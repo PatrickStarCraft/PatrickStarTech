@@ -28,7 +28,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
-import net.minecraftforge.common.util.INBTSerializable;
+import com.gregtechceu.gtceu.api.sync_system.NBTSerializable;
 
 import brachy.modularui.api.drawable.Text;
 import brachy.modularui.api.widget.IWidget;
@@ -433,7 +433,7 @@ public class PowerSubstationMachine extends WorkableMultiblockMachine
         return widgets;
     }
 
-    public static class PowerStationEnergyBank extends MachineTrait implements INBTSerializable<CompoundTag> {
+    public static class PowerStationEnergyBank extends MachineTrait implements NBTSerializable<CompoundTag> {
 
         private static final String NBT_SIZE = "Size";
         private static final String NBT_STORED = "Stored";

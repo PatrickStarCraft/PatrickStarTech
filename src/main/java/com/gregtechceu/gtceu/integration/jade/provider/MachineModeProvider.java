@@ -52,7 +52,7 @@ public class MachineModeProvider extends MachineInfoProvider<MetaMachine, Compou
                               BlockEntity blockEntity, IPluginConfig config) {
         if (data.contains("RecipeTypes") && data.contains("CurrentRecipeType")) {
             int currentRecipeTypeIndex = data.getIntOr("CurrentRecipeType", 0);
-            ListTag recipeTypesTagList = data.getList("RecipeTypes", StringTag.TAG_STRING);
+            ListTag recipeTypesTagList = com.gregtechceu.gtceu.utils.data.TypedTagList.read(data, "RecipeTypes", StringTag.TAG_STRING);
             if (block.showDetails()) {
                 tooltip.add(Component.translatable("gtceu.top.machine_mode"));
                 for (int i = 0; i < recipeTypesTagList.size(); i++) {

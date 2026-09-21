@@ -1,12 +1,12 @@
 package com.gregtechceu.gtceu.integration.ae2.utils;
 
 import net.minecraft.nbt.CompoundTag;
-import net.minecraftforge.common.util.INBTSerializable;
+import com.gregtechceu.gtceu.api.sync_system.NBTSerializable;
 
 import appeng.api.networking.IGridNodeListener;
 import appeng.me.ManagedGridNode;
 
-public class SerializableManagedGridNode extends ManagedGridNode implements INBTSerializable<CompoundTag> {
+public class SerializableManagedGridNode extends ManagedGridNode implements NBTSerializable<CompoundTag> {
 
     public <T> SerializableManagedGridNode(T nodeOwner, IGridNodeListener<? super T> listener) {
         super(nodeOwner, listener);

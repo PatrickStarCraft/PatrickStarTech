@@ -33,11 +33,11 @@ public class GTDimensionMarkers {
     public static final BlockEntry<Block> NETHER_MARKER = createMarker("the_nether");
     public static final BlockEntry<Block> END_MARKER = createMarker("the_end");
 
-    public static final DimensionMarker OVERWORLD = createAndRegister(Level.OVERWORLD.location(), 0,
+    public static final DimensionMarker OVERWORLD = createAndRegister(Level.OVERWORLD.identifier(), 0,
             () -> OVERWORLD_MARKER, null);
-    public static final DimensionMarker NETHER = createAndRegister(Level.NETHER.location(), 0,
+    public static final DimensionMarker NETHER = createAndRegister(Level.NETHER.identifier(), 0,
             () -> NETHER_MARKER, null);
-    public static final DimensionMarker END = createAndRegister(Level.END.location(), 0,
+    public static final DimensionMarker END = createAndRegister(Level.END.identifier(), 0,
             () -> END_MARKER, null);
 
     public static DimensionMarker createAndRegister(Identifier dim, int tier, Identifier itemKey,

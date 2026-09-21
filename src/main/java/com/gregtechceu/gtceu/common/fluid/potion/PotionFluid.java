@@ -69,7 +69,7 @@ public class PotionFluid extends ForgeFlowingFluid {
         if (customEffects.isEmpty())
             return fluidStack;
         CompoundTag tag = fluidStack.getOrCreateTag();
-        ListTag effects = tag.getList("CustomPotionEffects", 9);
+        ListTag effects = com.gregtechceu.gtceu.utils.data.TypedTagList.read(tag, "CustomPotionEffects", 9);
         for (MobEffectInstance effect : customEffects)
             effects.add(effect.save(new CompoundTag()));
         tag.put("CustomPotionEffects", effects);

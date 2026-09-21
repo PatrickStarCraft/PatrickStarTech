@@ -194,7 +194,7 @@ public class MEInputHatchPartMachine extends MEHatchPartMachine
             CompoundTag tag = new CompoundTag();
             tag.put("MEInputHatch", writeConfigToTag());
             dataStick.setTag(tag);
-            dataStick.setHoverName(Component.translatable("gtceu.machine.me.fluid_import.data_stick.name"));
+            dataStick.set(net.minecraft.core.component.DataComponents.CUSTOM_NAME, Component.translatable("gtceu.machine.me.fluid_import.data_stick.name"));
             player.sendSystemMessage(Component.translatable("gtceu.machine.me.import_copy_settings"));
         }
         return InteractionResult.SUCCESS;

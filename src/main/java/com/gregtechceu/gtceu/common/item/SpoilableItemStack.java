@@ -23,7 +23,7 @@ import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.util.INBTSerializable;
+import com.gregtechceu.gtceu.api.sync_system.NBTSerializable;
 import net.neoforged.neoforge.common.util.LazyOptional;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 
@@ -263,7 +263,7 @@ public abstract class SpoilableItemStack implements ISpoilableItem, IAddInformat
      *           than stack merging, though I don't think this will lead to any big user-facing bugs.
      */
     @Override
-    public void prepareForComparisonWith(INBTSerializable<Tag> other) {
+    public void prepareForComparisonWith(NBTSerializable<Tag> other) {
         if (other instanceof SpoilableItemStack spoilable) {
             if (!initialized || !spoilable.initialized) return;
             if (isFrozen() || spoilable.isFrozen()) {

@@ -393,7 +393,7 @@ public class LongDistanceNetwork {
             WorldData data = new WorldData();
             data.networks.clear();
             data.networkList.clear();
-            ListTag list = nbtTagCompound.getList("nets", Tag.TAG_COMPOUND);
+            ListTag list = com.gregtechceu.gtceu.utils.data.TypedTagList.read(nbtTagCompound, "nets", Tag.TAG_COMPOUND);
             for (Tag nbt : list) {
                 CompoundTag tag = (CompoundTag) nbt;
                 LongDistancePipeType pipeType = LongDistancePipeType.getPipeType(tag.getStringOr("class", ""));
@@ -401,13 +401,13 @@ public class LongDistanceNetwork {
                 ld.activeInputIndex = tag.getIntOr("in", 0);
                 ld.activeOutputIndex = tag.getIntOr("out", 0);
                 data.networkList.add(ld);
-                ListTag posList = tag.getList("pipes", Tag.TAG_LONG);
+                ListTag posList = com.gregtechceu.gtceu.utils.data.TypedTagList.read(tag, "pipes", Tag.TAG_LONG);
                 for (Tag nbtPos : posList) {
                     BlockPos pos = BlockPos.of(((LongTag) nbtPos).getAsLong());
                     data.putNetwork(pos, ld);
                     ld.longDistancePipeBlocks.add(pos);
                 }
-                ListTag endpoints = tag.getList("endpoints", Tag.TAG_LONG);
+                ListTag endpoints = com.gregtechceu.gtceu.utils.data.TypedTagList.read(tag, "endpoints", Tag.TAG_LONG);
                 for (Tag nbtPos : endpoints) {
                     BlockPos pos = BlockPos.of(((LongTag) nbtPos).getAsLong());
                     if (!ld.endpointPoss.contains(pos)) {

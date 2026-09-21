@@ -28,7 +28,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraftforge.common.util.INBTSerializable;
+import com.gregtechceu.gtceu.api.sync_system.NBTSerializable;
 import net.neoforged.neoforge.fluids.FluidStack;
 
 import com.mojang.serialization.Codec;
@@ -179,7 +179,7 @@ public final class ValueTransformers {
         registerTransformer(BlockPos.class, new BlockPosTransformer());
         registerCodecTransformer(BlockState.class, BlockState.CODEC, (b, v) -> b.writeId(Block.BLOCK_STATE_REGISTRY, v), b -> b.readById(Block.BLOCK_STATE_REGISTRY));
 
-        registerTransformer(INBTSerializable.class, new NBTSerializableTransformer());
+        registerTransformer(NBTSerializable.class, new NBTSerializableTransformer());
         registerTransformer(ISyncManaged.class, new SyncDataHolder.SyncManagedTransformer());
 
         registerGenericTransformerSupplier(List.class, ListTransformer::new);

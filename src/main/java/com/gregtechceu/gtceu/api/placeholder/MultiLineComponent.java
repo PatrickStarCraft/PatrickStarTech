@@ -185,9 +185,9 @@ public class MultiLineComponent extends ArrayList<MutableComponent> {
                 out.add(Component.Serializer.fromJson(i.getAsString()));
             }
         } else if (tag instanceof CompoundTag compoundTag) {
-            ListTag textTag = compoundTag.getList("text", Tag.TAG_STRING);
+            ListTag textTag = com.gregtechceu.gtceu.utils.data.TypedTagList.read(compoundTag, "text", Tag.TAG_STRING);
             for (Tag i : textTag) out.add(Component.Serializer.fromJson(i.getAsString()));
-            ListTag graphicsTag = compoundTag.getList("graphics", Tag.TAG_COMPOUND);
+            ListTag graphicsTag = com.gregtechceu.gtceu.utils.data.TypedTagList.read(compoundTag, "graphics", Tag.TAG_COMPOUND);
             for (Tag i : graphicsTag) out.addGraphics(GraphicsComponent.fromTag(i));
         }
         return out;

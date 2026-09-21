@@ -134,7 +134,7 @@ public class RecipeOutputProvider extends MachineTraitProvider<RecipeLogic, Comp
         if (capData.getBooleanOr("Working", false)) {
             List<Ingredient> outputItems = new ArrayList<>();
             if ((capData.get("OutputItems") instanceof ListTag)) {
-                ListTag itemTags = capData.getList("OutputItems", Tag.TAG_COMPOUND);
+                ListTag itemTags = com.gregtechceu.gtceu.utils.data.TypedTagList.read(capData, "OutputItems", Tag.TAG_COMPOUND);
                 if (!itemTags.isEmpty()) {
                     for (Tag tag : itemTags) {
                         if (tag instanceof CompoundTag tCompoundTag) {
@@ -154,7 +154,7 @@ public class RecipeOutputProvider extends MachineTraitProvider<RecipeLogic, Comp
             }
             List<FluidIngredient> outputFluids = new ArrayList<>();
             if ((capData.get("OutputFluids") instanceof ListTag)) {
-                ListTag fluidTags = capData.getList("OutputFluids", Tag.TAG_COMPOUND);
+                ListTag fluidTags = com.gregtechceu.gtceu.utils.data.TypedTagList.read(capData, "OutputFluids", Tag.TAG_COMPOUND);
                 for (Tag tag : fluidTags) {
                     if (tag instanceof CompoundTag tCompoundTag) {
                         if (tCompoundTag.contains("count_provider")) {

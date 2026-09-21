@@ -145,7 +145,7 @@ public class OverlayedTankHandler {
         private FluidStack search(FluidStack fluid) {
             FluidStack found = FluidStack.EMPTY;
             for (var stack : stacks) {
-                if (stack.isFluidEqual(fluid)) {
+                if (FluidStack.isSameFluidSameComponents(stack, fluid)) {
                     if (!sameFluidFill || stack.getAmount() < capacity) return stack;
                     else found = stack;
                 }

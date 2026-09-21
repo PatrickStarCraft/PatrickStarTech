@@ -1,7 +1,7 @@
 package com.gregtechceu.gtceu.api.misc.virtualregistry;
 
 import net.minecraft.nbt.CompoundTag;
-import net.minecraftforge.common.util.INBTSerializable;
+import com.gregtechceu.gtceu.api.sync_system.NBTSerializable;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -11,7 +11,7 @@ import java.util.Locale;
 
 @Getter
 @Accessors(chain = true)
-public abstract class VirtualEntry implements INBTSerializable<CompoundTag> {
+public abstract class VirtualEntry implements NBTSerializable<CompoundTag> {
 
     public static final String DEFAULT_COLOR = "FFFFFFFF";
     protected static final String COLOR_KEY = "color";

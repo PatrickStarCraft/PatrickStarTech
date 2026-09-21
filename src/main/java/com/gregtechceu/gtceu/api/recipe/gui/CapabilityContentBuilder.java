@@ -53,9 +53,9 @@ public interface CapabilityContentBuilder {
     @SuppressWarnings("unchecked")
     CapabilityContentBuilder ITEM = (widget, content, io, perTick,
                                      recipeType, recipe, chanceTier, recipeTier) -> {
-        if (!(widget instanceof RecipeViewerSlotWidget<?, ?> recipeViewerSlot)) return;
+        if (!(widget instanceof RecipeViewerSlotWidget<?> recipeViewerSlot)) return;
 
-        RecipeViewerSlotWidget<ItemStack, ?> recipeViewerSlotWidget = (RecipeViewerSlotWidget<ItemStack, ?>) recipeViewerSlot;
+        RecipeViewerSlotWidget<?> recipeViewerSlotWidget = (RecipeViewerSlotWidget<?>) recipeViewerSlot;
 
         float chance = (float) content.chance() / content.maxChance();
         var innerContent = ItemRecipeCapability.CAP.of(content.content());
@@ -100,9 +100,9 @@ public interface CapabilityContentBuilder {
     @SuppressWarnings("unchecked")
     CapabilityContentBuilder FLUID = (widget, content, io, perTick,
                                       recipeType, recipe, chanceTier, recipeTier) -> {
-        if (!(widget instanceof RecipeViewerSlotWidget<?, ?> recipeViewerSlot)) return;
+        if (!(widget instanceof RecipeViewerSlotWidget<?> recipeViewerSlot)) return;
 
-        RecipeViewerSlotWidget<FluidStack, ?> recipeViewerSlotWidget = (RecipeViewerSlotWidget<FluidStack, ?>) recipeViewerSlot;
+        RecipeViewerSlotWidget<?> recipeViewerSlotWidget = (RecipeViewerSlotWidget<?>) recipeViewerSlot;
 
         float chance = (float) content.chance() / content.maxChance();
         FluidIngredient ingredient = FluidRecipeCapability.CAP.of(content.content());

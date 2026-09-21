@@ -28,7 +28,7 @@ public class MonitorGroupTransformer implements ValueTransformer<MonitorGroup> {
         // Backwards compat
 
         var positions = (compoundTag.get("positions") instanceof ListTag) ?
-                compoundTag.getList("positions", Tag.TAG_COMPOUND) : null;
+                com.gregtechceu.gtceu.utils.data.TypedTagList.read(compoundTag, "positions", Tag.TAG_COMPOUND) : null;
         var placeholderItems = (compoundTag.get("placeholderSlots") instanceof CompoundTag) ?
                 compoundTag.getCompound("placeholderSlots") : null;
         var targetPos = (compoundTag.get("targetPos") instanceof CompoundTag) ? compoundTag.getCompound("targetPos") :

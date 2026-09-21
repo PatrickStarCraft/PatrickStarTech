@@ -208,7 +208,7 @@ public class MEInputBusPartMachine extends MEBusPartMachine
             CompoundTag tag = new CompoundTag();
             tag.put("MEInputBus", writeConfigToTag());
             dataStick.setTag(tag);
-            dataStick.setHoverName(Component.translatable("gtceu.machine.me.item_import.data_stick.name"));
+            dataStick.set(net.minecraft.core.component.DataComponents.CUSTOM_NAME, Component.translatable("gtceu.machine.me.item_import.data_stick.name"));
             player.sendSystemMessage(Component.translatable("gtceu.machine.me.import_copy_settings"));
         }
         return InteractionResult.SUCCESS;

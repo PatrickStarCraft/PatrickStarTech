@@ -1398,7 +1398,7 @@ public interface GTRecipeSchema {
 
             var id = fluids[0].getFluid().builtInRegistryHolder().unwrapKey();
             if (id.isPresent()) {
-                return id.get().location().getPath();
+                return id.get().identifier().getPath();
             }
         }
         return null;

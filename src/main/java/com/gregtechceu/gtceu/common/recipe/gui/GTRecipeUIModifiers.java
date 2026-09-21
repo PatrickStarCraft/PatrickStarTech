@@ -42,7 +42,7 @@ public class GTRecipeUIModifiers {
                     .filter(coil -> coil.getKey().getCoilTemperature() >= temp)
                     .map(coil -> new ItemStack(coil.getValue().get())).toList();
 
-            coilRow.child(RecipeViewerSlotWidget.create(ItemStack.class)
+            coilRow.child(RecipeViewerSlotWidget.create()
                     .recipeSlotRole(RecipeSlotRole.RENDER_ONLY)
                     .value(ItemStackList.of(items))
                     .background(IDrawable.EMPTY)
@@ -57,7 +57,7 @@ public class GTRecipeUIModifiers {
             if (condition instanceof ResearchCondition researchCondition) {
                 var row = Flow.row();
                 for (var researchItem : researchCondition.getData()) {
-                    row.child(RecipeViewerSlotWidget.create(ItemStack.class)
+                    row.child(RecipeViewerSlotWidget.create()
                             .marginLeft(2)
                             .recipeSlotRole(RecipeSlotRole.CATALYST)
                             .value(researchItem.getDataItem()));

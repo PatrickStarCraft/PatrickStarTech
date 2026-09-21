@@ -49,7 +49,7 @@ public class DimensionCache {
             if (!cache.containsKey(key)) {
                 cache.put(key, new GridCache());
             }
-            cache.get(key).fromNBT(tag.getList(gridPos, Tag.TAG_COMPOUND), isClient);
+            cache.get(key).fromNBT(com.gregtechceu.gtceu.utils.data.TypedTagList.read(tag, gridPos, Tag.TAG_COMPOUND), isClient);
         }
     }
 

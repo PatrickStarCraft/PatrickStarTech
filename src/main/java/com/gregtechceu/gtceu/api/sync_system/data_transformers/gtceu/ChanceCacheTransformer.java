@@ -52,7 +52,7 @@ public class ChanceCacheTransformer implements
             Object2IntMap map = context.currentValue().computeIfAbsent(cap,
                     RecipeCapability::makeChanceCache);
 
-            ListTag chanceTag = chanceCache.getList(key, Tag.TAG_COMPOUND);
+            ListTag chanceTag = com.gregtechceu.gtceu.utils.data.TypedTagList.read(chanceCache, key, Tag.TAG_COMPOUND);
             for (int i = 0; i < chanceTag.size(); ++i) {
                 CompoundTag chanceKey = chanceTag.getCompoundOrEmpty(i);
                 var entry = cap.serializer.fromNbt(chanceKey.get("entry"));

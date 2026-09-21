@@ -17,7 +17,7 @@ public class ProgrammedCircuitRecipeWidget extends ParentWidget<ProgrammedCircui
 
         Grid circuits = new Grid()
                 .coverChildren()
-                .gridOfSizeWidth(32, 8, (x, y, i) -> RecipeViewerSlotWidget.create(ItemStack.class)
+                .gridOfSizeWidth(32, 8, (x, y, i) -> RecipeViewerSlotWidget.create()
                         .recipeSlotRole(RecipeSlotRole.RENDER_ONLY)
                         .value(IntCircuitBehaviour.stack(i + 1)));
 

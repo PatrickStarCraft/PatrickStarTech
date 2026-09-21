@@ -45,7 +45,7 @@ public class WirelessTransmitterCover extends CoverBehavior
         dataStick.getOrCreateTag().putInt("targetY", coverHolder.getBlockPos().getY());
         dataStick.getOrCreateTag().putInt("targetZ", coverHolder.getBlockPos().getZ());
         dataStick.getOrCreateTag().putString("face", attachedSide.getName());
-        dataStick.getOrCreateTag().putString("dim", coverHolder.getLevel().dimension().location().toString());
+        dataStick.getOrCreateTag().putString("dim", coverHolder.getLevel().dimension().identifier().toString());
         return InteractionResult.SUCCESS;
     }
 

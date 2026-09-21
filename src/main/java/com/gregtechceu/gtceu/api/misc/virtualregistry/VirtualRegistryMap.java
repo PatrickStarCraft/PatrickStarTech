@@ -4,14 +4,14 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.Identifier;
-import net.minecraftforge.common.util.INBTSerializable;
+import com.gregtechceu.gtceu.api.sync_system.NBTSerializable;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public class VirtualRegistryMap implements INBTSerializable<CompoundTag> {
+public class VirtualRegistryMap implements NBTSerializable<CompoundTag> {
 
     private final Map<EntryTypes<?>, Map<String, VirtualEntry>> registryMap = new Object2ObjectOpenHashMap<>();
 

@@ -221,11 +221,11 @@ public final class ResearchManager {
         @Override
         public void buildRepresentativeRecipes() {
             ItemStack copiedStick = GTItems.TOOL_DATA_STICK.asStack();
-            copiedStick.setHoverName(Component.translatable("gtceu.scanner.copy_stick_from"));
+            copiedStick.set(net.minecraft.core.component.DataComponents.CUSTOM_NAME, Component.translatable("gtceu.scanner.copy_stick_from"));
             ItemStack emptyStick = GTItems.TOOL_DATA_STICK.asStack();
-            emptyStick.setHoverName(Component.translatable("gtceu.scanner.copy_stick_empty"));
+            emptyStick.set(net.minecraft.core.component.DataComponents.CUSTOM_NAME, Component.translatable("gtceu.scanner.copy_stick_empty"));
             ItemStack resultStick = GTItems.TOOL_DATA_STICK.asStack();
-            resultStick.setHoverName(Component.translatable("gtceu.scanner.copy_stick_to"));
+            resultStick.set(net.minecraft.core.component.DataComponents.CUSTOM_NAME, Component.translatable("gtceu.scanner.copy_stick_to"));
 
             GTRecipe recipe = GTRecipeTypes.SCANNER_RECIPES
                     .recipeBuilder("copy_" + GTStringUtils.itemStackToString(copiedStick))

@@ -46,7 +46,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraftforge.common.util.INBTSerializable;
+import com.gregtechceu.gtceu.api.sync_system.NBTSerializable;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidType;
 
@@ -899,7 +899,7 @@ public class MEPatternBufferPartMachine extends MEBusPartMachine
         return new BufferData(items, fluids);
     }
 
-    public class InternalSlot implements INBTSerializable<CompoundTag> {
+    public class InternalSlot implements NBTSerializable<CompoundTag> {
 
         @Getter
         @Setter
@@ -1162,7 +1162,7 @@ public class MEPatternBufferPartMachine extends MEBusPartMachine
 
         @Override
         public void deserializeNBT(CompoundTag tag) {
-            ListTag items = tag.getList("inventory", Tag.TAG_COMPOUND);
+            ListTag items = com.gregtechceu.gtceu.utils.data.TypedTagList.read(tag, "inventory", Tag.TAG_COMPOUND);
             for (Tag t : items) {
                 if (!(t instanceof CompoundTag ct)) continue;
                 var stack = ItemStack.of(ct);
@@ -1172,7 +1172,7 @@ public class MEPatternBufferPartMachine extends MEBusPartMachine
                 }
             }
 
-            ListTag fluids = tag.getList("fluidInventory", Tag.TAG_COMPOUND);
+            ListTag fluids = com.gregtechceu.gtceu.utils.data.TypedTagList.read(tag, "fluidInventory", Tag.TAG_COMPOUND);
             for (Tag t : fluids) {
                 if (!(t instanceof CompoundTag ct)) continue;
                 var stack = FluidStack.loadFluidStackFromNBT(ct);

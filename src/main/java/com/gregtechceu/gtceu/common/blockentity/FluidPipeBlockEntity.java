@@ -3,6 +3,7 @@ package com.gregtechceu.gtceu.common.blockentity;
 import com.gregtechceu.gtceu.api.GTValues;
 import com.gregtechceu.gtceu.api.blockentity.PipeBlockEntity;
 import com.gregtechceu.gtceu.api.capability.GTCapability;
+import com.gregtechceu.gtceu.api.capability.GTCapabilityHelper;
 import com.gregtechceu.gtceu.api.capability.ICoverable;
 import com.gregtechceu.gtceu.api.capability.recipe.IO;
 import com.gregtechceu.gtceu.api.cover.CoverBehavior;
@@ -128,7 +129,7 @@ public class FluidPipeBlockEntity extends PipeBlockEntity<FluidPipeType, FluidPi
     @NotNull
     @Override
     public <T> @Nullable T getGTCapability(BlockCapability<T, Direction> capability, @Nullable Direction facing) {
-        if (capability == Capabilities.FluidHandler.BLOCK) {
+        if (capability == com.gregtechceu.gtceu.api.capability.GTTransferCapabilities.FLUID) {
             if (facing != null && isConnected(facing)) {
                 PipeTankList tankList = getTankList(facing);
                 if (tankList == null)

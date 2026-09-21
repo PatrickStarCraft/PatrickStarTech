@@ -28,17 +28,25 @@ public class GTCapabilityHelper {
 
     @Nullable
     public static IEnergyStorage getForgeEnergyItem(ItemStack itemStack) {
-        return itemStack.getCapability(Capabilities.EnergyStorage.ITEM);
+        var handler = itemStack.getCapability(Capabilities.Energy.ITEM,
+                net.neoforged.neoforge.transfer.access.ItemAccess.forStack(itemStack));
+        return handler == null ? null : IEnergyStorage.of(handler);
     }
 
     @Nullable
     public static IItemHandler getItemHandler(Level level, BlockPos pos, @Nullable Direction side) {
-        return getBlockEntityCapability(Capabilities.ItemHandler.BLOCK, level, pos, side);
+        var gtHandler = level.getCapability(GTTransferCapabilities.ITEM, pos, side);
+        if (gtHandler != null) return gtHandler;
+        var handler = level.getCapability(Capabilities.Item.BLOCK, pos, side);
+        return handler == null ? null : IItemHandler.of(handler);
     }
 
     @Nullable
     public static IFluidHandler getFluidHandler(Level level, BlockPos pos, @Nullable Direction side) {
-        return getBlockEntityCapability(Capabilities.FluidHandler.BLOCK, level, pos, side);
+        var gtHandler = level.getCapability(GTTransferCapabilities.FLUID, pos, side);
+        if (gtHandler != null) return gtHandler;
+        var handler = level.getCapability(Capabilities.Fluid.BLOCK, pos, side);
+        return handler == null ? null : IFluidHandler.of(handler);
     }
 
     @Nullable
@@ -68,7 +76,10 @@ public class GTCapabilityHelper {
 
     @Nullable
     public static IEnergyStorage getForgeEnergy(Level level, BlockPos pos, @Nullable Direction side) {
-        return getBlockEntityCapability(Capabilities.EnergyStorage.BLOCK, level, pos, side);
+        var gtHandler = level.getCapability(GTTransferCapabilities.ENERGY, pos, side);
+        if (gtHandler != null) return gtHandler;
+        var handler = level.getCapability(Capabilities.Energy.BLOCK, pos, side);
+        return handler == null ? null : IEnergyStorage.of(handler);
     }
 
     @Nullable

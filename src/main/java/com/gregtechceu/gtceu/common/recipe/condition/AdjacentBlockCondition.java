@@ -114,7 +114,7 @@ public class AdjacentBlockCondition extends RecipeCondition<AdjacentBlockConditi
             }
 
             for (var stack : stacksToDisplay) {
-                row.child(RecipeViewerSlotWidget.create(ItemStack.class).marginLeft(2)
+                row.child(RecipeViewerSlotWidget.create().marginLeft(2)
                         .recipeSlotRole(RecipeSlotRole.RENDER_ONLY)
                         .value(stack));
             }

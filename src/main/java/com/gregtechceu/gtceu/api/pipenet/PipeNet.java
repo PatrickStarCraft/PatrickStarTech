@@ -9,7 +9,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraftforge.common.util.INBTSerializable;
+import com.gregtechceu.gtceu.api.sync_system.NBTSerializable;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
@@ -19,7 +19,7 @@ import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import java.util.*;
 import java.util.Map.Entry;
 
-public abstract class PipeNet<NodeDataType> implements INBTSerializable<CompoundTag> {
+public abstract class PipeNet<NodeDataType> implements NBTSerializable<CompoundTag> {
 
     protected final LevelPipeNet<NodeDataType, PipeNet<NodeDataType>> worldData;
     private final Map<BlockPos, Node<NodeDataType>> nodeByBlockPos = new HashMap<>();
@@ -420,8 +420,8 @@ public abstract class PipeNet<NodeDataType> implements INBTSerializable<Compound
     }
 
     protected void deserializeAllNodeList(CompoundTag compound) {
-        ListTag allNodesList = compound.getList("NodeIndexes", Tag.TAG_COMPOUND);
-        ListTag wirePropertiesList = compound.getList("WireProperties", Tag.TAG_COMPOUND);
+        ListTag allNodesList = com.gregtechceu.gtceu.utils.data.TypedTagList.read(compound, "NodeIndexes", Tag.TAG_COMPOUND);
+        ListTag wirePropertiesList = com.gregtechceu.gtceu.utils.data.TypedTagList.read(compound, "WireProperties", Tag.TAG_COMPOUND);
         Int2ObjectMap<NodeDataType> readProperties = new Int2ObjectOpenHashMap<>();
 
         for (int i = 0; i < wirePropertiesList.size(); i++) {

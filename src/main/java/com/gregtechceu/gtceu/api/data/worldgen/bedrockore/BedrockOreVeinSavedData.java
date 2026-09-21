@@ -50,7 +50,7 @@ public class BedrockOreVeinSavedData extends SavedData {
 
     public BedrockOreVeinSavedData(ServerLevel serverLevel, CompoundTag nbt) {
         this(serverLevel);
-        var list = nbt.getList("veinInfo", Tag.TAG_COMPOUND);
+        var list = com.gregtechceu.gtceu.utils.data.TypedTagList.read(nbt, "veinInfo", Tag.TAG_COMPOUND);
         for (Tag tag : list) {
             if (tag instanceof CompoundTag compoundTag) {
                 var chunkPos = ChunkPos.unpack(compoundTag.getLongOr("pos", 0));

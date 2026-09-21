@@ -1,6 +1,7 @@
 package com.gregtechceu.gtceu.common.item.modules;
 
 import com.gregtechceu.gtceu.api.item.component.IAddInformation;
+import com.gregtechceu.gtceu.api.item.data.ItemStackData;
 import com.gregtechceu.gtceu.api.item.component.IMonitorModuleItem;
 import com.gregtechceu.gtceu.api.placeholder.GraphicsComponent;
 import com.gregtechceu.gtceu.api.placeholder.MultiLineComponent;
@@ -31,8 +32,11 @@ import java.util.UUID;
 public class TextModuleBehaviour implements IMonitorModuleItem, IAddInformation {
 
     private PlaceholderContext getContext(ItemStack stack, CentralMonitorMachine machine, MonitorGroup group) {
-        if (!stack.getOrCreateTag().contains("placeholderUUID")) {
-            stack.getOrCreateTag().putUUID("placeholderUUID", UUID.randomUUID());
+        UUID id = ItemStackData.read(stack).read("placeholderUUID", net.minecraft.core.UUIDUtil.CODEC).orElse(null);
+        if (id == null) {
+            id = UUID.randomUUID();
+            UUID newId = id;
+            ItemStackData.update(stack, tag -> tag.store("placeholderUUID", net.minecraft.core.UUIDUtil.CODEC, newId));
         }
         return new PlaceholderContext(
                 group.getTargetLevel(machine.getLevel()),
@@ -42,14 +46,14 @@ public class TextModuleBehaviour implements IMonitorModuleItem, IAddInformation 
                 group.getTargetCover(machine.getLevel()),
                 group,
                 null,
-                stack.getOrCreateTag().getUUID("placeholderUUID"));
+                id);
     }
 
     private void updateText(ItemStack stack, CentralMonitorMachine machine, MonitorGroup group) {
         MultiLineComponent text = PlaceholderHandler.processPlaceholders(
                 getPlaceholderText(stack), getContext(stack, machine, group));
-        stack.getOrCreateTag().put("text",
-                text.withStyle(style -> style.withFont(GTGuiTextures.MONOCRAFT_FONT)).toTag());
+        ItemStackData.update(stack, tag -> tag.put("text",
+                text.withStyle(style -> style.withFont(GTGuiTextures.MONOCRAFT_FONT)).toTag()));
     }
 
     @Override
@@ -92,40 +96,36 @@ public class TextModuleBehaviour implements IMonitorModuleItem, IAddInformation 
     }
 
     public MultiLineComponent getText(ItemStack stack) {
-        return MultiLineComponent.fromTag(stack.getOrCreateTag().get("text"));
+        return MultiLineComponent.fromTag(ItemStackData.read(stack).get("text"));
     }
 
     public double getScale(ItemStack stack) {
-        if (!stack.getOrCreateTag().contains("scale"))
-            return 1;
-        return Math.max(stack.getOrCreateTag().getDouble("scale"), .0001);
+        return Math.max(ItemStackData.read(stack).getDoubleOr("scale", 1), .0001);
     }
 
     public void setScale(ItemStack stack, double scale) {
-        stack.getOrCreateTag().putDouble("scale", scale);
+        ItemStackData.update(stack, tag -> tag.putDouble("scale", scale));
     }
 
     public void setPaused(ItemStack stack, boolean paused) {
-        stack.getOrCreateTag().putBoolean("paused", paused);
+        ItemStackData.update(stack, tag -> tag.putBoolean("paused", paused));
     }
 
     public boolean isPaused(ItemStack stack) {
-        if (stack.getOrCreateTag().contains("paused"))
-            return stack.getOrCreateTag().getBoolean("paused");
-        else return false;
+        return ItemStackData.read(stack).getBooleanOr("paused", false);
     }
 
     public void setPlaceholderText(ItemStack stack, String text) {
         ListTag listTag = new ListTag();
         for (String line : text.split("\n")) listTag.add(StringTag.valueOf(line.replaceAll("\r", "")));
-        stack.getOrCreateTag().put("formatStringLines", listTag);
+        ItemStackData.update(stack, tag -> tag.put("formatStringLines", listTag));
     }
 
     public String getPlaceholderText(ItemStack stack) {
         StringBuilder formatStringLines = new StringBuilder();
-        ListTag tag = stack.getOrCreateTag().getList("formatStringLines", StringTag.TAG_STRING);
+        ListTag tag = com.gregtechceu.gtceu.utils.data.TypedTagList.read(ItemStackData.read(stack), "formatStringLines", StringTag.TAG_STRING);
         for (Tag value : tag) {
-            formatStringLines.append(value.getAsString()).append('\n');
+            formatStringLines.append(value.asString().orElse("")).append('\n');
         }
         return formatStringLines.toString();
     }

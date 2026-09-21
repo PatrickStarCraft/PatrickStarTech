@@ -42,7 +42,7 @@ public class DamageTypeData {
 
     protected DamageTypeData(ResourceKey<DamageType> key, DamageType type, Collection<TagKey<DamageType>> tags) {
         this.key = key;
-        this.id = key.location();
+        this.id = key.identifier();
         this.type = type;
         this.tags = tags;
     }

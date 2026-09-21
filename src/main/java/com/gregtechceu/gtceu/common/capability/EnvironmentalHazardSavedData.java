@@ -67,7 +67,7 @@ public class EnvironmentalHazardSavedData extends SavedData {
             return;
         }
 
-        ListTag allHazardZones = tag.getList("zones", Tag.TAG_COMPOUND);
+        ListTag allHazardZones = com.gregtechceu.gtceu.utils.data.TypedTagList.read(tag, "zones", Tag.TAG_COMPOUND);
         for (int i = 0; i < allHazardZones.size(); ++i) {
             CompoundTag zoneTag = allHazardZones.getCompoundOrEmpty(i);
 

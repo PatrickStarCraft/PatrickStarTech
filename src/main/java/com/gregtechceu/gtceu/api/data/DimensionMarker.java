@@ -64,7 +64,7 @@ public class DimensionMarker {
     private ItemStack getStack(Item item) {
         ItemStack stack = new ItemStack(item);
         if (overrideName != null) {
-            stack.setHoverName(Component.translatable(overrideName));
+            stack.set(net.minecraft.core.component.DataComponents.CUSTOM_NAME, Component.translatable(overrideName));
         }
         return stack;
     }

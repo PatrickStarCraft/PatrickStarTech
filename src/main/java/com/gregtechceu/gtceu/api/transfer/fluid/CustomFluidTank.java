@@ -1,7 +1,9 @@
 package com.gregtechceu.gtceu.api.transfer.fluid;
 
 import net.minecraft.nbt.CompoundTag;
-import net.minecraftforge.common.util.INBTSerializable;
+import net.minecraft.core.HolderLookup;
+import com.gregtechceu.gtceu.api.sync_system.ValueIOPersistence;
+import com.gregtechceu.gtceu.api.sync_system.NBTSerializable;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 
@@ -11,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Predicate;
 
-public class CustomFluidTank extends FluidTank implements IFluidHandlerModifiable, INBTSerializable<CompoundTag> {
+public class CustomFluidTank extends FluidTank implements IFluidHandlerModifiable, NBTSerializable<CompoundTag> {
 
     @Getter
     @Setter
@@ -48,14 +50,23 @@ public class CustomFluidTank extends FluidTank implements IFluidHandlerModifiabl
 
     @Override
     public CompoundTag serializeNBT() {
-        var tag = new CompoundTag();
-        if (isEmpty() || getFluidAmount() <= 0) tag.putBoolean("isNull", true);
-        return writeToNBT(tag);
+        return serializeNBT(ValueIOPersistence.builtInRegistries());
+    }
+
+    @Override
+    public CompoundTag serializeNBT(HolderLookup.Provider registries) {
+        return ValueIOPersistence.write(this, registries);
     }
 
     @Override
     public void deserializeNBT(CompoundTag nbt) {
-        if (nbt.getBooleanOr("isNull", false)) return;
-        readFromNBT(nbt);
+        deserializeNBT(nbt, ValueIOPersistence.builtInRegistries());
+    }
+
+    @Override
+    public void deserializeNBT(CompoundTag nbt, HolderLookup.Provider registries) {
+        var loaded = new FluidTank(getCapacity());
+        ValueIOPersistence.read(loaded, nbt, registries);
+        setFluid(loaded.getFluid());
     }
 }

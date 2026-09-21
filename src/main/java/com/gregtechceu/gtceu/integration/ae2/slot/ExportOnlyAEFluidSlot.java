@@ -108,7 +108,7 @@ public class ExportOnlyAEFluidSlot extends ExportOnlyAESlot implements IFluidHan
 
     @Override
     public FluidStack drain(FluidStack resource, FluidAction action) {
-        if (this.getFluid().isFluidEqual(resource)) {
+        if (FluidStack.isSameFluidSameComponents(this.getFluid(), resource)) {
             return this.drain(resource.getAmount(), action);
         }
         return FluidStack.EMPTY;

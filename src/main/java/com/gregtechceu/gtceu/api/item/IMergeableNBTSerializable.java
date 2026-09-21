@@ -3,13 +3,13 @@ package com.gregtechceu.gtceu.api.item;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.capabilities.CapabilityDispatcher;
-import net.minecraftforge.common.util.INBTSerializable;
+import com.gregtechceu.gtceu.api.sync_system.NBTSerializable;
 
 /**
  * An interface for capability providers to implement if they need to store NBT data
  * and have custom comparison logic in {@link ItemStack#areCapsCompatible(CapabilityDispatcher)}.
  */
-public interface IMergeableNBTSerializable extends INBTSerializable<Tag> {
+public interface IMergeableNBTSerializable extends NBTSerializable<Tag> {
 
     /**
      * Called right before this capability provider is compared to a different one in
@@ -20,5 +20,5 @@ public interface IMergeableNBTSerializable extends INBTSerializable<Tag> {
      * 
      * @param other the other capability provider
      */
-    void prepareForComparisonWith(INBTSerializable<Tag> other);
+    void prepareForComparisonWith(NBTSerializable<Tag> other);
 }

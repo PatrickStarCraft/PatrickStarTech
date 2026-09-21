@@ -172,7 +172,7 @@ public class QuantumTankMachine extends TieredMachine implements IControllable,
     protected void setLocked(FluidStack fluid) {
         if (fluid.isEmpty()) setLocked(false);
         else if (stored.isEmpty()) lockedFluid.setFluid(fluid);
-        else if (stored.isFluidEqual(fluid)) setLocked(true);
+        else if (FluidStack.isSameFluidSameComponents(stored, fluid)) setLocked(true);
         syncDataHolder.markClientSyncFieldDirty("lockedFluid");
     }
 
@@ -246,7 +246,7 @@ public class QuantumTankMachine extends TieredMachine implements IControllable,
 
     protected class FluidCache extends MachineTrait implements IFluidHandler {
 
-        private final Predicate<FluidStack> filter = f -> !isLocked() || getLockedFluid().isFluidEqual(f);
+        private final Predicate<FluidStack> filter = f -> !isLocked() || FluidStack.isSameFluidSameComponents(getLockedFluid(), f);
 
         public FluidCache() {
             super();
@@ -261,7 +261,7 @@ public class QuantumTankMachine extends TieredMachine implements IControllable,
         public int fill(FluidStack resource, FluidAction action) {
             long free = isVoiding ? Long.MAX_VALUE : maxAmount - storedAmount;
             long canFill = 0;
-            if ((stored.isEmpty() || stored.isFluidEqual(resource)) && filter.test(resource)) {
+            if ((stored.isEmpty() || FluidStack.isSameFluidSameComponents(stored, resource)) && filter.test(resource)) {
                 canFill = Math.min(resource.getAmount(), free);
             }
             if (action.execute() && canFill > 0) {
@@ -287,7 +287,7 @@ public class QuantumTankMachine extends TieredMachine implements IControllable,
 
         @Override
         public FluidStack drain(FluidStack resource, FluidAction action) {
-            if (!resource.isFluidEqual(stored)) return FluidStack.EMPTY;
+            if (!FluidStack.isSameFluidSameComponents(resource, stored)) return FluidStack.EMPTY;
             return drain(resource.getAmount(), action);
         }
 

@@ -100,13 +100,13 @@ public class NotifiableFluidTank extends NotifiableRecipeHandlerTrait<FluidIngre
         }
         for (int i = 0; i < this.getTanks(); i++) {
             if (this.getFluidInTank(i).isEmpty()) continue;
-            if (!this.getFluidInTank(i).isFluidEqual(newFluid)) {
+            if (!FluidStack.isSameFluidSameComponents(this.getFluidInTank(i), newFluid)) {
                 // Fluid in a tank that doesn't equal the new locked fluid
                 this.lockedFluid.setFluid(FluidStack.EMPTY);
                 return;
             }
         }
-        this.setFilter(stack -> stack.isFluidEqual(newFluid));
+        this.setFilter(stack -> FluidStack.isSameFluidSameComponents(stack, newFluid));
         this.onContentsChanged();
     }
 
@@ -154,7 +154,7 @@ public class NotifiableFluidTank extends NotifiableRecipeHandlerTrait<FluidIngre
                 int tank = 0;
                 for (int i = 0; i < storages.length; ++i) {
                     var storage = storages[i];
-                    if (!storage.getFluid().isEmpty() && storage.getFluid().isFluidEqual(fluids[0])) {
+                    if (!storage.getFluid().isEmpty() && FluidStack.isSameFluidSameComponents(storage.getFluid(), fluids[0])) {
                         existing = storage;
                         tank = i;
                         break;
@@ -215,7 +215,7 @@ public class NotifiableFluidTank extends NotifiableRecipeHandlerTrait<FluidIngre
                     FluidStack output = fluids[0].copy();
                     if (recipe != null) recipe.mutateOutput(output);
                     output.setAmount(amount);
-                    if (visited[tank] == null || visited[tank].isFluidEqual(output)) {
+                    if (visited[tank] == null || FluidStack.isSameFluidSameComponents(visited[tank], output)) {
                         if (count < storages[tank].getCapacity()) {
                             int filled = storages[tank].fill(output, action);
                             if (filled > 0) {
@@ -276,7 +276,7 @@ public class NotifiableFluidTank extends NotifiableRecipeHandlerTrait<FluidIngre
         if (locked && !fluidStack.isEmpty()) {
             this.lockedFluid.setFluid(fluidStack.copy());
             this.lockedFluid.getFluid().setAmount(1);
-            setFilter(stack -> stack.isFluidEqual(this.lockedFluid.getFluid()));
+            setFilter(stack -> FluidStack.isSameFluidSameComponents(stack, this.lockedFluid.getFluid()));
         } else {
             this.lockedFluid.setFluid(FluidStack.EMPTY);
             setFilter(stack -> true);
@@ -399,7 +399,7 @@ public class NotifiableFluidTank extends NotifiableRecipeHandlerTrait<FluidIngre
         CustomFluidTank existingStorage = null;
         if (!allowSameFluids) {
             for (var storage : storages) {
-                if (!storage.getFluid().isEmpty() && storage.getFluid().isFluidEqual(resource)) {
+                if (!storage.getFluid().isEmpty() && FluidStack.isSameFluidSameComponents(storage.getFluid(), resource)) {
                     existingStorage = storage;
                     break;
                 }
@@ -478,7 +478,7 @@ public class NotifiableFluidTank extends NotifiableRecipeHandlerTrait<FluidIngre
     public void onMachineLoad() {
         super.onMachineLoad();
         if (this.isLocked()) {
-            setFilter(stack -> stack.isFluidEqual(this.lockedFluid.getFluid()));
+            setFilter(stack -> FluidStack.isSameFluidSameComponents(stack, this.lockedFluid.getFluid()));
         }
     }
 }

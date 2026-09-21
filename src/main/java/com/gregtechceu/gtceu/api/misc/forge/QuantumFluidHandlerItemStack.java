@@ -100,7 +100,7 @@ public class QuantumFluidHandlerItemStack implements IFluidHandlerItem, ICapabil
             }
 
             return fillAmount;
-        } else if (contained.isFluidEqual(resource)) {
+        } else if (FluidStack.isSameFluidSameComponents(contained, resource)) {
 
             int fillAmount = Math.min(GTMath.saturatedCast(this.capacity - amount), resource.getAmount());
             if (doFill.execute() && fillAmount > 0) {
@@ -116,7 +116,7 @@ public class QuantumFluidHandlerItemStack implements IFluidHandlerItem, ICapabil
 
     @Override
     public @NotNull FluidStack drain(FluidStack resource, IFluidHandler.FluidAction action) {
-        return this.container.getCount() == 1 && !resource.isEmpty() && resource.isFluidEqual(this.getFluid()) ?
+        return this.container.getCount() == 1 && !resource.isEmpty() && FluidStack.isSameFluidSameComponents(resource, this.getFluid()) ?
                 this.drain(resource.getAmount(), action) : FluidStack.EMPTY;
     }
 

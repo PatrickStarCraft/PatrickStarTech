@@ -445,7 +445,7 @@ public interface IGTTool extends IUIHolder<PlayerInventoryGuiData<?>>, ItemLike,
         CompoundTag toolTag = getToolTag(stack);
 
         if ((toolTag.get(DEFAULT_ENCHANTMENTS_KEY) instanceof ListTag)) {
-            ListTag defaultsTag = toolTag.getList(DEFAULT_ENCHANTMENTS_KEY, Tag.TAG_COMPOUND);
+            ListTag defaultsTag = com.gregtechceu.gtceu.utils.data.TypedTagList.read(toolTag, DEFAULT_ENCHANTMENTS_KEY, Tag.TAG_COMPOUND);
             return EnchantmentHelper.deserializeEnchantments(defaultsTag);
         }
 

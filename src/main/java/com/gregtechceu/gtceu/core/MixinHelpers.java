@@ -214,7 +214,7 @@ public class MixinHelpers {
 
                     TagLoader.EntryWithSource entry = makeFluidEntry(fluid);
 
-                    Identifier fluidIdTag = fluid.builtInRegistryHolder().key().location();
+                    Identifier fluidIdTag = fluid.builtInRegistryHolder().key().identifier();
                     fluidIdTag = Identifier.fromNamespaceAndPath(ForgeVersion.MOD_ID, fluidIdTag.getPath());
                     tagMap.computeIfAbsent(fluidIdTag, path -> new ArrayList<>()).add(entry);
                     FluidState state;
@@ -243,7 +243,7 @@ public class MixinHelpers {
     }
 
     public static TagLoader.EntryWithSource makeItemEntry(ItemLike item) {
-        return makeElementEntry(item.asItem().builtInRegistryHolder().key().location());
+        return makeElementEntry(item.asItem().builtInRegistryHolder().key().identifier());
     }
 
     public static TagLoader.EntryWithSource makeBlockEntry(Supplier<? extends Block> block) {
@@ -251,11 +251,11 @@ public class MixinHelpers {
     }
 
     public static TagLoader.EntryWithSource makeBlockEntry(Block block) {
-        return makeElementEntry(block.builtInRegistryHolder().key().location());
+        return makeElementEntry(block.builtInRegistryHolder().key().identifier());
     }
 
     public static TagLoader.EntryWithSource makeFluidEntry(Fluid fluid) {
-        return makeElementEntry(fluid.builtInRegistryHolder().key().location());
+        return makeElementEntry(fluid.builtInRegistryHolder().key().identifier());
     }
 
     public static TagLoader.EntryWithSource makeElementEntry(Identifier id) {

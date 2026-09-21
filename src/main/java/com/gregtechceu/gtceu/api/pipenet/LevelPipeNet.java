@@ -26,7 +26,7 @@ public abstract class LevelPipeNet<NodeDataType, T extends PipeNet<NodeDataType>
     public LevelPipeNet(ServerLevel serverLevel, CompoundTag tag) {
         this(serverLevel);
         this.pipeNets = new ArrayList<>();
-        ListTag allEnergyNets = tag.getList("PipeNets", Tag.TAG_COMPOUND);
+        ListTag allEnergyNets = com.gregtechceu.gtceu.utils.data.TypedTagList.read(tag, "PipeNets", Tag.TAG_COMPOUND);
         for (int i = 0; i < allEnergyNets.size(); i++) {
             CompoundTag pNetTag = allEnergyNets.getCompoundOrEmpty(i);
             T pipeNet = createNetInstance();

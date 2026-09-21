@@ -30,7 +30,7 @@ public class FluidCache {
     }
 
     public void fromNbt(CompoundTag nbt) {
-        var fluidList = nbt.getList("fluids", Tag.TAG_COMPOUND);
+        var fluidList = com.gregtechceu.gtceu.utils.data.TypedTagList.read(nbt, "fluids", Tag.TAG_COMPOUND);
         for (var fluidTagRaw : fluidList) {
             if (fluidTagRaw instanceof CompoundTag fluidTag) {
                 ResourceKey<Level> dim = ResourceKey.create(Registries.DIMENSION,
@@ -52,7 +52,7 @@ public class FluidCache {
             for (var entry : dimensions.getValue().entrySet()) {
                 CompoundTag tag = entry.getValue().toNbt();
                 tag.putLong("pos", entry.getKey().toLong());
-                tag.putString("dim", dimensions.getKey().location().toString());
+                tag.putString("dim", dimensions.getKey().identifier().toString());
                 fluidList.add(tag);
             }
         }

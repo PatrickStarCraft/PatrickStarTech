@@ -6,6 +6,12 @@ gradle.projectsEvaluated {
     project.sourceSets.test.java.srcDir(new File(gtRoot, 'src/test/java'))
     project.sourceSets.test.java.setIncludes([
         'brachy/**',
+        'com/gregtechceu/gtceu/api/sync_system/NBTSerializable.java',
+        'com/gregtechceu/gtceu/api/sync_system/ValueIOPersistence.java',
+        'com/gregtechceu/gtceu/api/transfer/item/CustomItemStackHandler.java',
+        'com/gregtechceu/gtceu/api/transfer/fluid/CustomFluidTank.java',
+        'com/gregtechceu/gtceu/api/transfer/fluid/IFluidHandlerModifiable.java',
+        'com/gregtechceu/gtceu/api/recipe/InventoryPersistencePortTest.java',
         'com/gregtechceu/gtceu/data/recipe/GeneratedRecipe.java',
         'com/gregtechceu/gtceu/data/recipe/GeneratedRecipeOutput.java',
         'com/gregtechceu/gtceu/data/recipe/builder/RecipeBuilderCodecs.java',

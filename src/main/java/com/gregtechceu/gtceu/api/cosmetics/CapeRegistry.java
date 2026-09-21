@@ -106,14 +106,14 @@ public class CapeRegistry extends SavedData {
     private CapeRegistry load(CompoundTag tag) {
         init();
 
-        ListTag unlockedCapesTag = tag.getList("unlocked_capes", Tag.TAG_COMPOUND);
+        ListTag unlockedCapesTag = com.gregtechceu.gtceu.utils.data.TypedTagList.read(tag, "unlocked_capes", Tag.TAG_COMPOUND);
         for (int i = 0; i < unlockedCapesTag.size(); i++) {
             CompoundTag entryTag = unlockedCapesTag.getCompoundOrEmpty(i);
             UUID uuid = entryTag.getUUID("owner");
 
             Set<Identifier> capes = UNLOCKED_CAPES.computeIfAbsent(uuid, CapeRegistry::makeSet);
 
-            ListTag capesTag = entryTag.getList("capes", Tag.TAG_STRING);
+            ListTag capesTag = com.gregtechceu.gtceu.utils.data.TypedTagList.read(entryTag, "capes", Tag.TAG_STRING);
             for (int j = 0; j < capesTag.size(); j++) {
                 String capeId = capesTag.getStringOr(j, "");
                 if (capeId.isEmpty())
@@ -123,7 +123,7 @@ public class CapeRegistry extends SavedData {
             UNLOCKED_CAPES.put(uuid, capes);
         }
 
-        ListTag currentCapesTag = tag.getList("current_capes", Tag.TAG_COMPOUND);
+        ListTag currentCapesTag = com.gregtechceu.gtceu.utils.data.TypedTagList.read(tag, "current_capes", Tag.TAG_COMPOUND);
         for (int i = 0; i < currentCapesTag.size(); i++) {
             CompoundTag entryTag = currentCapesTag.getCompoundOrEmpty(i);
             String capeId = entryTag.getStringOr("cape", "");

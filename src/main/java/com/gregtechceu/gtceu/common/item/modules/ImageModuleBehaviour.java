@@ -1,6 +1,7 @@
 package com.gregtechceu.gtceu.common.item.modules;
 
 import com.gregtechceu.gtceu.api.item.component.IAddInformation;
+import com.gregtechceu.gtceu.api.item.data.ItemStackData;
 import com.gregtechceu.gtceu.api.item.component.IMonitorModuleItem;
 import com.gregtechceu.gtceu.client.renderer.monitor.IMonitorRenderer;
 import com.gregtechceu.gtceu.client.renderer.monitor.MonitorImageRenderer;
@@ -56,11 +57,11 @@ public class ImageModuleBehaviour implements IMonitorModuleItem, IAddInformation
     }
 
     public String getUrl(ItemStack stack) {
-        return stack.getOrCreateTag().getString("url");
+        return ItemStackData.read(stack).getStringOr("url", "");
     }
 
     public void setUrl(ItemStack stack, String url) {
-        stack.getOrCreateTag().putString("url", url);
+        ItemStackData.update(stack, tag -> tag.putString("url", url));
     }
 
     @Override

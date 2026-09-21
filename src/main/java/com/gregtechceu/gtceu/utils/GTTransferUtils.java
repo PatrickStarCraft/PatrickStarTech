@@ -11,8 +11,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.neoforged.neoforge.common.util.LazyOptional;
+import com.gregtechceu.gtceu.api.capability.GTCapabilityHelper;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidUtil;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
@@ -28,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 public class GTTransferUtils {
@@ -38,10 +38,10 @@ public class GTTransferUtils {
      * @param level  Level of caller
      * @param pos    BlockPos of caller
      * @param facing Direction to get the FluidHandler from
-     * @return LazyOpt of the IFluidHandler described above
+     * @return a fresh lookup of the adjacent fluid handler
      */
-    public static LazyOptional<IFluidHandler> getAdjacentFluidHandler(Level level, BlockPos pos, Direction facing) {
-        return FluidUtil.getFluidHandler(level, pos.relative(facing), facing.getOpposite());
+    public static Optional<IFluidHandler> getAdjacentFluidHandler(Level level, BlockPos pos, Direction facing) {
+        return Optional.ofNullable(GTCapabilityHelper.getFluidHandler(level, pos.relative(facing), facing.getOpposite()));
     }
 
     // Same as above, but returns the presence
@@ -55,21 +55,14 @@ public class GTTransferUtils {
      * @param level Level of block
      * @param pos   BlockPos of block
      * @param side  Side of block
-     * @return LazyOpt of ItemHandler of given block
+     * @return a fresh lookup of the block's item handler
      */
-    public static LazyOptional<IItemHandler> getItemHandler(Level level, BlockPos pos, @Nullable Direction side) {
-        BlockState state = level.getBlockState(pos);
-        if (state.hasBlockEntity()) {
-            BlockEntity blockEntity = level.getBlockEntity(pos);
-            if (blockEntity != null) {
-                return blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER, side);
-            }
-        }
-        return LazyOptional.empty();
+    public static Optional<IItemHandler> getItemHandler(Level level, BlockPos pos, @Nullable Direction side) {
+        return Optional.ofNullable(GTCapabilityHelper.getItemHandler(level, pos, side));
     }
 
     // Same as getAdjacentFluidHandler, but for ItemHandler
-    public static LazyOptional<IItemHandler> getAdjacentItemHandler(Level level, BlockPos pos, Direction facing) {
+    public static Optional<IItemHandler> getAdjacentItemHandler(Level level, BlockPos pos, Direction facing) {
         return getItemHandler(level, pos.relative(facing), facing.getOpposite());
     }
 

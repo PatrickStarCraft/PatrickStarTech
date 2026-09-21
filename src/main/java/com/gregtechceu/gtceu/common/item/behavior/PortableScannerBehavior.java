@@ -173,7 +173,7 @@ public class PortableScannerBehavior implements IInteractionItem, IAddInformatio
                             .withStyle(ChatFormatting.AQUA),
                     Component.translatable(FormattingUtil.formatNumbers(pos.getZ()))
                             .withStyle(ChatFormatting.AQUA),
-                    Component.translatable(level.dimension().location().toString())
+                    Component.translatable(level.dimension().identifier().toString())
                             .withStyle(ChatFormatting.AQUA)));
 
             // Hardness and blast resistance

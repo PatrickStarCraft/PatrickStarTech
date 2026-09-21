@@ -67,7 +67,7 @@ public class DimensionCondition extends RecipeCondition<DimensionCondition> {
     @Override
     public RecipeUIModifier modifyUI() {
         return (recipe, widget) -> {
-            DimensionMarker dimMarker = GTRegistries.DIMENSION_MARKERS.getOrDefault(this.dimension.location(),
+            DimensionMarker dimMarker = GTRegistries.DIMENSION_MARKERS.getOrDefault(this.dimension.identifier(),
                     new DimensionMarker(DimensionMarker.MAX_TIER, () -> Blocks.BARRIER,
                             this.dimension.toString()));
             ItemStack icon = dimMarker.getIcon();
@@ -77,7 +77,7 @@ public class DimensionCondition extends RecipeCondition<DimensionCondition> {
 
             dimConditionRow.child(Text.lang("recipe.condition.dimension.tooltip", "").asWidget());
 
-            RecipeViewerSlotWidget<ItemStack, ?> displayWidget = RecipeViewerSlotWidget.create(ItemStack.class)
+            RecipeViewerSlotWidget<?> displayWidget = RecipeViewerSlotWidget.create()
                     .value(icon)
                     .marginLeft(2)
                     .recipeSlotRole(RecipeSlotRole.CATALYST)
@@ -95,7 +95,7 @@ public class DimensionCondition extends RecipeCondition<DimensionCondition> {
     @Override
     public boolean testCondition(@NotNull GTRecipe recipe, @NotNull RecipeLogic recipeLogic) {
         Level level = recipeLogic.getLevel();
-        return dimension.location().equals(level.dimension().location());
+        return dimension.identifier().equals(level.dimension().identifier());
     }
 
     @Override

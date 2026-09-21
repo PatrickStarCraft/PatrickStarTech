@@ -49,7 +49,7 @@ public class BedrockFluidVeinSavedData extends SavedData {
 
     public BedrockFluidVeinSavedData(ServerLevel serverLevel, CompoundTag nbt) {
         this(serverLevel);
-        var list = nbt.getList("veinInfo", Tag.TAG_COMPOUND);
+        var list = com.gregtechceu.gtceu.utils.data.TypedTagList.read(nbt, "veinInfo", Tag.TAG_COMPOUND);
         for (int i = 0; i < list.size(); ++i) {
             CompoundTag compoundTag = list.getCompound(i);
             var chunkPos = ChunkPos.unpack(compoundTag.getLongOr("p", 0));

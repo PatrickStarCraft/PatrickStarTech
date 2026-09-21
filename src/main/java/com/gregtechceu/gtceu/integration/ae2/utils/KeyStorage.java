@@ -3,7 +3,7 @@ package com.gregtechceu.gtceu.integration.ae2.utils;
 import org.jspecify.annotations.NullMarked;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraftforge.common.util.INBTSerializable;
+import com.gregtechceu.gtceu.api.sync_system.NBTSerializable;
 
 import appeng.api.config.Actionable;
 import appeng.api.networking.security.IActionSource;
@@ -22,7 +22,7 @@ import java.util.Iterator;
  * Provides methods for serialization and deserialization.
  */
 @NullMarked
-public class KeyStorage implements INBTSerializable<ListTag>,
+public class KeyStorage implements NBTSerializable<ListTag>,
                         Iterable<Object2LongMap.Entry<AEKey>> {
 
     public final Object2LongMap<AEKey> storage = new Object2LongOpenHashMap<>(); // TODO trim periodically or not

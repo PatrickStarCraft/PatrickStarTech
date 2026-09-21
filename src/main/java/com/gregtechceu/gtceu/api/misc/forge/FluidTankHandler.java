@@ -29,7 +29,7 @@ public class FluidTankHandler implements IFluidHandler {
     @Override
     public @NotNull FluidStack drain(FluidStack resource, FluidAction action) {
         FluidStack currentFluid = this.fluidTank.getFluid();
-        if (currentFluid.isEmpty() || !currentFluid.isFluidEqual(resource)) {
+        if (currentFluid.isEmpty() || !FluidStack.isSameFluidSameComponents(currentFluid, resource)) {
             return FluidStack.EMPTY;
         }
         return this.fluidTank.drain(resource, action);

@@ -186,12 +186,12 @@ public class ComputerMonitorCover extends CoverBehavior
         CompoundTag tag = dataStick.getTagElement("computer_monitor_cover_config");
         if (tag == null) return InteractionResult.FAIL;
         List<String> stringLines = new ArrayList<>();
-        ListTag stringLinesTag = tag.getList("lines", Tag.TAG_STRING);
+        ListTag stringLinesTag = com.gregtechceu.gtceu.utils.data.TypedTagList.read(tag, "lines", Tag.TAG_STRING);
         for (int i = 0; i < stringLinesTag.size(); i++) stringLines.add(stringLinesTag.getStringOr(i, ""));
         formatStringLines.clear();
         formatStringLines.addAll(stringLines);
         List<String> stringArgs = new ArrayList<>();
-        ListTag stringArgsTag = tag.getList("args", Tag.TAG_STRING);
+        ListTag stringArgsTag = com.gregtechceu.gtceu.utils.data.TypedTagList.read(tag, "args", Tag.TAG_STRING);
         for (int i = 0; i < stringArgsTag.size(); i++) stringArgs.add(stringArgsTag.getStringOr(i, ""));
         formatStringArgs.clear();
         formatStringArgs.addAll(stringArgs);

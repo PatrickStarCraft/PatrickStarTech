@@ -76,7 +76,7 @@ public class MEPatternBufferProvider extends MachineInfoProvider<MEPatternBuffer
     public static void readBufferTag(ITooltip iTooltip, CompoundTag serverData) {
         IElementHelper helper = iTooltip.getElementHelper();
 
-        ListTag itemsTag = serverData.getList("items", Tag.TAG_COMPOUND);
+        ListTag itemsTag = com.gregtechceu.gtceu.utils.data.TypedTagList.read(serverData, "items", Tag.TAG_COMPOUND);
         for (Tag t : itemsTag) {
             if (!(t instanceof CompoundTag ct)) continue;
             var stack = ItemStack.of(ct);
@@ -91,7 +91,7 @@ public class MEPatternBufferProvider extends MachineInfoProvider<MEPatternBuffer
                 iTooltip.append(text);
             }
         }
-        ListTag fluidsTag = serverData.getList("fluids", Tag.TAG_COMPOUND);
+        ListTag fluidsTag = com.gregtechceu.gtceu.utils.data.TypedTagList.read(serverData, "fluids", Tag.TAG_COMPOUND);
         for (Tag t : fluidsTag) {
             if (!(t instanceof CompoundTag ct)) continue;
             var stack = FluidStack.loadFluidStackFromNBT(ct);

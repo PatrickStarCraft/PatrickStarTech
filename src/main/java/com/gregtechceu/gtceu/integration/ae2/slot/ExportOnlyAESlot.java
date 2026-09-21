@@ -1,7 +1,7 @@
 package com.gregtechceu.gtceu.integration.ae2.slot;
 
 import net.minecraft.nbt.CompoundTag;
-import net.minecraftforge.common.util.INBTSerializable;
+import com.gregtechceu.gtceu.api.sync_system.NBTSerializable;
 
 import appeng.api.stacks.GenericStack;
 import lombok.Getter;
@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * An export only slot to hold {@link appeng.api.stacks.GenericStack}
  */
-public abstract class ExportOnlyAESlot implements IConfigurableSlot, INBTSerializable<CompoundTag> {
+public abstract class ExportOnlyAESlot implements IConfigurableSlot, NBTSerializable<CompoundTag> {
 
     protected final static String CONFIG_TAG = "config";
     protected final static String STOCK_TAG = "stock";

@@ -407,10 +407,10 @@ public abstract class AbstractEnderLinkCover<T extends VirtualEntry> extends Cov
         return panel;
     }
 
-    private class VirtualEntryAdapter implements IByteBufAdapter<VirtualEntry> {
+    private class VirtualEntryAdapter implements IByteBufAdapter<FriendlyByteBuf, VirtualEntry> {
 
         @Override
-        public VirtualEntry deserialize(FriendlyByteBuf buffer) {
+        public VirtualEntry decode(FriendlyByteBuf buffer) {
             VirtualEntry entry = getEntryType().createInstance();
             var nbt = buffer.readNbt();
             if (nbt == null) return entry;
@@ -419,7 +419,7 @@ public abstract class AbstractEnderLinkCover<T extends VirtualEntry> extends Cov
         }
 
         @Override
-        public void serialize(FriendlyByteBuf buffer, VirtualEntry entry) {
+        public void encode(FriendlyByteBuf buffer, VirtualEntry entry) {
             buffer.writeNbt(entry.serializeNBT());
         }
 

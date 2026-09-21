@@ -88,7 +88,7 @@ public class FluidRecipeCapability extends RecipeCapability<FluidIngredient> {
                             break;
                         }
                     } else if (obj instanceof FluidStack stack) {
-                        if (fluidStack.isFluidEqual(stack)) {
+                        if (FluidStack.isSameFluidSameComponents(fluidStack, stack)) {
                             isEqual = true;
                             break;
                         }

@@ -5,7 +5,7 @@ import com.gregtechceu.gtceu.api.recipe.GTRecipe;
 import com.gregtechceu.gtceu.api.recipe.GTRecipeSerializer;
 import com.gregtechceu.gtceu.common.machine.multiblock.electric.monitor.MonitorGroup;
 
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 
 import brachy.modularui.utils.EqualityTest;
@@ -20,17 +20,16 @@ import java.util.Objects;
 public class GTByteBufAdapters {
 
     // spotless:off
-    public static final IByteBufAdapter<MonitorGroup> MONITOR_GROUPS = makeAdapter(MonitorGroup.CODEC);
-    public static final IByteBufAdapter<Component> COMPONENT = ByteBufAdapters.makeAdapter(FriendlyByteBuf::readComponent, FriendlyByteBuf::writeComponent,
-            (a, b) -> Objects.equals(a.toString(), b.toString()));
-    public static final IByteBufAdapter<PatternError> PATTERN_ERRORS = makeAdapter(PatternError.CODEC);
+    public static final IByteBufAdapter<RegistryFriendlyByteBuf, MonitorGroup> MONITOR_GROUPS = makeAdapter(MonitorGroup.CODEC);
+    public static final IByteBufAdapter<RegistryFriendlyByteBuf, Component> COMPONENT = ByteBufAdapters.COMPONENT;
+    public static final IByteBufAdapter<RegistryFriendlyByteBuf, PatternError> PATTERN_ERRORS = makeAdapter(PatternError.CODEC);
 
     // spotless:on
 
-    public static final IByteBufAdapter<GTRecipe> GTRECIPE = new IByteBufAdapter<>() {
+    public static final IByteBufAdapter<RegistryFriendlyByteBuf, GTRecipe> GTRECIPE = new IByteBufAdapter<>() {
 
         @Override
-        public @Nullable GTRecipe deserialize(FriendlyByteBuf buffer) {
+        public @Nullable GTRecipe decode(RegistryFriendlyByteBuf buffer) {
             if (!buffer.readBoolean()) {
                 return null;
             }
@@ -38,7 +37,7 @@ public class GTByteBufAdapters {
         }
 
         @Override
-        public void serialize(FriendlyByteBuf buffer, @Nullable GTRecipe u) {
+        public void encode(RegistryFriendlyByteBuf buffer, @Nullable GTRecipe u) {
             if (u == null) {
                 buffer.writeBoolean(false);
                 return;
@@ -53,17 +52,17 @@ public class GTByteBufAdapters {
         }
     };
 
-    public static <T> IByteBufAdapter<T> makeAdapter(Codec<T> codec) {
+    public static <T> IByteBufAdapter<RegistryFriendlyByteBuf, T> makeAdapter(Codec<T> codec) {
         return new IByteBufAdapter<>() {
 
             @Override
-            public T deserialize(FriendlyByteBuf buffer) {
-                return buffer.readJsonWithCodec(codec);
+            public T decode(RegistryFriendlyByteBuf buffer) {
+                return net.minecraft.network.codec.ByteBufCodecs.fromCodecWithRegistries(codec).decode(buffer);
             }
 
             @Override
-            public void serialize(FriendlyByteBuf buffer, T u) {
-                buffer.writeJsonWithCodec(codec, u);
+            public void encode(RegistryFriendlyByteBuf buffer, T u) {
+                net.minecraft.network.codec.ByteBufCodecs.fromCodecWithRegistries(codec).encode(buffer, u);
             }
 
             @Override

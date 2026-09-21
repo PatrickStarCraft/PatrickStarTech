@@ -58,7 +58,7 @@ public class OreVeinRecipeWidget extends ParentWidget<OreVeinRecipeWidget> {
     public OreVeinRecipeWidget(BedrockFluidDefinition fluid) {
         this(WIDTH, 140, getFluidName(fluid), fluid.getWeight(), null, fluid.dimensionFilter, veinYield(fluid),
                 depletion(fluid));
-        drawUI(Flow.row().coverChildren().child(RecipeViewerSlotWidget.create(FluidStack.class)
+        drawUI(Flow.row().coverChildren().child(RecipeViewerSlotWidget.create()
                 .value(new FluidStack(fluid.getStoredFluid().get(), 1000)).recipeSlotRole(RecipeSlotRole.OUTPUT)));
     }
 
@@ -72,7 +72,7 @@ public class OreVeinRecipeWidget extends ParentWidget<OreVeinRecipeWidget> {
 
         var slots = Flow.row().coverChildren();
         for (int i = 0; i < containedOresAsItemStacks.size(); i++) {
-            RecipeViewerSlotWidget<ItemStack, ?> oreSlot = RecipeViewerSlotWidget.create(ItemStack.class)
+            RecipeViewerSlotWidget<?> oreSlot = RecipeViewerSlotWidget.create()
                     .value(containedOresAsItemStacks.get(i))
                     .recipeSlotRole(RecipeSlotRole.OUTPUT);
             int finalI = i;
@@ -92,7 +92,7 @@ public class OreVeinRecipeWidget extends ParentWidget<OreVeinRecipeWidget> {
 
         var slots = Flow.row().coverChildren();
         for (int i = 0; i < containedOresAsItemStacks.size(); i++) {
-            RecipeViewerSlotWidget<ItemStack, ?> oreSlot = RecipeViewerSlotWidget.create(ItemStack.class)
+            RecipeViewerSlotWidget<?> oreSlot = RecipeViewerSlotWidget.create()
                     .value(containedOresAsItemStacks.get(i))
                     .recipeSlotRole(RecipeSlotRole.OUTPUT);
             int finalI = i;
@@ -120,7 +120,7 @@ public class OreVeinRecipeWidget extends ParentWidget<OreVeinRecipeWidget> {
             Flow row = Flow.row().coverChildren().padding(2);
 
             for (DimensionMarker dimMarker : getDimensionMarkers(dimensionFilter)) {
-                RecipeViewerSlotWidget<ItemStack, ?> dimSlot = RecipeViewerSlotWidget.create(ItemStack.class)
+                RecipeViewerSlotWidget<?> dimSlot = RecipeViewerSlotWidget.create()
                         .value(dimMarker.getIcon())
                         .recipeSlotRole(RecipeSlotRole.CATALYST).background(IDrawable.NONE);
                 if (ConfigHolder.INSTANCE.compat.showDimensionTier) {

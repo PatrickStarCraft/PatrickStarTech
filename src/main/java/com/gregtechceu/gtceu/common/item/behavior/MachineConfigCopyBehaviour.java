@@ -97,7 +97,7 @@ public class MachineConfigCopyBehaviour implements IInteractionItem, IAddInforma
             if (tag == null) return InteractionResult.FAIL;
 
             List<ItemStack> items = new ArrayList<>();
-            tag.getList(ITEMS_TO_PASTE, CompoundTag.TAG_COMPOUND).forEach(t -> {
+            com.gregtechceu.gtceu.utils.data.TypedTagList.read(tag, ITEMS_TO_PASTE, CompoundTag.TAG_COMPOUND).forEach(t -> {
                 if (t instanceof CompoundTag c) items.add(ItemStack.of(c));
             });
 
@@ -191,7 +191,7 @@ public class MachineConfigCopyBehaviour implements IInteractionItem, IAddInforma
 
         if (tag.contains(ITEMS_TO_PASTE)) {
             List<ItemStack> items = new ArrayList<>();
-            tag.getList(ITEMS_TO_PASTE, CompoundTag.TAG_COMPOUND).forEach(t -> {
+            com.gregtechceu.gtceu.utils.data.TypedTagList.read(tag, ITEMS_TO_PASTE, CompoundTag.TAG_COMPOUND).forEach(t -> {
                 if (t instanceof CompoundTag c) items.add(ItemStack.of(c));
             });
 

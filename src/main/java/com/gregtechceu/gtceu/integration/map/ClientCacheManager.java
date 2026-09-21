@@ -107,8 +107,8 @@ public class ClientCacheManager {
                     CompoundTag data = cache.saveDimFile(dimFilePrefix, dim);
                     if (data == null) continue;
                     File dimFile = new File(cacheInfo.cacheFolder,
-                            dimFilePrefix + filePrefix + dim.location().getNamespace() + "=" +
-                                    dim.location().getPath() + fileEnding);
+                            dimFilePrefix + filePrefix + dim.identifier().getNamespace() + "=" +
+                                    dim.identifier().getPath() + fileEnding);
                     try {
                         NbtIo.writeCompressed(data, new FileOutputStream(dimFile));
                     } catch (IOException e) {

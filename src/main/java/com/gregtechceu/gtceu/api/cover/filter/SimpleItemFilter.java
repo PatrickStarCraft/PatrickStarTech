@@ -56,7 +56,7 @@ public class SimpleItemFilter extends Filter<ItemStack> {
 
         isBlackList = tag.getBoolean("isBlackList");
         ignoreNbt = tag.getBoolean("matchNbt");
-        var list = tag.getList("matches", Tag.TAG_COMPOUND);
+        var list = com.gregtechceu.gtceu.utils.data.TypedTagList.read(tag, "matches", Tag.TAG_COMPOUND);
         for (int i = 0; i < list.size(); i++) {
             matches[i] = ItemStack.of((CompoundTag) list.get(i));
         }

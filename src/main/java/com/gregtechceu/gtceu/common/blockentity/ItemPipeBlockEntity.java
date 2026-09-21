@@ -57,7 +57,7 @@ public class ItemPipeBlockEntity extends PipeBlockEntity<ItemPipeType, ItemPipeP
 
     @Override
     public <T> @Nullable T getGTCapability(@NotNull BlockCapability<T, Direction> cap, @Nullable Direction side) {
-        if (cap == Capabilities.ItemHandler.BLOCK) {
+        if (cap == com.gregtechceu.gtceu.api.capability.GTTransferCapabilities.ITEM) {
             Level world = getLevel();
             if (world == null || world.isClientSide()) return null;
 

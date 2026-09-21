@@ -3,6 +3,7 @@ package com.gregtechceu.gtceu.api.item.armor;
 import com.gregtechceu.gtceu.api.item.IComponentItem;
 import com.gregtechceu.gtceu.api.item.component.*;
 import com.gregtechceu.gtceu.common.data.GTItems;
+import com.gregtechceu.gtceu.common.item.armor.GTArmorMaterials;
 
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.core.NonNullList;
@@ -32,15 +33,15 @@ import java.util.*;
 import java.util.function.Consumer;
 
 @NotNullByDefault
-public class ArmorComponentItem extends ArmorItem implements IComponentItem {
+public class ArmorComponentItem extends Item implements IComponentItem {
 
     @Getter
     private IArmorLogic armorLogic = new DummyArmorLogic();
     @Getter
     protected List<IItemComponent> components;
 
-    public ArmorComponentItem(ArmorMaterial material, ArmorType type, Properties properties) {
-        super(material, type, properties.durability(0));
+    public ArmorComponentItem(GTArmorMaterials material, ArmorType type, Item.Properties properties) {
+        super(material.applyProperties(type, properties));
         components = new ArrayList<>();
     }
 
@@ -121,8 +122,8 @@ public class ArmorComponentItem extends ArmorItem implements IComponentItem {
     }
 
     @Override
-    public <T extends LivingEntity> int damageItem(ItemStack stack, int amount, T entity, Consumer<T> onBroken) {
-        return armorLogic.damageArmor(entity, stack, entity.getLastDamageSource(), amount, this.getEquipmentSlot());
+    public <T extends LivingEntity> int damageItem(ItemStack stack, int amount, @Nullable T entity, Consumer<Item> onBroken) {
+        return entity == null ? 0 : armorLogic.damageArmor(entity, stack, entity.getLastDamageSource(), amount, this.getEquipmentSlot());
     }
 
     @Override

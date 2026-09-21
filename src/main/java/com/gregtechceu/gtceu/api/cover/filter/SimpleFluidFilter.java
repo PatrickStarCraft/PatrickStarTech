@@ -63,7 +63,7 @@ public class SimpleFluidFilter extends Filter<FluidStack> {
 
         isBlackList = tag.getBoolean("isBlackList");
         ignoreNbt = tag.getBoolean("matchNbt");
-        var list = tag.getList("matches", Tag.TAG_COMPOUND);
+        var list = com.gregtechceu.gtceu.utils.data.TypedTagList.read(tag, "matches", Tag.TAG_COMPOUND);
         for (int i = 0; i < list.size(); i++) {
             matches[i] = FluidStack.loadFluidStackFromNBT((CompoundTag) list.get(i));
             fluidStorageSlots[i].setFluid(matches[i]);
@@ -150,7 +150,7 @@ public class SimpleFluidFilter extends Filter<FluidStack> {
             if (ignoreNbt && candidate.getFluid() == fluidStack.getFluid()) {
                 totalAmount += candidate.getAmount();
             }
-            if (!ignoreNbt && candidate.isFluidEqual(fluidStack)) {
+            if (!ignoreNbt && FluidStack.isSameFluidSameComponents(candidate, fluidStack)) {
                 totalAmount += candidate.getAmount();
             }
         }

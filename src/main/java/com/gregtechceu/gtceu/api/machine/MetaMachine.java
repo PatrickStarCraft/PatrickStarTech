@@ -74,10 +74,9 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.model.data.ModelData;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.neoforged.neoforge.capabilities.BlockCapability;
+
 import net.neoforged.neoforge.common.extensions.IBlockExtension;
-import net.neoforged.neoforge.common.util.LazyOptional;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
@@ -101,7 +100,7 @@ import java.util.function.Predicate;
  */
 public class MetaMachine extends ManagedSyncBlockEntity implements IGregtechBlockEntity, IToolGridHighlight,
                          IPaintable, IMachineFeature, ICopyable,
-                         com.gregtechceu.gtceu.api.capability.IBlockEnergyProvider {
+                         com.gregtechceu.gtceu.api.capability.IBlockEnergyProvider, IBlockCapabilityProvider {
 
     private static final int MIN_OFFSET_BOUND = 20;
 
@@ -1159,9 +1158,9 @@ public class MetaMachine extends ManagedSyncBlockEntity implements IGregtechBloc
     }
 
     @Override
-    public <T> LazyOptional<T> getCapability(Capability<T> cap, @Nullable Direction side) {
-        var result = getCapability(this, cap, side);
-        return result.isPresent() ? result : super.getCapability(cap, side);
+    public <T> @Nullable T getGTCapability(BlockCapability<T, Direction> cap, @Nullable Direction side) {
+        var result = getGTCapability(this, cap, side);
+        return result;
     }
 
     @Override
@@ -1184,128 +1183,123 @@ public class MetaMachine extends ManagedSyncBlockEntity implements IGregtechBloc
         return list;
     }
 
-    public static <T> LazyOptional<T> getCapability(MetaMachine machine, Capability<T> cap,
+    public static <T> @Nullable T getGTCapability(MetaMachine machine, BlockCapability<T, Direction> cap,
                                                     @Nullable Direction side) {
         if (cap == GTCapability.CAPABILITY_COVERABLE) {
-            return GTCapability.CAPABILITY_COVERABLE.orEmpty(cap, LazyOptional.of(machine::getCoverContainer));
+            return cap.typeClass().cast(machine.getCoverContainer());
         } else if (cap == GTCapability.CAPABILITY_WORKABLE) {
             if (machine instanceof IWorkable workable) {
-                return GTCapability.CAPABILITY_WORKABLE.orEmpty(cap, LazyOptional.of(() -> workable));
+                return cap.typeClass().cast(workable);
             }
             for (MachineTrait trait : machine.getAllTraits()) {
                 if (trait instanceof IWorkable workable) {
-                    return GTCapability.CAPABILITY_WORKABLE.orEmpty(cap, LazyOptional.of(() -> workable));
+                    return cap.typeClass().cast(workable);
                 }
             }
         } else if (cap == GTCapability.CAPABILITY_CONTROLLABLE) {
             if (machine instanceof IControllable controllable) {
-                return GTCapability.CAPABILITY_CONTROLLABLE.orEmpty(cap, LazyOptional.of(() -> controllable));
+                return cap.typeClass().cast(controllable);
             }
             for (MachineTrait trait : machine.getAllTraits()) {
                 if (trait instanceof IControllable controllable) {
-                    return GTCapability.CAPABILITY_CONTROLLABLE.orEmpty(cap, LazyOptional.of(() -> controllable));
+                    return cap.typeClass().cast(controllable);
                 }
             }
         } else if (cap == GTCapability.CAPABILITY_ENERGY_CONTAINER) {
             if (machine instanceof IEnergyContainer energyContainer) {
-                return GTCapability.CAPABILITY_ENERGY_CONTAINER.orEmpty(cap, LazyOptional.of(() -> energyContainer));
+                return cap.typeClass().cast(energyContainer);
             }
             var list = getCapabilitiesFromTraits(machine.getAllTraits(), side, IEnergyContainer.class);
             if (!list.isEmpty()) {
-                return GTCapability.CAPABILITY_ENERGY_CONTAINER.orEmpty(cap,
-                        LazyOptional.of(() -> list.size() == 1 ? list.get(0) : new EnergyContainerList(list)));
+                return cap.typeClass().cast(list.size() == 1 ? list.get(0) : new EnergyContainerList(list));
             }
         } else if (cap == GTCapability.CAPABILITY_ENERGY_INFO_PROVIDER) {
             if (machine instanceof IEnergyInfoProvider energyInfoProvider) {
-                return GTCapability.CAPABILITY_ENERGY_INFO_PROVIDER.orEmpty(cap,
-                        LazyOptional.of(() -> energyInfoProvider));
+                return cap.typeClass().cast(energyInfoProvider);
             }
             var list = getCapabilitiesFromTraits(machine.getAllTraits(), side, IEnergyInfoProvider.class);
             if (!list.isEmpty()) {
-                return GTCapability.CAPABILITY_ENERGY_INFO_PROVIDER.orEmpty(cap,
-                        LazyOptional.of(() -> list.size() == 1 ? list.get(0) : new EnergyInfoProviderList(list)));
+                return cap.typeClass().cast(list.size() == 1 ? list.get(0) : new EnergyInfoProviderList(list));
             }
-        } else if (cap == ForgeCapabilities.ITEM_HANDLER) {
+        } else if (cap == com.gregtechceu.gtceu.api.capability.GTTransferCapabilities.ITEM) {
             var handler = machine.getItemHandlerCap(side, true);
             if (handler != null) {
-                return ForgeCapabilities.ITEM_HANDLER.orEmpty(cap, LazyOptional.of(() -> handler));
+                return cap.typeClass().cast(handler);
             }
-        } else if (cap == ForgeCapabilities.FLUID_HANDLER) {
+        } else if (cap == com.gregtechceu.gtceu.api.capability.GTTransferCapabilities.FLUID) {
             var handler = machine.getFluidHandlerCap(side, true);
             if (handler != null) {
-                return ForgeCapabilities.FLUID_HANDLER.orEmpty(cap, LazyOptional.of(() -> handler));
+                return cap.typeClass().cast(handler);
             }
-        } else if (cap == ForgeCapabilities.ENERGY) {
+        } else if (cap == com.gregtechceu.gtceu.api.capability.GTTransferCapabilities.ENERGY) {
             if (machine instanceof IEnergyStorage energyStorage) {
-                return ForgeCapabilities.ENERGY.orEmpty(cap, LazyOptional.of(() -> energyStorage));
+                return cap.typeClass().cast(energyStorage);
             }
             var list = getCapabilitiesFromTraits(machine.getAllTraits(), side, IEnergyStorage.class);
             if (!list.isEmpty()) {
                 // TODO wrap list in the future
-                return ForgeCapabilities.ENERGY.orEmpty(cap, LazyOptional.of(() -> list.get(0)));
+                return cap.typeClass().cast(list.get(0));
             }
         } else if (cap == GTCapability.CAPABILITY_LASER) {
             if (machine instanceof ILaserContainer energyContainer) {
-                return GTCapability.CAPABILITY_LASER.orEmpty(cap, LazyOptional.of(() -> energyContainer));
+                return cap.typeClass().cast(energyContainer);
             }
             var list = getCapabilitiesFromTraits(machine.getAllTraits(), side, ILaserContainer.class);
             if (!list.isEmpty()) {
-                return GTCapability.CAPABILITY_LASER.orEmpty(cap,
-                        LazyOptional.of(() -> list.size() == 1 ? list.get(0) : new LaserContainerList(list)));
+                return cap.typeClass().cast(list.size() == 1 ? list.get(0) : new LaserContainerList(list));
             }
         } else if (cap == GTCapability.CAPABILITY_COMPUTATION_PROVIDER) {
             if (machine instanceof IOpticalComputationProvider computationProvider) {
-                return GTCapability.CAPABILITY_COMPUTATION_PROVIDER.orEmpty(cap,
-                        LazyOptional.of(() -> computationProvider));
+                return cap.typeClass().cast(computationProvider);
             }
             var list = getCapabilitiesFromTraits(machine.getAllTraits(), side,
                     IOpticalComputationProvider.class);
             if (!list.isEmpty()) {
-                return GTCapability.CAPABILITY_COMPUTATION_PROVIDER.orEmpty(cap, LazyOptional.of(() -> list.get(0)));
+                return cap.typeClass().cast(list.get(0));
             }
         } else if (cap == GTCapability.CAPABILITY_DATA_ACCESS) {
             if (machine instanceof IDataAccessHatch computationProvider) {
-                return GTCapability.CAPABILITY_DATA_ACCESS.orEmpty(cap, LazyOptional.of(() -> computationProvider));
+                return cap.typeClass().cast(computationProvider);
             }
             var list = getCapabilitiesFromTraits(machine.getAllTraits(), side, IDataAccessHatch.class);
             if (!list.isEmpty()) {
-                return GTCapability.CAPABILITY_DATA_ACCESS.orEmpty(cap, LazyOptional.of(() -> list.get(0)));
+                return cap.typeClass().cast(list.get(0));
             }
         } else if (cap == GTCapability.CAPABILITY_MONITOR_COMPONENT) {
             if (machine instanceof IMonitorComponent monitorComponent) {
-                return GTCapability.CAPABILITY_MONITOR_COMPONENT.orEmpty(cap, LazyOptional.of(() -> monitorComponent));
+                return cap.typeClass().cast(monitorComponent);
             }
             var list = getCapabilitiesFromTraits(machine.getAllTraits(), side, IMonitorComponent.class);
             if (!list.isEmpty()) {
-                return GTCapability.CAPABILITY_MONITOR_COMPONENT.orEmpty(cap, LazyOptional.of(() -> list.get(0)));
+                return cap.typeClass().cast(list.get(0));
             }
         }
         if (GTCEu.Mods.isAE2Loaded()) {
-            LazyOptional<?> opt = AE2CallWrapper.getGridNodeHostCapability(cap, machine, side);
-            if (opt.isPresent()) {
+            Object opt = AE2CallWrapper.getGridNodeHostCapability(cap, machine, side);
+            if (opt != null) {
                 // noinspection unchecked
-                return (LazyOptional<T>) opt;
+                return cap.typeClass().cast(opt);
             }
         }
-        return LazyOptional.empty();
+        return null;
     }
 
     public static class AE2CallWrapper {
 
-        public static LazyOptional<?> getGridNodeHostCapability(Capability<?> cap, MetaMachine machine,
+        public static Object getGridNodeHostCapability(BlockCapability<?, Direction> cap, MetaMachine machine,
                                                                 @Nullable Direction side) {
             if (cap == Capabilities.IN_WORLD_GRID_NODE_HOST) {
                 if (machine instanceof IInWorldGridNodeHost nodeHost) {
-                    return Capabilities.IN_WORLD_GRID_NODE_HOST.orEmpty(cap, LazyOptional.of(() -> nodeHost));
+                    return cap.typeClass().cast(nodeHost);
                 }
                 var list = getCapabilitiesFromTraits(machine.getAllTraits(), side,
                         IInWorldGridNodeHost.class);
                 if (!list.isEmpty()) {
                     // TODO wrap list in the future (or not.)
-                    return Capabilities.IN_WORLD_GRID_NODE_HOST.orEmpty(cap, LazyOptional.of(() -> list.get(0)));
+                    return cap.typeClass().cast(list.get(0));
                 }
             }
-            return LazyOptional.empty();
+            return null;
         }
     }
 

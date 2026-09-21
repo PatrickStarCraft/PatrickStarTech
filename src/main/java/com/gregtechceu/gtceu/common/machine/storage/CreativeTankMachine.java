@@ -199,7 +199,7 @@ public class CreativeTankMachine extends QuantumTankMachine {
 
         @Override
         public int fill(FluidStack resource, FluidAction action) {
-            if (!stored.isEmpty() && stored.isFluidEqual(resource)) return resource.getAmount();
+            if (!stored.isEmpty() && FluidStack.isSameFluidSameComponents(stored, resource)) return resource.getAmount();
             return 0;
         }
 
@@ -211,7 +211,7 @@ public class CreativeTankMachine extends QuantumTankMachine {
 
         @Override
         public FluidStack drain(FluidStack resource, FluidAction action) {
-            if (!stored.isEmpty() && stored.isFluidEqual(resource)) return resource.copyWithAmount(mBPerCycle);
+            if (!stored.isEmpty() && FluidStack.isSameFluidSameComponents(stored, resource)) return resource.copyWithAmount(mBPerCycle);
             return FluidStack.EMPTY;
         }
 

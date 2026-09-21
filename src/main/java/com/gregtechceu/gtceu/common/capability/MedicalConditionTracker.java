@@ -249,7 +249,7 @@ public class MedicalConditionTracker implements ICapabilitySerializable<Compound
         medicalConditions.clear();
         permanentConditions.clear();
 
-        ListTag medicalConditionsTag = arg.getList("medical_conditions", Tag.TAG_COMPOUND);
+        ListTag medicalConditionsTag = com.gregtechceu.gtceu.utils.data.TypedTagList.read(arg, "medical_conditions", Tag.TAG_COMPOUND);
         for (int i = 0; i < medicalConditionsTag.size(); ++i) {
             CompoundTag compoundTag = medicalConditionsTag.getCompoundOrEmpty(i);
             Identifier id = GTCEu.id(compoundTag.getStringOr("condition", ""));
@@ -262,7 +262,7 @@ public class MedicalConditionTracker implements ICapabilitySerializable<Compound
             medicalConditions.put(condition, progression);
         }
 
-        ListTag permanentConditionsTag = arg.getList("permanent_conditions", Tag.TAG_STRING);
+        ListTag permanentConditionsTag = com.gregtechceu.gtceu.utils.data.TypedTagList.read(arg, "permanent_conditions", Tag.TAG_STRING);
         for (int i = 0; i < permanentConditionsTag.size(); ++i) {
             Identifier id = GTCEu.id(permanentConditionsTag.getStringOr(i, ""));
             if (!GTRegistries.MEDICAL_CONDITIONS.containsKey(id)) {

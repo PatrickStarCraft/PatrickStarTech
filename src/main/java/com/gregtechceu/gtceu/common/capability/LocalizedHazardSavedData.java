@@ -62,7 +62,7 @@ public class LocalizedHazardSavedData extends SavedData {
             return;
         }
 
-        ListTag allHazardZones = tag.getList("zones", Tag.TAG_COMPOUND);
+        ListTag allHazardZones = com.gregtechceu.gtceu.utils.data.TypedTagList.read(tag, "zones", Tag.TAG_COMPOUND);
         for (int i = 0; i < allHazardZones.size(); ++i) {
             CompoundTag zoneTag = allHazardZones.getCompoundOrEmpty(i);
 
@@ -326,7 +326,7 @@ public class LocalizedHazardSavedData extends SavedData {
         }
 
         public static HazardZone deserializeNBT(CompoundTag zoneTag) {
-            Set<BlockPos> blocks = zoneTag.getList("blocks", Tag.TAG_COMPOUND).stream()
+            Set<BlockPos> blocks = com.gregtechceu.gtceu.utils.data.TypedTagList.read(zoneTag, "blocks", Tag.TAG_COMPOUND).stream()
                     .map(CompoundTag.class::cast)
                     .map(NbtUtils::readBlockPos)
                     .collect(Collectors.toSet());

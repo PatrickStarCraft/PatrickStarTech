@@ -228,7 +228,7 @@ public enum BreweryLogic implements GTRecipeType.ICustomRecipeLogic {
         if (output != Potions.EMPTY) {
             name = output.getName("");
         } else {
-            name = toFluid.getFluid().builtInRegistryHolder().key().location().getPath();
+            name = toFluid.getFluid().builtInRegistryHolder().key().identifier().getPath();
         }
 
         return GTRecipeTypes.BREWING_RECIPES.recipeBuilder("potion_forge_" + name)
@@ -310,7 +310,7 @@ public enum BreweryLogic implements GTRecipeType.ICustomRecipeLogic {
             FluidStack toFluid = PotionFluidHelper.getFluidFromPotionItem(impl.getOutput(),
                     PotionFluidHelper.MB_PER_RECIPE);
 
-            String name = toFluid.getFluid().builtInRegistryHolder().key().location().getPath();
+            String name = toFluid.getFluid().builtInRegistryHolder().key().identifier().getPath();
             Potion output = PotionUtils.getPotion(impl.getOutput());
             if (output != null) {
                 name = output.getName("");
