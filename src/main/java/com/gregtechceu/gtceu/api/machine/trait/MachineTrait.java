@@ -40,8 +40,14 @@ public abstract class MachineTrait implements ISyncManaged {
     protected final SyncDataHolder syncDataHolder = new SyncDataHolder(this);
 
     private @Nullable MetaMachine machine;
-    @Setter
     protected Predicate<@Nullable Direction> capabilityValidator = $ -> true;
+
+    public void setCapabilityValidator(Predicate<@Nullable Direction> capabilityValidator) {
+        this.capabilityValidator = java.util.Objects.requireNonNull(capabilityValidator);
+        if (machine != null && machine.getLevel() != null) {
+            machine.getLevel().invalidateCapabilities(machine.getBlockPos());
+        }
+    }
 
     @Getter
     @Setter(onMethod_ = @ApiStatus.Internal)

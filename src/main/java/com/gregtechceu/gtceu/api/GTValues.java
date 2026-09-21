@@ -53,8 +53,7 @@ public class GTValues {
     /**
      * The Voltage Tiers. Use this Array instead of the old named Voltage Variables
      */
-    public static final long[] V = { 8, 32, 128, 512, 2048, 8192, 32768, 131072, 524288, 2097152, 8388608,
-            33554432, 134217728, 536870912, 2147483648L };
+    public static final long[] V = GTVoltages.V;
 
     /**
      * The Voltage Tiers divided by 2.

@@ -21,9 +21,9 @@ try {
     }
     & (Join-Path $projectRoot 'gradlew.bat') -p (Join-Path $projectRoot 'ports/ModularUI') `
         -I (Join-Path $PSScriptRoot 'port-item-components.init.gradle') test -PportDiagnostics `
-        --tests 'com.gregtechceu.gtceu.api.item.data.ItemStackDataPortTest' --max-workers=1 --console=plain @extraArguments
+        --tests 'com.gregtechceu.gtceu.api.item.data.*PortTest' --max-workers=1 --console=plain @extraArguments
     if ($LASTEXITCODE -ne 0) { throw 'GT item component checks failed.' }
 } finally {
     $env:JAVA_HOME = $previousJavaHome
 }
-Write-Output 'Real Minecraft component checks passed; this does not load GT or validate equipment/capability gameplay.'
+Write-Output 'Real Minecraft component and energy capability checks passed; this does not load GT or validate live equipment/machine gameplay.'

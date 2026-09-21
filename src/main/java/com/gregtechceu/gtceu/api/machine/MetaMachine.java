@@ -100,7 +100,8 @@ import java.util.function.Predicate;
  * The base BlockEntity for all GT machines.
  */
 public class MetaMachine extends ManagedSyncBlockEntity implements IGregtechBlockEntity, IToolGridHighlight,
-                         IPaintable, IMachineFeature, ICopyable {
+                         IPaintable, IMachineFeature, ICopyable,
+                         com.gregtechceu.gtceu.api.capability.IBlockEnergyProvider {
 
     private static final int MIN_OFFSET_BOUND = 20;
 
@@ -1161,6 +1162,14 @@ public class MetaMachine extends ManagedSyncBlockEntity implements IGregtechBloc
     public <T> LazyOptional<T> getCapability(Capability<T> cap, @Nullable Direction side) {
         var result = getCapability(this, cap, side);
         return result.isPresent() ? result : super.getCapability(cap, side);
+    }
+
+    @Override
+    public @Nullable IEnergyContainer getEnergyContainer(@Nullable Direction side) {
+        if (this instanceof IEnergyContainer container) return container;
+        var containers = getCapabilitiesFromTraits(getAllTraits(), side, IEnergyContainer.class);
+        return containers.isEmpty() ? null :
+                containers.size() == 1 ? containers.get(0) : new EnergyContainerList(containers);
     }
 
     private static <T> List<T> getCapabilitiesFromTraits(List<MachineTrait> traits, @Nullable Direction accessSide,

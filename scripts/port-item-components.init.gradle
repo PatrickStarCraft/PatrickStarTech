@@ -6,7 +6,16 @@ gradle.projectsEvaluated {
     project.sourceSets.test.java.srcDir(new File(gtRoot, 'src/test/java'))
     project.sourceSets.test.java.setIncludes([
         'brachy/**',
-        'com/gregtechceu/gtceu/api/item/data/**'
+        'com/gregtechceu/gtceu/api/item/data/**',
+        'com/gregtechceu/gtceu/api/GTVoltages.java',
+        'com/gregtechceu/gtceu/api/capability/IElectricItem.java',
+        'com/gregtechceu/gtceu/api/capability/IEnergyContainer.java',
+        'com/gregtechceu/gtceu/api/capability/IEnergyInfoProvider.java',
+        'com/gregtechceu/gtceu/api/capability/IBlockEnergyProvider.java',
+        'com/gregtechceu/gtceu/api/capability/BlockEnergyCapabilities.java',
+        'com/gregtechceu/gtceu/api/capability/EnergyNetworkTransfer.java',
+        'com/gregtechceu/gtceu/api/capability/ElectricItemCapabilities.java',
+        'com/gregtechceu/gtceu/api/item/capability/ElectricItem.java'
     ])
     if (project.hasProperty('itemComponentTestAssetProperties')) {
         project.tasks.named('prepareNeoForgeTestFiles') {

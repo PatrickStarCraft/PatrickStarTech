@@ -54,7 +54,8 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 @NullMarked
-public class CableBlockEntity extends PipeBlockEntity<Insulation, WireProperties> implements IDataInfoProvider {
+public class CableBlockEntity extends PipeBlockEntity<Insulation, WireProperties> implements IDataInfoProvider,
+        com.gregtechceu.gtceu.api.capability.IBlockEnergyProvider {
 
     protected WeakReference<EnergyNet> currentEnergyNet = new WeakReference<>(null);
 

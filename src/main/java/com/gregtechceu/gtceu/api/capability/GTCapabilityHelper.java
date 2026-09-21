@@ -22,7 +22,7 @@ public class GTCapabilityHelper {
 
     @Nullable
     public static IElectricItem getElectricItem(ItemStack itemStack) {
-        return itemStack.getCapability(GTCapability.CAPABILITY_ELECTRIC_ITEM).orElse(null);
+        return itemStack.getCapability(ElectricItemCapabilities.ELECTRIC_ITEM);
     }
 
     @Nullable
@@ -42,7 +42,7 @@ public class GTCapabilityHelper {
 
     @Nullable
     public static IEnergyContainer getEnergyContainer(Level level, BlockPos pos, @Nullable Direction side) {
-        return getBlockEntityCapability(GTCapability.CAPABILITY_ENERGY_CONTAINER, level, pos, side);
+        return level.getCapability(BlockEnergyCapabilities.ENERGY_CONTAINER, pos, side);
     }
 
     @Nullable

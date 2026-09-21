@@ -1,6 +1,6 @@
 package com.gregtechceu.gtceu.api.item.capability;
 
-import com.gregtechceu.gtceu.api.GTValues;
+import com.gregtechceu.gtceu.api.GTVoltages;
 import com.gregtechceu.gtceu.api.capability.IElectricItem;
 import com.gregtechceu.gtceu.api.item.data.ElectricItemData;
 
@@ -35,7 +35,7 @@ public class ElectricItem implements IElectricItem {
 
     @Override
     public long getTransferLimit() {
-        return GTValues.V[getTier()];
+        return GTVoltages.V[getTier()];
     }
 
     @Override

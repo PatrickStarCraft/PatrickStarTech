@@ -4,7 +4,7 @@ import com.gregtechceu.gtceu.GTCEu;
 import com.gregtechceu.gtceu.api.GTValues;
 import com.gregtechceu.gtceu.api.block.MaterialPipeBlock;
 import com.gregtechceu.gtceu.api.blockentity.PipeBlockEntity;
-import com.gregtechceu.gtceu.api.capability.GTCapability;
+import com.gregtechceu.gtceu.api.capability.GTCapabilityHelper;
 import com.gregtechceu.gtceu.api.data.chemical.material.Material;
 import com.gregtechceu.gtceu.api.data.chemical.material.properties.PropertyKey;
 import com.gregtechceu.gtceu.api.data.chemical.material.properties.WireProperties;
@@ -91,8 +91,9 @@ public class CableBlock extends MaterialPipeBlock<Insulation, WireProperties, Le
     @Override
     public boolean canPipeConnectToBlock(IPipeNode<Insulation, WireProperties> selfTile, Direction side,
                                          @Nullable BlockEntity tile) {
-        return tile != null &&
-                tile.getCapability(GTCapability.CAPABILITY_ENERGY_CONTAINER, side.getOpposite()).isPresent();
+        return tile != null && tile.getLevel() != null &&
+                GTCapabilityHelper.getEnergyContainer(
+                        tile.getLevel(), tile.getBlockPos(), side.getOpposite()) != null;
     }
 
     @Override

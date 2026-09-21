@@ -1,6 +1,7 @@
 package com.gregtechceu.gtceu.api.misc;
 
 import com.gregtechceu.gtceu.api.capability.IEnergyContainer;
+import com.gregtechceu.gtceu.api.capability.EnergyNetworkTransfer;
 import com.gregtechceu.gtceu.api.recipe.ingredient.EnergyStack;
 
 import net.minecraft.core.Direction;
@@ -131,14 +132,7 @@ public class EnergyContainerList implements IEnergyContainer {
 
     @Override
     public long acceptEnergyFromNetwork(Direction side, long voltage, long amperage) {
-        long amperesUsed = 0L;
-        for (IEnergyContainer container : this.energyContainerList) {
-            amperesUsed += container.acceptEnergyFromNetwork(null, voltage, amperage);
-            if (amperesUsed >= amperage) {
-                return amperesUsed;
-            }
-        }
-        return amperesUsed;
+        return EnergyNetworkTransfer.distribute(energyContainerList, side, voltage, amperage);
     }
 
     @Override

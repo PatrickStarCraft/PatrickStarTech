@@ -27,6 +27,7 @@ public interface IGregtechBlockEntity extends ISyncManaged, ITickSubscription, I
         var level = self().getLevel();
         var pos = self().getBlockPos();
         if (level != null) {
+            level.invalidateCapabilities(pos);
             level.updateNeighborsAt(pos, self().getBlockState().getBlock());
         }
     }

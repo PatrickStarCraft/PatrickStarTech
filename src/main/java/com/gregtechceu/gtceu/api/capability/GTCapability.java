@@ -7,6 +7,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.CapabilityToken;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.capabilities.ItemCapability;
 
 public class GTCapability {
 
@@ -18,8 +19,8 @@ public class GTCapability {
     public static final Capability<IWorkable> CAPABILITY_WORKABLE = CapabilityManager.get(new CapabilityToken<>() {});
     public static final Capability<IControllable> CAPABILITY_CONTROLLABLE = CapabilityManager
             .get(new CapabilityToken<>() {});
-    public static final Capability<IElectricItem> CAPABILITY_ELECTRIC_ITEM = CapabilityManager
-            .get(new CapabilityToken<>() {});
+    public static final ItemCapability<IElectricItem, Void> CAPABILITY_ELECTRIC_ITEM =
+            ElectricItemCapabilities.ELECTRIC_ITEM;
     public static final Capability<ILaserContainer> CAPABILITY_LASER = CapabilityManager
             .get(new CapabilityToken<>() {});
     public static final Capability<IOpticalComputationProvider> CAPABILITY_COMPUTATION_PROVIDER = CapabilityManager

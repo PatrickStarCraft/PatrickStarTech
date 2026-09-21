@@ -934,17 +934,8 @@ public interface IGTTool extends IUIHolder<PlayerInventoryGuiData<?>>, ItemLike,
     @Nullable
     default ICapabilityProvider definition$initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
         List<ICapabilityProvider> providers = new ArrayList<>();
-        if (isElectric()) {
-            ElectricStats item = ElectricStats.createElectricItem(0L, getElectricTier());
-            providers.add(new ICapabilityProvider() {
-
-                @Override
-                public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> capability,
-                                                                  @Nullable Direction arg) {
-                    return item.getCapability(stack, capability);
-                }
-            });
-        }
+        // Electric capability registration now lives in ElectricItemCapabilityRegistration.
+        // The remaining legacy providers below belong to the pending fluid/tool capability migration.
         for (IToolBehavior behavior : getToolStats().getBehaviors()) {
             if (behavior instanceof IComponentCapability componentCapability) {
                 providers.add(new ICapabilityProvider() {

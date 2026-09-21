@@ -120,11 +120,13 @@ public abstract class PipeBlockEntity<PipeType extends Enum<PipeType> & IPipeTyp
 
     public void setConnections(int connections) {
         this.connections = connections;
+        if (level != null) level.invalidateCapabilities(getBlockPos());
         syncDataHolder.markClientSyncFieldDirty("connections");
     }
 
     public void setBlockedConnections(int blocked) {
         this.blockedConnections = blocked;
+        if (level != null) level.invalidateCapabilities(getBlockPos());
         syncDataHolder.markClientSyncFieldDirty("blockedConnections");
     }
 
@@ -288,6 +290,7 @@ public abstract class PipeBlockEntity<PipeType extends Enum<PipeType> & IPipeTyp
 
     @Override
     public void notifyBlockUpdate() {
+        if (level != null) level.invalidateCapabilities(getBlockPos());
         getLevel().updateNeighborsAt(getBlockPos(), getPipeBlock());
         getPipeBlock().updateActiveNodeStatus(getLevel(), getBlockPos(), this);
     }

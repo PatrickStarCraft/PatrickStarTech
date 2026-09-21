@@ -260,8 +260,8 @@ public class PortableScannerBehavior implements IInteractionItem, IAddInformatio
             if (mode == DisplayMode.SHOW_ALL || mode == DisplayMode.SHOW_ELECTRICAL_INFO) {
 
                 // Energy container
-                Optional<IEnergyContainer> energyCap = blockEntity
-                        .getCapability(GTCapability.CAPABILITY_ENERGY_CONTAINER).resolve();
+                Optional<IEnergyContainer> energyCap = Optional.ofNullable(
+                        GTCapabilityHelper.getEnergyContainer(level, pos, null));
                 if (energyCap.isPresent()) {
                     IEnergyContainer energyContainer = energyCap.get();
                     if (energyContainer.getInputVoltage() > 0) {
