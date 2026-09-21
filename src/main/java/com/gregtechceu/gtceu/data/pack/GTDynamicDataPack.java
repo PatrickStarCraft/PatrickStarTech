@@ -5,10 +5,10 @@ import com.gregtechceu.gtceu.api.addon.AddonFinder;
 import com.gregtechceu.gtceu.api.addon.IGTAddon;
 import com.gregtechceu.gtceu.common.data.GTRecipes;
 import com.gregtechceu.gtceu.config.ConfigHolder;
+import com.gregtechceu.gtceu.data.recipe.GeneratedRecipe;
 
 import net.minecraft.SharedConstants;
 import net.minecraft.util.Util;
-import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.FileToIdConverter;
 import net.minecraft.resources.Identifier;
@@ -42,10 +42,8 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 public class GTDynamicDataPack implements PackResources {
 
-    // change the path to `recipe` on 1.21!!
-    public static final FileToIdConverter RECIPE_ID_CONVERTER = FileToIdConverter.json("recipes");
-    // change the path to `advancement` on 1.21!!
-    public static final FileToIdConverter ADVANCEMENT_ID_CONVERTER = FileToIdConverter.json("advancements");
+    public static final FileToIdConverter RECIPE_ID_CONVERTER = GeneratedRecipe.RECIPES;
+    public static final FileToIdConverter ADVANCEMENT_ID_CONVERTER = GeneratedRecipe.ADVANCEMENTS;
     public static final Function<String, FileToIdConverter> TAG_ID_CONVERTER = Util
             .memoize(registryName -> FileToIdConverter.json("tags/" + registryName));
 
@@ -75,23 +73,23 @@ public class GTDynamicDataPack implements PackResources {
         CONTENTS.addToData(location, bytes);
     }
 
-    public static void addRecipe(FinishedRecipe recipe) {
-        JsonObject recipeJson = recipe.serializeRecipe();
+    public static void addRecipe(GeneratedRecipe recipe) {
+        JsonObject recipeJson = recipe.recipeJson();
         byte[] recipeBytes = recipeJson.toString().getBytes(StandardCharsets.UTF_8);
         Path parent = GTCEu.GTCEU_FOLDER.resolve("dumped/data");
-        Identifier recipeId = recipe.getId();
+        Identifier recipeId = recipe.id();
         if (ConfigHolder.INSTANCE.dev.dumpRecipes) {
-            writeJson(recipeId, "recipes", parent, recipeBytes);
+            writeJson(recipeId, "recipe", parent, recipeBytes);
         }
         addToData(getRecipeLocation(recipeId), recipeBytes);
 
-        if (recipe.serializeAdvancement() != null) {
-            JsonObject advancement = recipe.serializeAdvancement();
+        JsonObject advancement = recipe.advancementJson();
+        if (advancement != null) {
             byte[] advancementBytes = advancement.toString().getBytes(StandardCharsets.UTF_8);
             if (ConfigHolder.INSTANCE.dev.dumpRecipes) {
-                writeJson(recipe.getAdvancementId(), "advancements", parent, advancementBytes);
+                writeJson(recipe.advancementId(), "advancement", parent, advancementBytes);
             }
-            addToData(getAdvancementLocation(Objects.requireNonNull(recipe.getAdvancementId())),
+            addToData(getAdvancementLocation(Objects.requireNonNull(recipe.advancementId())),
                     advancementBytes);
         }
     }

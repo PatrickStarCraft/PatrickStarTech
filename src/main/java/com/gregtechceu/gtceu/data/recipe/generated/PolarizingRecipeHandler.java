@@ -7,8 +7,8 @@ import com.gregtechceu.gtceu.api.data.chemical.material.properties.PropertyKey;
 import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
 import com.gregtechceu.gtceu.common.data.GTMaterials;
 import com.gregtechceu.gtceu.data.recipe.VanillaRecipeHelper;
+import com.gregtechceu.gtceu.data.recipe.GeneratedRecipe;
 
-import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.world.item.ItemStack;
 
 import org.jetbrains.annotations.NotNull;
@@ -29,7 +29,7 @@ public final class PolarizingRecipeHandler {
 
     private PolarizingRecipeHandler() {}
 
-    public static void run(@NotNull Consumer<FinishedRecipe> provider, @NotNull Material material) {
+    public static void run(@NotNull Consumer<GeneratedRecipe> provider, @NotNull Material material) {
         IngotProperty property = material.getProperty(PropertyKey.INGOT);
         if (property == null) {
             return;
@@ -40,7 +40,7 @@ public final class PolarizingRecipeHandler {
         }
     }
 
-    private static void processPolarizing(@NotNull Consumer<FinishedRecipe> provider, @NotNull IngotProperty property,
+    private static void processPolarizing(@NotNull Consumer<GeneratedRecipe> provider, @NotNull IngotProperty property,
                                           @NotNull TagPrefix prefix, @NotNull Material material) {
         if (!material.shouldGenerateRecipesFor(prefix) || !material.hasProperty(PropertyKey.INGOT)) {
             return;

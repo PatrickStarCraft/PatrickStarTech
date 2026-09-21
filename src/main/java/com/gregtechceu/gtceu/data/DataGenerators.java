@@ -22,7 +22,7 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
 import java.util.Set;
 
-@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
+@net.neoforged.fml.common.EventBusSubscriber()
 public class DataGenerators {
 
     @SubscribeEvent

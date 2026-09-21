@@ -3,8 +3,8 @@ package com.gregtechceu.gtceu.common.network.packets;
 import com.gregtechceu.gtceu.api.misc.ImageCache;
 import com.gregtechceu.gtceu.common.network.GTNetwork;
 
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.io.IOException;
 
@@ -16,17 +16,17 @@ public class CPacketImageRequest implements GTNetwork.INetPacket {
         this.url = url;
     }
 
-    public CPacketImageRequest(FriendlyByteBuf buf) {
+    public CPacketImageRequest(RegistryFriendlyByteBuf buf) {
         this.url = buf.readUtf();
     }
 
     @Override
-    public void encode(FriendlyByteBuf buffer) {
+    public void encode(RegistryFriendlyByteBuf buffer) {
         buffer.writeUtf(url);
     }
 
     @Override
-    public void execute(NetworkEvent.Context context) {
+    public void execute(IPayloadContext context) {
         ImageCache.queryServerImage(url, image -> {
             try {
                 SPacketImageResponse.sendImage(url, image, context);

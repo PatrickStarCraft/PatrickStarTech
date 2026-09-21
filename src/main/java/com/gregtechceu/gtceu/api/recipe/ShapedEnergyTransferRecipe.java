@@ -1,7 +1,8 @@
 package com.gregtechceu.gtceu.api.recipe;
 
-import com.gregtechceu.gtceu.api.capability.GTCapabilityHelper;
+import com.gregtechceu.gtceu.api.capability.ElectricItemCapabilities;
 import com.gregtechceu.gtceu.api.capability.IElectricItem;
+import com.gregtechceu.gtceu.api.item.data.ElectricItemData;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -99,12 +100,12 @@ public class ShapedEnergyTransferRecipe extends NormalCraftingRecipe {
             for (int i = 0; i < input.size(); i++) {
                 if (ItemStack.isSameItem(input.getItem(i), chargeStack)) {
                     ItemStack stack = input.getItem(i);
-                    IElectricItem electricItem = GTCapabilityHelper.getElectricItem(stack);
+                    IElectricItem electricItem = stack.getCapability(ElectricItemCapabilities.ELECTRIC_ITEM);
                     if (electricItem != null) {
                         maxCharge += electricItem.getMaxCharge();
                         charge += electricItem.getCharge();
-                        resultStack.getOrCreateTag().putLong("MaxCharge", maxCharge);
-                        resultStack.getOrCreateTag().putLong("Charge", charge);
+                        ElectricItemData.setMaxCharge(resultStack, maxCharge);
+                        ElectricItemData.setCharge(resultStack, charge);
                         return resultStack;
                     }
                 }
@@ -119,12 +120,12 @@ public class ShapedEnergyTransferRecipe extends NormalCraftingRecipe {
         long charge = 0L;
         ItemStack resultStack = this.result.create();
         for (ItemStack chargeStack : chargeIngredient.items().map(ItemStack::new).toList()) {
-            IElectricItem electricItem = GTCapabilityHelper.getElectricItem(chargeStack);
+            IElectricItem electricItem = chargeStack.getCapability(ElectricItemCapabilities.ELECTRIC_ITEM);
             if (electricItem != null) {
                 maxCharge += electricItem.getMaxCharge();
                 charge += electricItem.getCharge();
-                resultStack.getOrCreateTag().putLong("MaxCharge", maxCharge);
-                resultStack.getOrCreateTag().putLong("Charge", charge);
+                ElectricItemData.setMaxCharge(resultStack, maxCharge);
+                ElectricItemData.setCharge(resultStack, charge);
                 return resultStack;
             }
         }

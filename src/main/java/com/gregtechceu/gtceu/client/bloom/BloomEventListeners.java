@@ -21,7 +21,7 @@ import net.neoforged.fml.common.Mod;
 
 import lombok.experimental.UtilityClass;
 
-@Mod.EventBusSubscriber(modid = GTCEu.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
+@net.neoforged.fml.common.EventBusSubscriber(modid = GTCEu.MOD_ID, value = Dist.CLIENT)
 @UtilityClass
 public class BloomEventListeners {
 
@@ -75,7 +75,7 @@ public class BloomEventListeners {
     }
 
     // Merge into parent class in 1.21, event listener discovery is smarter there
-    @Mod.EventBusSubscriber(modid = GTCEu.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
+    @net.neoforged.fml.common.EventBusSubscriber(modid = GTCEu.MOD_ID, value = Dist.CLIENT)
     @UtilityClass
     public static class ModBus {
 

@@ -5,8 +5,8 @@ import com.gregtechceu.gtceu.api.addon.events.MaterialCasingCollectionEvent;
 import com.gregtechceu.gtceu.api.data.worldgen.bedrockfluid.BedrockFluidDefinition;
 import com.gregtechceu.gtceu.api.registry.registrate.GTRegistrate;
 import com.gregtechceu.gtceu.common.data.GTOres;
+import com.gregtechceu.gtceu.data.recipe.GeneratedRecipe;
 
-import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.Identifier;
 
 import java.util.function.Consumer;
@@ -93,7 +93,7 @@ public interface IGTAddon {
      */
     default void registerIndicatorGenerators() {}
 
-    default void addRecipes(Consumer<FinishedRecipe> provider) {}
+    default void addRecipes(Consumer<GeneratedRecipe> provider) {}
 
     default void removeRecipes(Consumer<Identifier> consumer) {}
 

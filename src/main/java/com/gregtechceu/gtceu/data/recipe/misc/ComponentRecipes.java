@@ -5,8 +5,8 @@ import com.gregtechceu.gtceu.api.data.chemical.material.stack.MaterialEntry;
 import com.gregtechceu.gtceu.data.recipe.CustomTags;
 import com.gregtechceu.gtceu.data.recipe.GTCraftingComponents;
 import com.gregtechceu.gtceu.data.recipe.VanillaRecipeHelper;
+import com.gregtechceu.gtceu.data.recipe.GeneratedRecipe;
 
-import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.world.item.Items;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
@@ -23,7 +23,7 @@ import static com.gregtechceu.gtceu.common.data.GTRecipeTypes.ASSEMBLY_LINE_RECI
 
 public class ComponentRecipes {
 
-    public static void init(Consumer<FinishedRecipe> provider) {
+    public static void init(Consumer<GeneratedRecipe> provider) {
         // Motors
         // Start--------------------------------------------------------------------------------------------------
         VanillaRecipeHelper.addShapedRecipe(provider, "electric_motor_lv_steel", ELECTRIC_MOTOR_LV.asStack(), "CWR",

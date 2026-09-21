@@ -80,22 +80,22 @@ public class RenderBufferHelper {
 
                 switch (axis) {
                     case Y:
-                        buffer.vertex(mat, x + sinTheta * dist, y + tubeRadius * sinPhi, z + cosTheta * dist)
-                                .color(red, green, blue, alpha).endVertex();
-                        buffer.vertex(mat, x + sinTheta1 * dist, y + tubeRadius * sinPhi, z + cosTheta1 * dist)
-                                .color(red, green, blue, alpha).endVertex();
+                        buffer.addVertex(mat, x + sinTheta * dist, y + tubeRadius * sinPhi, z + cosTheta * dist)
+                                .setColor(red, green, blue, alpha);
+                        buffer.addVertex(mat, x + sinTheta1 * dist, y + tubeRadius * sinPhi, z + cosTheta1 * dist)
+                                .setColor(red, green, blue, alpha);
                         break;
                     case X:
-                        buffer.vertex(mat, x + tubeRadius * sinPhi, y + sinTheta * dist, z + cosTheta * dist)
-                                .color(red, green, blue, alpha).endVertex();
-                        buffer.vertex(mat, x + tubeRadius * sinPhi, y + sinTheta1 * dist, z + cosTheta1 * dist)
-                                .color(red, green, blue, alpha).endVertex();
+                        buffer.addVertex(mat, x + tubeRadius * sinPhi, y + sinTheta * dist, z + cosTheta * dist)
+                                .setColor(red, green, blue, alpha);
+                        buffer.addVertex(mat, x + tubeRadius * sinPhi, y + sinTheta1 * dist, z + cosTheta1 * dist)
+                                .setColor(red, green, blue, alpha);
                         break;
                     case Z:
-                        buffer.vertex(mat, x + cosTheta * dist, y + sinTheta * dist, z + tubeRadius * sinPhi)
-                                .color(red, green, blue, alpha).endVertex();
-                        buffer.vertex(mat, x + cosTheta1 * dist, y + sinTheta1 * dist, z + tubeRadius * sinPhi)
-                                .color(red, green, blue, alpha).endVertex();
+                        buffer.addVertex(mat, x + cosTheta * dist, y + sinTheta * dist, z + tubeRadius * sinPhi)
+                                .setColor(red, green, blue, alpha);
+                        buffer.addVertex(mat, x + cosTheta1 * dist, y + sinTheta1 * dist, z + tubeRadius * sinPhi)
+                                .setColor(red, green, blue, alpha);
                         break;
                 }
 
@@ -223,10 +223,10 @@ public class RenderBufferHelper {
     private static void renderSide(VertexConsumer buf, PoseStack pose, Vec3 tr, Vec3 tl, Vec3 br, Vec3 bl,
                                    int colorARGB) {
         Matrix4f mat = pose.last().pose();
-        buf.vertex(mat, (float) tr.x, (float) tr.y, (float) tr.z).color(colorARGB).endVertex();
-        buf.vertex(mat, (float) br.x, (float) br.y, (float) br.z).color(colorARGB).endVertex();
-        buf.vertex(mat, (float) bl.x, (float) bl.y, (float) bl.z).color(colorARGB).endVertex();
-        buf.vertex(mat, (float) tl.x, (float) tl.y, (float) tl.z).color(colorARGB).endVertex();
+        buf.addVertex(mat, (float) tr.x, (float) tr.y, (float) tr.z).setColor(colorARGB);
+        buf.addVertex(mat, (float) br.x, (float) br.y, (float) br.z).setColor(colorARGB);
+        buf.addVertex(mat, (float) bl.x, (float) bl.y, (float) bl.z).setColor(colorARGB);
+        buf.addVertex(mat, (float) tl.x, (float) tl.y, (float) tl.z).setColor(colorARGB);
     }
 
     public static void renderTexturedCube(VertexConsumer buffer, PoseStack.Pose pose, Set<Direction> sidesToRender,
@@ -305,50 +305,50 @@ public class RenderBufferHelper {
             g *= 0.6f;
             b *= 0.6f;
         }
-        buffer.vertex(pose, minX, minY, minZ).color(r, g, b, a).endVertex();
-        buffer.vertex(pose, minX, minY, maxZ).color(r, g, b, a).endVertex();
-        buffer.vertex(pose, minX, maxY, maxZ).color(r, g, b, a).endVertex();
-        buffer.vertex(pose, minX, maxY, minZ).color(r, g, b, a).endVertex();
+        buffer.addVertex(pose, minX, minY, minZ).setColor(r, g, b, a);
+        buffer.addVertex(pose, minX, minY, maxZ).setColor(r, g, b, a);
+        buffer.addVertex(pose, minX, maxY, maxZ).setColor(r, g, b, a);
+        buffer.addVertex(pose, minX, maxY, minZ).setColor(r, g, b, a);
 
-        buffer.vertex(pose, maxX, minY, minZ).color(r, g, b, a).endVertex();
-        buffer.vertex(pose, maxX, maxY, minZ).color(r, g, b, a).endVertex();
-        buffer.vertex(pose, maxX, maxY, maxZ).color(r, g, b, a).endVertex();
-        buffer.vertex(pose, maxX, minY, maxZ).color(r, g, b, a).endVertex();
+        buffer.addVertex(pose, maxX, minY, minZ).setColor(r, g, b, a);
+        buffer.addVertex(pose, maxX, maxY, minZ).setColor(r, g, b, a);
+        buffer.addVertex(pose, maxX, maxY, maxZ).setColor(r, g, b, a);
+        buffer.addVertex(pose, maxX, minY, maxZ).setColor(r, g, b, a);
 
         if (shade) {
             r = red * 0.5f;
             g = green * 0.5f;
             b = blue * 0.5f;
         }
-        buffer.vertex(pose, minX, minY, minZ).color(r, g, b, a).endVertex();
-        buffer.vertex(pose, maxX, minY, minZ).color(r, g, b, a).endVertex();
-        buffer.vertex(pose, maxX, minY, maxZ).color(r, g, b, a).endVertex();
-        buffer.vertex(pose, minX, minY, maxZ).color(r, g, b, a).endVertex();
+        buffer.addVertex(pose, minX, minY, minZ).setColor(r, g, b, a);
+        buffer.addVertex(pose, maxX, minY, minZ).setColor(r, g, b, a);
+        buffer.addVertex(pose, maxX, minY, maxZ).setColor(r, g, b, a);
+        buffer.addVertex(pose, minX, minY, maxZ).setColor(r, g, b, a);
 
         if (shade) {
             r = red;
             g = green;
             b = blue;
         }
-        buffer.vertex(pose, minX, maxY, minZ).color(r, g, b, a).endVertex();
-        buffer.vertex(pose, minX, maxY, maxZ).color(r, g, b, a).endVertex();
-        buffer.vertex(pose, maxX, maxY, maxZ).color(r, g, b, a).endVertex();
-        buffer.vertex(pose, maxX, maxY, minZ).color(r, g, b, a).endVertex();
+        buffer.addVertex(pose, minX, maxY, minZ).setColor(r, g, b, a);
+        buffer.addVertex(pose, minX, maxY, maxZ).setColor(r, g, b, a);
+        buffer.addVertex(pose, maxX, maxY, maxZ).setColor(r, g, b, a);
+        buffer.addVertex(pose, maxX, maxY, minZ).setColor(r, g, b, a);
 
         if (shade) {
             r = red * 0.8f;
             g = green * 0.8f;
             b = blue * 0.8f;
         }
-        buffer.vertex(pose, minX, minY, minZ).color(r, g, b, a).endVertex();
-        buffer.vertex(pose, minX, maxY, minZ).color(r, g, b, a).endVertex();
-        buffer.vertex(pose, maxX, maxY, minZ).color(r, g, b, a).endVertex();
-        buffer.vertex(pose, maxX, minY, minZ).color(r, g, b, a).endVertex();
+        buffer.addVertex(pose, minX, minY, minZ).setColor(r, g, b, a);
+        buffer.addVertex(pose, minX, maxY, minZ).setColor(r, g, b, a);
+        buffer.addVertex(pose, maxX, maxY, minZ).setColor(r, g, b, a);
+        buffer.addVertex(pose, maxX, minY, minZ).setColor(r, g, b, a);
 
-        buffer.vertex(pose, minX, minY, maxZ).color(r, g, b, a).endVertex();
-        buffer.vertex(pose, maxX, minY, maxZ).color(r, g, b, a).endVertex();
-        buffer.vertex(pose, maxX, maxY, maxZ).color(r, g, b, a).endVertex();
-        buffer.vertex(pose, minX, maxY, maxZ).color(r, g, b, a).endVertex();
+        buffer.addVertex(pose, minX, minY, maxZ).setColor(r, g, b, a);
+        buffer.addVertex(pose, maxX, minY, maxZ).setColor(r, g, b, a);
+        buffer.addVertex(pose, maxX, maxY, maxZ).setColor(r, g, b, a);
+        buffer.addVertex(pose, minX, maxY, maxZ).setColor(r, g, b, a);
     }
 
     public static void renderCubeFace(VertexConsumer buffer, PoseStack.Pose pose,

@@ -1,6 +1,6 @@
 package com.gregtechceu.gtceu.data.recipe.serialized.chemistry;
 
-import net.minecraft.data.recipes.FinishedRecipe;
+import com.gregtechceu.gtceu.data.recipe.GeneratedRecipe;
 
 import java.util.function.Consumer;
 
@@ -13,14 +13,14 @@ public class TitaniumRecipes {
 
     private TitaniumRecipes() {}
 
-    public static void init(Consumer<FinishedRecipe> provider) {
+    public static void init(Consumer<GeneratedRecipe> provider) {
         titaniumProcess(provider);
         solvayProcess(provider);
         bauxiteProcess(provider);
         ilmeniteProcess(provider);
     }
 
-    private static void titaniumProcess(Consumer<FinishedRecipe> provider) {
+    private static void titaniumProcess(Consumer<GeneratedRecipe> provider) {
         // Rutile extraction from Ilmenite
         // FeTiO3 + C -> Fe + TiO2 + CO
         BLAST_RECIPES.recipeBuilder("rutile_from_ilmenite")
@@ -60,7 +60,7 @@ public class TitaniumRecipes {
                 .duration(200).EUt(VA[HV]).save(provider);
     }
 
-    private static void solvayProcess(Consumer<FinishedRecipe> provider) {
+    private static void solvayProcess(Consumer<GeneratedRecipe> provider) {
         // CaCO3 -> CaO + CO2
         CHEMICAL_RECIPES.recipeBuilder("quicklime_from_calcite")
                 .circuitMeta(1)
@@ -97,7 +97,7 @@ public class TitaniumRecipes {
                 .duration(200).EUt(VA[MV]).save(provider);
     }
 
-    private static void bauxiteProcess(Consumer<FinishedRecipe> provider) {
+    private static void bauxiteProcess(Consumer<GeneratedRecipe> provider) {
         // Bauxite (crushed) + Soda Ash + Calcium Chloride -> Bauxite Slurry
         MIXER_RECIPES.recipeBuilder("bauxite_slurry_from_crushed_bauxite")
                 .inputItems(crushed, Bauxite, 32)
@@ -163,7 +163,7 @@ public class TitaniumRecipes {
                 .duration(100).EUt(VA[MV]).save(provider);
     }
 
-    private static void ilmeniteProcess(Consumer<FinishedRecipe> provider) {
+    private static void ilmeniteProcess(Consumer<GeneratedRecipe> provider) {
         // Byproduct separation for Ilmenite
         ELECTROMAGNETIC_SEPARATOR_RECIPES.recipeBuilder("ilmenite_separation")
                 .inputItems(dust, IlmeniteSlag)

@@ -9,8 +9,8 @@ import com.gregtechceu.gtceu.config.ConfigHolder;
 import com.gregtechceu.gtceu.data.recipe.CustomTags;
 import com.gregtechceu.gtceu.data.recipe.VanillaRecipeHelper;
 import com.gregtechceu.gtceu.data.recipe.builder.GTRecipeBuilder;
+import com.gregtechceu.gtceu.data.recipe.GeneratedRecipe;
 
-import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
@@ -31,7 +31,7 @@ import static com.gregtechceu.gtceu.common.data.GTRecipeTypes.*;
 
 public class MiscRecipeLoader {
 
-    public static void init(Consumer<FinishedRecipe> provider) {
+    public static void init(Consumer<GeneratedRecipe> provider) {
         // Basic Terminal Recipe
         VanillaRecipeHelper.addShapedRecipe(provider, true, "basic_terminal", TERMINAL.asStack(),
                 "SGS", "PBP", "PWP", 'S', new MaterialEntry(screw, WroughtIron), 'G', Tags.Items.GLASS_PANES, 'B',

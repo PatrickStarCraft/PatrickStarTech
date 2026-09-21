@@ -83,7 +83,10 @@ tasks.withType(JavaCompile).configureEach {
         options.incremental = false
         options.fork = true
         options.forkOptions.executable = javaCompiler.get().executablePath.asFile.absolutePath
-        options.compilerArgs.addAll(['-Xmaxerrs', '10000', '-Xmaxwarns', '20'])
+        // Early enter/type errors otherwise stop annotation processing, producing thousands of
+        // false missing-Lombok-method cascades. Diagnostic mode continues through processing and
+        // attribution; the build still fails on errors. Keep this javac-internal option opt-in.
+        options.compilerArgs.addAll(['-Xmaxerrs', '10000', '-Xmaxwarns', '20', '-XDshould-stop.ifError=FLOW'])
     }
 }
 

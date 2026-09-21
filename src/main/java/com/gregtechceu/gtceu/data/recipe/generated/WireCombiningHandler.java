@@ -8,8 +8,8 @@ import com.gregtechceu.gtceu.api.data.chemical.material.stack.MaterialEntry;
 import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
 import com.gregtechceu.gtceu.common.data.GTMaterials;
 import com.gregtechceu.gtceu.data.recipe.VanillaRecipeHelper;
+import com.gregtechceu.gtceu.data.recipe.GeneratedRecipe;
 
-import net.minecraft.data.recipes.FinishedRecipe;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -34,7 +34,7 @@ public final class WireCombiningHandler {
 
     private WireCombiningHandler() {}
 
-    public static void run(@NotNull Consumer<FinishedRecipe> provider, @NotNull Material material) {
+    public static void run(@NotNull Consumer<GeneratedRecipe> provider, @NotNull Material material) {
         // Generate Wire Packer/Unpacker recipes
         processWireCompression(provider, material);
 
@@ -49,7 +49,7 @@ public final class WireCombiningHandler {
         }
     }
 
-    private static void generateWireCombiningRecipe(@NotNull Consumer<FinishedRecipe> provider, int index,
+    private static void generateWireCombiningRecipe(@NotNull Consumer<GeneratedRecipe> provider, int index,
                                                     @NotNull Material material) {
         TagPrefix prefix = WIRE_DOUBLING_ORDER[index];
         if (!material.shouldGenerateRecipesFor(prefix) || !material.hasProperty(PropertyKey.WIRE)) {
@@ -78,7 +78,7 @@ public final class WireCombiningHandler {
         }
     }
 
-    private static void processWireCompression(@NotNull Consumer<FinishedRecipe> provider, @NotNull Material material) {
+    private static void processWireCompression(@NotNull Consumer<GeneratedRecipe> provider, @NotNull Material material) {
         if (!material.shouldGenerateRecipesFor(wireGtSingle) || !material.hasProperty(PropertyKey.WIRE)) {
             return;
         }
@@ -102,7 +102,7 @@ public final class WireCombiningHandler {
         }
     }
 
-    private static void processCableStripping(@NotNull Consumer<FinishedRecipe> provider, @NotNull TagPrefix prefix,
+    private static void processCableStripping(@NotNull Consumer<GeneratedRecipe> provider, @NotNull TagPrefix prefix,
                                               @NotNull Material material) {
         if (!material.shouldGenerateRecipesFor(prefix) || !material.hasProperty(PropertyKey.WIRE)) {
             return;

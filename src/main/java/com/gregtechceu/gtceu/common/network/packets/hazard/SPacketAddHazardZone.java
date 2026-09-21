@@ -4,10 +4,10 @@ import com.gregtechceu.gtceu.client.EnvironmentalHazardClientHandler;
 import com.gregtechceu.gtceu.common.capability.EnvironmentalHazardSavedData;
 import com.gregtechceu.gtceu.common.network.GTNetwork;
 
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraft.network.protocol.PacketFlow;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -19,20 +19,20 @@ public class SPacketAddHazardZone implements GTNetwork.INetPacket {
     private ChunkPos pos;
     private EnvironmentalHazardSavedData.HazardZone zone;
 
-    public SPacketAddHazardZone(FriendlyByteBuf buf) {
+    public SPacketAddHazardZone(RegistryFriendlyByteBuf buf) {
         pos = buf.readChunkPos();
         zone = EnvironmentalHazardSavedData.HazardZone.fromNetwork(buf);
     }
 
     @Override
-    public void encode(FriendlyByteBuf buf) {
+    public void encode(RegistryFriendlyByteBuf buf) {
         buf.writeChunkPos(pos);
         zone.toNetwork(buf);
     }
 
     @Override
-    public void execute(NetworkEvent.Context context) {
-        if (context.getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
+    public void execute(IPayloadContext context) {
+        if (context.flow() == PacketFlow.CLIENTBOUND) {
             EnvironmentalHazardClientHandler.INSTANCE.addHazardZone(pos, zone);
         }
     }

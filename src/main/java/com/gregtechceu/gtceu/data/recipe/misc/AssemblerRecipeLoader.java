@@ -1,8 +1,8 @@
 package com.gregtechceu.gtceu.data.recipe.misc;
 
 import com.gregtechceu.gtceu.config.ConfigHolder;
+import com.gregtechceu.gtceu.data.recipe.GeneratedRecipe;
 
-import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.world.item.Items;
 
 import java.util.function.Consumer;
@@ -16,7 +16,7 @@ import static com.gregtechceu.gtceu.common.data.GTRecipeTypes.ASSEMBLER_RECIPES;
 
 public class AssemblerRecipeLoader {
 
-    public static void init(Consumer<FinishedRecipe> provider) {
+    public static void init(Consumer<GeneratedRecipe> provider) {
         // Gearbox-like
         ASSEMBLER_RECIPES.recipeBuilder("bronze_gearbox_casing")
                 .inputItems(plate, Bronze, 4)

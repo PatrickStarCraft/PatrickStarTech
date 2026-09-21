@@ -13,8 +13,8 @@ import com.gregtechceu.gtceu.config.ConfigHolder;
 import com.gregtechceu.gtceu.data.recipe.CraftingComponent;
 import com.gregtechceu.gtceu.data.recipe.CustomTags;
 import com.gregtechceu.gtceu.data.recipe.VanillaRecipeHelper;
+import com.gregtechceu.gtceu.data.recipe.GeneratedRecipe;
 
-import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -35,7 +35,7 @@ import static com.gregtechceu.gtceu.data.recipe.GTCraftingComponents.*;
 
 public class MetaTileEntityLoader {
 
-    public static void init(Consumer<FinishedRecipe> provider) {
+    public static void init(Consumer<GeneratedRecipe> provider) {
         VanillaRecipeHelper.addShapedRecipe(provider, true, "casing_ulv", GTBlocks.MACHINE_CASING_ULV.asStack(), "PPP",
                 "PwP", "PPP", 'P', new MaterialEntry(TagPrefix.plate, GTMaterials.WroughtIron));
         VanillaRecipeHelper.addShapedRecipe(provider, true, "casing_lv", GTBlocks.MACHINE_CASING_LV.asStack(), "PPP",
@@ -1215,7 +1215,7 @@ public class MetaTileEntityLoader {
     // - CraftingComponent.Component
     // - MaterialEntry
     // - TagKey<?>
-    public static void registerMachineRecipe(Consumer<FinishedRecipe> provider, boolean setMaterialInfoData,
+    public static void registerMachineRecipe(Consumer<GeneratedRecipe> provider, boolean setMaterialInfoData,
                                              MachineDefinition[] machines, Object... recipe) {
         for (MachineDefinition machine : machines) {
 
@@ -1232,7 +1232,7 @@ public class MetaTileEntityLoader {
         }
     }
 
-    public static void registerMachineRecipe(Consumer<FinishedRecipe> provider, MachineDefinition[] machines,
+    public static void registerMachineRecipe(Consumer<GeneratedRecipe> provider, MachineDefinition[] machines,
                                              Object... recipe) {
         registerMachineRecipe(provider, true, machines, recipe);
     }

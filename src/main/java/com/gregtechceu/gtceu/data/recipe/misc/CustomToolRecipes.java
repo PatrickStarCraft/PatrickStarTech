@@ -17,9 +17,9 @@ import com.gregtechceu.gtceu.common.item.behavior.ItemMagnetBehavior;
 import com.gregtechceu.gtceu.data.recipe.CustomTags;
 import com.gregtechceu.gtceu.data.recipe.VanillaRecipeHelper;
 import com.gregtechceu.gtceu.utils.ToolItemHelper;
+import com.gregtechceu.gtceu.data.recipe.GeneratedRecipe;
 
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.SpecialRecipeBuilder;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Item;
@@ -49,7 +49,7 @@ public final class CustomToolRecipes {
 
     private CustomToolRecipes() {}
 
-    public static void init(@NotNull Consumer<FinishedRecipe> provider) {
+    public static void init(@NotNull Consumer<GeneratedRecipe> provider) {
         initializeGTItems();
         registerPowerUnitRecipes(provider);
         registerCustomToolRecipes(provider);
@@ -102,7 +102,7 @@ public final class CustomToolRecipes {
         ToolHeadReplaceRecipe.setToolHeadForTool(toolHeadWireCutter, GTToolType.WIRE_CUTTER_IV);
     }
 
-    private static void registerPowerUnitRecipes(@NotNull Consumer<FinishedRecipe> provider) {
+    private static void registerPowerUnitRecipes(@NotNull Consumer<GeneratedRecipe> provider) {
         for (int tier : powerUnitItems.keySet()) {
             List<ItemEntry<? extends Item>> tieredBatteryItems = batteryItems.get(tier);
             for (ItemEntry<? extends Item> batteryItem : tieredBatteryItems) {
@@ -128,7 +128,7 @@ public final class CustomToolRecipes {
         }
     }
 
-    private static void registerCustomToolRecipes(@NotNull Consumer<FinishedRecipe> provider) {
+    private static void registerCustomToolRecipes(@NotNull Consumer<GeneratedRecipe> provider) {
         registerFlintToolRecipes(provider);
         registerSoftToolRecipes(provider);
         registerElectricRecipes(provider);
@@ -137,7 +137,7 @@ public final class CustomToolRecipes {
                 "gtceu:crafting/replace_tool_head");
     }
 
-    private static void registerFlintToolRecipes(@NotNull Consumer<FinishedRecipe> provider) {
+    private static void registerFlintToolRecipes(@NotNull Consumer<GeneratedRecipe> provider) {
         final MaterialEntry flint = new MaterialEntry(TagPrefix.gem, GTMaterials.Flint);
         final ItemStack stick = new ItemStack(Items.STICK);
 
@@ -177,7 +177,7 @@ public final class CustomToolRecipes {
                 'S', stick);
     }
 
-    private static void registerSoftToolRecipes(@NotNull Consumer<FinishedRecipe> provider) {
+    private static void registerSoftToolRecipes(@NotNull Consumer<GeneratedRecipe> provider) {
         final ItemStack stick = new ItemStack(Items.STICK);
 
         for (int i = 0; i < softMaterials.length; i++) {
@@ -206,7 +206,7 @@ public final class CustomToolRecipes {
         }
     }
 
-    private static void registerElectricRecipes(@NotNull Consumer<FinishedRecipe> provider) {
+    private static void registerElectricRecipes(@NotNull Consumer<GeneratedRecipe> provider) {
         for (ItemEntry<? extends Item> batteryItem : batteryItems.get(LV)) {
             VanillaRecipeHelper.addShapedEnergyTransferRecipe(provider, true, false, true,
                     "prospector_lv_" + batteryItem.getId().getPath(),

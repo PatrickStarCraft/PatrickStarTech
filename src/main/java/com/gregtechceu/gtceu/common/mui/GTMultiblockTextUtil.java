@@ -531,8 +531,8 @@ public class GTMultiblockTextUtil {
             rounded = true;
             stack = provider.getMaxSizeStack();
             displaycount = Component.translatable("gtceu.gui.content.range",
-                    provider.getCountProvider().getMinValue(),
-                    provider.getCountProvider().getMaxValue());
+                    provider.getCountProvider().minInclusive(),
+                    provider.getCountProvider().maxInclusive());
             if (itemOutput.chance() < itemOutput.maxChance()) {
                 countD = countD * runs * itemOutput.chance() / itemOutput.maxChance();
             }
@@ -599,8 +599,8 @@ public class GTMultiblockTextUtil {
             rounded = true;
             stack = provider.getMaxSizeStack();
             displaycount = Component.translatable("gtceu.gui.content.range",
-                    provider.getCountProvider().getMinValue(),
-                    provider.getCountProvider().getMaxValue());
+                    provider.getCountProvider().minInclusive(),
+                    provider.getCountProvider().maxInclusive());
             if (fluidOutput.chance() < fluidOutput.maxChance()) {
                 amountD = amountD * runs * fluidOutput.chance() / fluidOutput.maxChance();
             }

@@ -72,7 +72,7 @@ public class VirtualRegistryMap implements INBTSerializable<CompoundTag> {
 
     @Override
     public void deserializeNBT(CompoundTag nbt) {
-        for (String entryTypeString : nbt.getAllKeys()) {
+        for (String entryTypeString : nbt.keySet()) {
             Identifier entryTypeLoc = Identifier.tryParse(entryTypeString);
             if (entryTypeLoc == null) continue;
             EntryTypes<?> type = EntryTypes.fromLocation(entryTypeLoc);
@@ -82,7 +82,7 @@ public class VirtualRegistryMap implements INBTSerializable<CompoundTag> {
 
             // backwards compat
             if (virtualEntries instanceof CompoundTag compoundTag) {
-                for (String name : compoundTag.getAllKeys()) {
+                for (String name : compoundTag.keySet()) {
                     CompoundTag entryTag = compoundTag.getCompoundOrEmpty(name);
                     VirtualEntry entry = type.createInstance(entryTag);
                     if (entry.canRemove()) continue;

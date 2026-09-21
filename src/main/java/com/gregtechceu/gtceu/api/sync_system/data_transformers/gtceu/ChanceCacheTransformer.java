@@ -45,7 +45,7 @@ public class ChanceCacheTransformer implements
                 context);
 
         if (context.currentValue() == null) return null;
-        for (String key : chanceCache.getAllKeys()) {
+        for (String key : chanceCache.keySet()) {
             RecipeCapability<?> cap = GTRegistries.RECIPE_CAPABILITIES.get(GTCEu.id(key));
             if (cap == null) continue;
             // noinspection rawtypes

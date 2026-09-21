@@ -14,8 +14,8 @@ import com.gregtechceu.gtceu.common.data.GTItems;
 import com.gregtechceu.gtceu.common.data.GTMaterials;
 import com.gregtechceu.gtceu.common.data.GTRecipeTypes;
 import com.gregtechceu.gtceu.data.recipe.builder.GTRecipeBuilder;
+import com.gregtechceu.gtceu.data.recipe.GeneratedRecipe;
 
-import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
 
@@ -36,7 +36,7 @@ public class AlloyBlastRecipeProducer {
      * @param property the blast property of the material
      */
     public void produce(@NotNull Material material, @NotNull BlastProperty property,
-                        Consumer<FinishedRecipe> provider) {
+                        Consumer<GeneratedRecipe> provider) {
         // do not generate for disabled materials
         if (material.hasFlag(MaterialFlags.DISABLE_ALLOY_BLAST)) return;
 
@@ -134,7 +134,7 @@ public class AlloyBlastRecipeProducer {
      */
     protected void buildRecipes(@NotNull BlastProperty property, @NotNull Fluid molten,
                                 int outputAmount, int componentAmount,
-                                @NotNull GTRecipeBuilder builder, Consumer<FinishedRecipe> provider) {
+                                @NotNull GTRecipeBuilder builder, Consumer<GeneratedRecipe> provider) {
         // add the fluid output with the correct amount
         builder.outputFluids(new FluidStack(molten, GTValues.L * outputAmount));
 
@@ -182,7 +182,7 @@ public class AlloyBlastRecipeProducer {
      */
     @SuppressWarnings("MethodMayBeStatic")
     protected void addFreezerRecipes(@NotNull Material material, @NotNull Fluid molten, int temperature,
-                                     Consumer<FinishedRecipe> provider) {
+                                     Consumer<GeneratedRecipe> provider) {
         // build the freezer recipe
         GTRecipeBuilder freezerBuilder = GTRecipeTypes.VACUUM_RECIPES.recipeBuilder(material.getName())
                 .inputFluids(new FluidStack(molten, GTValues.L))

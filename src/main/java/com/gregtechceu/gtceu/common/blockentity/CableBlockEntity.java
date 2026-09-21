@@ -37,8 +37,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.minecraftforge.common.capabilities.Capability;
-import net.neoforged.neoforge.common.util.LazyOptional;
+import net.neoforged.neoforge.capabilities.BlockCapability;
 
 import brachy.modularui.drawable.UITexture;
 import lombok.Getter;
@@ -80,16 +79,16 @@ public class CableBlockEntity extends PipeBlockEntity<Insulation, WireProperties
     }
 
     @Override
-    public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
+    public <T> @Nullable T getGTCapability(@NotNull BlockCapability<T, Direction> cap, @Nullable Direction side) {
         if (cap == GTCapability.CAPABILITY_ENERGY_CONTAINER) {
             var container = getEnergyContainer(side);
             if (container != null) {
-                return GTCapability.CAPABILITY_ENERGY_CONTAINER.orEmpty(cap, LazyOptional.of(() -> container));
+                return cap.typeClass().cast(container);
             }
         } else if (cap == GTCapability.CAPABILITY_COVERABLE) {
-            return GTCapability.CAPABILITY_COVERABLE.orEmpty(cap, LazyOptional.of(this::getCoverContainer));
+            return cap.typeClass().cast(getCoverContainer());
         }
-        return super.getCapability(cap, side);
+        return super.getGTCapability(cap, side);
     }
 
     @Override

@@ -29,12 +29,12 @@ import com.gregtechceu.gtceu.common.recipe.condition.*;
 import com.gregtechceu.gtceu.config.ConfigHolder;
 import com.gregtechceu.gtceu.utils.GTUtil;
 import com.gregtechceu.gtceu.utils.ResearchManager;
+import com.gregtechceu.gtceu.data.recipe.GeneratedRecipe;
 
 import org.jspecify.annotations.NullMarked;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.RegistryOps;
@@ -109,7 +109,7 @@ public class GTRecipeBuilder {
     public boolean keepSpoilingProgress = true;
     public GTRecipeCategory recipeCategory;
     @Setter
-    public @Nullable BiConsumer<GTRecipeBuilder, Consumer<FinishedRecipe>> onSave;
+    public @Nullable BiConsumer<GTRecipeBuilder, Consumer<GeneratedRecipe>> onSave;
 
     @Getter
     private final Collection<ResearchRecipeEntry> researchRecipeEntries = new ArrayList<>();
@@ -1473,39 +1473,12 @@ public class GTRecipeBuilder {
         return jsonObject;
     }
 
-    public FinishedRecipe build() {
-        return new FinishedRecipe() {
-
-            @Override
-            public void serializeRecipeData(JsonObject pJson) {
-                toJson(pJson);
-            }
-
-            @Override
-            public Identifier getId() {
-                return id.withPath(recipeType.registryName.getPath() + "/" + id.getPath());
-            }
-
-            @Override
-            public RecipeSerializer<?> getType() {
-                return GTRecipeSerializer.serializerFor(recipeType);
-            }
-
-            @Nullable
-            @Override
-            public JsonObject serializeAdvancement() {
-                return null;
-            }
-
-            @Nullable
-            @Override
-            public Identifier getAdvancementId() {
-                return null;
-            }
-        };
+    public GeneratedRecipe build() {
+        return GeneratedRecipe.create(id.withPath(recipeType.registryName.getPath() + "/" + id.getPath()),
+                GTRecipeSerializer.serializerFor(recipeType), this::toJson);
     }
 
-    public void save(Consumer<FinishedRecipe> consumer) {
+    public void save(Consumer<GeneratedRecipe> consumer) {
         if (onSave != null) {
             onSave.accept(this, consumer);
         }

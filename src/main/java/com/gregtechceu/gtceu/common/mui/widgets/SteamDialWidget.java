@@ -58,13 +58,13 @@ public class SteamDialWidget implements IDrawable {
             height /= 2.f;
             int a = Color.getAlpha(color), r = Color.getRed(color), g = Color.getGreen(color), b = Color.getBlue(color);
 
-            bufferBuilder.vertex(pose, x + width * cosAngle, y + width * sinAngle, 0.0f).color(r, g, b, a).endVertex();
-            bufferBuilder.vertex(pose, x + height * sinAngle, y - height * cosAngle, 0.0f).color(r, g, b, a)
-                    .endVertex();
-            bufferBuilder.vertex(pose, x - height * sinAngle, y + height * cosAngle, 0.0f).color(r, g, b, a)
-                    .endVertex();
-            bufferBuilder.vertex(pose, x - height * cosAngle, y - height * sinAngle, 0.0f).color(r, g, b, a)
-                    .endVertex();
+            bufferBuilder.addVertex(pose, x + width * cosAngle, y + width * sinAngle, 0.0f).setColor(r, g, b, a);
+            bufferBuilder.addVertex(pose, x + height * sinAngle, y - height * cosAngle, 0.0f).setColor(r, g, b, a)
+                    ;
+            bufferBuilder.addVertex(pose, x - height * sinAngle, y + height * cosAngle, 0.0f).setColor(r, g, b, a)
+                    ;
+            bufferBuilder.addVertex(pose, x - height * cosAngle, y - height * sinAngle, 0.0f).setColor(r, g, b, a)
+                    ;
         } else {
             VertexConsumer bufferBuilder = graphics.bufferSource()
                     .getBuffer(GTRenderTypes.guiTriangleStrip(texture.location));
@@ -85,14 +85,14 @@ public class SteamDialWidget implements IDrawable {
             height /= 2.f;
             int a = Color.getAlpha(color), r = Color.getRed(color), g = Color.getGreen(color), b = Color.getBlue(color);
 
-            bufferBuilder.vertex(pose, x + width * cosAngle, y + width * sinAngle, 0.0f).color(r, g, b, a)
-                    .uv(0.0f, 0.0f).endVertex();
-            bufferBuilder.vertex(pose, x + height * sinAngle, y - height * cosAngle, 0.0f).color(r, g, b, a)
-                    .uv(1.0f, 0.0f).endVertex();
-            bufferBuilder.vertex(pose, x - height * sinAngle, y + height * cosAngle, 0.0f).color(r, g, b, a)
-                    .uv(0.0f, 1.0f).endVertex();
-            bufferBuilder.vertex(pose, x - height * cosAngle, y - height * sinAngle, 0.0f).color(r, g, b, a)
-                    .uv(1.0f, 1.0f).endVertex();
+            bufferBuilder.addVertex(pose, x + width * cosAngle, y + width * sinAngle, 0.0f).setColor(r, g, b, a)
+                    .setUv(0.0f, 0.0f);
+            bufferBuilder.addVertex(pose, x + height * sinAngle, y - height * cosAngle, 0.0f).setColor(r, g, b, a)
+                    .setUv(1.0f, 0.0f);
+            bufferBuilder.addVertex(pose, x - height * sinAngle, y + height * cosAngle, 0.0f).setColor(r, g, b, a)
+                    .setUv(0.0f, 1.0f);
+            bufferBuilder.addVertex(pose, x - height * cosAngle, y - height * sinAngle, 0.0f).setColor(r, g, b, a)
+                    .setUv(1.0f, 1.0f);
         }
         // RenderSystem.disableBlend();
     }

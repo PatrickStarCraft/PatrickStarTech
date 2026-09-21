@@ -16,8 +16,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.Capability;
-import net.neoforged.neoforge.common.util.LazyOptional;
+import net.neoforged.neoforge.capabilities.BlockCapability;
 
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
@@ -43,10 +42,10 @@ public class DuctPipeBlockEntity extends PipeBlockEntity<DuctPipeType, DuctPipeP
     public static void onBlockEntityRegister(BlockEntityType<DuctPipeBlockEntity> ductBlockEntityBlockEntityType) {}
 
     @Override
-    public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
+    public <T> @Nullable T getGTCapability(@NotNull BlockCapability<T, Direction> cap, @Nullable Direction side) {
         if (cap == GTCapability.CAPABILITY_HAZARD_CONTAINER) {
             if (getLevel().isClientSide())
-                return GTCapability.CAPABILITY_HAZARD_CONTAINER.orEmpty(cap, LazyOptional.of(() -> clientCapability));
+                return cap.typeClass().cast(clientCapability);
 
             if (handlers.isEmpty()) {
                 initHandlers();
@@ -54,15 +53,14 @@ public class DuctPipeBlockEntity extends PipeBlockEntity<DuctPipeType, DuctPipeP
             checkNetwork();
 
             if (defaultHandler == null) {
-                // if the default handler is null, return LazyOptional.empty because that means the pipenet is invalid
-                return LazyOptional.empty();
+                // if the default handler is null, return null because that means the pipenet is invalid
+                return null;
             }
-            return GTCapability.CAPABILITY_HAZARD_CONTAINER.orEmpty(cap,
-                    LazyOptional.of(() -> handlers.getOrDefault(side, defaultHandler)));
+            return cap.typeClass().cast(handlers.getOrDefault(side, defaultHandler));
         } else if (cap == GTCapability.CAPABILITY_COVERABLE) {
-            return GTCapability.CAPABILITY_COVERABLE.orEmpty(cap, LazyOptional.of(this::getCoverContainer));
+            return cap.typeClass().cast(getCoverContainer());
         }
-        return super.getCapability(cap, side);
+        return super.getGTCapability(cap, side);
     }
 
     @Override

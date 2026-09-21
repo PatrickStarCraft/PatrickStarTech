@@ -17,8 +17,8 @@ import com.gregtechceu.gtceu.common.data.GTMaterialItems;
 import com.gregtechceu.gtceu.common.data.GTMaterials;
 import com.gregtechceu.gtceu.common.data.GTRecipeTypes;
 import com.gregtechceu.gtceu.data.recipe.VanillaRecipeHelper;
+import com.gregtechceu.gtceu.data.recipe.GeneratedRecipe;
 
-import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.equipment.ArmorType;
@@ -50,7 +50,7 @@ public final class ToolRecipeHandler {
 
     private ToolRecipeHandler() {}
 
-    public static void run(@NotNull Consumer<FinishedRecipe> provider, @NotNull Material material) {
+    public static void run(@NotNull Consumer<GeneratedRecipe> provider, @NotNull Material material) {
         ToolProperty property = material.getProperty(PropertyKey.TOOL);
         if (property == null) {
             return;
@@ -60,7 +60,7 @@ public final class ToolRecipeHandler {
         processElectricTool(provider, property, material);
     }
 
-    private static void processTool(@NotNull Consumer<FinishedRecipe> provider, @NotNull Material material) {
+    private static void processTool(@NotNull Consumer<GeneratedRecipe> provider, @NotNull Material material) {
         ItemStack stick = new ItemStack(Items.STICK);
         MaterialEntry ingot = new MaterialEntry(
                 material.hasProperty(PropertyKey.GEM) ? TagPrefix.gem : TagPrefix.ingot, material);
@@ -209,7 +209,7 @@ public final class ToolRecipeHandler {
         GTToolType.getTypes().forEach((s, gtToolType) -> addNetheriteToolRecipe(provider, gtToolType));
     }
 
-    private static void processElectricTool(@NotNull Consumer<FinishedRecipe> provider, @NotNull ToolProperty property,
+    private static void processElectricTool(@NotNull Consumer<GeneratedRecipe> provider, @NotNull ToolProperty property,
                                             @NotNull Material material) {
         if (!material.shouldGenerateRecipesFor(plate)) {
             return;
@@ -328,7 +328,7 @@ public final class ToolRecipeHandler {
         }
     }
 
-    private static void addElectricToolRecipe(@NotNull Consumer<FinishedRecipe> provider, @NotNull TagPrefix toolHead,
+    private static void addElectricToolRecipe(@NotNull Consumer<GeneratedRecipe> provider, @NotNull TagPrefix toolHead,
                                               @NotNull GTToolType @NotNull [] toolItems,
                                               @NotNull Material material) {
         for (GTToolType toolType : toolItems) {
@@ -349,7 +349,7 @@ public final class ToolRecipeHandler {
         }
     }
 
-    public static void addToolRecipe(@NotNull Consumer<FinishedRecipe> provider, @NotNull Material material,
+    public static void addToolRecipe(@NotNull Consumer<GeneratedRecipe> provider, @NotNull Material material,
                                      @NotNull GTToolType tool, boolean mirrored, Object... recipe) {
         ItemStack toolStack = ToolHelper.get(tool, material);
         if (toolStack.isEmpty()) return;
@@ -362,12 +362,12 @@ public final class ToolRecipeHandler {
         }
     }
 
-    public static void addNetheriteToolRecipe(@NotNull Consumer<FinishedRecipe> provider, @NotNull GTToolType tool) {
+    public static void addNetheriteToolRecipe(@NotNull Consumer<GeneratedRecipe> provider, @NotNull GTToolType tool) {
         VanillaRecipeHelper.addToolUpgradingRecipe(provider, tool, GTMaterials.Netherite, GTMaterials.Diamond,
                 Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE, ChemicalHelper.get(ingot, GTMaterials.Netherite).getItem());
     }
 
-    public static void addArmorRecipe(Consumer<FinishedRecipe> provider, @NotNull Material material,
+    public static void addArmorRecipe(Consumer<GeneratedRecipe> provider, @NotNull Material material,
                                       @NotNull ArmorType armor, Object... recipe) {
         ItemStack armorStack = ToolHelper.getArmor(armor, material);
         if (armorStack.isEmpty()) return;
@@ -378,7 +378,7 @@ public final class ToolRecipeHandler {
     /**
      * {@code D} is inferred as the dye key
      */
-    public static void addDyeableToolRecipe(@NotNull Consumer<FinishedRecipe> provider, @NotNull Material material,
+    public static void addDyeableToolRecipe(@NotNull Consumer<GeneratedRecipe> provider, @NotNull Material material,
                                             @NotNull GTToolType tool, boolean mirrored, Object... recipe) {
         ItemStack toolStack = ToolHelper.get(tool, material);
         if (toolStack.isEmpty()) return;

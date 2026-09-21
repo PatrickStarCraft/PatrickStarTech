@@ -140,15 +140,15 @@ public class BedrockOreVeinSavedData extends SavedData {
                     var random = new XoroshiroRandomSource(serverLevel.getSeed() ^ pos2.toLong());
 
                     int maximumYield;
-                    if ((definition.yield().getMaxValue() - definition.yield().getMinValue()) / distanceFromOriginal <=
+                    if ((definition.yield().maxInclusive() - definition.yield().minInclusive()) / distanceFromOriginal <=
                             0) {
-                        maximumYield = definition.yield().getMinValue();
+                        maximumYield = definition.yield().minInclusive();
                     } else {
-                        maximumYield = (int) ((definition.yield().sample(random) + definition.yield().getMinValue()) /
+                        maximumYield = (int) ((definition.yield().sample(random) + definition.yield().minInclusive()) /
                                 distanceFromOriginal);
-                        maximumYield = Math.max(maximumYield, definition.yield().getMinValue());
+                        maximumYield = Math.max(maximumYield, definition.yield().minInclusive());
                     }
-                    maximumYield = Math.min(maximumYield, definition.yield().getMaxValue());
+                    maximumYield = Math.min(maximumYield, definition.yield().maxInclusive());
 
                     veinOres.put(pos2, new OreVeinWorldEntry(definition, maximumYield, MAXIMUM_VEIN_OPERATIONS));
                 }

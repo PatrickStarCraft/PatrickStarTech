@@ -6,8 +6,8 @@ import com.gregtechceu.gtceu.api.data.chemical.material.properties.PropertyKey;
 import com.gregtechceu.gtceu.api.data.chemical.material.stack.MaterialStack;
 import com.gregtechceu.gtceu.data.recipe.builder.GTRecipeBuilder;
 import com.gregtechceu.gtceu.utils.GTMath;
+import com.gregtechceu.gtceu.data.recipe.GeneratedRecipe;
 
-import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.fluids.FluidStack;
 
@@ -29,11 +29,11 @@ public final class DecompositionRecipeHandler {
 
     private DecompositionRecipeHandler() {}
 
-    public static void run(@NotNull Consumer<FinishedRecipe> provider, @NotNull Material material) {
+    public static void run(@NotNull Consumer<GeneratedRecipe> provider, @NotNull Material material) {
         processDecomposition(provider, material);
     }
 
-    private static void processDecomposition(@NotNull Consumer<FinishedRecipe> provider, @NotNull Material material) {
+    private static void processDecomposition(@NotNull Consumer<GeneratedRecipe> provider, @NotNull Material material) {
         if (material.getMaterialComponents().isEmpty() ||
                 (!material.hasFlag(DECOMPOSITION_BY_ELECTROLYZING) &&
                         !material.hasFlag(DECOMPOSITION_BY_CENTRIFUGING)) ||

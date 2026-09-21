@@ -13,7 +13,7 @@ import com.gregtechceu.gtceu.config.ConfigHolder;
 
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.eventbus.api.GenericEvent;
+import net.neoforged.bus.api.Event;
 import net.neoforged.fml.event.IModBusEvent;
 
 import lombok.Getter;
@@ -51,12 +51,15 @@ public class GTCEuAPI {
         else GTCEu.LOGGER.info("High-Tier is Disabled.");
     }
 
-    public static class RegisterEvent<K, V> extends GenericEvent<V> implements IModBusEvent {
+    /** NeoForge listeners must filter by {@link #getValueClass()} before registering values. */
+    public static class RegisterEvent<K, V> extends Event implements IModBusEvent {
 
         private final GTRegistry<K, V> registry;
+        @Getter
+        private final Class<V> valueClass;
 
         public RegisterEvent(GTRegistry<K, V> registry, Class<V> clazz) {
-            super(clazz);
+            this.valueClass = clazz;
             this.registry = registry;
         }
 

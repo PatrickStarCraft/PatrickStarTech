@@ -43,7 +43,7 @@ public class DimensionCache {
     }
 
     public void fromNBT(CompoundTag tag, boolean isClient) {
-        for (String gridPos : tag.getAllKeys()) {
+        for (String gridPos : tag.keySet()) {
             String[] split = gridPos.split(",");
             GridPos key = new GridPos(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
             if (!cache.containsKey(key)) {

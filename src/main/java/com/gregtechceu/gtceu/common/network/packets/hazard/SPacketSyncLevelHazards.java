@@ -4,10 +4,10 @@ import com.gregtechceu.gtceu.client.EnvironmentalHazardClientHandler;
 import com.gregtechceu.gtceu.common.capability.EnvironmentalHazardSavedData;
 import com.gregtechceu.gtceu.common.network.GTNetwork;
 
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraft.network.protocol.PacketFlow;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -22,7 +22,7 @@ public class SPacketSyncLevelHazards implements GTNetwork.INetPacket {
 
     private Map<ChunkPos, EnvironmentalHazardSavedData.HazardZone> map;
 
-    public SPacketSyncLevelHazards(FriendlyByteBuf buf) {
+    public SPacketSyncLevelHazards(RegistryFriendlyByteBuf buf) {
         map = Stream.generate(() -> {
             ChunkPos pos = buf.readChunkPos();
             var zone = EnvironmentalHazardSavedData.HazardZone.fromNetwork(buf);
@@ -31,7 +31,7 @@ public class SPacketSyncLevelHazards implements GTNetwork.INetPacket {
     }
 
     @Override
-    public void encode(FriendlyByteBuf buf) {
+    public void encode(RegistryFriendlyByteBuf buf) {
         buf.writeVarInt(map.size());
         for (var entry : map.entrySet()) {
             buf.writeChunkPos(entry.getKey());
@@ -40,8 +40,8 @@ public class SPacketSyncLevelHazards implements GTNetwork.INetPacket {
     }
 
     @Override
-    public void execute(NetworkEvent.Context context) {
-        if (context.getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
+    public void execute(IPayloadContext context) {
+        if (context.flow() == PacketFlow.CLIENTBOUND) {
             EnvironmentalHazardClientHandler.INSTANCE.updateHazardMap(this.map);
         }
     }

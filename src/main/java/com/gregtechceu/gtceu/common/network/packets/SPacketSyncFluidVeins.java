@@ -9,10 +9,10 @@ import com.gregtechceu.gtceu.common.network.GTNetwork;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.Identifier;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import lombok.RequiredArgsConstructor;
 
@@ -30,24 +30,24 @@ public class SPacketSyncFluidVeins implements GTNetwork.INetPacket {
         this.veins = new HashMap<>();
     }
 
-    public SPacketSyncFluidVeins(FriendlyByteBuf buf) {
+    public SPacketSyncFluidVeins(RegistryFriendlyByteBuf buf) {
         this();
         RegistryOps<Tag> ops = RegistryOps.create(NbtOps.INSTANCE, GTRegistries.builtinRegistry());
         Stream.generate(() -> {
-            Identifier id = buf.readResourceLocation();
-            CompoundTag tag = buf.readAnySizeNbt();
+            Identifier id = buf.readIdentifier();
+            CompoundTag tag = buf.readNbt();
             BedrockFluidDefinition def = BedrockFluidDefinition.FULL_CODEC.parse(ops, tag).getOrThrow(message -> { GTCEu.LOGGER.error(message); return new RuntimeException(message); });
             return Map.entry(id, def);
         }).limit(buf.readVarInt()).forEach(entry -> veins.put(entry.getKey(), entry.getValue()));
     }
 
     @Override
-    public void encode(FriendlyByteBuf buf) {
+    public void encode(RegistryFriendlyByteBuf buf) {
         RegistryOps<Tag> ops = RegistryOps.create(NbtOps.INSTANCE, GTRegistries.builtinRegistry());
         int size = veins.size();
         buf.writeVarInt(size);
         for (var entry : veins.entrySet()) {
-            buf.writeResourceLocation(entry.getKey());
+            buf.writeIdentifier(entry.getKey());
             CompoundTag tag = (CompoundTag) BedrockFluidDefinition.FULL_CODEC.encodeStart(ops, entry.getValue())
                     .getOrThrow(message -> { GTCEu.LOGGER.error(message); return new RuntimeException(message); });
             buf.writeNbt(tag);
@@ -55,7 +55,7 @@ public class SPacketSyncFluidVeins implements GTNetwork.INetPacket {
     }
 
     @Override
-    public void execute(NetworkEvent.Context context) {
+    public void execute(IPayloadContext context) {
         ClientProxy.CLIENT_FLUID_VEINS.clear();
         ClientProxy.CLIENT_FLUID_VEINS.putAll(veins);
     }

@@ -63,7 +63,7 @@ public class GTRecipeTransformer implements ValueTransformer<GTRecipe> {
         } else if (tag instanceof ByteArrayTag byteArray) { // Backwards Compatibility
             ByteBuf copiedDataBuffer = Unpooled.copiedBuffer(byteArray.getAsByteArray());
             FriendlyByteBuf buf = new FriendlyByteBuf(copiedDataBuffer);
-            result = (GTRecipe) recipeManager.byKey(buf.readResourceLocation()).orElse(null);
+            result = (GTRecipe) recipeManager.byKey(buf.readIdentifier()).orElse(null);
             buf.release();
         }
         return result;

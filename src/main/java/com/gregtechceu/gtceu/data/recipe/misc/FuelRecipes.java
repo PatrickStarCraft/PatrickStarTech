@@ -3,9 +3,9 @@ package com.gregtechceu.gtceu.data.recipe.misc;
 import com.gregtechceu.gtceu.GTCEu;
 import com.gregtechceu.gtceu.api.fluids.store.FluidStorageKeys;
 import com.gregtechceu.gtceu.utils.GTUtil;
+import com.gregtechceu.gtceu.data.recipe.GeneratedRecipe;
 
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
@@ -24,7 +24,7 @@ import static com.gregtechceu.gtceu.common.data.GTRecipeTypes.*;
 
 public class FuelRecipes {
 
-    public static void addBoilerFuel(Consumer<FinishedRecipe> provider, Set<Item> added,
+    public static void addBoilerFuel(Consumer<GeneratedRecipe> provider, Set<Item> added,
                                      Item item, int burnTime) {
         if (added.contains(item) || burnTime <= 0) {
             return;
@@ -52,7 +52,7 @@ public class FuelRecipes {
         }
     }
 
-    public static void init(Consumer<FinishedRecipe> provider) {
+    public static void init(Consumer<GeneratedRecipe> provider) {
         // TODO this all needs to be cleaned up, but this will make it somewhat work for now
         // do these first because for some reason vanilla fuels are not set up yet at this phase?
         Set<Item> addedItems = new HashSet<>();

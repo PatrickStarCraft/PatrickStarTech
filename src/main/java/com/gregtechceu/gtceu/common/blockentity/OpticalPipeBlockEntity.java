@@ -17,8 +17,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.Capability;
-import net.neoforged.neoforge.common.util.LazyOptional;
+import net.neoforged.neoforge.capabilities.BlockCapability;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -55,40 +54,36 @@ public class OpticalPipeBlockEntity extends PipeBlockEntity<OpticalPipeType, Opt
     }
 
     @Override
-    public <T> LazyOptional<T> getCapability(Capability<T> capability, @Nullable Direction facing) {
+    public <T> @Nullable T getGTCapability(BlockCapability<T, Direction> capability, @Nullable Direction facing) {
         if (capability == GTCapability.CAPABILITY_DATA_ACCESS) {
             if (level.isClientSide()) {
-                return GTCapability.CAPABILITY_DATA_ACCESS.orEmpty(capability,
-                        LazyOptional.of(() -> clientDataHandler));
+                return capability.typeClass().cast(clientDataHandler);
             }
-            if (facing != null && !isConnected(facing)) return LazyOptional.empty();
+            if (facing != null && !isConnected(facing)) return null;
             if (handlers.isEmpty()) initHandlers();
-            if (handlers.isEmpty()) return LazyOptional.empty();
+            if (handlers.isEmpty()) return null;
 
             checkNetwork();
-            return GTCapability.CAPABILITY_DATA_ACCESS.orEmpty(capability,
-                    LazyOptional.of(() -> handlers.getOrDefault(facing, defaultHandler)));
+            return capability.typeClass().cast(handlers.getOrDefault(facing, defaultHandler));
         }
 
         if (capability == GTCapability.CAPABILITY_COMPUTATION_PROVIDER) {
             if (level.isClientSide()) {
-                return GTCapability.CAPABILITY_COMPUTATION_PROVIDER.orEmpty(capability,
-                        LazyOptional.of(() -> clientComputationHandler));
+                return capability.typeClass().cast(clientComputationHandler);
             }
-            if (facing != null && !isConnected(facing)) return LazyOptional.empty();
+            if (facing != null && !isConnected(facing)) return null;
             if (handlers.isEmpty()) initHandlers();
-            if (handlers.isEmpty()) return LazyOptional.empty();
+            if (handlers.isEmpty()) return null;
 
             checkNetwork();
-            return GTCapability.CAPABILITY_COMPUTATION_PROVIDER.orEmpty(capability,
-                    LazyOptional.of(() -> handlers.getOrDefault(facing, defaultHandler)));
+            return capability.typeClass().cast(handlers.getOrDefault(facing, defaultHandler));
         }
 
         if (capability == GTCapability.CAPABILITY_COVERABLE) {
-            return GTCapability.CAPABILITY_COVERABLE.orEmpty(capability, LazyOptional.of(this::getCoverContainer));
+            return capability.typeClass().cast(getCoverContainer());
         }
 
-        return super.getCapability(capability, facing);
+        return super.getGTCapability(capability, facing);
     }
 
     public void checkNetwork() {

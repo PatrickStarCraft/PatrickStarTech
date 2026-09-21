@@ -19,8 +19,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.Capability;
-import net.neoforged.neoforge.common.util.LazyOptional;
+import net.neoforged.neoforge.capabilities.BlockCapability;
 
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
@@ -46,21 +45,20 @@ public class LaserPipeBlockEntity extends PipeBlockEntity<LaserPipeType, LaserPi
     public static void onBlockEntityRegister(BlockEntityType<LaserPipeBlockEntity> cableBlockEntityBlockEntityType) {}
 
     @Override
-    public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
+    public <T> @Nullable T getGTCapability(@NotNull BlockCapability<T, Direction> cap, @Nullable Direction side) {
         if (cap == GTCapability.CAPABILITY_LASER) {
             if (getLevel().isClientSide())
-                return GTCapability.CAPABILITY_LASER.orEmpty(cap, LazyOptional.of(() -> clientCapability));
-            if (side != null && !isConnected(side)) return LazyOptional.empty();
+                return cap.typeClass().cast(clientCapability);
+            if (side != null && !isConnected(side)) return null;
             if (handlers.isEmpty()) {
                 initHandlers();
             }
             checkNetwork();
-            return GTCapability.CAPABILITY_LASER.orEmpty(cap,
-                    LazyOptional.of(() -> handlers.getOrDefault(side, defaultHandler)));
+            return cap.typeClass().cast(handlers.getOrDefault(side, defaultHandler));
         } else if (cap == GTCapability.CAPABILITY_COVERABLE) {
-            return GTCapability.CAPABILITY_COVERABLE.orEmpty(cap, LazyOptional.of(this::getCoverContainer));
+            return cap.typeClass().cast(getCoverContainer());
         }
-        return super.getCapability(cap, side);
+        return super.getGTCapability(cap, side);
     }
 
     @Override

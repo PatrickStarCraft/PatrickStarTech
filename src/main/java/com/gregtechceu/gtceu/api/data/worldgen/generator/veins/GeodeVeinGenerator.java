@@ -147,7 +147,7 @@ public class GeodeVeinGenerator extends VeinGenerator {
         WorldgenRandom worldgenRandom = new WorldgenRandom(new LegacyRandomSource(level.getSeed()));
         NormalNoise normalNoise = NormalNoise.create(worldgenRandom, -4, 1.0);
         List<BlockPos> list2 = new ArrayList<>(3);
-        double wallDistance = (double) distributionSample / (double) this.outerWallDistance.getMaxValue();
+        double wallDistance = (double) distributionSample / (double) this.outerWallDistance.maxInclusive();
         double fillingSize = 1.0 / Math.sqrt(geodeLayerSettings.filling);
         double innerSize = 1.0 / Math.sqrt(geodeLayerSettings.innerLayer + wallDistance);
         double middleSize = 1.0 / Math.sqrt(geodeLayerSettings.middleLayer + wallDistance);

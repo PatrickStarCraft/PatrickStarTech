@@ -1,6 +1,6 @@
 package com.gregtechceu.gtceu.data.recipe.serialized.chemistry;
 
-import net.minecraft.data.recipes.FinishedRecipe;
+import com.gregtechceu.gtceu.data.recipe.GeneratedRecipe;
 
 import java.util.function.Consumer;
 
@@ -24,7 +24,7 @@ public class NaquadahRecipes {
     // |> 0.25 Gallium
     // |> 0.25 Barium
 
-    public static void init(Consumer<FinishedRecipe> provider) {
+    public static void init(Consumer<GeneratedRecipe> provider) {
         // FLUOROANTIMONIC ACID
 
         CHEMICAL_RECIPES.recipeBuilder("antimony_trioxide").EUt(VA[ULV]).duration(60)

@@ -214,7 +214,7 @@ public class StaticFaceBakery {
                                    Transformation rotation, @Nullable BlockElementRotation partRotation,
                                    boolean shade) {
         FaceInfo.VertexInfo vertexInfo = FaceInfo.fromFacing(facing).getVertexInfo(vertexIndex);
-        Vector3f face = new Vector3f(shape[vertexInfo.xFace], shape[vertexInfo.yFace], shape[vertexInfo.zFace]);
+        Vector3f face = new Vector3f(shape[vertexInfo.xFace().ordinal()], shape[vertexInfo.yFace().ordinal()], shape[vertexInfo.zFace().ordinal()]);
         applyElementRotation(face, partRotation);
         applyModelRotation(face, rotation);
         fillVertex(vertexData, vertexIndex, face, sprite, blockFaceUV);
@@ -235,12 +235,12 @@ public class StaticFaceBakery {
 
     private static float[] setupShape(Vector3f min, Vector3f max) {
         float[] shape = new float[Direction.values().length];
-        shape[FaceInfo.Constants.MIN_X] = min.x() / 16.0F;
-        shape[FaceInfo.Constants.MIN_Y] = min.y() / 16.0F;
-        shape[FaceInfo.Constants.MIN_Z] = min.z() / 16.0F;
-        shape[FaceInfo.Constants.MAX_X] = max.x() / 16.0F;
-        shape[FaceInfo.Constants.MAX_Y] = max.y() / 16.0F;
-        shape[FaceInfo.Constants.MAX_Z] = max.z() / 16.0F;
+        shape[FaceInfo.Extent.MIN_X.ordinal()] = min.x() / 16.0F;
+        shape[FaceInfo.Extent.MIN_Y.ordinal()] = min.y() / 16.0F;
+        shape[FaceInfo.Extent.MIN_Z.ordinal()] = min.z() / 16.0F;
+        shape[FaceInfo.Extent.MAX_X.ordinal()] = max.x() / 16.0F;
+        shape[FaceInfo.Extent.MAX_Y.ordinal()] = max.y() / 16.0F;
+        shape[FaceInfo.Extent.MAX_Z.ordinal()] = max.z() / 16.0F;
         return shape;
     }
 
@@ -298,35 +298,35 @@ public class StaticFaceBakery {
         int[] verticesCopy = new int[vertices.length];
         System.arraycopy(vertices, 0, verticesCopy, 0, vertices.length);
         float[] shape = new float[Direction.values().length];
-        shape[FaceInfo.Constants.MIN_X] = 999.0F;
-        shape[FaceInfo.Constants.MIN_Y] = 999.0F;
-        shape[FaceInfo.Constants.MIN_Z] = 999.0F;
-        shape[FaceInfo.Constants.MAX_X] = -999.0F;
-        shape[FaceInfo.Constants.MAX_Y] = -999.0F;
-        shape[FaceInfo.Constants.MAX_Z] = -999.0F;
+        shape[FaceInfo.Extent.MIN_X.ordinal()] = 999.0F;
+        shape[FaceInfo.Extent.MIN_Y.ordinal()] = 999.0F;
+        shape[FaceInfo.Extent.MIN_Z.ordinal()] = 999.0F;
+        shape[FaceInfo.Extent.MAX_X.ordinal()] = -999.0F;
+        shape[FaceInfo.Extent.MAX_Y.ordinal()] = -999.0F;
+        shape[FaceInfo.Extent.MAX_Z.ordinal()] = -999.0F;
 
         for (int i = 0; i < 4; ++i) {
             int element = 8 * i;
             float x = Float.intBitsToFloat(verticesCopy[element]);
             float y = Float.intBitsToFloat(verticesCopy[element + 1]);
             float z = Float.intBitsToFloat(verticesCopy[element + 2]);
-            if (x < shape[FaceInfo.Constants.MIN_X]) {
-                shape[FaceInfo.Constants.MIN_X] = x;
+            if (x < shape[FaceInfo.Extent.MIN_X.ordinal()]) {
+                shape[FaceInfo.Extent.MIN_X.ordinal()] = x;
             }
-            if (y < shape[FaceInfo.Constants.MIN_Y]) {
-                shape[FaceInfo.Constants.MIN_Y] = y;
+            if (y < shape[FaceInfo.Extent.MIN_Y.ordinal()]) {
+                shape[FaceInfo.Extent.MIN_Y.ordinal()] = y;
             }
-            if (z < shape[FaceInfo.Constants.MIN_Z]) {
-                shape[FaceInfo.Constants.MIN_Z] = z;
+            if (z < shape[FaceInfo.Extent.MIN_Z.ordinal()]) {
+                shape[FaceInfo.Extent.MIN_Z.ordinal()] = z;
             }
-            if (x > shape[FaceInfo.Constants.MAX_X]) {
-                shape[FaceInfo.Constants.MAX_X] = x;
+            if (x > shape[FaceInfo.Extent.MAX_X.ordinal()]) {
+                shape[FaceInfo.Extent.MAX_X.ordinal()] = x;
             }
-            if (y > shape[FaceInfo.Constants.MAX_Y]) {
-                shape[FaceInfo.Constants.MAX_Y] = y;
+            if (y > shape[FaceInfo.Extent.MAX_Y.ordinal()]) {
+                shape[FaceInfo.Extent.MAX_Y.ordinal()] = y;
             }
-            if (z > shape[FaceInfo.Constants.MAX_Z]) {
-                shape[FaceInfo.Constants.MAX_Z] = z;
+            if (z > shape[FaceInfo.Extent.MAX_Z.ordinal()]) {
+                shape[FaceInfo.Extent.MAX_Z.ordinal()] = z;
             }
         }
 
@@ -335,9 +335,9 @@ public class StaticFaceBakery {
         for (int vert1 = 0; vert1 < 4; ++vert1) {
             int e1 = vert1 * VERTEX_INT_SIZE;
             FaceInfo.VertexInfo vertexInfo = faceInfo.getVertexInfo(vert1);
-            float x1 = shape[vertexInfo.xFace];
-            float y1 = shape[vertexInfo.yFace];
-            float z1 = shape[vertexInfo.zFace];
+            float x1 = shape[vertexInfo.xFace().ordinal()];
+            float y1 = shape[vertexInfo.yFace().ordinal()];
+            float z1 = shape[vertexInfo.zFace().ordinal()];
             vertices[e1 + POSITION_INDEX] = Float.floatToRawIntBits(x1);
             vertices[e1 + POSITION_INDEX + 1] = Float.floatToRawIntBits(y1);
             vertices[e1 + POSITION_INDEX + 2] = Float.floatToRawIntBits(z1);

@@ -8,12 +8,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraft.network.protocol.PacketFlow;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import lombok.AllArgsConstructor;
 
@@ -35,7 +35,7 @@ public class SCPacketShareProspection implements GTNetwork.INetPacket {
     @SuppressWarnings("unused")
     public SCPacketShareProspection() {}
 
-    public SCPacketShareProspection(FriendlyByteBuf buf) {
+    public SCPacketShareProspection(RegistryFriendlyByteBuf buf) {
         sender = buf.readUUID();
         receiver = buf.readUUID();
         cacheName = buf.readUtf();
@@ -47,7 +47,7 @@ public class SCPacketShareProspection implements GTNetwork.INetPacket {
     }
 
     @Override
-    public void encode(FriendlyByteBuf buf) {
+    public void encode(RegistryFriendlyByteBuf buf) {
         buf.writeUUID(sender);
         buf.writeUUID(receiver);
         buf.writeUtf(cacheName);
@@ -59,8 +59,8 @@ public class SCPacketShareProspection implements GTNetwork.INetPacket {
     }
 
     @Override
-    public void execute(NetworkEvent.Context context) {
-        if (context.getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
+    public void execute(IPayloadContext context) {
+        if (context.flow() == PacketFlow.CLIENTBOUND) {
             if (first) {
                 PlayerInfo senderInfo = Objects.requireNonNull(Minecraft.getInstance().getConnection())
                         .getPlayerInfo(sender);
@@ -69,7 +69,7 @@ public class SCPacketShareProspection implements GTNetwork.INetPacket {
                 }
 
                 Component playerName = senderInfo.getTabListDisplayName() != null ? senderInfo.getTabListDisplayName() :
-                        Component.literal(senderInfo.getProfile().getName());
+                        Component.literal(senderInfo.getProfile().name());
 
                 assert Minecraft.getInstance().player != null;
                 Minecraft.getInstance().player.sendSystemMessage(Component
@@ -77,11 +77,13 @@ public class SCPacketShareProspection implements GTNetwork.INetPacket {
             }
             ClientCacheManager.processProspectionShare(cacheName, key, isDimCache, dimension, data);
         } else {
-            SCPacketShareProspection newPacket = new SCPacketShareProspection(sender, receiver,
+            var recipient = GTCEu.getMinecraftServer().getPlayerList().getPlayer(receiver);
+            if (recipient == null) return;
+            SCPacketShareProspection newPacket = new SCPacketShareProspection(context.player().getUUID(), receiver,
                     cacheName, key,
                     isDimCache, dimension,
                     data, first);
-            GTNetwork.sendToPlayer(GTCEu.getMinecraftServer().getPlayerList().getPlayer(receiver), newPacket);
+            GTNetwork.sendToPlayer(recipient, newPacket);
         }
     }
 }

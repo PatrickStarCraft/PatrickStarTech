@@ -40,7 +40,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-@Mod.EventBusSubscriber(modid = GTCEu.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+@net.neoforged.fml.common.EventBusSubscriber(modid = GTCEu.MOD_ID, value = Dist.CLIENT)
 public class MachineModelLoader implements IGeometryLoader<UnbakedMachineModel> {
 
     public static final MachineModelLoader INSTANCE = new MachineModelLoader();

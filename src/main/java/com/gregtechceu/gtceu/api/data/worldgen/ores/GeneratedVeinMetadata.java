@@ -85,18 +85,18 @@ public final class GeneratedVeinMetadata {
     }
 
     public static GeneratedVeinMetadata readFromPacket(FriendlyByteBuf buf) {
-        Identifier id = buf.readResourceLocation();
+        Identifier id = buf.readIdentifier();
         ChunkPos origin = ChunkPos.unpack(buf.readVarLong());
         BlockPos center = BlockPos.of(buf.readVarLong());
-        GTOreDefinition def = ClientProxy.CLIENT_ORE_VEINS.get(buf.readResourceLocation());
+        GTOreDefinition def = ClientProxy.CLIENT_ORE_VEINS.get(buf.readIdentifier());
         return new GeneratedVeinMetadata(id, origin, center, def, false);
     }
 
     public void writeToPacket(FriendlyByteBuf buf) {
-        buf.writeResourceLocation(this.id);
+        buf.writeIdentifier(this.id);
         buf.writeVarLong(this.originChunk.toLong());
         buf.writeVarLong(this.center.asLong());
-        buf.writeResourceLocation(GTRegistries.ORE_VEINS.getKey(this.definition));
+        buf.writeIdentifier(GTRegistries.ORE_VEINS.getKey(this.definition));
     }
 
     @Override

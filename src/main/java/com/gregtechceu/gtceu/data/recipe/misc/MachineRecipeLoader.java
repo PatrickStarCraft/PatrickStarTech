@@ -19,9 +19,9 @@ import com.gregtechceu.gtceu.common.data.machines.GTMachineUtils;
 import com.gregtechceu.gtceu.config.ConfigHolder;
 import com.gregtechceu.gtceu.data.recipe.CustomTags;
 import com.gregtechceu.gtceu.data.recipe.VanillaRecipeHelper;
+import com.gregtechceu.gtceu.data.recipe.GeneratedRecipe;
 
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
@@ -49,7 +49,7 @@ public class MachineRecipeLoader {
 
     private MachineRecipeLoader() {}
 
-    public static void init(Consumer<FinishedRecipe> provider) {
+    public static void init(Consumer<GeneratedRecipe> provider) {
         ComputerRecipes.init(provider);
 
         registerDecompositionRecipes(provider);
@@ -67,7 +67,7 @@ public class MachineRecipeLoader {
         registerHatchConversion(provider);
     }
 
-    private static void registerBendingCompressingRecipes(Consumer<FinishedRecipe> provider) {
+    private static void registerBendingCompressingRecipes(Consumer<GeneratedRecipe> provider) {
         COMPRESSOR_RECIPES.recipeBuilder("compressed_fireclay")
                 .inputItems(dust, Fireclay)
                 .outputItems(COMPRESSED_FIRECLAY)
@@ -186,7 +186,7 @@ public class MachineRecipeLoader {
                 .duration(300).EUt(2).save(provider);
     }
 
-    private static void registerPrimitiveBlastFurnaceRecipes(Consumer<FinishedRecipe> provider) {
+    private static void registerPrimitiveBlastFurnaceRecipes(Consumer<GeneratedRecipe> provider) {
         PRIMITIVE_BLAST_FURNACE_RECIPES.recipeBuilder("steel_from_coal_gem").inputItems(ingot, Iron)
                 .inputItems(gem, Coal, 2).outputItems(ingot, Steel).outputItems(dustTiny, DarkAsh, 2).duration(1800)
                 .save(provider);
@@ -247,7 +247,7 @@ public class MachineRecipeLoader {
                 .inputItems(block, Coke).outputItems(block, Steel).outputItems(dust, Ash).duration(5400).save(provider);
     }
 
-    private static void registerCokeOvenRecipes(Consumer<FinishedRecipe> provider) {
+    private static void registerCokeOvenRecipes(Consumer<GeneratedRecipe> provider) {
         COKE_OVEN_RECIPES.recipeBuilder("log_to_charcoal").inputItems(ItemTags.LOGS_THAT_BURN)
                 .outputItems(gem, Charcoal)
                 .outputFluids(Creosote.getFluid(250)).duration(900).save(provider);
@@ -257,7 +257,7 @@ public class MachineRecipeLoader {
                 .outputFluids(Creosote.getFluid(4500)).duration(8100).save(provider);
     }
 
-    private static void registerStoneBricksRecipes(Consumer<FinishedRecipe> provider) {
+    private static void registerStoneBricksRecipes(Consumer<GeneratedRecipe> provider) {
         // normal variant -> cobble variant
         List<ItemStack> cobbles = GTBlocks.STONE_BLOCKS.row(StoneBlockType.COBBLE).values().stream().map(ItemStack::new)
                 .toList();
@@ -313,7 +313,7 @@ public class MachineRecipeLoader {
         }
     }
 
-    private static void registerMixingCrystallizationRecipes(Consumer<FinishedRecipe> provider) {
+    private static void registerMixingCrystallizationRecipes(Consumer<GeneratedRecipe> provider) {
         AUTOCLAVE_RECIPES.recipeBuilder("silicon_dioxide_to_quartzite_gem")
                 .inputItems(dust, SiliconDioxide)
                 .inputFluids(DistilledWater.getFluid(250))
@@ -374,7 +374,7 @@ public class MachineRecipeLoader {
             { new MaterialStack(Magnesium, 1), new MaterialStack(Aluminium, 2L), new MaterialStack(Magnalium, 3L) },
             { new MaterialStack(Silver, 1), new MaterialStack(Electrotine, 4), new MaterialStack(BlueAlloy, 1) } };
 
-    private static void registerAlloyRecipes(Consumer<FinishedRecipe> provider) {
+    private static void registerAlloyRecipes(Consumer<GeneratedRecipe> provider) {
         for (MaterialStack[] stack : alloySmelterList) {
             String recipeNape = stack[0].material().getName() + "_%s_and_" + stack[1].material().getName() +
                     "_%s_into_" + stack[2].material().getName();
@@ -428,7 +428,7 @@ public class MachineRecipeLoader {
                 .save(provider);
     }
 
-    private static void registerAssemblerRecipes(Consumer<FinishedRecipe> provider) {
+    private static void registerAssemblerRecipes(Consumer<GeneratedRecipe> provider) {
         for (DyeColor color : DyeColor.values()) {
 
             CANNER_RECIPES.recipeBuilder("spray_can_" + color.getName())
@@ -1079,7 +1079,7 @@ public class MachineRecipeLoader {
                 .addMaterialInfo(true).save(provider);
     }
 
-    private static void registerBlastFurnaceRecipes(Consumer<FinishedRecipe> provider) {
+    private static void registerBlastFurnaceRecipes(Consumer<GeneratedRecipe> provider) {
         BLAST_RECIPES.recipeBuilder("aluminium_from_ruby_dust").duration(400).EUt(100).inputItems(dust, Ruby)
                 .outputItems(nugget, Aluminium, 3).chancedOutput(dust, Ash, "1/9").blastFurnaceTemp(1200)
                 .save(provider);
@@ -1113,7 +1113,7 @@ public class MachineRecipeLoader {
         registerBlastFurnaceMetallurgyRecipes(provider);
     }
 
-    private static void registerBlastFurnaceMetallurgyRecipes(Consumer<FinishedRecipe> provider) {
+    private static void registerBlastFurnaceMetallurgyRecipes(Consumer<GeneratedRecipe> provider) {
         createSulfurDioxideRecipe(provider, Stibnite, AntimonyTrioxide, 1500);
         createSulfurDioxideRecipe(provider, Sphalerite, Zincite, 1000);
         createSulfurDioxideRecipe(provider, Pyrite, Hematite, 2000);
@@ -1161,7 +1161,7 @@ public class MachineRecipeLoader {
                 .save(provider);
     }
 
-    private static void createSulfurDioxideRecipe(Consumer<FinishedRecipe> provider, Material inputMaterial,
+    private static void createSulfurDioxideRecipe(Consumer<GeneratedRecipe> provider, Material inputMaterial,
                                                   Material outputMaterial, int sulfurDioxideAmount) {
         BLAST_RECIPES.recipeBuilder(inputMaterial.getName() + "_metallurgy").duration(120).EUt(VA[MV])
                 .blastFurnaceTemp(1200)
@@ -1173,7 +1173,7 @@ public class MachineRecipeLoader {
                 .save(provider);
     }
 
-    private static void registerDecompositionRecipes(Consumer<FinishedRecipe> provider) {
+    private static void registerDecompositionRecipes(Consumer<GeneratedRecipe> provider) {
         EXTRACTOR_RECIPES.recipeBuilder("raw_rubber_from_resin")
                 .inputItems(STICKY_RESIN)
                 .outputItems(dust, RawRubber, 3)
@@ -1238,7 +1238,7 @@ public class MachineRecipeLoader {
                 .inputItems(new ItemStack(Items.HORN_CORAL, 8)).outputItems(PLANT_BALL).save(provider);
     }
 
-    private static void registerRecyclingRecipes(Consumer<FinishedRecipe> provider) {
+    private static void registerRecyclingRecipes(Consumer<GeneratedRecipe> provider) {
         MACERATOR_RECIPES.recipeBuilder("macerate_end_stone")
                 .inputItems(new ItemStack(Blocks.END_STONE))
                 .outputItems(dust, Endstone)
@@ -1386,7 +1386,7 @@ public class MachineRecipeLoader {
                 .duration(102).EUt(2).save(provider);
     }
 
-    private static void registerFluidRecipes(Consumer<FinishedRecipe> provider) {
+    private static void registerFluidRecipes(Consumer<GeneratedRecipe> provider) {
         FLUID_HEATER_RECIPES.recipeBuilder("heat_ice_to_water").duration(32).EUt(4)
                 .inputFluids(Ice.getFluid(L))
                 .circuitMeta(1)
@@ -1413,7 +1413,7 @@ public class MachineRecipeLoader {
                 .save(provider);
     }
 
-    private static void registerSmoothRecipe(Consumer<FinishedRecipe> provider, List<ItemStack> roughStack,
+    private static void registerSmoothRecipe(Consumer<GeneratedRecipe> provider, List<ItemStack> roughStack,
                                              List<ItemStack> stoneStack) {
         for (int i = 0; i < roughStack.size(); i++) {
             Identifier stoneId = BuiltInRegistries.ITEM.getKey(stoneStack.get(i).getItem());
@@ -1428,7 +1428,7 @@ public class MachineRecipeLoader {
         }
     }
 
-    private static void registerCobbleRecipe(Consumer<FinishedRecipe> provider, List<ItemStack> stoneStack,
+    private static void registerCobbleRecipe(Consumer<GeneratedRecipe> provider, List<ItemStack> stoneStack,
                                              List<ItemStack> cobbleStack) {
         for (int i = 0; i < stoneStack.size(); i++) {
             Identifier cobbleId = BuiltInRegistries.ITEM.getKey(cobbleStack.get(i).getItem());
@@ -1439,7 +1439,7 @@ public class MachineRecipeLoader {
         }
     }
 
-    private static void registerBricksRecipe(Consumer<FinishedRecipe> provider, List<ItemStack> polishedStack,
+    private static void registerBricksRecipe(Consumer<GeneratedRecipe> provider, List<ItemStack> polishedStack,
                                              List<ItemStack> brickStack, TagKey<Item> lensTag) {
         for (int i = 0; i < polishedStack.size(); i++) {
             Identifier brickId = BuiltInRegistries.ITEM.getKey(brickStack.get(i).getItem());
@@ -1451,7 +1451,7 @@ public class MachineRecipeLoader {
         }
     }
 
-    private static void registerMossRecipe(Consumer<FinishedRecipe> provider, List<ItemStack> regularStack,
+    private static void registerMossRecipe(Consumer<GeneratedRecipe> provider, List<ItemStack> regularStack,
                                            List<ItemStack> mossStack) {
         for (int i = 0; i < regularStack.size(); i++) {
             Identifier mossId = BuiltInRegistries.ITEM.getKey(mossStack.get(i).getItem());
@@ -1471,7 +1471,7 @@ public class MachineRecipeLoader {
         }
     }
 
-    private static void registerNBTRemoval(Consumer<FinishedRecipe> provider) {
+    private static void registerNBTRemoval(Consumer<GeneratedRecipe> provider) {
         for (MachineDefinition chest : GTMachines.SUPER_CHEST) {
             if (chest != null) {
                 VanillaRecipeHelper.addShapelessNBTClearingRecipe(provider, "super_chest_nbt_" + chest.getTier(),
@@ -1564,7 +1564,7 @@ public class MachineRecipeLoader {
                 COMPOSITE_FLUID_FILTER.asStack());
     }
 
-    private static void registerHatchConversion(Consumer<FinishedRecipe> provider) {
+    private static void registerHatchConversion(Consumer<GeneratedRecipe> provider) {
         for (int i = 0; i < FLUID_IMPORT_HATCH.length; i++) {
             if (FLUID_IMPORT_HATCH[i] != null && FLUID_EXPORT_HATCH[i] != null) {
 

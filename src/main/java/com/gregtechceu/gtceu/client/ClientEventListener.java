@@ -52,7 +52,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-@Mod.EventBusSubscriber(modid = GTCEu.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
+@net.neoforged.fml.common.EventBusSubscriber(modid = GTCEu.MOD_ID, value = Dist.CLIENT)
 @OnlyIn(Dist.CLIENT)
 public class ClientEventListener {
 

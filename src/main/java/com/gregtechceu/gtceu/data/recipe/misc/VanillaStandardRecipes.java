@@ -9,9 +9,9 @@ import com.gregtechceu.gtceu.common.data.GTRecipeCategories;
 import com.gregtechceu.gtceu.config.ConfigHolder;
 import com.gregtechceu.gtceu.data.recipe.CustomTags;
 import com.gregtechceu.gtceu.data.recipe.VanillaRecipeHelper;
+import com.gregtechceu.gtceu.data.recipe.GeneratedRecipe;
 
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.DyeColor;
@@ -30,7 +30,7 @@ import static com.gregtechceu.gtceu.common.data.GTRecipeTypes.*;
 
 public class VanillaStandardRecipes {
 
-    public static void init(Consumer<FinishedRecipe> provider) {
+    public static void init(Consumer<GeneratedRecipe> provider) {
         compressingRecipes(provider);
         glassRecipes(provider);
         smashingRecipes(provider);
@@ -47,7 +47,7 @@ public class VanillaStandardRecipes {
     /**
      * + Adds compression recipes for vanilla items
      */
-    private static void compressingRecipes(Consumer<FinishedRecipe> provider) {
+    private static void compressingRecipes(Consumer<GeneratedRecipe> provider) {
         COMPRESSOR_RECIPES.recipeBuilder("stone_from_dust").duration(300).EUt(2)
                 .inputItems(plate, Stone, 9)
                 .outputItems(new ItemStack(Blocks.STONE))
@@ -158,7 +158,7 @@ public class VanillaStandardRecipes {
      * + Adds steam age manual glass recipes
      * - Removes some glass related recipes based on configs
      */
-    private static void glassRecipes(Consumer<FinishedRecipe> provider) {
+    private static void glassRecipes(Consumer<GeneratedRecipe> provider) {
         VanillaRecipeHelper.addShapedRecipe(provider, "glass_dust_hammer", ChemicalHelper.get(dust, Glass), "hG", 'G',
                 new ItemStack(Blocks.GLASS));
 
@@ -264,7 +264,7 @@ public class VanillaStandardRecipes {
     /**
      * Adds smashing related recipes for vanilla blocks and items
      */
-    private static void smashingRecipes(Consumer<FinishedRecipe> provider) {
+    private static void smashingRecipes(Consumer<GeneratedRecipe> provider) {
         FORGE_HAMMER_RECIPES.recipeBuilder("cobblestone_to_gravel")
                 .inputItems(ItemTags.STONE_CRAFTING_MATERIALS)
                 .outputItems(new ItemStack(Blocks.GRAVEL))
@@ -376,7 +376,7 @@ public class VanillaStandardRecipes {
     /**
      * + Adds new recipes for wood related items and blocks
      */
-    private static void woodRecipes(Consumer<FinishedRecipe> provider) {
+    private static void woodRecipes(Consumer<GeneratedRecipe> provider) {
         MACERATOR_RECIPES.recipeBuilder("macerate_logs")
                 .inputItems(ItemTags.LOGS)
                 .outputItems(dust, Wood, 6)
@@ -515,7 +515,7 @@ public class VanillaStandardRecipes {
     /**
      * + Adds cutting recipes for vanilla blocks
      */
-    private static void cuttingRecipes(Consumer<FinishedRecipe> provider) {
+    private static void cuttingRecipes(Consumer<GeneratedRecipe> provider) {
         CUTTER_RECIPES.recipeBuilder("snow_layer")
                 .inputItems(new ItemStack(Blocks.SNOW_BLOCK))
                 .outputItems(new ItemStack(Blocks.SNOW, 12))
@@ -525,7 +525,7 @@ public class VanillaStandardRecipes {
     /**
      * + Adds dying and cleaning recipes for vanilla blocks
      */
-    private static void dyingCleaningRecipes(Consumer<FinishedRecipe> provider) {
+    private static void dyingCleaningRecipes(Consumer<GeneratedRecipe> provider) {
         for (DyeColor color : DyeColor.values()) {
             String dyeName = color.getName();
             MIXER_RECIPES.recipeBuilder(dyeName + "_concrete_powder").duration(200).EUt(VA[ULV])
@@ -704,7 +704,7 @@ public class VanillaStandardRecipes {
     /**
      * + Adds more redstone related recipes
      */
-    private static void redstoneRecipes(Consumer<FinishedRecipe> provider) {
+    private static void redstoneRecipes(Consumer<GeneratedRecipe> provider) {
         ASSEMBLER_RECIPES.recipeBuilder("sticky_piston_resin")
                 .inputItems(STICKY_RESIN)
                 .inputItems(new ItemStack(Blocks.PISTON))
@@ -786,7 +786,7 @@ public class VanillaStandardRecipes {
      * + Adds metal related recipes
      * + Adds horse armor and chainmail recipes
      */
-    private static void metalRecipes(Consumer<FinishedRecipe> provider) {
+    private static void metalRecipes(Consumer<GeneratedRecipe> provider) {
         BENDER_RECIPES.recipeBuilder("bucket")
                 .circuitMeta(12)
                 .inputItems(plate, Iron, 3)
@@ -890,7 +890,7 @@ public class VanillaStandardRecipes {
      * Adds alternative gunpowder recipes
      * Adds polished stone variant autoclave recipes
      */
-    private static void miscRecipes(Consumer<FinishedRecipe> provider) {
+    private static void miscRecipes(Consumer<GeneratedRecipe> provider) {
         if (ConfigHolder.INSTANCE.recipes.hardToolArmorRecipes) {
             ASSEMBLER_RECIPES.recipeBuilder("fishing_rod")
                     .inputItems(new ItemStack(Items.STRING))
@@ -1251,7 +1251,7 @@ public class VanillaStandardRecipes {
     /**
      * Adds various mixer recipes for vanilla items and blocks
      */
-    private static void mixingRecipes(Consumer<FinishedRecipe> provider) {
+    private static void mixingRecipes(Consumer<GeneratedRecipe> provider) {
         MIXER_RECIPES.recipeBuilder("fire_charge")
                 .inputItems(dust, Coal)
                 .inputItems(dust, Gunpowder)
@@ -1273,7 +1273,7 @@ public class VanillaStandardRecipes {
                 .duration(100).EUt(4).save(provider);
     }
 
-    private static void dyeRecipes(Consumer<FinishedRecipe> provider) {
+    private static void dyeRecipes(Consumer<GeneratedRecipe> provider) {
         EXTRACTOR_RECIPES.recipeBuilder("poppy_dye")
                 .inputItems(new ItemStack(Blocks.POPPY))
                 .outputItems(new ItemStack(Items.RED_DYE, 2))

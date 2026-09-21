@@ -2,8 +2,8 @@ package com.gregtechceu.gtceu.data.recipe.serialized.chemistry;
 
 import com.gregtechceu.gtceu.common.data.GTBlocks;
 import com.gregtechceu.gtceu.common.data.GTItems;
+import com.gregtechceu.gtceu.data.recipe.GeneratedRecipe;
 
-import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -19,7 +19,7 @@ import static com.gregtechceu.gtceu.common.data.GTRecipeTypes.*;
 
 public class ReactorRecipes {
 
-    public static void init(Consumer<FinishedRecipe> provider) {
+    public static void init(Consumer<GeneratedRecipe> provider) {
         CHEMICAL_RECIPES.recipeBuilder("raw_rubber_from_air")
                 .circuitMeta(1)
                 .inputFluids(Isoprene.getFluid(L))

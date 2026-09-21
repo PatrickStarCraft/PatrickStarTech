@@ -10,10 +10,10 @@ import com.gregtechceu.gtceu.api.recipe.lookup.RecipeDB;
 import com.gregtechceu.gtceu.api.sound.SoundEntry;
 import com.gregtechceu.gtceu.data.recipe.builder.GTRecipeBuilder;
 import com.gregtechceu.gtceu.utils.FormattingUtil;
+import com.gregtechceu.gtceu.data.recipe.GeneratedRecipe;
 
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
@@ -240,7 +240,7 @@ public class GTRecipeType implements RecipeType<GTRecipe> {
         return recipeBuilder.copyFrom(builder);
     }
 
-    public GTRecipeType onRecipeBuild(BiConsumer<GTRecipeBuilder, Consumer<FinishedRecipe>> onBuild) {
+    public GTRecipeType onRecipeBuild(BiConsumer<GTRecipeBuilder, Consumer<GeneratedRecipe>> onBuild) {
         recipeBuilder.onSave(onBuild);
         return this;
     }

@@ -11,8 +11,8 @@ import com.gregtechceu.gtceu.data.recipe.CustomTags;
 import com.gregtechceu.gtceu.data.recipe.GTCraftingComponents;
 import com.gregtechceu.gtceu.data.recipe.VanillaRecipeHelper;
 import com.gregtechceu.gtceu.data.recipe.builder.GTRecipeBuilder;
+import com.gregtechceu.gtceu.data.recipe.GeneratedRecipe;
 
-import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.world.item.ItemStack;
 
 import appeng.core.definitions.AEBlocks;
@@ -34,7 +34,7 @@ import static com.gregtechceu.gtceu.common.data.GTRecipeTypes.ASSEMBLY_LINE_RECI
 
 public class MetaTileEntityMachineRecipeLoader {
 
-    public static void init(Consumer<FinishedRecipe> provider) {
+    public static void init(Consumer<GeneratedRecipe> provider) {
         // Reservoir Hatch
         ASSEMBLER_RECIPES.recipeBuilder("reservoir_hatch")
                 .inputItems(COVER_INFINITE_WATER)
@@ -731,7 +731,7 @@ public class MetaTileEntityMachineRecipeLoader {
         }
     }
 
-    private static void registerLaserRecipes(Consumer<FinishedRecipe> provider) {
+    private static void registerLaserRecipes(Consumer<GeneratedRecipe> provider) {
         // 256A Laser Target Hatches
         for (int tier = 0; tier < LASER_INPUT_HATCH_256.length; tier++) {
             var hatch = LASER_INPUT_HATCH_256[tier];

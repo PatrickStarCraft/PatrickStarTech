@@ -211,8 +211,8 @@ public class OreVeinRecipeWidget extends ParentWidget<OreVeinRecipeWidget> {
 
     private static String veinYield(BedrockOreDefinition oreDefinition) {
         IntProvider yieldProvider = oreDefinition.yield();
-        int minYield = yieldProvider.getMinValue();
-        int maxYield = yieldProvider.getMaxValue();
+        int minYield = yieldProvider.minInclusive();
+        int maxYield = yieldProvider.maxInclusive();
         return String.format("%d - %d", minYield, maxYield);
     }
 

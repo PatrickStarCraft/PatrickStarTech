@@ -11,7 +11,7 @@ public class NBTToJsonConverter {
     public static JsonElement getObject(Tag tag) {
         JsonElement jsonRoot;
         if (tag instanceof CompoundTag compoundTag) {
-            Set<String> keys = compoundTag.getAllKeys();
+            Set<String> keys = compoundTag.keySet();
             jsonRoot = new JsonObject();
             for (String key : keys) {
                 Tag nbt = compoundTag.get(key);

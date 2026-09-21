@@ -5,17 +5,14 @@ import com.gregtechceu.gtceu.common.machine.multiblock.electric.CentralMonitorMa
 import com.gregtechceu.gtceu.common.machine.multiblock.electric.monitor.MonitorGroup;
 import com.gregtechceu.gtceu.common.network.GTNetwork;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.util.LogicalSidedProvider;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-import java.util.Optional;
 
 public class SCPacketMonitorGroupNBTChange implements GTNetwork.INetPacket {
 
@@ -29,28 +26,30 @@ public class SCPacketMonitorGroupNBTChange implements GTNetwork.INetPacket {
         this.pos = machine.getBlockPos();
     }
 
-    public SCPacketMonitorGroupNBTChange(FriendlyByteBuf buf) {
-        this.stack = buf.readItem();
+    public SCPacketMonitorGroupNBTChange(RegistryFriendlyByteBuf buf) {
+        this.stack = ItemStack.OPTIONAL_STREAM_CODEC.decode(buf);
         this.monitorGroupId = buf.readVarInt();
         this.pos = buf.readBlockPos();
     }
 
     @Override
-    public void encode(FriendlyByteBuf buffer) {
-        buffer.writeItemStack(stack, false);
+    public void encode(RegistryFriendlyByteBuf buffer) {
+        ItemStack.OPTIONAL_STREAM_CODEC.encode(buffer, stack);
         buffer.writeVarInt(monitorGroupId);
         buffer.writeBlockPos(pos);
     }
 
     @Override
-    public void execute(NetworkEvent.Context context) {
-        Level level = LogicalSidedProvider.CLIENTWORLD.get(context.getDirection().getReceptionSide())
-                .or(() -> Optional.ofNullable(context.getSender()).map(ServerPlayer::level))
-                .orElse(null);
-        if (level == null) return;
+    public void execute(IPayloadContext context) {
+        Level level = context.player().level();
+        if (!level.hasChunkAt(pos)) return;
+        if (context.player() instanceof ServerPlayer player &&
+                (!player.mayInteract(player.level(), pos) ||
+                        player.distanceToSqr(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5) > 64)) return;
 
         MetaMachine machine = MetaMachine.getMachine(level, pos);
         if (machine instanceof CentralMonitorMachine centralMonitor) {
+            if (monitorGroupId < 0 || monitorGroupId >= centralMonitor.getMonitorGroups().size()) return;
             IItemHandlerModifiable itemHandler = centralMonitor.getMonitorGroups().get(monitorGroupId)
                     .getItemStackHandler();
             if (ItemStack.isSameItem(itemHandler.getStackInSlot(0), stack)) {
@@ -59,10 +58,4 @@ public class SCPacketMonitorGroupNBTChange implements GTNetwork.INetPacket {
         }
     }
 
-    private static class ClientCallWrapper {
-
-        private static Level getClientLevel() {
-            return Minecraft.getInstance().level;
-        }
-    }
 }

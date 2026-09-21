@@ -1,6 +1,6 @@
 package com.gregtechceu.gtceu.data.recipe.serialized.chemistry;
 
-import net.minecraft.data.recipes.FinishedRecipe;
+import com.gregtechceu.gtceu.data.recipe.GeneratedRecipe;
 
 import java.util.function.Consumer;
 
@@ -11,7 +11,7 @@ import static com.gregtechceu.gtceu.common.data.GTRecipeTypes.LARGE_CHEMICAL_REC
 
 public class FuelRecipeChains {
 
-    public static void init(Consumer<FinishedRecipe> provider) {
+    public static void init(Consumer<GeneratedRecipe> provider) {
         // High Octane Gasoline
         LARGE_CHEMICAL_RECIPES.recipeBuilder("raw_gasoline").EUt(VA[HV]).duration(100)
                 .inputFluids(Naphtha.getFluid(16000))

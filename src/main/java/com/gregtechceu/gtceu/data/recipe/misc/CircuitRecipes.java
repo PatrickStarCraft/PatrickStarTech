@@ -6,8 +6,8 @@ import com.gregtechceu.gtceu.common.data.GTRecipeCategories;
 import com.gregtechceu.gtceu.config.ConfigHolder;
 import com.gregtechceu.gtceu.data.recipe.CustomTags;
 import com.gregtechceu.gtceu.data.recipe.VanillaRecipeHelper;
+import com.gregtechceu.gtceu.data.recipe.GeneratedRecipe;
 
-import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
@@ -21,14 +21,14 @@ import static com.gregtechceu.gtceu.common.data.GTRecipeTypes.*;
 
 public class CircuitRecipes {
 
-    public static void init(Consumer<FinishedRecipe> provider) {
+    public static void init(Consumer<GeneratedRecipe> provider) {
         waferRecipes(provider);
         componentRecipes(provider);
         boardRecipes(provider);
         circuitRecipes(provider);
     }
 
-    private static void waferRecipes(Consumer<FinishedRecipe> provider) {
+    private static void waferRecipes(Consumer<GeneratedRecipe> provider) {
         // Boules
         BLAST_RECIPES.recipeBuilder("silicon_boule")
                 .inputItems(dust, Silicon, 32)
@@ -306,7 +306,7 @@ public class CircuitRecipes {
                 .cleanroom(CleanroomType.CLEANROOM).save(provider);
     }
 
-    private static void componentRecipes(Consumer<FinishedRecipe> provider) {
+    private static void componentRecipes(Consumer<GeneratedRecipe> provider) {
         // Vacuum Tube
         VanillaRecipeHelper.addShapedRecipe(provider, "vacuum_tube", VACUUM_TUBE.asStack(),
                 "PTP", "WWW",
@@ -768,7 +768,7 @@ public class CircuitRecipes {
                 .duration(480).EUt(VA[IV]).save(provider);
     }
 
-    private static void boardRecipes(Consumer<FinishedRecipe> provider) {
+    private static void boardRecipes(Consumer<GeneratedRecipe> provider) {
         // Coated Board
         VanillaRecipeHelper.addShapedRecipe(provider, "coated_board", COATED_BOARD.asStack(3),
                 "RRR", "PPP", "RRR",
@@ -1001,7 +1001,7 @@ public class CircuitRecipes {
                 .save(provider);
     }
 
-    private static void circuitRecipes(Consumer<FinishedRecipe> provider) {
+    private static void circuitRecipes(Consumer<GeneratedRecipe> provider) {
         int outputAmount = ConfigHolder.INSTANCE.recipes.harderCircuitRecipes ? 1 : 2;
 
         // T1: Electronic ==============================================================================================

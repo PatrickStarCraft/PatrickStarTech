@@ -1,8 +1,8 @@
 package com.gregtechceu.gtceu.data.recipe.serialized.chemistry;
 
 import com.gregtechceu.gtceu.api.fluids.store.FluidStorageKeys;
+import com.gregtechceu.gtceu.data.recipe.GeneratedRecipe;
 
-import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 
@@ -16,7 +16,7 @@ import static com.gregtechceu.gtceu.common.data.GTRecipeTypes.*;
 
 public class ChemistryRecipes {
 
-    public static void init(Consumer<FinishedRecipe> provider) {
+    public static void init(Consumer<GeneratedRecipe> provider) {
         AcidRecipes.init(provider);
         BrewingRecipes.init(provider);
         ChemicalBathRecipes.init(provider);

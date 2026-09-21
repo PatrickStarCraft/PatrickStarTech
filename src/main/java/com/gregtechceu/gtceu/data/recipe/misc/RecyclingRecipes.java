@@ -15,9 +15,9 @@ import com.gregtechceu.gtceu.common.data.GTRecipeCategories;
 import com.gregtechceu.gtceu.common.data.GTRecipeTypes;
 import com.gregtechceu.gtceu.config.ConfigHolder;
 import com.gregtechceu.gtceu.data.recipe.builder.GTRecipeBuilder;
+import com.gregtechceu.gtceu.data.recipe.GeneratedRecipe;
 
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -42,7 +42,7 @@ public class RecyclingRecipes {
 
     // TODO - Work on durations and EUt's
 
-    public static void init(Consumer<FinishedRecipe> provider) {
+    public static void init(Consumer<GeneratedRecipe> provider) {
         for (var entry : ChemicalHelper.getAllItemInfos()) {
             ItemStack itemStack = entry.getFirst();
             ItemMaterialInfo materialInfo = entry.getSecond();
@@ -51,7 +51,7 @@ public class RecyclingRecipes {
         }
     }
 
-    public static void registerRecyclingRecipes(Consumer<FinishedRecipe> provider, ItemStack input,
+    public static void registerRecyclingRecipes(Consumer<GeneratedRecipe> provider, ItemStack input,
                                                 List<MaterialStack> components, boolean ignoreArcSmelting,
                                                 @Nullable TagPrefix prefix) {
         // Gather the valid Materials for use in recycling recipes.
@@ -103,7 +103,7 @@ public class RecyclingRecipes {
         }
     }
 
-    private static void registerMaceratorRecycling(Consumer<FinishedRecipe> provider, ItemStack input,
+    private static void registerMaceratorRecycling(Consumer<GeneratedRecipe> provider, ItemStack input,
                                                    List<MaterialStack> materials, int multiplier) {
         // Finalize the output list.
         final float maceratorYield = ConfigHolder.INSTANCE.recipes.maceratorRecyclingYield;
@@ -138,7 +138,7 @@ public class RecyclingRecipes {
         builder.save(provider);
     }
 
-    private static void registerExtractorRecycling(Consumer<FinishedRecipe> provider, ItemStack input,
+    private static void registerExtractorRecycling(Consumer<GeneratedRecipe> provider, ItemStack input,
                                                    List<MaterialStack> materials, int multiplier,
                                                    @Nullable TagPrefix prefix) {
         MaterialEntry entry = ChemicalHelper.getMaterialEntry(input.getItem());
@@ -225,7 +225,7 @@ public class RecyclingRecipes {
         extractorBuilder.save(provider);
     }
 
-    private static void registerArcRecycling(Consumer<FinishedRecipe> provider, ItemStack input,
+    private static void registerArcRecycling(Consumer<GeneratedRecipe> provider, ItemStack input,
                                              List<MaterialStack> materials, @Nullable TagPrefix prefix) {
         MaterialEntry entry = ChemicalHelper.getMaterialEntry(input.getItem());
         TagKey<Item> inputTag = null;

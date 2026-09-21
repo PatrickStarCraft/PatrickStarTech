@@ -2,8 +2,8 @@ package com.gregtechceu.gtceu.data.recipe.misc;
 
 import com.gregtechceu.gtceu.api.data.chemical.ChemicalHelper;
 import com.gregtechceu.gtceu.data.recipe.CustomTags;
+import com.gregtechceu.gtceu.data.recipe.GeneratedRecipe;
 
-import net.minecraft.data.recipes.FinishedRecipe;
 
 import java.util.function.Consumer;
 
@@ -17,7 +17,7 @@ import static com.gregtechceu.gtceu.common.data.machines.GTMultiMachines.FUSION_
 
 public class AssemblyLineLoader {
 
-    public static void init(Consumer<FinishedRecipe> provider) {
+    public static void init(Consumer<GeneratedRecipe> provider) {
         ASSEMBLY_LINE_RECIPES.recipeBuilder("fusion_reactor_mk1")
                 .inputItems(SUPERCONDUCTING_COIL.asStack())
                 .inputItems(CustomTags.ZPM_CIRCUITS, 4)

@@ -1,6 +1,6 @@
 package com.gregtechceu.gtceu.data.recipe.serialized.chemistry;
 
-import net.minecraft.data.recipes.FinishedRecipe;
+import com.gregtechceu.gtceu.data.recipe.GeneratedRecipe;
 
 import java.util.function.Consumer;
 
@@ -11,7 +11,7 @@ import static com.gregtechceu.gtceu.common.data.GTRecipeTypes.LARGE_CHEMICAL_REC
 
 public class LCRCombined {
 
-    public static void init(Consumer<FinishedRecipe> provider) {
+    public static void init(Consumer<GeneratedRecipe> provider) {
         LARGE_CHEMICAL_RECIPES.recipeBuilder("ammonia_shortcut")
                 .circuitMeta(24)
                 .inputFluids(Methane.getFluid(3000))

@@ -1,8 +1,8 @@
 package com.gregtechceu.gtceu.data.recipe.misc;
 
 import com.gregtechceu.gtceu.common.data.GTRecipeCategories;
+import com.gregtechceu.gtceu.data.recipe.GeneratedRecipe;
 
-import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -23,13 +23,13 @@ public class DecorationRecipes {
 
     private DecorationRecipes() {}
 
-    public static void init(Consumer<FinishedRecipe> provider) {
+    public static void init(Consumer<GeneratedRecipe> provider) {
         assemblerRecipes(provider);
         dyeRecipes(provider);
         copperOxidationRecipes(provider);
     }
 
-    private static void assemblerRecipes(Consumer<FinishedRecipe> provider) {
+    private static void assemblerRecipes(Consumer<GeneratedRecipe> provider) {
         ASSEMBLER_RECIPES.recipeBuilder("metal_sheet_white")
                 .inputItems(block, Concrete, 5)
                 .inputItems(plate, Iron, 2)
@@ -55,7 +55,7 @@ public class DecorationRecipes {
                 .addMaterialInfo(true).save(provider);
     }
 
-    private static void dyeRecipes(Consumer<FinishedRecipe> provider) {
+    private static void dyeRecipes(Consumer<GeneratedRecipe> provider) {
         for (DyeColor color : DyeColor.values()) {
             CHEMICAL_BATH_RECIPES.recipeBuilder("metal_sheet_%s".formatted(color.getName()))
                     .inputItems(METAL_SHEETS.get(DyeColor.WHITE).asStack())
@@ -83,7 +83,7 @@ public class DecorationRecipes {
         }
     }
 
-    private static void copperOxidationRecipes(Consumer<FinishedRecipe> provider) {
+    private static void copperOxidationRecipes(Consumer<GeneratedRecipe> provider) {
         registerOxidationChain(provider, "copper_block", Items.COPPER_BLOCK, Items.EXPOSED_COPPER,
                 Items.WEATHERED_COPPER, Items.OXIDIZED_COPPER);
         registerOxidationChain(provider, "cut_copper", Items.CUT_COPPER, Items.EXPOSED_CUT_COPPER,
@@ -194,7 +194,7 @@ public class DecorationRecipes {
 
     private static final String[] OXIDATION_STAGES = { "raw", "exposed", "weathered", "oxidized" };
 
-    private static void registerOxidationChain(Consumer<FinishedRecipe> provider, String name, Item... items) {
+    private static void registerOxidationChain(Consumer<GeneratedRecipe> provider, String name, Item... items) {
         for (int i = 0; i < items.length - 1; i++) {
             CHEMICAL_BATH_RECIPES
                     .recipeBuilder(

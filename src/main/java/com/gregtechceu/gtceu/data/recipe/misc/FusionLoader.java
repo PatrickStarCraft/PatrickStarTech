@@ -2,8 +2,8 @@ package com.gregtechceu.gtceu.data.recipe.misc;
 
 import com.gregtechceu.gtceu.api.fluids.store.FluidStorageKeys;
 import com.gregtechceu.gtceu.common.data.GTMaterials;
+import com.gregtechceu.gtceu.data.recipe.GeneratedRecipe;
 
-import net.minecraft.data.recipes.FinishedRecipe;
 
 import java.util.function.Consumer;
 
@@ -12,7 +12,7 @@ import static com.gregtechceu.gtceu.common.data.GTRecipeTypes.FUSION_RECIPES;
 
 public class FusionLoader {
 
-    public static void init(Consumer<FinishedRecipe> provider) {
+    public static void init(Consumer<GeneratedRecipe> provider) {
         FUSION_RECIPES.recipeBuilder("deuterium_and_tritium_to_helium_plasma")
                 .inputFluids(GTMaterials.Deuterium.getFluid(125))
                 .inputFluids(GTMaterials.Tritium.getFluid(125))

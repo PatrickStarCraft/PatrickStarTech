@@ -4,8 +4,8 @@ import com.gregtechceu.gtceu.api.machine.multiblock.CleanroomType;
 import com.gregtechceu.gtceu.common.data.machines.GTMultiMachines;
 import com.gregtechceu.gtceu.config.ConfigHolder;
 import com.gregtechceu.gtceu.data.recipe.CustomTags;
+import com.gregtechceu.gtceu.data.recipe.GeneratedRecipe;
 
-import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.function.Consumer;
@@ -21,7 +21,7 @@ import static com.gregtechceu.gtceu.common.data.machines.GTResearchMachines.*;
 
 public class ComputerRecipes {
 
-    public static void init(Consumer<FinishedRecipe> provider) {
+    public static void init(Consumer<GeneratedRecipe> provider) {
         ASSEMBLER_RECIPES.recipeBuilder("basic_data_access_hatch")
                 .inputItems(ITEM_IMPORT_BUS[HV])
                 .inputItems(TOOL_DATA_STICK, 4)

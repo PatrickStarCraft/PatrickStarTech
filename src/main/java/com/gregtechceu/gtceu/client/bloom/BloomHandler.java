@@ -25,7 +25,7 @@ import static com.gregtechceu.gtceu.client.bloom.BloomRenderer.BLOOM_RENDER_LOCK
 @UtilityClass
 public class BloomHandler {
 
-    @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
+    @net.neoforged.fml.common.EventBusSubscriber()
     @UtilityClass
     public static class RenderStage {
 

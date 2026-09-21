@@ -47,9 +47,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.neoforged.neoforge.common.util.LazyOptional;
+import net.neoforged.neoforge.capabilities.BlockCapability;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 
@@ -128,22 +127,21 @@ public class FluidPipeBlockEntity extends PipeBlockEntity<FluidPipeType, FluidPi
 
     @NotNull
     @Override
-    public <T> LazyOptional<T> getCapability(Capability<T> capability, @Nullable Direction facing) {
-        if (capability == ForgeCapabilities.FLUID_HANDLER) {
+    public <T> @Nullable T getGTCapability(BlockCapability<T, Direction> capability, @Nullable Direction facing) {
+        if (capability == Capabilities.FluidHandler.BLOCK) {
             if (facing != null && isConnected(facing)) {
                 PipeTankList tankList = getTankList(facing);
                 if (tankList == null)
-                    return LazyOptional.empty();
+                    return null;
 
                 IOFluidHandlerList list = new IOFluidHandlerList(List.of(tankList), IO.BOTH,
                         getFluidCapFilter(facing, IO.IN), getFluidCapFilter(facing, IO.OUT));
-                return ForgeCapabilities.FLUID_HANDLER.orEmpty(capability,
-                        LazyOptional.of(() -> list));
+                return capability.typeClass().cast(list);
             }
         } else if (capability == GTCapability.CAPABILITY_COVERABLE) {
-            return GTCapability.CAPABILITY_COVERABLE.orEmpty(capability, LazyOptional.of(this::getCoverContainer));
+            return capability.typeClass().cast(getCoverContainer());
         }
-        return super.getCapability(capability, facing);
+        return super.getGTCapability(capability, facing);
     }
 
     public int getCapacityPerTank() {
@@ -199,8 +197,7 @@ public class FluidPipeBlockEntity extends PipeBlockEntity<FluidPipeType, FluidPi
 
             BlockEntity neighbor = getNeighbor(facing);
             if (neighbor == null) continue;
-            IFluidHandler fluidHandler = neighbor.getCapability(ForgeCapabilities.FLUID_HANDLER, facing.getOpposite())
-                    .resolve().orElse(null);
+            IFluidHandler fluidHandler = GTCapabilityHelper.getFluidHandler(level, neighbor.getBlockPos(), facing.getOpposite());
             if (fluidHandler == null) continue;
 
             IFluidHandlerModifiable pipeTank = tank;
@@ -212,8 +209,7 @@ public class FluidPipeBlockEntity extends PipeBlockEntity<FluidPipeType, FluidPi
                 // Shutter covers return null capability when active, so check here to prevent NPE
                 if (pipeTank == null || checkForPumpCover(cover)) continue;
             } else {
-                ICoverable coverable = neighbor.getCapability(GTCapability.CAPABILITY_COVERABLE, facing.getOpposite())
-                        .resolve().orElse(null);
+                ICoverable coverable = GTCapabilityHelper.getCoverable(level, neighbor.getBlockPos(), facing.getOpposite());
                 if (coverable != null) {
                     cover = coverable.getCoverAtSide(facing.getOpposite());
                     if (checkForPumpCover(cover)) continue;

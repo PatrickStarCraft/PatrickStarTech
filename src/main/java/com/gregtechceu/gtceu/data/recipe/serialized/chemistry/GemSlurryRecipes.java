@@ -1,6 +1,6 @@
 package com.gregtechceu.gtceu.data.recipe.serialized.chemistry;
 
-import net.minecraft.data.recipes.FinishedRecipe;
+import com.gregtechceu.gtceu.data.recipe.GeneratedRecipe;
 
 import java.util.function.Consumer;
 
@@ -12,7 +12,7 @@ import static com.gregtechceu.gtceu.common.data.GTRecipeTypes.MIXER_RECIPES;
 
 public class GemSlurryRecipes {
 
-    public static void init(Consumer<FinishedRecipe> provider) {
+    public static void init(Consumer<GeneratedRecipe> provider) {
         // Ruby
         MIXER_RECIPES.recipeBuilder("ruby_slurry_from_crushed_ruby").duration(280).EUt(VA[EV])
                 .inputItems(crushed, Ruby, 2)

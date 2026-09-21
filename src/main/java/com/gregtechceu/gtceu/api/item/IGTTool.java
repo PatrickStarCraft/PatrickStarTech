@@ -513,8 +513,8 @@ public interface IGTTool extends IUIHolder<PlayerInventoryGuiData<?>>, ItemLike,
             CompoundTag newTag = newStack.getTag();
             CompoundTag oldTag = oldStack.getTag();
             if (newTag != null && oldTag != null) {
-                Set<String> newKeys = new HashSet<>(newTag.getAllKeys());
-                Set<String> oldKeys = new HashSet<>(oldTag.getAllKeys());
+                Set<String> newKeys = new HashSet<>(newTag.keySet());
+                Set<String> oldKeys = new HashSet<>(oldTag.keySet());
                 newKeys.remove(ItemStack.TAG_DAMAGE);
                 oldKeys.remove(ItemStack.TAG_DAMAGE);
                 newKeys.remove(CHARGE_KEY);

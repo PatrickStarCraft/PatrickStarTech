@@ -226,7 +226,7 @@ public final class MachineTraitHolder {
             var traitHolder = Objects.requireNonNull(context.currentValue());
             var compoundTag = (CompoundTag) tag;
 
-            for (var key : compoundTag.getAllKeys()) {
+            for (var key : compoundTag.keySet()) {
                 var trait = traitHolder.getPersistentTrait(key);
                 if (trait == null) {
                     GTCEu.LOGGER.warn("Attempted to deserialise syncable trait '{}', but no syncable trait has that ID",

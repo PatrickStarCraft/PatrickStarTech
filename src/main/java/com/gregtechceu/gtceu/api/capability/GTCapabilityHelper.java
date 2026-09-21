@@ -8,8 +8,9 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.neoforged.neoforge.capabilities.BlockCapability;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.IItemHandler;
@@ -27,17 +28,17 @@ public class GTCapabilityHelper {
 
     @Nullable
     public static IEnergyStorage getForgeEnergyItem(ItemStack itemStack) {
-        return itemStack.getCapability(ForgeCapabilities.ENERGY).orElse(null);
+        return itemStack.getCapability(Capabilities.EnergyStorage.ITEM);
     }
 
     @Nullable
     public static IItemHandler getItemHandler(Level level, BlockPos pos, @Nullable Direction side) {
-        return getBlockEntityCapability(ForgeCapabilities.ITEM_HANDLER, level, pos, side);
+        return getBlockEntityCapability(Capabilities.ItemHandler.BLOCK, level, pos, side);
     }
 
     @Nullable
     public static IFluidHandler getFluidHandler(Level level, BlockPos pos, @Nullable Direction side) {
-        return getBlockEntityCapability(ForgeCapabilities.FLUID_HANDLER, level, pos, side);
+        return getBlockEntityCapability(Capabilities.FluidHandler.BLOCK, level, pos, side);
     }
 
     @Nullable
@@ -67,7 +68,7 @@ public class GTCapabilityHelper {
 
     @Nullable
     public static IEnergyStorage getForgeEnergy(Level level, BlockPos pos, @Nullable Direction side) {
-        return getBlockEntityCapability(ForgeCapabilities.ENERGY, level, pos, side);
+        return getBlockEntityCapability(Capabilities.EnergyStorage.BLOCK, level, pos, side);
     }
 
     @Nullable
@@ -97,24 +98,26 @@ public class GTCapabilityHelper {
     }
 
     @Nullable
-    private static <T> T getBlockEntityCapability(Capability<T> capability, Level level, BlockPos pos,
+    public static <T> T getBlockEntityCapability(BlockCapability<T, Direction> capability, Level level, BlockPos pos,
                                                   @Nullable Direction side) {
-        if (level.getBlockState(pos).hasBlockEntity()) {
-            var blockEntity = level.getBlockEntity(pos);
-            if (blockEntity != null) {
-                return blockEntity.getCapability(capability, side).orElse(null);
-            }
-        }
-        return null;
+        return level.getCapability(capability, pos, side);
+    }
+
+    public static <T> @Nullable T getBlockEntityCapability(BlockEntity entity,
+                                                          BlockCapability<T, Direction> capability,
+                                                          @Nullable Direction side) {
+        var level = entity.getLevel();
+        return level == null || entity.isRemoved() ? null :
+                level.getCapability(capability, entity.getBlockPos(), entity.getBlockState(), entity, side);
     }
 
     @Nullable
     public static MedicalConditionTracker getMedicalConditionTracker(@NotNull Entity entity) {
-        return entity.getCapability(GTCapability.CAPABILITY_MEDICAL_CONDITION_TRACKER, null).orElse(null);
+        return entity.getCapability(GTCapability.CAPABILITY_MEDICAL_CONDITION_TRACKER);
     }
 
     @Nullable
     public static ISpoilableItem getSpoilable(ItemStack stack) {
-        return stack.getCapability(GTCapability.CAPABILITY_SPOILABLE_ITEM).resolve().orElse(null);
+        return stack.getCapability(GTCapability.CAPABILITY_SPOILABLE_ITEM);
     }
 }

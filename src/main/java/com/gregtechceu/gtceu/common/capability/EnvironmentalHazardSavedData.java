@@ -315,7 +315,7 @@ public class EnvironmentalHazardSavedData extends SavedData {
             buf.writeFloat(strength);
             buf.writeBoolean(canSpread);
             buf.writeUtf(trigger.name());
-            buf.writeResourceLocation(condition.id);
+            buf.writeIdentifier(condition.id);
         }
 
         public static HazardZone fromNetwork(FriendlyByteBuf buf) {
@@ -323,7 +323,7 @@ public class EnvironmentalHazardSavedData extends SavedData {
             float strength = buf.readFloat();
             boolean canSpread = buf.readBoolean();
             HazardProperty.HazardTrigger trigger = HazardProperty.HazardTrigger.ALL_TRIGGERS.get(buf.readUtf());
-            MedicalCondition condition = GTRegistries.MEDICAL_CONDITIONS.get(buf.readResourceLocation());
+            MedicalCondition condition = GTRegistries.MEDICAL_CONDITIONS.get(buf.readIdentifier());
             return new HazardZone(source, strength, canSpread, trigger, condition);
         }
     }

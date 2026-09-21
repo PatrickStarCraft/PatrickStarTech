@@ -3,10 +3,10 @@ package com.gregtechceu.gtceu.common.network.packets.hazard;
 import com.gregtechceu.gtceu.client.EnvironmentalHazardClientHandler;
 import com.gregtechceu.gtceu.common.network.GTNetwork;
 
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraft.network.protocol.PacketFlow;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -17,18 +17,18 @@ public class SPacketRemoveHazardZone implements GTNetwork.INetPacket {
 
     public ChunkPos pos;
 
-    public SPacketRemoveHazardZone(FriendlyByteBuf buf) {
+    public SPacketRemoveHazardZone(RegistryFriendlyByteBuf buf) {
         pos = buf.readChunkPos();
     }
 
     @Override
-    public void encode(FriendlyByteBuf buf) {
+    public void encode(RegistryFriendlyByteBuf buf) {
         buf.writeChunkPos(pos);
     }
 
     @Override
-    public void execute(NetworkEvent.Context context) {
-        if (context.getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
+    public void execute(IPayloadContext context) {
+        if (context.flow() == PacketFlow.CLIENTBOUND) {
             EnvironmentalHazardClientHandler.INSTANCE.removeHazardZone(pos);
         }
     }

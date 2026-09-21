@@ -280,14 +280,14 @@ public class BlockHighlightRenderer {
     private static void drawLine(PoseStack.Pose pose, VertexConsumer buffer, Vector3fc from, Vector3fc to) {
         Vector3f normal = from.sub(to, new Vector3f());
 
-        buffer.vertex(pose.pose(), from.x(), from.y(), from.z())
-                .color(rColour, gColour, bColour, 1f)
-                .normal(pose.normal(), normal.x(), normal.y(), normal.z())
-                .endVertex();
-        buffer.vertex(pose.pose(), to.x(), to.y(), to.z())
-                .color(rColour, gColour, bColour, 1f)
-                .normal(pose.normal(), normal.x(), normal.y(), normal.z())
-                .endVertex();
+        buffer.addVertex(pose.pose(), from.x(), from.y(), from.z())
+                .setColor(rColour, gColour, bColour, 1f)
+                .setNormal(pose, normal.x(), normal.y(), normal.z())
+                ;
+        buffer.addVertex(pose.pose(), to.x(), to.y(), to.z())
+                .setColor(rColour, gColour, bColour, 1f)
+                .setNormal(pose, normal.x(), normal.y(), normal.z())
+                ;
     }
 
     private static void drawOverlayTexture(PoseStack poseStack, MultiBufferSource bufferSource,
@@ -298,10 +298,10 @@ public class BlockHighlightRenderer {
         float u0 = texture.u0, v0 = texture.v0;
         float u1 = texture.u1, v1 = texture.v1;
         // spotless:off
-        consumer.vertex(pose, x, y + h, 0).color(color).uv(u0, v0 + v1).uv2(LightTexture.FULL_BRIGHT).endVertex();
-        consumer.vertex(pose, x + w, y + h, 0).color(color).uv(u0 + u1, v0 + v1).uv2(LightTexture.FULL_BRIGHT).endVertex();
-        consumer.vertex(pose, x + w, y, 0).color(color).uv(u0 + u1, v0).uv2(LightTexture.FULL_BRIGHT).endVertex();
-        consumer.vertex(pose, x, y, 0).color(color).uv(u0, v0).uv2(LightTexture.FULL_BRIGHT).endVertex();
+        consumer.addVertex(pose, x, y + h, 0).setColor(color).setUv(u0, v0 + v1).setLight(LightTexture.FULL_BRIGHT);
+        consumer.addVertex(pose, x + w, y + h, 0).setColor(color).setUv(u0 + u1, v0 + v1).setLight(LightTexture.FULL_BRIGHT);
+        consumer.addVertex(pose, x + w, y, 0).setColor(color).setUv(u0 + u1, v0).setLight(LightTexture.FULL_BRIGHT);
+        consumer.addVertex(pose, x, y, 0).setColor(color).setUv(u0, v0).setLight(LightTexture.FULL_BRIGHT);
         // spotless:on
     }
 

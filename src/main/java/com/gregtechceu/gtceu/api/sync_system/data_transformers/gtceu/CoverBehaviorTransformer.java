@@ -103,7 +103,7 @@ public class CoverBehaviorTransformer implements ValueTransformer<CoverBehavior>
         buf.writeBoolean(value != null);
         if (value == null) return;
         buf.writeEnum(value.attachedSide);
-        buf.writeResourceLocation(value.coverDefinition.getId());
+        buf.writeIdentifier(value.coverDefinition.getId());
         if (context.isClientFullSyncUpdate()) value.getSyncDataHolder().resyncAllFields();
         value.getSyncDataHolder().writeClientPacket(context.lookup(), buf);
     }
@@ -120,7 +120,7 @@ public class CoverBehaviorTransformer implements ValueTransformer<CoverBehavior>
         }
 
         Direction side = buf.readEnum(Direction.class);
-        Identifier coverId = buf.readResourceLocation();
+        Identifier coverId = buf.readIdentifier();
         CoverBehavior cover = context.currentValue();
 
         if (cover == null || !cover.coverDefinition.getId().equals(coverId)) {

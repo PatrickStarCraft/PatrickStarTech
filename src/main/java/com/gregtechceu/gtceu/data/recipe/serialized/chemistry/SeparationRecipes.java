@@ -1,8 +1,8 @@
 package com.gregtechceu.gtceu.data.recipe.serialized.chemistry;
 
 import com.gregtechceu.gtceu.common.data.GTBlocks;
+import com.gregtechceu.gtceu.data.recipe.GeneratedRecipe;
 
-import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
@@ -18,7 +18,7 @@ import static com.gregtechceu.gtceu.common.data.GTRecipeTypes.*;
 
 public class SeparationRecipes {
 
-    public static void init(Consumer<FinishedRecipe> provider) {
+    public static void init(Consumer<GeneratedRecipe> provider) {
         // Centrifuge
         CENTRIFUGE_RECIPES.recipeBuilder("refinery_gas_separation")
                 .inputFluids(RefineryGas.getFluid(8000))

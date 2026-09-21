@@ -4,8 +4,8 @@ import com.gregtechceu.gtceu.common.network.GTNetwork;
 import com.gregtechceu.gtceu.integration.map.ClientCacheManager;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import lombok.AllArgsConstructor;
 
@@ -27,17 +27,17 @@ public class SPacketStartProspectionShare implements GTNetwork.INetPacket {
     @SuppressWarnings("unused")
     public SPacketStartProspectionShare() {}
 
-    public SPacketStartProspectionShare(FriendlyByteBuf buf) {
+    public SPacketStartProspectionShare(RegistryFriendlyByteBuf buf) {
         receiver = buf.readUUID();
     }
 
     @Override
-    public void encode(FriendlyByteBuf buf) {
+    public void encode(RegistryFriendlyByteBuf buf) {
         buf.writeUUID(receiver);
     }
 
     @Override
-    public void execute(NetworkEvent.Context context) {
+    public void execute(IPayloadContext context) {
         UUID sender = Minecraft.getInstance().player.getUUID();
         Thread sendThread = new Thread(new ProspectingShareTask(sender, receiver));
         sendThread.start();

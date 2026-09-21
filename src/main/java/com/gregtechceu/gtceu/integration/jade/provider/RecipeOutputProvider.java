@@ -186,8 +186,8 @@ public class RecipeOutputProvider extends MachineTraitProvider<RecipeLogic, Comp
                 if (itemOutput instanceof IntProviderIngredient provider) {
                     item = provider.getInner().getItems()[0];
                     text = text.append(Component.translatable("gtceu.gui.content.range",
-                            String.valueOf(provider.getCountProvider().getMinValue()),
-                            String.valueOf(provider.getCountProvider().getMaxValue())));
+                            String.valueOf(provider.getCountProvider().minInclusive()),
+                            String.valueOf(provider.getCountProvider().maxInclusive())));
                 } else {
                     item = itemOutput.getItems()[0];
                     text.append(String.valueOf(item.getCount()));
@@ -211,8 +211,8 @@ public class RecipeOutputProvider extends MachineTraitProvider<RecipeLogic, Comp
                 if (fluidOutput instanceof IntProviderFluidIngredient provider) {
                     stack = provider.getMaxSizeStack();
                     text.append(Component.translatable("gtceu.gui.content.range",
-                            FluidTextHelper.getUnicodeMillibuckets(provider.getCountProvider().getMinValue(), true),
-                            FluidTextHelper.getUnicodeMillibuckets(provider.getCountProvider().getMaxValue(), true)));
+                            FluidTextHelper.getUnicodeMillibuckets(provider.getCountProvider().minInclusive(), true),
+                            FluidTextHelper.getUnicodeMillibuckets(provider.getCountProvider().maxInclusive(), true)));
                 } else {
                     stack = fluidOutput.getStacks()[0];
                     text.append(FluidTextHelper.getUnicodeMillibuckets(stack.getAmount(), true));

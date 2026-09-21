@@ -1,6 +1,6 @@
 package com.gregtechceu.gtceu.data.recipe.serialized.chemistry;
 
-import net.minecraft.data.recipes.FinishedRecipe;
+import com.gregtechceu.gtceu.data.recipe.GeneratedRecipe;
 
 import java.util.function.Consumer;
 
@@ -11,7 +11,7 @@ import static com.gregtechceu.gtceu.common.data.GTRecipeTypes.*;
 
 public class NuclearRecipes {
 
-    public static void init(Consumer<FinishedRecipe> provider) {
+    public static void init(Consumer<GeneratedRecipe> provider) {
         CHEMICAL_RECIPES.recipeBuilder("uranium_hexafluoride").duration(200).EUt(VA[LV])
                 .inputItems(dust, Uraninite, 3)
                 .inputFluids(HydrofluoricAcid.getFluid(4000))

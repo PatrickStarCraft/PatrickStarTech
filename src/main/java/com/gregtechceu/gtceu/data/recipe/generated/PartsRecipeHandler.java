@@ -12,8 +12,8 @@ import com.gregtechceu.gtceu.common.item.behavior.TurbineRotorBehaviour;
 import com.gregtechceu.gtceu.config.ConfigHolder;
 import com.gregtechceu.gtceu.data.recipe.VanillaRecipeHelper;
 import com.gregtechceu.gtceu.data.recipe.builder.GTRecipeBuilder;
+import com.gregtechceu.gtceu.data.recipe.GeneratedRecipe;
 
-import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.fluids.FluidStack;
 
@@ -30,7 +30,7 @@ public final class PartsRecipeHandler {
 
     private PartsRecipeHandler() {}
 
-    public static void run(@NotNull Consumer<FinishedRecipe> provider, @NotNull Material material) {
+    public static void run(@NotNull Consumer<GeneratedRecipe> provider, @NotNull Material material) {
         processRod(provider, material);
         processLongRod(provider, material);
         processPlate(provider, material);
@@ -51,7 +51,7 @@ public final class PartsRecipeHandler {
         processRound(provider, material);
     }
 
-    private static void processBolt(@NotNull Consumer<FinishedRecipe> provider, @NotNull Material material) {
+    private static void processBolt(@NotNull Consumer<GeneratedRecipe> provider, @NotNull Material material) {
         if (!material.shouldGenerateRecipesFor(bolt) || !material.hasProperty(PropertyKey.DUST)) {
             return;
         }
@@ -92,7 +92,7 @@ public final class PartsRecipeHandler {
         }
     }
 
-    private static void processScrew(@NotNull Consumer<FinishedRecipe> provider, @NotNull Material material) {
+    private static void processScrew(@NotNull Consumer<GeneratedRecipe> provider, @NotNull Material material) {
         if (!material.shouldGenerateRecipesFor(screw) || !material.hasProperty(PropertyKey.DUST)) {
             return;
         }
@@ -116,7 +116,7 @@ public final class PartsRecipeHandler {
                 'X', new MaterialEntry(bolt, material));
     }
 
-    private static void processFoil(@NotNull Consumer<FinishedRecipe> provider, @NotNull Material material) {
+    private static void processFoil(@NotNull Consumer<GeneratedRecipe> provider, @NotNull Material material) {
         if (!material.shouldGenerateRecipesFor(foil) || !material.hasProperty(PropertyKey.INGOT)) {
             return;
         }
@@ -165,7 +165,7 @@ public final class PartsRecipeHandler {
         }
     }
 
-    private static void processFineWire(@NotNull Consumer<FinishedRecipe> provider, @NotNull Material material) {
+    private static void processFineWire(@NotNull Consumer<GeneratedRecipe> provider, @NotNull Material material) {
         if (!material.shouldGenerateRecipesFor(wireFine) || !material.hasProperty(PropertyKey.INGOT)) {
             return;
         }
@@ -197,7 +197,7 @@ public final class PartsRecipeHandler {
         }
     }
 
-    private static void processGear(@NotNull Consumer<FinishedRecipe> provider, @NotNull TagPrefix prefix,
+    private static void processGear(@NotNull Consumer<GeneratedRecipe> provider, @NotNull TagPrefix prefix,
                                     @NotNull Material material) {
         if (!material.shouldGenerateRecipesFor(prefix) || !material.hasProperty(PropertyKey.DUST)) {
             return;
@@ -296,7 +296,7 @@ public final class PartsRecipeHandler {
         }
     }
 
-    private static void processLens(@NotNull Consumer<FinishedRecipe> provider, @NotNull Material material) {
+    private static void processLens(@NotNull Consumer<GeneratedRecipe> provider, @NotNull Material material) {
         if (!material.shouldGenerateRecipesFor(lens) || !material.hasProperty(PropertyKey.GEM)) {
             return;
         }
@@ -316,7 +316,7 @@ public final class PartsRecipeHandler {
         }
     }
 
-    private static void processPlate(@NotNull Consumer<FinishedRecipe> provider, @NotNull Material material) {
+    private static void processPlate(@NotNull Consumer<GeneratedRecipe> provider, @NotNull Material material) {
         if (!material.shouldGenerateRecipesFor(plate) || !material.hasProperty(PropertyKey.DUST)) {
             return;
         }
@@ -335,7 +335,7 @@ public final class PartsRecipeHandler {
         }
     }
 
-    private static void processPlateDouble(@NotNull Consumer<FinishedRecipe> provider, @NotNull Material material) {
+    private static void processPlateDouble(@NotNull Consumer<GeneratedRecipe> provider, @NotNull Material material) {
         if (!material.shouldGenerateRecipesFor(plateDouble) || !material.hasProperty(PropertyKey.INGOT)) {
             return;
         }
@@ -368,7 +368,7 @@ public final class PartsRecipeHandler {
         }
     }
 
-    private static void processPlateDense(@NotNull Consumer<FinishedRecipe> provider, @NotNull Material material) {
+    private static void processPlateDense(@NotNull Consumer<GeneratedRecipe> provider, @NotNull Material material) {
         if (!material.shouldGenerateRecipesFor(plateDense) || !material.hasProperty(PropertyKey.DUST)) {
             return;
         }
@@ -396,7 +396,7 @@ public final class PartsRecipeHandler {
         }
     }
 
-    private static void processRing(@NotNull Consumer<FinishedRecipe> provider, @NotNull Material material) {
+    private static void processRing(@NotNull Consumer<GeneratedRecipe> provider, @NotNull Material material) {
         if (!material.shouldGenerateRecipesFor(ring) || !material.hasProperty(PropertyKey.INGOT)) {
             return;
         }
@@ -425,7 +425,7 @@ public final class PartsRecipeHandler {
         }
     }
 
-    private static void processSpring(@NotNull Consumer<FinishedRecipe> provider, @NotNull TagPrefix prefix,
+    private static void processSpring(@NotNull Consumer<GeneratedRecipe> provider, @NotNull TagPrefix prefix,
                                       @NotNull Material material) {
         if (!material.shouldGenerateRecipesFor(prefix) || !material.hasProperty(PropertyKey.INGOT)) {
             return;
@@ -458,7 +458,7 @@ public final class PartsRecipeHandler {
         }
     }
 
-    private static void processRotor(@NotNull Consumer<FinishedRecipe> provider, @NotNull Material material) {
+    private static void processRotor(@NotNull Consumer<GeneratedRecipe> provider, @NotNull Material material) {
         if (!material.shouldGenerateRecipesFor(rotor) || !material.hasProperty(PropertyKey.INGOT)) {
             return;
         }
@@ -502,7 +502,7 @@ public final class PartsRecipeHandler {
         }
     }
 
-    private static void processRod(@NotNull Consumer<FinishedRecipe> provider, @NotNull Material material) {
+    private static void processRod(@NotNull Consumer<GeneratedRecipe> provider, @NotNull Material material) {
         if (!material.shouldGenerateRecipesFor(rod) || !material.hasProperty(PropertyKey.DUST)) {
             return;
         }
@@ -547,7 +547,7 @@ public final class PartsRecipeHandler {
         }
     }
 
-    private static void processLongRod(@NotNull Consumer<FinishedRecipe> provider, @NotNull Material material) {
+    private static void processLongRod(@NotNull Consumer<GeneratedRecipe> provider, @NotNull Material material) {
         if (!material.shouldGenerateRecipesFor(rodLong) || !material.hasProperty(PropertyKey.DUST)) {
             return;
         }
@@ -597,7 +597,7 @@ public final class PartsRecipeHandler {
                 .save(provider);
     }
 
-    private static void processTurbine(@NotNull Consumer<FinishedRecipe> provider, @NotNull Material material) {
+    private static void processTurbine(@NotNull Consumer<GeneratedRecipe> provider, @NotNull Material material) {
         if (!material.shouldGenerateRecipesFor(turbineBlade) || !material.hasProperty(PropertyKey.INGOT)) {
             return;
         }
@@ -629,7 +629,7 @@ public final class PartsRecipeHandler {
                 'S', new MaterialEntry(screw, material));
     }
 
-    private static void processRound(@NotNull Consumer<FinishedRecipe> provider, @NotNull Material material) {
+    private static void processRound(@NotNull Consumer<GeneratedRecipe> provider, @NotNull Material material) {
         if (!material.shouldGenerateRecipesFor(round) || !material.hasProperty(PropertyKey.INGOT)) {
             return;
         }

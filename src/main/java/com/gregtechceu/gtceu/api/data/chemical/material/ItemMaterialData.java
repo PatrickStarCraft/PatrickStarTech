@@ -11,9 +11,9 @@ import com.gregtechceu.gtceu.data.recipe.misc.WoodMachineRecipes;
 import com.gregtechceu.gtceu.data.tags.TagsHandler;
 import com.gregtechceu.gtceu.utils.ItemStackHashStrategy;
 import com.gregtechceu.gtceu.utils.memoization.MemoizedBlockSupplier;
+import com.gregtechceu.gtceu.data.recipe.GeneratedRecipe;
 
 import net.minecraft.core.registries.Registries;
-import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -172,7 +172,7 @@ public class ItemMaterialData {
     }
 
     @ApiStatus.Internal
-    public static void resolveItemMaterialInfos(Consumer<FinishedRecipe> provider) {
+    public static void resolveItemMaterialInfos(Consumer<GeneratedRecipe> provider) {
         for (var iter = UNRESOLVED_ITEM_MATERIAL_INFO.entrySet().iterator(); iter.hasNext();) {
             var entry = iter.next();
             var stack = entry.getKey();

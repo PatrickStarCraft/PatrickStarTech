@@ -39,7 +39,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-@Mod.EventBusSubscriber(modid = GTCEu.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
+@net.neoforged.fml.common.EventBusSubscriber(modid = GTCEu.MOD_ID)
 public class ToolEventHandlers {
 
     /**

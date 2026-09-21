@@ -18,9 +18,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.neoforged.neoforge.common.util.LazyOptional;
+import net.neoforged.neoforge.capabilities.BlockCapability;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
 
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
@@ -57,22 +56,21 @@ public class ItemPipeBlockEntity extends PipeBlockEntity<ItemPipeType, ItemPipeP
     public static void onBlockEntityRegister(BlockEntityType<ItemPipeBlockEntity> itemPipeBlockEntityBlockEntityType) {}
 
     @Override
-    public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-        if (cap == ForgeCapabilities.ITEM_HANDLER) {
+    public <T> @Nullable T getGTCapability(@NotNull BlockCapability<T, Direction> cap, @Nullable Direction side) {
+        if (cap == Capabilities.ItemHandler.BLOCK) {
             Level world = getLevel();
-            if (world == null || world.isClientSide()) return LazyOptional.empty();
+            if (world == null || world.isClientSide()) return null;
 
             if (side != null && isConnected(side)) {
                 ensureHandlersInitialized();
                 checkNetwork();
-                if (this.currentItemPipeNet.get() == null) return LazyOptional.empty();
-                return ForgeCapabilities.ITEM_HANDLER.orEmpty(cap,
-                        LazyOptional.of(() -> getHandler(side, true)));
+                if (this.currentItemPipeNet.get() == null) return null;
+                return cap.typeClass().cast(getHandler(side, true));
             }
         } else if (cap == GTCapability.CAPABILITY_COVERABLE) {
-            return GTCapability.CAPABILITY_COVERABLE.orEmpty(cap, LazyOptional.of(this::getCoverContainer));
+            return cap.typeClass().cast(getCoverContainer());
         }
-        return super.getCapability(cap, side);
+        return super.getGTCapability(cap, side);
     }
 
     private void ensureHandlersInitialized() {

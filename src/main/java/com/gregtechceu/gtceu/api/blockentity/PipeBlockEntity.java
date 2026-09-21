@@ -52,7 +52,14 @@ import javax.annotation.ParametersAreNonnullByDefault;
 public abstract class PipeBlockEntity<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, NodeDataType>
                                      extends ManagedSyncBlockEntity
                                      implements IPipeNode<PipeType, NodeDataType>, IToolGridHighlight,
-                                     ICopyable {
+                                     ICopyable, com.gregtechceu.gtceu.api.capability.IBlockCapabilityProvider {
+
+    @Override
+    public <T> @Nullable T getGTCapability(net.neoforged.neoforge.capabilities.BlockCapability<T, Direction> cap,
+                                          @Nullable Direction side) {
+        return cap == com.gregtechceu.gtceu.api.capability.GTCapability.CAPABILITY_COVERABLE ?
+                cap.typeClass().cast(getCoverContainer()) : null;
+    }
 
     private final long offset = GTValues.RNG.nextInt(20);
 

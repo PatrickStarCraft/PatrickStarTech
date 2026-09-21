@@ -108,7 +108,7 @@ import java.util.regex.Pattern;
 
 import static com.gregtechceu.gtceu.utils.FormattingUtil.toLowerCaseUnderscore;
 
-@Mod.EventBusSubscriber(modid = GTCEu.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
+@net.neoforged.fml.common.EventBusSubscriber(modid = GTCEu.MOD_ID)
 public class CommonEventListener {
 
     @SubscribeEvent

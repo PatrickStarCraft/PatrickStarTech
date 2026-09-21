@@ -13,8 +13,8 @@ import com.gregtechceu.gtceu.common.data.GTRecipeTypes;
 import com.gregtechceu.gtceu.config.ConfigHolder;
 import com.gregtechceu.gtceu.data.recipe.StoneTypeEntry;
 import com.gregtechceu.gtceu.data.recipe.VanillaRecipeHelper;
+import com.gregtechceu.gtceu.data.recipe.GeneratedRecipe;
 
-import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
@@ -29,7 +29,7 @@ import static com.gregtechceu.gtceu.common.data.GTRecipeTypes.ASSEMBLER_RECIPES;
 
 public class StoneMachineRecipes {
 
-    public static void init(Consumer<FinishedRecipe> provider) {
+    public static void init(Consumer<GeneratedRecipe> provider) {
         registerStoneRecipes(provider);
     }
 
@@ -516,13 +516,13 @@ public class StoneMachineRecipes {
         }
     }
 
-    private static void registerStoneRecipes(Consumer<FinishedRecipe> provider) {
+    private static void registerStoneRecipes(Consumer<GeneratedRecipe> provider) {
         for (StoneTypeEntry entry : getDefaultEntries()) {
             registerStoneTypeRecipes(provider, entry);
         }
     }
 
-    public static void registerStoneTypeRecipes(Consumer<FinishedRecipe> provider, @NotNull StoneTypeEntry entry) {
+    public static void registerStoneTypeRecipes(Consumer<GeneratedRecipe> provider, @NotNull StoneTypeEntry entry) {
         if (entry.stone == null) {
             GTCEu.LOGGER.error("Could not find stone form of StoneTypeEntry, id: {}", entry.stoneName);
             return;

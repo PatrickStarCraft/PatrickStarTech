@@ -4,8 +4,8 @@ import com.gregtechceu.gtceu.client.util.ClientImageCache;
 import com.gregtechceu.gtceu.common.network.GTNetwork;
 import com.gregtechceu.gtceu.utils.GTMath;
 
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -27,7 +27,7 @@ public class SPacketImageResponse implements GTNetwork.INetPacket {
         this.totalSize = totalSize;
     }
 
-    public SPacketImageResponse(FriendlyByteBuf buf) {
+    public SPacketImageResponse(RegistryFriendlyByteBuf buf) {
         this.index = buf.readInt();
         this.totalSize = buf.readInt();
         this.url = buf.readUtf();
@@ -35,7 +35,7 @@ public class SPacketImageResponse implements GTNetwork.INetPacket {
     }
 
     @Override
-    public void encode(FriendlyByteBuf buffer) {
+    public void encode(RegistryFriendlyByteBuf buffer) {
         buffer.writeInt(index);
         buffer.writeInt(totalSize);
         buffer.writeUtf(url);
@@ -43,7 +43,7 @@ public class SPacketImageResponse implements GTNetwork.INetPacket {
     }
 
     @Override
-    public void execute(NetworkEvent.Context context) {
+    public void execute(IPayloadContext context) {
         if (imagePart == null) {
             return;
         }
@@ -52,7 +52,7 @@ public class SPacketImageResponse implements GTNetwork.INetPacket {
         } catch (IOException ignored) {}
     }
 
-    public static void sendImage(String url, byte[] imageBytes, NetworkEvent.Context context) throws IOException {
+    public static void sendImage(String url, byte[] imageBytes, IPayloadContext context) throws IOException {
         if (imageBytes.length < MAX_BYTES_PER_PACKET) {
             GTNetwork.reply(context, new SPacketImageResponse(url, imageBytes, 0, 1));
         } else {

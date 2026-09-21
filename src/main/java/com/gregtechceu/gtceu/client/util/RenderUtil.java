@@ -145,12 +145,12 @@ public class RenderUtil {
          * Change it, and it'll break and complain that you didn't fill all elements (even though you did).
          */
         vertexConsumer.gtceu$vertex(pose.pose(), pos)
-                .color(argb)
-                .uv(u, v)
-                .overlayCoords(packedOverlay)
-                .uv2(packedLight)
+                .setColor(argb)
+                .setUv(u, v)
+                .setOverlay(packedOverlay)
+                .setLight(packedLight)
                 .gtceu$normal(pose.normal(), normal)
-                .endVertex();
+                ;
     }
 
     public static void vertex(PoseStack.Pose pose, VertexConsumer vertexConsumer,
@@ -163,13 +163,13 @@ public class RenderUtil {
          * The order of the vertex calls is important.
          * Change it, and it'll break and complain that you didn't fill all elements (even though you did).
          */
-        vertexConsumer.vertex(pose.pose(), x, y, z)
-                .color(r, g, b, a)
-                .uv(u, v)
-                .overlayCoords(packedOverlay)
-                .uv2(packedLight)
-                .normal(pose.normal(), v0, v1, v2)
-                .endVertex();
+        vertexConsumer.addVertex(pose.pose(), x, y, z)
+                .setColor(r, g, b, a)
+                .setUv(u, v)
+                .setOverlay(packedOverlay)
+                .setLight(packedLight)
+                .setNormal(pose, v0, v1, v2)
+                ;
     }
 
     public static Vector3f transformVertex(Vector3fc vertex, Direction direction,
@@ -261,10 +261,10 @@ public class RenderUtil {
         int a2 = alpha(colorTo), r2 = red(colorTo), g2 = green(colorTo), b2 = blue(colorTo);
 
         Matrix4f pose = graphics.pose().last().pose();
-        consumer.vertex(pose, x1, y1, z).color(r1, g1, b1, a1).endVertex();
-        consumer.vertex(pose, x1, y2, z).color(r1, g1, b1, a1).endVertex();
-        consumer.vertex(pose, x2, y2, z).color(r2, g2, b2, a2).endVertex();
-        consumer.vertex(pose, x2, y1, z).color(r2, g2, b2, a2).endVertex();
+        consumer.addVertex(pose, x1, y1, z).setColor(r1, g1, b1, a1);
+        consumer.addVertex(pose, x1, y2, z).setColor(r1, g1, b1, a1);
+        consumer.addVertex(pose, x2, y2, z).setColor(r2, g2, b2, a2);
+        consumer.addVertex(pose, x2, y1, z).setColor(r2, g2, b2, a2);
     }
 
     /**

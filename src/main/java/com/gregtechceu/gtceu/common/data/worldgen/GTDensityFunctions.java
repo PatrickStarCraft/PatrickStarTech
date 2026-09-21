@@ -5,7 +5,7 @@ import com.gregtechceu.gtceu.GTCEu;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.data.worldgen.BootstapContext;
+import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.levelgen.DensityFunction;
 import net.minecraft.world.level.levelgen.DensityFunctions;
@@ -18,7 +18,7 @@ public class GTDensityFunctions {
     public static final ResourceKey<DensityFunction> NEW_ORE_VEIN_TOGGLE = ResourceKey.create(Registries.DENSITY_FUNCTION, GTCEu.id("vein_toggle"));
     public static final ResourceKey<DensityFunction> NEW_ORE_VEIN_RIDGED = ResourceKey.create(Registries.DENSITY_FUNCTION, GTCEu.id("vein_ridged"));
 
-    public static void bootstrap(BootstapContext<DensityFunction> ctx) {
+    public static void bootstrap(BootstrapContext<DensityFunction> ctx) {
         HolderGetter<NormalNoise.NoiseParameters> noises = ctx.lookup(Registries.NOISE);
 
         Holder<NormalNoise.NoiseParameters> oreVeininess = noises.getOrThrow(Noises.ORE_VEININESS);

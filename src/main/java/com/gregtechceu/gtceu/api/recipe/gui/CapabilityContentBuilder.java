@@ -81,14 +81,14 @@ public interface CapabilityContentBuilder {
             if (innerContent instanceof IntProviderIngredient ingredient) {
                 IntProvider countProvider = ingredient.getCountProvider();
                 tooltip.add(Component.translatable("gtceu.gui.content.count_range",
-                        countProvider.getMinValue(), countProvider.getMaxValue())
+                        countProvider.minInclusive(), countProvider.maxInclusive())
                         .withStyle(ChatFormatting.GOLD));
             } else if (innerContent instanceof SizedIngredient sizedIngredient &&
                     sizedIngredient.getInner() instanceof IntProviderIngredient ingredient) {
 
                         IntProvider countProvider = ingredient.getCountProvider();
                         tooltip.add(Component.translatable("gtceu.gui.content.count_range",
-                                countProvider.getMinValue(), countProvider.getMaxValue())
+                                countProvider.minInclusive(), countProvider.maxInclusive())
                                 .withStyle(ChatFormatting.GOLD));
                     }
             if (perTick) {
@@ -116,7 +116,7 @@ public interface CapabilityContentBuilder {
             if (ingredient instanceof IRangedIngredient provider) {
                 IntProvider countProvider = provider.getCountProvider();
                 tooltip.addLine(Component.translatable("gtceu.gui.content.fluid_range",
-                        countProvider.getMinValue(), countProvider.getMaxValue())
+                        countProvider.minInclusive(), countProvider.maxInclusive())
                         .withStyle(ChatFormatting.GOLD));
             }
             if (perTick) {

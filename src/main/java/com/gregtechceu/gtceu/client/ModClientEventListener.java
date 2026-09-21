@@ -14,7 +14,7 @@ import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import brachy.modularui.screen.ContainerScreenWrapper;
 import brachy.modularui.screen.ModularContainerMenu;
 
-@Mod.EventBusSubscriber(modid = GTCEu.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
+@net.neoforged.fml.common.EventBusSubscriber(modid = GTCEu.MOD_ID, value = Dist.CLIENT)
 public class ModClientEventListener {
 
     @SubscribeEvent

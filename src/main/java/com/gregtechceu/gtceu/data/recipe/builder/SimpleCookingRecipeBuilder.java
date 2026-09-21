@@ -1,17 +1,14 @@
 package com.gregtechceu.gtceu.data.recipe.builder;
 
-import com.gregtechceu.gtceu.GTCEu;
-import com.gregtechceu.gtceu.utils.data.NBTToJsonConverter;
+import com.gregtechceu.gtceu.data.recipe.GeneratedRecipe;
 
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.ItemLike;
-import net.minecraftforge.common.crafting.StrictNBTIngredient;
 
 import com.google.gson.JsonObject;
 import lombok.Setter;
@@ -32,6 +29,14 @@ public class SimpleCookingRecipeBuilder<T extends AbstractCookingRecipe> {
     @Setter
     protected CookingBookCategory category = CookingBookCategory.MISC;
 
+    protected net.minecraft.core.HolderLookup.Provider registries =
+            net.minecraft.core.RegistryAccess.fromRegistryOfRegistries(BuiltInRegistries.REGISTRY);
+
+    public SimpleCookingRecipeBuilder<T> registries(net.minecraft.core.HolderLookup.Provider registries) {
+        this.registries = java.util.Objects.requireNonNull(registries);
+        return this;
+    }
+
     protected ItemStack output = ItemStack.EMPTY;
     @Setter
     protected float experience;
@@ -47,27 +52,27 @@ public class SimpleCookingRecipeBuilder<T extends AbstractCookingRecipe> {
     }
 
     public static SimpleCookingRecipeBuilder<CampfireCookingRecipe> campfireCooking(@Nullable Identifier id) {
-        return new SimpleCookingRecipeBuilder<>(id, "campfire_cooking", RecipeSerializer.CAMPFIRE_COOKING_RECIPE);
+        return new SimpleCookingRecipeBuilder<>(id, "campfire_cooking", CampfireCookingRecipe.SERIALIZER);
     }
 
     public static SimpleCookingRecipeBuilder<SmeltingRecipe> smelting(@Nullable Identifier id) {
-        return new SimpleCookingRecipeBuilder<>(id, "smelting", RecipeSerializer.SMELTING_RECIPE);
+        return new SimpleCookingRecipeBuilder<>(id, "smelting", SmeltingRecipe.SERIALIZER);
     }
 
     public static SimpleCookingRecipeBuilder<BlastingRecipe> blasting(@Nullable Identifier id) {
-        return new SimpleCookingRecipeBuilder<>(id, "blasting", RecipeSerializer.BLASTING_RECIPE);
+        return new SimpleCookingRecipeBuilder<>(id, "blasting", BlastingRecipe.SERIALIZER);
     }
 
     public static SimpleCookingRecipeBuilder<SmokingRecipe> smoking(@Nullable Identifier id) {
-        return new SimpleCookingRecipeBuilder<>(id, "smoking", RecipeSerializer.SMOKING_RECIPE);
+        return new SimpleCookingRecipeBuilder<>(id, "smoking", SmokingRecipe.SERIALIZER);
     }
 
     public SimpleCookingRecipeBuilder<T> input(TagKey<Item> tag) {
-        return input(Ingredient.of(tag));
+        return input(RecipeBuilderCodecs.tag(tag));
     }
 
     public SimpleCookingRecipeBuilder<T> input(ItemStack itemStack) {
-        input = itemStack.hasTag() ? StrictNBTIngredient.of(itemStack) : Ingredient.of(itemStack);
+        input = RecipeBuilderCodecs.stack(itemStack);
         return this;
     }
 
@@ -99,62 +104,27 @@ public class SimpleCookingRecipeBuilder<T extends AbstractCookingRecipe> {
             json.addProperty("group", group);
         }
 
-        if (input == null || input.isEmpty()) {
-            GTCEu.LOGGER.error("{} recipe {} input is empty", folder, id);
+        if (input == null) {
+            com.mojang.logging.LogUtils.getLogger().error("{} recipe {} input is empty", folder, id);
             throw new IllegalArgumentException(id + ": input item is empty");
         }
         if (output.isEmpty()) {
-            GTCEu.LOGGER.error("{} recipe {} output is empty", folder, id);
+            com.mojang.logging.LogUtils.getLogger().error("{} recipe {} output is empty", folder, id);
             throw new IllegalArgumentException(id + ": output item is empty");
         }
 
-        json.add("ingredient", input.toJson());
+        json.add("ingredient", RecipeBuilderCodecs.ingredient(input, registries));
 
-        JsonObject result = new JsonObject();
-        result.addProperty("item", BuiltInRegistries.ITEM.getKey(output.getItem()).toString());
-        if (output.getCount() > 1) {
-            result.addProperty("count", output.getCount());
-        }
-        if (output.hasTag() && output.getTag() != null) {
-            result.add("nbt", NBTToJsonConverter.getObject(output.getTag()));
-        }
-        json.add("result", result);
+        json.add("result", RecipeBuilderCodecs.result(output, registries));
 
         json.addProperty("experience", experience);
+        json.addProperty("category", category.getSerializedName());
         json.addProperty("cookingtime", cookingTime);
     }
 
-    public void save(Consumer<FinishedRecipe> consumer) {
+    public void save(Consumer<GeneratedRecipe> consumer) {
         Identifier recipeId = (id == null ? defaultId() : id).withPrefix(folder + "/");
 
-        consumer.accept(new FinishedRecipe() {
-
-            @Override
-            public void serializeRecipeData(JsonObject pJson) {
-                toJson(pJson);
-            }
-
-            @Override
-            public Identifier getId() {
-                return recipeId;
-            }
-
-            @Override
-            public RecipeSerializer<?> getType() {
-                return serializer;
-            }
-
-            @Nullable
-            @Override
-            public JsonObject serializeAdvancement() {
-                return null;
-            }
-
-            @Nullable
-            @Override
-            public Identifier getAdvancementId() {
-                return null;
-            }
-        });
+        consumer.accept(GeneratedRecipe.create(recipeId, serializer, this::toJson));
     }
 }

@@ -34,7 +34,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @SuppressWarnings("deprecation")
 @UtilityClass
-@Mod.EventBusSubscriber(modid = GTCEu.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+@net.neoforged.fml.common.EventBusSubscriber(modid = GTCEu.MOD_ID, value = Dist.CLIENT)
 public class ModelEventHelper {
 
     @ApiStatus.Internal

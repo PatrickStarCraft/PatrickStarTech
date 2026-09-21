@@ -13,8 +13,8 @@ import com.gregtechceu.gtceu.common.data.GTMaterials;
 import com.gregtechceu.gtceu.config.ConfigHolder;
 import com.gregtechceu.gtceu.data.recipe.VanillaRecipeHelper;
 import com.gregtechceu.gtceu.data.recipe.WoodTypeEntry;
+import com.gregtechceu.gtceu.data.recipe.GeneratedRecipe;
 
-import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
@@ -37,7 +37,7 @@ import static com.gregtechceu.gtceu.common.data.GTRecipeTypes.*;
 
 public class WoodMachineRecipes {
 
-    public static void init(Consumer<FinishedRecipe> provider) {
+    public static void init(Consumer<GeneratedRecipe> provider) {
         registerGTWoodRecipes(provider);
         registerWoodRecipes(provider);
         registerPyrolyseOvenRecipes(provider);
@@ -318,7 +318,7 @@ public class WoodMachineRecipes {
     /**
      * Standardized processing for wood types
      */
-    private static void registerWoodRecipes(Consumer<FinishedRecipe> provider) {
+    private static void registerWoodRecipes(Consumer<GeneratedRecipe> provider) {
         if (ConfigHolder.INSTANCE.recipes.nerfWoodCrafting) {
             VanillaRecipeHelper.addShapedRecipe(provider, "stick_saw", new ItemStack(Items.STICK, 4), "s", "P", "P",
                     'P', ItemTags.PLANKS);
@@ -429,7 +429,7 @@ public class WoodMachineRecipes {
      *
      * @param entry the entry to register for
      */
-    public static void registerWoodTypeRecipe(Consumer<FinishedRecipe> provider, @NotNull WoodTypeEntry entry) {
+    public static void registerWoodTypeRecipe(Consumer<GeneratedRecipe> provider, @NotNull WoodTypeEntry entry) {
         final String name = entry.woodName;
         TagKey<Item> logTag = entry.logTag;
         boolean hasPlanksRecipe = entry.planksRecipeName != null;
@@ -924,7 +924,7 @@ public class WoodMachineRecipes {
     /**
      * Standard recipes for GT woods
      */
-    private static void registerGTWoodRecipes(Consumer<FinishedRecipe> provider) {
+    private static void registerGTWoodRecipes(Consumer<GeneratedRecipe> provider) {
         VanillaRecipeHelper.addShapedRecipe(provider, "treated_wood_stick",
                 ChemicalHelper.get(rod, TreatedWood, ConfigHolder.INSTANCE.recipes.nerfWoodCrafting ? 2 : 4),
                 "L", "L",
@@ -1038,7 +1038,7 @@ public class WoodMachineRecipes {
         }
     }
 
-    private static void registerPyrolyseOvenRecipes(Consumer<FinishedRecipe> provider) {
+    private static void registerPyrolyseOvenRecipes(Consumer<GeneratedRecipe> provider) {
         // Logs ================================================
 
         // Charcoal Byproducts

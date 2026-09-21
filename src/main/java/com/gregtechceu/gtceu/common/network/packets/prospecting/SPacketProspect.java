@@ -4,10 +4,10 @@ import com.gregtechceu.gtceu.common.network.GTNetwork;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
@@ -51,7 +51,7 @@ public abstract class SPacketProspect<T> implements GTNetwork.INetPacket {
         data.put(key, position, prospected);
     }
 
-    public SPacketProspect(FriendlyByteBuf buf) {
+    public SPacketProspect(RegistryFriendlyByteBuf buf) {
         this();
         var rowCount = buf.readInt();
         for (int i = 0; i < rowCount; i++) {
@@ -65,12 +65,12 @@ public abstract class SPacketProspect<T> implements GTNetwork.INetPacket {
         }
     }
 
-    public abstract void encodeData(FriendlyByteBuf buf, T data);
+    public abstract void encodeData(RegistryFriendlyByteBuf buf, T data);
 
-    public abstract T decodeData(FriendlyByteBuf buf);
+    public abstract T decodeData(RegistryFriendlyByteBuf buf);
 
     @Override
-    public void encode(FriendlyByteBuf buf) {
+    public void encode(RegistryFriendlyByteBuf buf) {
         buf.writeInt(data.rowKeySet().size());
         data.rowMap().forEach((key, entry) -> {
             buf.writeResourceKey(key);
@@ -83,5 +83,5 @@ public abstract class SPacketProspect<T> implements GTNetwork.INetPacket {
     }
 
     @Override
-    public abstract void execute(NetworkEvent.Context context);
+    public abstract void execute(IPayloadContext context);
 }

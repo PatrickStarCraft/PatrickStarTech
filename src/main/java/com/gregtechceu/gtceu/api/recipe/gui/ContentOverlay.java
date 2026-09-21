@@ -41,8 +41,8 @@ public record ContentOverlay(Content content, boolean perTick)
             graphics.pose().pushPose();
             graphics.pose().translate(0, 0, 400);
             graphics.pose().scale(0.5f, 0.5f, 1);
-            int min = ingredient.getCountProvider().getMinValue();
-            int max = ingredient.getCountProvider().getMaxValue();
+            int min = ingredient.getCountProvider().minInclusive();
+            int max = ingredient.getCountProvider().maxInclusive();
             String s = String.format("%s-%s", min, max);
             int color = 0xFFFFFF;
             Font fontRenderer = Minecraft.getInstance().font;

@@ -10,8 +10,8 @@ import com.gregtechceu.gtceu.common.data.GTItems;
 import com.gregtechceu.gtceu.common.pipelike.duct.DuctPipeType;
 import com.gregtechceu.gtceu.data.recipe.CustomTags;
 import com.gregtechceu.gtceu.data.recipe.VanillaRecipeHelper;
+import com.gregtechceu.gtceu.data.recipe.GeneratedRecipe;
 
-import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.SpecialRecipeBuilder;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.ItemStack;
@@ -29,7 +29,7 @@ import static com.gregtechceu.gtceu.common.data.GTMaterials.*;
 
 public class CraftingRecipeLoader {
 
-    public static void init(Consumer<FinishedRecipe> provider) {
+    public static void init(Consumer<GeneratedRecipe> provider) {
         // todo facades
         // registerFacadeRecipe(provider, Iron, 4);
 
@@ -318,7 +318,7 @@ public class CraftingRecipeLoader {
         SpecialRecipeBuilder.special(FacadeCoverRecipe.SERIALIZER).save(provider, "gtceu:crafting/facade_cover");
     }
 
-    private static void addDuctRecipes(@NotNull Consumer<FinishedRecipe> provider, @NotNull Material material,
+    private static void addDuctRecipes(@NotNull Consumer<GeneratedRecipe> provider, @NotNull Material material,
                                        int outputAmount) {
         VanillaRecipeHelper.addShapedRecipe(provider, "small_duct_%s".formatted(material.getName()),
                 GTBlocks.DUCT_PIPES[DuctPipeType.SMALL.ordinal()].asStack(outputAmount * 2), "w", "X", "h",
@@ -334,7 +334,7 @@ public class CraftingRecipeLoader {
                 'X', new MaterialEntry(plateDouble, material));
     }
 
-    // private static void registerFacadeRecipe(Consumer<FinishedRecipe> provider, Material material, int facadeAmount)
+    // private static void registerFacadeRecipe(Consumer<GeneratedRecipe> provider, Material material, int facadeAmount)
     // {
     // OreIngredient ingredient = new OreIngredient(new MaterialEntry(plate, material).toString());
     // ForgeRegistries.RECIPES.register(new FacadeRecipe(null, ingredient, facadeAmount).setRegistryName("facade_" +

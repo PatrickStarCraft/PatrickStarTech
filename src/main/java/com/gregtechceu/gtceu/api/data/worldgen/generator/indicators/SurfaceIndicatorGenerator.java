@@ -179,7 +179,7 @@ public class SurfaceIndicatorGenerator extends IndicatorGenerator {
 
     @Override
     public int getSearchRadiusModifier(int veinRadius) {
-        return Math.max(0, radius.getMaxValue() - veinRadius);
+        return Math.max(0, radius.maxInclusive() - veinRadius);
     }
 
     @Override

@@ -128,13 +128,13 @@ public class GTRegistryArgument<K, V> implements ArgumentType<V> {
                             ArgumentTypeInfo<GTRegistryArgument<K, V>, GTRegistryArgument.Info<K, V>.Template> {
 
         public void serializeToNetwork(GTRegistryArgument.Info<K, V>.Template template, FriendlyByteBuf buffer) {
-            buffer.writeResourceLocation(template.registryKey.getRegistryName());
+            buffer.writeIdentifier(template.registryKey.getRegistryName());
             buffer.writeBoolean(Identifier.class.isAssignableFrom(template.keyClass));
         }
 
         @SuppressWarnings("unchecked")
         public GTRegistryArgument.Info<K, V>.Template deserializeFromNetwork(FriendlyByteBuf buffer) {
-            Identifier resourceLocation = buffer.readResourceLocation();
+            Identifier resourceLocation = buffer.readIdentifier();
             Class<K> keyClass = (Class<K>) String.class;
             if (buffer.readBoolean()) {
                 keyClass = (Class<K>) Identifier.class;

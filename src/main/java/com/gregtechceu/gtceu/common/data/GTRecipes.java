@@ -12,8 +12,8 @@ import com.gregtechceu.gtceu.data.recipe.configurable.RecipeRemoval;
 import com.gregtechceu.gtceu.data.recipe.generated.*;
 import com.gregtechceu.gtceu.data.recipe.misc.*;
 import com.gregtechceu.gtceu.data.recipe.serialized.chemistry.ChemistryRecipes;
+import com.gregtechceu.gtceu.data.recipe.GeneratedRecipe;
 
-import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.ComposterBlock;
 
@@ -37,9 +37,9 @@ public class GTRecipes {
      * This should also be used for recipes that need
      * to respond to a config option in ConfigHolder.
      */
-    public static void recipeAddition(Consumer<FinishedRecipe> originalConsumer) {
-        Consumer<FinishedRecipe> consumer = recipe -> {
-            if (!RECIPE_FILTERS.contains(recipe.getId())) {
+    public static void recipeAddition(Consumer<GeneratedRecipe> originalConsumer) {
+        Consumer<GeneratedRecipe> consumer = recipe -> {
+            if (!RECIPE_FILTERS.contains(recipe.id())) {
                 originalConsumer.accept(recipe);
             }
         };

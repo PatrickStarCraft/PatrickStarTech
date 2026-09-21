@@ -14,8 +14,8 @@ import com.gregtechceu.gtceu.data.recipe.CustomTags;
 import com.gregtechceu.gtceu.data.recipe.VanillaRecipeHelper;
 import com.gregtechceu.gtceu.data.recipe.builder.GTRecipeBuilder;
 import com.gregtechceu.gtceu.utils.FormattingUtil;
+import com.gregtechceu.gtceu.data.recipe.GeneratedRecipe;
 
-import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -38,7 +38,7 @@ public final class MaterialRecipeHandler {
 
     private MaterialRecipeHandler() {}
 
-    public static void run(@NotNull Consumer<FinishedRecipe> provider, @NotNull Material material) {
+    public static void run(@NotNull Consumer<GeneratedRecipe> provider, @NotNull Material material) {
         processIngot(provider, material);
         processNugget(provider, material);
         processBlock(provider, material);
@@ -59,7 +59,7 @@ public final class MaterialRecipeHandler {
         generateSurfaceRockRecipe(provider, material);
     }
 
-    private static void processDust(@NotNull Consumer<FinishedRecipe> provider, @NotNull Material material) {
+    private static void processDust(@NotNull Consumer<GeneratedRecipe> provider, @NotNull Material material) {
         if (!material.shouldGenerateRecipesFor(dust) || !material.hasProperty(PropertyKey.DUST)) {
             return;
         }
@@ -178,7 +178,7 @@ public final class MaterialRecipeHandler {
     }
 
     private static void processEBFRecipe(Material material, BlastProperty property, ItemStack output,
-                                         Consumer<FinishedRecipe> provider) {
+                                         Consumer<GeneratedRecipe> provider) {
         int blastTemp = property.getBlastTemperature();
         BlastProperty.GasTier gasTier = property.getGasTier();
         int duration = property.getDurationOverride();
@@ -245,7 +245,7 @@ public final class MaterialRecipeHandler {
         }
     }
 
-    private static void processSmallDust(@NotNull Consumer<FinishedRecipe> provider, @NotNull Material material) {
+    private static void processSmallDust(@NotNull Consumer<GeneratedRecipe> provider, @NotNull Material material) {
         if (!material.shouldGenerateRecipesFor(dustSmall) || !material.hasProperty(PropertyKey.DUST)) {
             return;
         }
@@ -276,7 +276,7 @@ public final class MaterialRecipeHandler {
                 .save(provider);
     }
 
-    private static void processTinyDust(@NotNull Consumer<FinishedRecipe> provider, @NotNull Material material) {
+    private static void processTinyDust(@NotNull Consumer<GeneratedRecipe> provider, @NotNull Material material) {
         if (!material.shouldGenerateRecipesFor(dustTiny) || !material.hasProperty(PropertyKey.DUST)) {
             return;
         }
@@ -307,7 +307,7 @@ public final class MaterialRecipeHandler {
                 .save(provider);
     }
 
-    private static void processIngot(@NotNull Consumer<FinishedRecipe> provider, @NotNull Material material) {
+    private static void processIngot(@NotNull Consumer<GeneratedRecipe> provider, @NotNull Material material) {
         if (!material.shouldGenerateRecipesFor(ingot) || !material.hasProperty(PropertyKey.INGOT)) {
             return;
         }
@@ -428,7 +428,7 @@ public final class MaterialRecipeHandler {
         }
     }
 
-    private static void processGemConversion(@NotNull Consumer<FinishedRecipe> provider, @NotNull TagPrefix prefix,
+    private static void processGemConversion(@NotNull Consumer<GeneratedRecipe> provider, @NotNull TagPrefix prefix,
                                              @Nullable TagPrefix lowerPrefix, @NotNull Material material) {
         if (!material.shouldGenerateRecipesFor(prefix) || !material.hasProperty(PropertyKey.GEM)) {
             return;
@@ -481,7 +481,7 @@ public final class MaterialRecipeHandler {
                 .save(provider);
     }
 
-    private static void processNugget(@NotNull Consumer<FinishedRecipe> provider, @NotNull Material material) {
+    private static void processNugget(@NotNull Consumer<GeneratedRecipe> provider, @NotNull Material material) {
         if (!material.shouldGenerateRecipesFor(nugget) || !material.hasProperty(PropertyKey.DUST)) {
             return;
         }
@@ -551,7 +551,7 @@ public final class MaterialRecipeHandler {
         }
     }
 
-    private static void processFrame(@NotNull Consumer<FinishedRecipe> provider, @NotNull Material material) {
+    private static void processFrame(@NotNull Consumer<GeneratedRecipe> provider, @NotNull Material material) {
         if (!material.shouldGenerateRecipesFor(frameGt) || !material.hasProperty(PropertyKey.DUST)) {
             return;
         }
@@ -572,7 +572,7 @@ public final class MaterialRecipeHandler {
         }
     }
 
-    private static void processBlock(@NotNull Consumer<FinishedRecipe> provider, @NotNull Material material) {
+    private static void processBlock(@NotNull Consumer<GeneratedRecipe> provider, @NotNull Material material) {
         if (!material.shouldGenerateRecipesFor(block) || !material.hasProperty(PropertyKey.DUST)) {
             return;
         }
@@ -680,7 +680,7 @@ public final class MaterialRecipeHandler {
         }
     }
 
-    private static void generateSurfaceRockRecipe(@NotNull Consumer<FinishedRecipe> provider,
+    private static void generateSurfaceRockRecipe(@NotNull Consumer<GeneratedRecipe> provider,
                                                   @NotNull Material material) {
         if (material.hasProperty(PropertyKey.ORE)) {
             VanillaRecipeHelper.addShapedRecipe(provider, "%s_surface_indicator".formatted(material.getName()),

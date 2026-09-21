@@ -2,8 +2,8 @@ package com.gregtechceu.gtceu.common.network.packets.prospecting;
 
 import com.gregtechceu.gtceu.api.item.component.prospector.ProspectorMode;
 
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class SPacketProspectBedrockOre extends SPacketProspect<ProspectorMode.BedrockOreInfo> {
 
@@ -12,22 +12,22 @@ public class SPacketProspectBedrockOre extends SPacketProspect<ProspectorMode.Be
         super();
     }
 
-    public SPacketProspectBedrockOre(FriendlyByteBuf buf) {
+    public SPacketProspectBedrockOre(RegistryFriendlyByteBuf buf) {
         super(buf);
     }
 
     @Override
-    public void encodeData(FriendlyByteBuf buf, ProspectorMode.BedrockOreInfo data) {
+    public void encodeData(RegistryFriendlyByteBuf buf, ProspectorMode.BedrockOreInfo data) {
         ProspectorMode.BEDROCK_ORE.serialize(data, buf);
     }
 
     @Override
-    public ProspectorMode.BedrockOreInfo decodeData(FriendlyByteBuf buf) {
+    public ProspectorMode.BedrockOreInfo decodeData(RegistryFriendlyByteBuf buf) {
         return ProspectorMode.BEDROCK_ORE.deserialize(buf);
     }
 
     @Override
-    public void execute(NetworkEvent.Context context) {
+    public void execute(IPayloadContext context) {
         // todo: add cache for bedrock ore veins
     }
 }
