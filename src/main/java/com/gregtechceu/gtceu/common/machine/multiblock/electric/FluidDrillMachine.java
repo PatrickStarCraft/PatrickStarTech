@@ -83,7 +83,7 @@ public class FluidDrillMachine extends WorkableElectricMultiblockMachine impleme
     // .withStyle(ChatFormatting.GRAY);
     // textList.add(Component.translatable("gtceu.multiblock.invalid_structure")
     // .withStyle(Style.EMPTY.withColor(ChatFormatting.RED)
-    // .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, tooltip))));
+    // .withHoverEvent(new HoverEvent.ShowText(tooltip))));
     // }
     // }
 

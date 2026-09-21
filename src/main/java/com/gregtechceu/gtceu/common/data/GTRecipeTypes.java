@@ -661,7 +661,7 @@ public class GTRecipeTypes {
                     .setItemSlotOverlay(IO.IN, 2, GTGuiTextures.IMPLOSION_OVERLAY_1)
                     .setItemSlotOverlay(IO.OUT, 0, GTGuiTextures.IMPLOSION_OVERLAY_2)
                     .setItemSlotOverlay(IO.OUT, 1, GTGuiTextures.DUST_OVERLAY))
-            .setSound(new ExistingSoundEntry(SoundEvents.GENERIC_EXPLODE, SoundSource.BLOCKS));
+            .setSound(new ExistingSoundEntry(SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS));
 
     public final static GTRecipeType VACUUM_RECIPES = register("vacuum_freezer", MULTIBLOCK).setMaxIOSize(1, 1, 2, 1)
             .setEUIO(IO.IN)

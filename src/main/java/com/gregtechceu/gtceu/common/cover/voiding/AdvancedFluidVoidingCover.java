@@ -84,7 +84,7 @@ public class AdvancedFluidVoidingCover extends FluidVoidingCover {
 
             long diff = presentAmount - targetAmount;
             for (int op : GTMath.split(diff)) {
-                var toDrain = new FluidStack(stack, op);
+                var toDrain = stack.copyWithAmount(op);
                 fluidHandler.drain(toDrain, IFluidHandler.FluidAction.EXECUTE);
             }
         }

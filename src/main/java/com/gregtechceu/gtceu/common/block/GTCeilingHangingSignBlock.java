@@ -18,7 +18,7 @@ import javax.annotation.Nullable;
 public class GTCeilingHangingSignBlock extends CeilingHangingSignBlock {
 
     public GTCeilingHangingSignBlock(Properties properties, WoodType type) {
-        super(properties, type);
+        super(type, properties);
     }
 
     @Override

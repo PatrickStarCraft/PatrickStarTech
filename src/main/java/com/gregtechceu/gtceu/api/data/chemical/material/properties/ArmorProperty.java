@@ -11,7 +11,6 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.equipment.ArmorType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -214,7 +213,13 @@ public class ArmorProperty implements IMaterialProperty {
         Identifier getCustomTexture(ItemStack stack, Entity entity, EquipmentSlot slot, boolean overlay);
     }
 
-    public class ArmorMaterial implements net.minecraft.world.item.equipment.ArmorMaterial {
+    /**
+     * Holds this material's armour stats.
+     * <p>
+     * This used to implement {@code net.minecraft.world.item.equipment.ArmorMaterial}; in 26.2 that type is a final
+     * record, so it can no longer be implemented. GT's armour items take this data holder directly.
+     */
+    public class ArmorMaterial {
 
         private static final EnumMap<ArmorType, Integer> HEALTH_FUNCTION_FOR_TYPE = Util
                 .make(new EnumMap<>(ArmorType.class), (map) -> {
@@ -224,44 +229,36 @@ public class ArmorProperty implements IMaterialProperty {
                     map.put(ArmorType.HELMET, 11);
                 });
 
-        @Override
         public int getDurabilityForType(@NotNull ArmorType type) {
             return HEALTH_FUNCTION_FOR_TYPE.get(type) * ArmorProperty.this.durabilityMultiplier;
         }
 
-        @Override
         public int getDefenseForType(@NotNull ArmorType type) {
             return ArmorProperty.this.protectionValues.get(type);
         }
 
-        @Override
         public int getEnchantmentValue() {
             return ArmorProperty.this.enchantability;
         }
 
-        @Override
         public @NotNull SoundEvent getEquipSound() {
             return ArmorProperty.this.sound.get();
         }
 
-        @Override
         public @NotNull Ingredient getRepairIngredient() {
             return ArmorProperty.this.repairIngredient != null ?
                     ArmorProperty.this.repairIngredient.get() :
                     Ingredient.EMPTY;
         }
 
-        @Override
         public @NotNull String getName() {
             return ArmorProperty.this.name;
         }
 
-        @Override
         public float getToughness() {
             return ArmorProperty.this.toughness;
         }
 
-        @Override
         public float getKnockbackResistance() {
             return ArmorProperty.this.knockbackResistance;
         }

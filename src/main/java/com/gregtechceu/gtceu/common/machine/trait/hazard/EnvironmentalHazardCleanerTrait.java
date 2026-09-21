@@ -95,7 +95,7 @@ public class EnvironmentalHazardCleanerTrait extends MachineTrait implements IRe
             final ServerLevel serverLevel = (ServerLevel) getLevel();
             EnvironmentalHazardSavedData savedData = EnvironmentalHazardSavedData.getOrCreate(serverLevel);
 
-            final ChunkPos pos = new ChunkPos(getBlockPos());
+            final ChunkPos pos = ChunkPos.containing(getBlockPos());
             Object2FloatMap<ChunkPos> relativePositions = new Object2FloatOpenHashMap<>();
             if (cleaningRadius <= 0) {
                 // LV scrubber can only process the chunk it's in

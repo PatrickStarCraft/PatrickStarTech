@@ -57,7 +57,7 @@ public class CreativeTankMachine extends QuantumTankMachine {
     }
 
     private InteractionResult updateStored(FluidStack fluid) {
-        stored = new FluidStack(fluid, 1000);
+        stored = fluid.copyWithAmount(1000);
         onFluidChanged();
         return InteractionResult.SUCCESS;
     }
@@ -101,7 +101,7 @@ public class CreativeTankMachine extends QuantumTankMachine {
             }
 
             // Need to make a fake source to fully fill held-item since our cache only allows mbPerTick extraction
-            CustomFluidTank source = new CustomFluidTank(new FluidStack(stored, Integer.MAX_VALUE));
+            CustomFluidTank source = new CustomFluidTank(stored.copyWithAmount(Integer.MAX_VALUE));
             ItemStack result = FluidUtil.tryFillContainer(heldItem, source, Integer.MAX_VALUE, player, true)
                     .getResult();
             if (!result.isEmpty() && heldItem.getCount() > 1) {
@@ -205,13 +205,13 @@ public class CreativeTankMachine extends QuantumTankMachine {
 
         @Override
         public FluidStack drain(int maxDrain, FluidAction action) {
-            if (!stored.isEmpty()) return new FluidStack(stored, mBPerCycle);
+            if (!stored.isEmpty()) return stored.copyWithAmount(mBPerCycle);
             return FluidStack.EMPTY;
         }
 
         @Override
         public FluidStack drain(FluidStack resource, FluidAction action) {
-            if (!stored.isEmpty() && stored.isFluidEqual(resource)) return new FluidStack(resource, mBPerCycle);
+            if (!stored.isEmpty() && stored.isFluidEqual(resource)) return resource.copyWithAmount(mBPerCycle);
             return FluidStack.EMPTY;
         }
 

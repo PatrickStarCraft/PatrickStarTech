@@ -6,10 +6,13 @@ import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
 import com.gregtechceu.gtceu.common.data.GTItems;
 import com.gregtechceu.gtceu.common.data.GTMaterials;
 
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.loot.LootTableProvider;
 import net.minecraft.data.loot.LootTableSubProvider;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
@@ -17,6 +20,7 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 
 import static com.gregtechceu.gtceu.common.loot.condition.GTConfigValueCondition.*;
@@ -44,10 +48,10 @@ public class GTLootTables extends LootTableProvider {
     public static final Identifier STRONGHOLD_CROSSING_EXTRA = GTCEu.id("chests/extra/stronghold_crossing");
     public static final Identifier STRONGHOLD_CORRIDOR_EXTRA = GTCEu.id("chests/extra/stronghold_corridor");
 
-    public GTLootTables(PackOutput output) {
+    public GTLootTables(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
         super(output, Set.of(), List.of(
                 new SubProviderEntry(ChestLoot::new, LootContextParamSets.CHEST)
-        ));
+        ), registries);
     }
 
     /**
@@ -56,22 +60,24 @@ public class GTLootTables extends LootTableProvider {
      */
     public static class ChestLoot implements LootTableSubProvider {
 
+        public ChestLoot(HolderLookup.Provider registries) {}
+
         // Additional chest loot tables to inject. Note that all roll amounts are lower than in 1.12 because these
         // aren't added into the loot tables' existing pools (they're new pools).
         // That means we must take some care to avoid overfilling loot chests.
         @Override
-        public void generate(BiConsumer<Identifier, LootTable.Builder> provider) {
+        public void generate(BiConsumer<ResourceKey<LootTable>, LootTable.Builder> provider) {
             // Negative roll values are skipped, so most rolls' minimums are weighed toward 0. That's intentional and
             // is done to limit the amount of items added to chests.
 
-            provider.accept(SPAWN_BONUS_CHEST_EXTRA, lootTable()
+            provider.accept(ResourceKey.create(Registries.LOOT_TABLE, SPAWN_BONUS_CHEST_EXTRA), lootTable()
                     .withPool(spawnBonusChestLoot().setRolls(between(0, 1)))
                     .withPool(spawnBonusChestLoot().setRolls(between(1, 2))
                             .when(increaseDungeonLootConfigEnabled())
                     )
             );
 
-            provider.accept(SIMPLE_DUNGEON_EXTRA, lootTable()
+            provider.accept(ResourceKey.create(Registries.LOOT_TABLE, SIMPLE_DUNGEON_EXTRA), lootTable()
                     // purple drink/sus record loot pool
                     // usually gives nothing, sometimes purple drink and very rarely the sus record
                     .withPool(lootPool()
@@ -90,14 +96,14 @@ public class GTLootTables extends LootTableProvider {
                     )
             );
 
-            provider.accept(DESERT_PYRAMID_EXTRA, lootTable()
+            provider.accept(ResourceKey.create(Registries.LOOT_TABLE, DESERT_PYRAMID_EXTRA), lootTable()
                     .withPool(desertPyramidLoot().setRolls(between(-1, 3)))
                     .withPool(desertPyramidLoot().setRolls(between(-1, 3))
                             .when(increaseDungeonLootConfigEnabled())
                     )
             );
 
-            provider.accept(JUNGLE_TEMPLE_EXTRA, lootTable()
+            provider.accept(ResourceKey.create(Registries.LOOT_TABLE, JUNGLE_TEMPLE_EXTRA), lootTable()
                     .withPool(lootPool()
                             .setRolls(exactly(1))
                             .add(lootTableItem(GTItems.ZERO_POINT_MODULE).apply(setCharge(Long.MAX_VALUE)))
@@ -109,7 +115,7 @@ public class GTLootTables extends LootTableProvider {
                     )
             );
 
-            provider.accept(JUNGLE_TEMPLE_DISPENSER_EXTRA, lootTable()
+            provider.accept(ResourceKey.create(Registries.LOOT_TABLE, JUNGLE_TEMPLE_DISPENSER_EXTRA), lootTable()
                     .withPool(lootPool()
                             .setRolls(between(0, 1))
                             .add(lootTableItem(Items.FIRE_CHARGE)
@@ -118,28 +124,28 @@ public class GTLootTables extends LootTableProvider {
                     )
             );
 
-            provider.accept(ABANDONED_MINESHAFT_EXTRA, lootTable()
+            provider.accept(ResourceKey.create(Registries.LOOT_TABLE, ABANDONED_MINESHAFT_EXTRA), lootTable()
                     .withPool(abandonedMineshaftLoot().setRolls(between(-1, 2)))
                     .withPool(abandonedMineshaftLoot().setRolls(between(-1, 2))
                             .when(increaseDungeonLootConfigEnabled())
                     )
             );
 
-            provider.accept(VILLAGE_WEAPONSMITH_EXTRA, lootTable()
+            provider.accept(ResourceKey.create(Registries.LOOT_TABLE, VILLAGE_WEAPONSMITH_EXTRA), lootTable()
                     .withPool(villageWeaponsmithLoot().setRolls(between(-1, 4)))
                     .withPool(villageWeaponsmithLoot().setRolls(between(-1, 4))
                             .when(increaseDungeonLootConfigEnabled())
                     )
             );
 
-            provider.accept(STRONGHOLD_CROSSING_EXTRA, lootTable()
+            provider.accept(ResourceKey.create(Registries.LOOT_TABLE, STRONGHOLD_CROSSING_EXTRA), lootTable()
                     .withPool(strongholdCrossingLoot().setRolls(between(-1, 3)))
                     .withPool(strongholdCrossingLoot().setRolls(between(-1, 3))
                             .when(increaseDungeonLootConfigEnabled())
                     )
             );
 
-            provider.accept(STRONGHOLD_CORRIDOR_EXTRA, lootTable()
+            provider.accept(ResourceKey.create(Registries.LOOT_TABLE, STRONGHOLD_CORRIDOR_EXTRA), lootTable()
                     .withPool(strongholdCorridorLoot().setRolls(between(-2, 2)))
                     .withPool(strongholdCorridorLoot().setRolls(between(-2, 2))
                             .when(increaseDungeonLootConfigEnabled())

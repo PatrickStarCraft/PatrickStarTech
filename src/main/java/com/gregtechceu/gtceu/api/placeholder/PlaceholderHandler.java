@@ -401,9 +401,7 @@ public class PlaceholderHandler {
                             .withUnderlined(true)
                             .withInsertion("")
                             .withColor(0xFF0000)
-                            .withHoverEvent(new HoverEvent(
-                                    HoverEvent.Action.SHOW_TEXT,
-                                    unclosedBrackets == 1 ?
+                            .withHoverEvent(new HoverEvent.ShowText(unclosedBrackets == 1 ?
                                             Component.translatable("gtceu.placeholder_editor.unclosed_bracket") :
                                             Component.translatable("gtceu.placeholder_editor.unclosed_brackets",
                                                     unclosedBrackets))));
@@ -414,9 +412,7 @@ public class PlaceholderHandler {
                             .withUnderlined(true)
                             .withInsertion("")
                             .withColor(0xFF0000)
-                            .withHoverEvent(new HoverEvent(
-                                    HoverEvent.Action.SHOW_TEXT,
-                                    unclosedSingleEscapes == 1 ?
+                            .withHoverEvent(new HoverEvent.ShowText(unclosedSingleEscapes == 1 ?
                                             Component.translatable("gtceu.placeholder_editor.unclosed_escape") :
                                             Component.translatable("gtceu.placeholder_editor.unclosed_escapes",
                                                     unclosedBrackets))));
@@ -451,9 +447,7 @@ public class PlaceholderHandler {
                         onEncounteredError();
                         return Component.literal(s).withStyle(Style.EMPTY
                                 .withColor(0xFF0000)
-                                .withHoverEvent(new HoverEvent(
-                                        HoverEvent.Action.SHOW_TEXT,
-                                        Component.translatable("gtceu.placeholder_editor.extra_closing_bracket"))));
+                                .withHoverEvent(new HoverEvent.ShowText(Component.translatable("gtceu.placeholder_editor.extra_closing_bracket"))));
                     }
                     return Component.literal(s).withStyle(ChatFormatting.GOLD);
                 }
@@ -471,9 +465,7 @@ public class PlaceholderHandler {
                         onEncounteredError();
                         return Component.literal(s).withStyle(Style.EMPTY
                                 .withColor(0xFF0000)
-                                .withHoverEvent(new HoverEvent(
-                                        HoverEvent.Action.SHOW_TEXT,
-                                        Component.translatable("gtceu.placeholder_editor.extra_closing_bracket"))));
+                                .withHoverEvent(new HoverEvent.ShowText(Component.translatable("gtceu.placeholder_editor.extra_closing_bracket"))));
                     }
                     everything.append(s);
                     if (!openPlaceholders.empty()) {
@@ -490,9 +482,7 @@ public class PlaceholderHandler {
                         viewStarts.pop();
                         if (!everything.substring(popped).contains(" ")) return Component.literal(s);
                         return Component.literal(s)
-                                .withStyle(style -> style.withHoverEvent(new HoverEvent(
-                                        HoverEvent.Action.SHOW_TEXT,
-                                        Component.translatable("gtceu.placeholder_editor.constant_value", result)))
+                                .withStyle(style -> style.withHoverEvent(new HoverEvent.ShowText(Component.translatable("gtceu.placeholder_editor.constant_value", result)))
                                         .withInsertion(""));
                     }
                     if (!viewStarts.empty()) viewStarts.pop();
@@ -515,18 +505,14 @@ public class PlaceholderHandler {
                     else if (ifDepth > 0 && !GTRegistries.PLACEHOLDERS.get(id).isView()) {
                         return Component.literal(s)
                                 .withStyle(ChatFormatting.BLUE, ChatFormatting.UNDERLINE)
-                                .withStyle(style -> style.withHoverEvent(new HoverEvent(
-                                        HoverEvent.Action.SHOW_TEXT,
-                                        Component.translatable("gtceu.placeholder_editor.write_in_if"))));
+                                .withStyle(style -> style.withHoverEvent(new HoverEvent.ShowText(Component.translatable("gtceu.placeholder_editor.write_in_if"))));
                     }
                     return Component.literal(s).withStyle(ChatFormatting.BLUE);
                 } else {
                     onEncounteredError();
                     return Component.literal(s).withStyle(Style.EMPTY
                             .withColor(0xFF0000)
-                            .withHoverEvent(new HoverEvent(
-                                    HoverEvent.Action.SHOW_TEXT,
-                                    Component.translatable("gtceu.placeholder_editor.no_placeholder",
+                            .withHoverEvent(new HoverEvent.ShowText(Component.translatable("gtceu.placeholder_editor.no_placeholder",
                                             s.replaceAll("\\n", "\\\\n")))));
                 }
             }

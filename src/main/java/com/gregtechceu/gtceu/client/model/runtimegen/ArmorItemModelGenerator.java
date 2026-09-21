@@ -7,7 +7,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.GsonHelper;
-import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.equipment.ArmorType;
 import net.minecraft.world.item.Item;
 

@@ -389,8 +389,7 @@ public class PowerSubstationMachine extends WorkableMultiblockMachine
             return Component
                     .translatable("gtceu.multiblock.power_substation.average_in",
                             avgInComponent.setStyle(STYLE_GREEN))
-                    .withStyle(Style.EMPTY.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                            Component.translatable("gtceu.multiblock.power_substation.average_in_hover"))));
+                    .withStyle(Style.EMPTY.withHoverEvent(new HoverEvent.ShowText(Component.translatable("gtceu.multiblock.power_substation.average_in_hover"))));
         })
                 .asWidget()
                 .setEnabledIf((widget) -> energyBankExists.getBoolValue()));
@@ -402,8 +401,7 @@ public class PowerSubstationMachine extends WorkableMultiblockMachine
             return Component
                     .translatable("gtceu.multiblock.power_substation.average_out",
                             avgOutComponent.setStyle(STYLE_RED))
-                    .withStyle(Style.EMPTY.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                            Component.translatable("gtceu.multiblock.power_substation.average_out_hover"))));
+                    .withStyle(Style.EMPTY.withHoverEvent(new HoverEvent.ShowText(Component.translatable("gtceu.multiblock.power_substation.average_out_hover"))));
         })
                 .asWidget()
                 .setEnabledIf((widget) -> energyBankExists.getBoolValue()));

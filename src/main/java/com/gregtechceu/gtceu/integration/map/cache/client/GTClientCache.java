@@ -40,9 +40,7 @@ public class GTClientCache extends WorldCache implements IClientCache {
 
             if (material != null) {
                 var center = vein.center();
-                name.setStyle(name.getStyle().withColor(material.getMaterialRGB()).withHoverEvent(new HoverEvent(
-                        HoverEvent.Action.SHOW_TEXT,
-                        Component.literal("(%d, %d, %d)".formatted(center.getX(), center.getY(), center.getZ())))));
+                name.setStyle(name.getStyle().withColor(material.getMaterialRGB()).withHoverEvent(new HoverEvent.ShowText(Component.literal("(%d, %d, %d)".formatted(center.getX(), center.getY(), center.getZ())))));
             }
             player.sendSystemMessage(Component.translatable("message.gtceu.new_veins.name", name));
         }

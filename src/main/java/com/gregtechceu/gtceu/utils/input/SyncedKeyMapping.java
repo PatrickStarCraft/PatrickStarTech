@@ -12,7 +12,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.settings.IKeyConflictContext;
-import net.minecraftforge.event.TickEvent;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.bus.api.SubscribeEvent;
 
 import com.mojang.blaze3d.platform.InputConstants;
@@ -235,27 +235,25 @@ public final class SyncedKeyMapping {
     @ApiStatus.Internal
     @SubscribeEvent
     @OnlyIn(Dist.CLIENT)
-    public static void onClientTick(@NotNull TickEvent.ClientTickEvent event) {
-        if (event.phase == TickEvent.Phase.START) {
-            updatingKeyDown.clear();
-            for (var entry : KEYMAPPINGS.int2ObjectEntrySet()) {
-                SyncedKeyMapping keyMapping = entry.getValue();
-                boolean previousKeyDown = keyMapping.isKeyDown;
+    public static void onClientTick(@NotNull ClientTickEvent.Pre event) {
+        updatingKeyDown.clear();
+        for (var entry : KEYMAPPINGS.int2ObjectEntrySet()) {
+            SyncedKeyMapping keyMapping = entry.getValue();
+            boolean previousKeyDown = keyMapping.isKeyDown;
 
-                if (keyMapping.keyMapping != null) {
-                    keyMapping.isKeyDown = keyMapping.keyMapping.isDown();
-                } else {
-                    long id = Minecraft.getInstance().getWindow().getWindow();
-                    keyMapping.isKeyDown = InputConstants.isKeyDown(id, keyMapping.keyCode);
-                }
+            if (keyMapping.keyMapping != null) {
+                keyMapping.isKeyDown = keyMapping.keyMapping.isDown();
+            } else {
+                long id = Minecraft.getInstance().getWindow().getWindow();
+                keyMapping.isKeyDown = InputConstants.isKeyDown(id, keyMapping.keyCode);
+            }
 
-                if (previousKeyDown != keyMapping.isKeyDown) {
-                    updatingKeyDown.put(entry.getIntKey(), keyMapping.isKeyDown);
-                }
+            if (previousKeyDown != keyMapping.isKeyDown) {
+                updatingKeyDown.put(entry.getIntKey(), keyMapping.isKeyDown);
             }
-            if (!updatingKeyDown.isEmpty()) {
-                GTNetwork.sendToServer(new CPacketKeyDown(updatingKeyDown));
-            }
+        }
+        if (!updatingKeyDown.isEmpty()) {
+            GTNetwork.sendToServer(new CPacketKeyDown(updatingKeyDown));
         }
     }
 

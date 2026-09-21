@@ -18,7 +18,7 @@ import javax.annotation.Nullable;
 public class GTWallHangingSignBlock extends WallHangingSignBlock {
 
     public GTWallHangingSignBlock(Properties properties, WoodType type) {
-        super(properties, type);
+        super(type, properties);
     }
 
     @Override

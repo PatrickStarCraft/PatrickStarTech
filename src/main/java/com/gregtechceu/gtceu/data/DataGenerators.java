@@ -47,8 +47,8 @@ public class DataGenerators {
                     set));
             generator.addProvider(true,
                     new DamageTagsLoader(packOutput, provider.getRegistryProvider(), existingFileHelper));
-            generator.addProvider(true, new GTLootTables(packOutput));
-            generator.addProvider(true, new GTLootModifications(packOutput));
+        generator.addProvider(true, new GTLootTables(packOutput, registries));
+        generator.addProvider(true, new GTLootModifications(packOutput, registries));
         }
     }
 }

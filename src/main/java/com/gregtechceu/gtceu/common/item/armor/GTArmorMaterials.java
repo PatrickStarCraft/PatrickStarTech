@@ -4,7 +4,6 @@ import net.minecraft.util.Util;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.StringRepresentable;
-import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.equipment.ArmorMaterial;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.equipment.ArmorType;
@@ -16,8 +15,14 @@ import lombok.Getter;
 
 import java.util.EnumMap;
 
+/**
+ * GT's armour material presets.
+ * <p>
+ * {@code ArmorMaterial} is a final record in 26.2 and can no longer be implemented, so this enum keeps only the
+ * {@link StringRepresentable} contract and exposes its stats through normal methods.
+ */
 @AllArgsConstructor
-public enum GTArmorMaterials implements ArmorMaterial, StringRepresentable {
+public enum GTArmorMaterials implements StringRepresentable {
 
     GOGGLES("goggles", 0, Util.make(new EnumMap<>(ArmorType.class), map -> {
         map.put(ArmorType.BOOTS, 0);
@@ -73,22 +78,18 @@ public enum GTArmorMaterials implements ArmorMaterial, StringRepresentable {
     private final float knockbackResistance;
     private final Lazy<Ingredient> repairIngredient;
 
-    @Override
     public int getDurabilityForType(ArmorType type) {
         return HEALTH_FUNCTION_FOR_TYPE.get(type) * this.durabilityMultiplier;
     }
 
-    @Override
     public int getDefenseForType(ArmorType type) {
         return this.protectionFunctionForType.get(type);
     }
 
-    @Override
     public Ingredient getRepairIngredient() {
         return this.repairIngredient.get();
     }
 
-    @Override
     public String getName() {
         return name;
     }

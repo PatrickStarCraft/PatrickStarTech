@@ -86,7 +86,7 @@ public final class GeneratedVeinMetadata {
 
     public static GeneratedVeinMetadata readFromPacket(FriendlyByteBuf buf) {
         Identifier id = buf.readResourceLocation();
-        ChunkPos origin = new ChunkPos(buf.readVarLong());
+        ChunkPos origin = ChunkPos.unpack(buf.readVarLong());
         BlockPos center = BlockPos.of(buf.readVarLong());
         GTOreDefinition def = ClientProxy.CLIENT_ORE_VEINS.get(buf.readResourceLocation());
         return new GeneratedVeinMetadata(id, origin, center, def, false);

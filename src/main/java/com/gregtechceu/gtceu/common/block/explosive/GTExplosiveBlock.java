@@ -72,9 +72,12 @@ public abstract class GTExplosiveBlock extends Block {
     }
 
     @Override
-    public void onCaughtFire(BlockState state, Level level, BlockPos pos, @Nullable Direction face,
-                             @Nullable LivingEntity igniter) {
+    public boolean onCaughtFire(BlockState state, Level level, BlockPos pos,
+                                @org.jspecify.annotations.Nullable Direction face,
+                                @org.jspecify.annotations.Nullable LivingEntity igniter) {
         explode(level, pos, igniter);
+        // the fuse was primed (or would have been on the server), so the block caught fire successfully
+        return true;
     }
 
     public void explode(Level level, BlockPos pos, @Nullable LivingEntity exploder) {

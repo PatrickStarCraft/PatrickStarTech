@@ -94,7 +94,7 @@ public class GTTransferUtils {
             FluidStack fluid = source.getFluidInTank(i);
             if (fluid.isEmpty() || !filter.test(fluid)) continue;
 
-            fluid = new FluidStack(fluid, toTransfer);
+            fluid = fluid.copyWithAmount(toTransfer);
             var transferred = FluidUtil.tryFluidTransfer(dest, source, fluid, true);
             toTransfer -= transferred.getAmount();
             if (toTransfer <= 0) break;

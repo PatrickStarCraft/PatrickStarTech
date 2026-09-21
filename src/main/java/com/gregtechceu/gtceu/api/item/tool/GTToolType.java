@@ -200,7 +200,7 @@ public class GTToolType {
             .toolStats(b -> b.blockBreaking().crafting()
                     .attackDamage(2.0F).attackSpeed(-2.4F)
                     .sneakBypassUse().behaviors(RotateRailBehavior.INSTANCE))
-            .sound(new ExistingSoundEntry(SoundEvents.ITEM_BREAK, SoundSource.BLOCKS), true)
+            .sound(new ExistingSoundEntry(SoundEvents.ITEM_BREAK.value(), SoundSource.BLOCKS), true)
             .symbol('c')
             .defaultActions(GTToolActions.CROWBAR_DIG, GTToolActions.CROWBAR_REMOVE_COVER)
             .materialAmount(3 * GTValues.M / 2)

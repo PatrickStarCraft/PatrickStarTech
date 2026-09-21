@@ -895,7 +895,7 @@ public class GTBlocks {
             .build()
             .register();
     public static final BlockEntry<TrapDoorBlock> RUBBER_TRAPDOOR = REGISTRATE
-            .block("rubber_trapdoor", (p) -> new TrapDoorBlock(p, RUBBER_SET))
+            .block("rubber_trapdoor", (p) -> new TrapDoorBlock(RUBBER_SET, p))
             .initialProperties(() -> Blocks.SPRUCE_TRAPDOOR)
             .lang("Rubber Trapdoor")
             .blockstate((ctx, prov) -> prov.trapdoorBlock(ctx.get(), prov.blockTexture(ctx.get()), true))
@@ -928,7 +928,7 @@ public class GTBlocks {
             .build()
             .register();
     public static final BlockEntry<FenceGateBlock> RUBBER_FENCE_GATE = REGISTRATE
-            .block("rubber_fence_gate", (p) -> new FenceGateBlock(p, RUBBER_TYPE))
+                    .block("rubber_fence_gate", (p) -> new FenceGateBlock(RUBBER_TYPE, p))
             .initialProperties(() -> Blocks.SPRUCE_FENCE_GATE)
             .lang("Rubber Fence Gate")
             .tag(BlockTags.FENCE_GATES, BlockTags.MINEABLE_WITH_AXE)
@@ -939,7 +939,7 @@ public class GTBlocks {
             .build()
             .register();
     public static final BlockEntry<DoorBlock> RUBBER_DOOR = REGISTRATE
-            .block("rubber_door", (p) -> new DoorBlock(p, RUBBER_SET))
+            .block("rubber_door", (p) -> new DoorBlock(RUBBER_SET, p))
             .initialProperties(() -> Blocks.SPRUCE_DOOR)
             .lang("Rubber Door")
             .loot((table, block) -> table.add(block, table.createDoorTable(block)))
@@ -1059,7 +1059,7 @@ public class GTBlocks {
             .build()
             .register();
     public static final BlockEntry<TrapDoorBlock> TREATED_WOOD_TRAPDOOR = REGISTRATE
-            .block("treated_wood_trapdoor", (p) -> new TrapDoorBlock(p, RUBBER_SET))
+            .block("treated_wood_trapdoor", (p) -> new TrapDoorBlock(RUBBER_SET, p))
             .initialProperties(() -> Blocks.SPRUCE_TRAPDOOR)
             .lang("Treated Wood Trapdoor")
             .blockstate((ctx, prov) -> prov.trapdoorBlock(ctx.get(), prov.blockTexture(ctx.get()), true))
@@ -1093,7 +1093,7 @@ public class GTBlocks {
             .build()
             .register();
     public static final BlockEntry<FenceGateBlock> TREATED_WOOD_FENCE_GATE = REGISTRATE
-            .block("treated_wood_fence_gate", (p) -> new FenceGateBlock(p, TREATED_WOOD_TYPE))
+                    .block("treated_wood_fence_gate", (p) -> new FenceGateBlock(TREATED_WOOD_TYPE, p))
             .initialProperties(() -> Blocks.SPRUCE_FENCE_GATE)
             .lang("Treated Wood Fence Gate")
             .tag(BlockTags.FENCE_GATES)
@@ -1104,7 +1104,7 @@ public class GTBlocks {
             .build()
             .register();
     public static final BlockEntry<DoorBlock> TREATED_WOOD_DOOR = REGISTRATE
-            .block("treated_wood_door", (p) -> new DoorBlock(p, TREATED_WOOD_SET))
+            .block("treated_wood_door", (p) -> new DoorBlock(TREATED_WOOD_SET, p))
             .initialProperties(() -> Blocks.SPRUCE_DOOR)
             .lang("Treated Wood Door")
             .loot((table, block) -> table.add(block, table.createDoorTable(block)))

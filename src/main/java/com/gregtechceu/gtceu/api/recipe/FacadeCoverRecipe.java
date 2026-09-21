@@ -7,6 +7,10 @@ import com.gregtechceu.gtceu.common.data.GTItems;
 import com.gregtechceu.gtceu.common.data.GTMaterials;
 import com.gregtechceu.gtceu.common.item.behavior.FacadeItemBehaviour;
 
+import com.mojang.serialization.MapCodec;
+
+import net.minecraft.network.codec.StreamCodec;
+
 import org.jspecify.annotations.NullMarked;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
@@ -31,21 +35,9 @@ import javax.annotation.ParametersAreNonnullByDefault;
 public class FacadeCoverRecipe implements CraftingRecipe {
 
     public static final FacadeCoverRecipe INSTANCE = new FacadeCoverRecipe();
-    public static final RecipeSerializer<FacadeCoverRecipe> SERIALIZER = new RecipeSerializer<>() {
-
-        @Override
-        public FacadeCoverRecipe fromJson(Identifier recipeId, JsonObject serializedRecipe) {
-            return INSTANCE;
-        }
-
-        @Override
-        public FacadeCoverRecipe fromNetwork(Identifier recipeId, FriendlyByteBuf buffer) {
-            return INSTANCE;
-        }
-
-        @Override
-        public void toNetwork(FriendlyByteBuf buffer, FacadeCoverRecipe recipe) {}
-    };
+    /** The recipe is stateless, so both codecs ignore their input and yield {@link #INSTANCE}. */
+    public static final RecipeSerializer<FacadeCoverRecipe> SERIALIZER =
+            new RecipeSerializer<>(MapCodec.unit(INSTANCE), StreamCodec.unit(INSTANCE));
 
     public static Identifier ID = GTCEu.id("crafting/facade_cover");
 

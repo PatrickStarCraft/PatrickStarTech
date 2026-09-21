@@ -71,7 +71,7 @@ public class EnvironmentalHazardSavedData extends SavedData {
         for (int i = 0; i < allHazardZones.size(); ++i) {
             CompoundTag zoneTag = allHazardZones.getCompoundOrEmpty(i);
 
-            ChunkPos source = new ChunkPos(zoneTag.getLong("pos"));
+            ChunkPos source = ChunkPos.unpack(zoneTag.getLongOr("pos", 0));
             HazardZone zone = HazardZone.deserializeNBT(zoneTag);
             if (zone == null) {
                 continue;
@@ -92,7 +92,7 @@ public class EnvironmentalHazardSavedData extends SavedData {
             HazardZone zone = entry.getValue();
             Stream<ServerPlayer> playersInZone = serverLevel.players()
                     .stream()
-                    .filter(player -> new ChunkPos(BlockPos.containing(player.getEyePosition()))
+                    .filter(player -> ChunkPos.containing(BlockPos.containing(player.getEyePosition()))
                             .equals(entry.getKey()));
             tickPlayerHazards(zone, playersInZone);
 
@@ -185,7 +185,7 @@ public class EnvironmentalHazardSavedData extends SavedData {
      */
     @Nullable
     public HazardZone getZoneByContainedPos(BlockPos containedPos) {
-        return getZoneByPos(new ChunkPos(containedPos));
+        return getZoneByPos(ChunkPos.containing(containedPos));
     }
 
     /**
@@ -196,16 +196,16 @@ public class EnvironmentalHazardSavedData extends SavedData {
      */
     @Nullable
     public HazardZone getZoneByContainedPosAndCondition(BlockPos containedPos, MedicalCondition condition) {
-        HazardZone zone = hazardZones.get(new ChunkPos(containedPos));
+        HazardZone zone = hazardZones.get(ChunkPos.containing(containedPos));
         return zone != null && zone.condition == condition ? zone : null;
     }
 
     public void removeZone(BlockPos inChunkPos) {
-        this.removeZone(new ChunkPos(inChunkPos));
+        this.removeZone(ChunkPos.containing(inChunkPos));
     }
 
     public void removeZone(BlockPos inChunkPos, MedicalCondition condition) {
-        ChunkPos chunkPos = new ChunkPos(inChunkPos);
+        ChunkPos chunkPos = ChunkPos.containing(inChunkPos);
         if (this.hazardZones.get(chunkPos).condition() == condition) {
             removeZone(chunkPos);
         }
@@ -237,7 +237,7 @@ public class EnvironmentalHazardSavedData extends SavedData {
 
     public void addZone(BlockPos source, float strength, boolean canSpread,
                         HazardProperty.HazardTrigger trigger, MedicalCondition condition) {
-        addZone(new ChunkPos(source), new HazardZone(source, strength, canSpread, trigger, condition));
+        addZone(ChunkPos.containing(source), new HazardZone(source, strength, canSpread, trigger, condition));
     }
 
     @NotNull

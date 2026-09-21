@@ -112,7 +112,7 @@ public abstract class LevelPipeNet<NodeDataType, T extends PipeNet<NodeDataType>
     }
 
     public T getNetFromPos(BlockPos blockPos) {
-        List<T> pipeNetsInChunk = pipeNetsByChunk.getOrDefault(new ChunkPos(blockPos), Collections.emptyList());
+        List<T> pipeNetsInChunk = pipeNetsByChunk.getOrDefault(ChunkPos.containing(blockPos), Collections.emptyList());
         for (T pipeNet : pipeNetsInChunk) {
             if (pipeNet.containsNode(blockPos))
                 return pipeNet;

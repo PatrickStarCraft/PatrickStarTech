@@ -85,7 +85,7 @@ public class WorldGeneratorUtils {
 
     public static <T> Map<ChunkPos, Map<BlockPos, T>> groupByChunks(Map<BlockPos, T> input) {
         return input.entrySet().stream().collect(Collectors.groupingBy(
-                entry -> new ChunkPos(entry.getKey()),
+                entry -> ChunkPos.containing(entry.getKey()),
                 Object2ObjectOpenHashMap::new,
                 Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (a, b) -> a, Object2ObjectOpenHashMap::new)));
     }

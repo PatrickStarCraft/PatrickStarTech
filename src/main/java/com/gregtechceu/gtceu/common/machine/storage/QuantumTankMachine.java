@@ -161,7 +161,7 @@ public class QuantumTankMachine extends TieredMachine implements IControllable,
 
     protected void setLocked(boolean locked) {
         if (!stored.isEmpty() && locked) {
-            var copied = new FluidStack(stored, 1000);
+            var copied = stored.copyWithAmount(1000);
             lockedFluid.setFluid(copied);
         } else if (!locked) {
             lockedFluid.setFluid(FluidStack.EMPTY);
@@ -254,7 +254,7 @@ public class QuantumTankMachine extends TieredMachine implements IControllable,
 
         @Override
         public FluidStack getFluidInTank(int tank) {
-            return new FluidStack(stored, GTMath.saturatedCast(storedAmount));
+            return stored.copyWithAmount(GTMath.saturatedCast(storedAmount));
         }
 
         @Override
@@ -265,7 +265,7 @@ public class QuantumTankMachine extends TieredMachine implements IControllable,
                 canFill = Math.min(resource.getAmount(), free);
             }
             if (action.execute() && canFill > 0) {
-                if (stored.isEmpty()) stored = new FluidStack(resource, 1000);
+                if (stored.isEmpty()) stored = resource.copyWithAmount(1000);
                 storedAmount = Math.min(maxAmount, storedAmount + canFill);
                 onFluidChanged();
             }
@@ -276,7 +276,7 @@ public class QuantumTankMachine extends TieredMachine implements IControllable,
         public FluidStack drain(int maxDrain, FluidAction action) {
             if (stored.isEmpty()) return FluidStack.EMPTY;
             long toDrain = Math.min(storedAmount, maxDrain);
-            var copy = new FluidStack(stored, (int) toDrain);
+            var copy = stored.copyWithAmount((int) toDrain);
             if (action.execute() && toDrain > 0) {
                 storedAmount -= toDrain;
                 if (storedAmount == 0) stored = FluidStack.EMPTY;

@@ -136,7 +136,7 @@ public class GTMultiblockTextUtil {
             Component hoverText = Component.translatable("gtceu.multiblock.max_energy_per_tick_hover")
                     .withStyle(ChatFormatting.GRAY);
             return bodyText
-                    .withStyle(style -> style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverText)))
+                    .withStyle(style -> style.withHoverEvent(new HoverEvent.ShowText(hoverText)))
                     .withStyle(ChatFormatting.WHITE);
         })
                 .asWidget()
@@ -185,7 +185,7 @@ public class GTMultiblockTextUtil {
         Component hoverText = Component.translatable("gtceu.multiblock.max_recipe_tier_hover")
                 .withStyle(ChatFormatting.GRAY);
         return Text.dynamic(() -> bodyText
-                .withStyle(style -> style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverText))));
+                .withStyle(style -> style.withHoverEvent(new HoverEvent.ShowText(hoverText))));
     }
 
     public static TextWidget<?> addProgressLine(WorkableMultiblockMachine rlMachine, PanelSyncManager syncManager) {

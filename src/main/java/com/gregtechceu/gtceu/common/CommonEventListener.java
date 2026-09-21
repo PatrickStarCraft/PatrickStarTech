@@ -88,10 +88,12 @@ import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.neoforged.neoforge.event.server.ServerStoppingEvent;
+import net.neoforged.neoforge.event.tick.LevelTickEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import net.neoforged.bus.api.Event;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.LogicalSide;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.minecraftforge.registries.MissingMappingsEvent;
@@ -139,12 +141,12 @@ public class CommonEventListener {
     }
 
     @SubscribeEvent
-    public static void tickPlayerHazards(TickEvent.PlayerTickEvent event) {
-        if (event.side == LogicalSide.CLIENT || event.phase != TickEvent.Phase.END) {
+    public static void tickPlayerHazards(PlayerTickEvent.Post event) {
+        Player player = event.getEntity();
+        if (player.level().isClientSide()) {
             return;
         }
 
-        Player player = event.player;
         // update the tracker every second, including clearing everything when the config changes.
         if (player.tickCount % 20 != 0) {
             return;
@@ -271,8 +273,8 @@ public class CommonEventListener {
     }
 
     @SubscribeEvent
-    public static void levelTick(TickEvent.LevelTickEvent event) {
-        if (event.phase == TickEvent.Phase.END && event.level instanceof ServerLevel serverLevel) {
+    public static void levelTick(LevelTickEvent.Post event) {
+        if (event.getLevel() instanceof ServerLevel serverLevel) {
             TaskHandler.onTickUpdate(serverLevel);
             if (ConfigHolder.INSTANCE.gameplay.environmentalHazards) {
                 EnvironmentalHazardSavedData.getOrCreate(serverLevel).tick();
@@ -385,9 +387,9 @@ public class CommonEventListener {
     }
 
     @SubscribeEvent
-    public static void playerTickEvent(TickEvent.PlayerTickEvent event) {
-        Player player = event.player;
-        if (event.phase == TickEvent.Phase.START && !player.level().isClientSide()) {
+    public static void playerTickEvent(PlayerTickEvent.Pre event) {
+        Player player = event.getEntity();
+        if (!player.level().isClientSide()) {
             var speedAttrib = player.getAttribute(Attributes.MOVEMENT_SPEED);
             if (speedAttrib == null) return;
             var speedMod = speedAttrib.getModifier(BlockAttributes.BLOCK_SPEED_BOOST);
@@ -423,7 +425,7 @@ public class CommonEventListener {
     }
 
     @SubscribeEvent
-    public static void stepAssistHandler(LivingEvent.LivingTickEvent event) {
+    public static void stepAssistHandler(EntityTickEvent.Pre event) {
         float MAGIC_STEP_HEIGHT = 1.0023f;
         if (event.getEntity() == null || !(event.getEntity() instanceof Player player)) return;
         if (!player.isCrouching() && player.getItemBySlot(EquipmentSlot.FEET).is(CustomTags.STEP_BOOTS) &&

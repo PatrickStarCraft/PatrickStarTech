@@ -53,7 +53,7 @@ public class BedrockOreVeinSavedData extends SavedData {
         var list = nbt.getList("veinInfo", Tag.TAG_COMPOUND);
         for (Tag tag : list) {
             if (tag instanceof CompoundTag compoundTag) {
-                var chunkPos = new ChunkPos(compoundTag.getLong("pos"));
+                var chunkPos = ChunkPos.unpack(compoundTag.getLongOr("pos", 0));
                 veinOres.put(chunkPos, OreVeinWorldEntry.readFromNBT(compoundTag.getCompoundOrEmpty("data")));
             }
         }

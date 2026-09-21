@@ -52,7 +52,7 @@ public class BedrockFluidVeinSavedData extends SavedData {
         var list = nbt.getList("veinInfo", Tag.TAG_COMPOUND);
         for (int i = 0; i < list.size(); ++i) {
             CompoundTag compoundTag = list.getCompound(i);
-            var chunkPos = new ChunkPos(compoundTag.getLong("p"));
+            var chunkPos = ChunkPos.unpack(compoundTag.getLongOr("p", 0));
             veinFluids.put(chunkPos, FluidVeinWorldEntry.readFromNBT(compoundTag.getCompoundOrEmpty("d")));
         }
     }

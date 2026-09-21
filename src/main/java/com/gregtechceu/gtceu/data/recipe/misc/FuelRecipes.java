@@ -39,7 +39,7 @@ public class FuelRecipes {
                     .duration(burnTime)
                     .save(provider);
         } else {
-            FluidStack fluid = new FluidStack(containedFluid.get(), 250);
+            FluidStack fluid = containedFluid.get().copyWithAmount(250);
             Identifier id = BuiltInRegistries.FLUID.getKey(fluid.getFluid());
 
             // the lava recipe's duration is 4/9 of the bucket's burn time

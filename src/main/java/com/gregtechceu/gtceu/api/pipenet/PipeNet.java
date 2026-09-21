@@ -119,7 +119,7 @@ public abstract class PipeNet<NodeDataType> implements INBTSerializable<Compound
     }
 
     protected void checkAddedInChunk(BlockPos nodePos) {
-        ChunkPos chunkPos = new ChunkPos(nodePos);
+        ChunkPos chunkPos = ChunkPos.containing(nodePos);
         int oldValue = this.ownedChunks.addTo(chunkPos, 1);
         if (oldValue == 0 && isValid()) {
             this.worldData.addPipeNetToChunk(chunkPos, this);
@@ -127,7 +127,7 @@ public abstract class PipeNet<NodeDataType> implements INBTSerializable<Compound
     }
 
     protected void ensureRemovedFromChunk(BlockPos nodePos) {
-        ChunkPos chunkPos = new ChunkPos(nodePos);
+        ChunkPos chunkPos = ChunkPos.containing(nodePos);
         int oldValue = this.ownedChunks.containsKey(chunkPos) ? ownedChunks.addTo(chunkPos, -1) : 0;
         if (oldValue == 1) {
             this.ownedChunks.removeInt(chunkPos);

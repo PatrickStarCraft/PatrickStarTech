@@ -11,7 +11,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.client.event.CustomizeGuiOverlayEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
-import net.minecraftforge.event.TickEvent;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -177,8 +177,8 @@ public final class GTParticleManager {
     }
 
     @SubscribeEvent
-    public void clientTick(TickEvent.ClientTickEvent event) {
-        if (event.phase != TickEvent.Phase.END || Minecraft.getInstance().isPaused()) {
+    public void clientTick(ClientTickEvent.Post event) {
+        if (Minecraft.getInstance().isPaused()) {
             return;
         }
         if (Minecraft.getInstance().level != null) {

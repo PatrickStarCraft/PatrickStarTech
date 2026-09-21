@@ -35,7 +35,7 @@ public class FluidCache {
             if (fluidTagRaw instanceof CompoundTag fluidTag) {
                 ResourceKey<Level> dim = ResourceKey.create(Registries.DIMENSION,
                         Identifier.parse(fluidTag.getStringOr("dim", "")));
-                ChunkPos pos = new ChunkPos(fluidTag.getLong("pos"));
+                ChunkPos pos = ChunkPos.unpack(fluidTag.getLongOr("pos", 0));
                 var fluid = ProspectorMode.FluidInfo.fromNbt(fluidTag);
                 fluidCache.put(dim, pos, fluid);
 

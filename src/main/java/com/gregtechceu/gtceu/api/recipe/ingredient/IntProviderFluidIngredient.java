@@ -95,7 +95,7 @@ public class IntProviderFluidIngredient extends FluidIngredient implements IRang
     public @NotNull FluidStack getMaxSizeStack() {
         FluidStack[] in = inner.getStacks();
         if (in.length == 0) return FluidStack.EMPTY;
-        return new FluidStack(in[0], countProvider.maxInclusive());
+        return in[0].copyWithAmount(countProvider.maxInclusive());
     }
 
     /**

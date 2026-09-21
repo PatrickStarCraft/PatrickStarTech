@@ -36,7 +36,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.client.gui.overlay.ForgeGui;
-import net.minecraftforge.event.TickEvent;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.neoforge.event.server.ServerStoppedEvent;
@@ -150,14 +150,12 @@ public class ClientEventListener {
     }
 
     @SubscribeEvent
-    public static void onClientTickEvent(TickEvent.ClientTickEvent event) {
-        if (event.phase == TickEvent.Phase.END) {
-            TooltipHelper.onClientTick();
-            EnvironmentalHazardClientHandler.INSTANCE.onClientTick();
-            PatternPreviewRenderer.INSTANCE.clientTick();
+    public static void onClientTickEvent(ClientTickEvent.Post event) {
+        TooltipHelper.onClientTick();
+        EnvironmentalHazardClientHandler.INSTANCE.onClientTick();
+        PatternPreviewRenderer.INSTANCE.clientTick();
 
-            GTValues.CLIENT_TIME++;
-        }
+        GTValues.CLIENT_TIME++;
     }
 
     private static final String BLOCK_INFO_LINE_START = ChatFormatting.UNDERLINE + "Targeted Block: ";

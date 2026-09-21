@@ -126,7 +126,7 @@ public class OverlayedTankHandler {
                 if (!existing.isEmpty() && !sameFluidFill) return 0;  // Not allowed to add new stack
                 if (stacks.size() >= size) return 0;  // No space to add new stack
                 int canInsert = Math.min(capacity, amount);
-                stacks.add(new FluidStack(fluid, amount));
+                stacks.add(fluid.copyWithAmount(amount));
                 return canInsert;
             } else { // Stack (that can grow) exists
                 int canInsert = Math.min(capacity - existing.getAmount(), amount);

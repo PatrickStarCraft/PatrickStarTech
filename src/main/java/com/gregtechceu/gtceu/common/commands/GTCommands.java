@@ -320,7 +320,7 @@ public class GTCommands {
         GTOreDefinition vein = context.getArgument("vein", GTOreDefinition.class);
         Identifier id = GTRegistries.ORE_VEINS.getKey(vein);
 
-        ChunkPos chunkPos = new ChunkPos(sourcePos);
+        ChunkPos chunkPos = ChunkPos.containing(sourcePos);
         ServerLevel level = context.getSource().getLevel();
 
         GeneratedVeinMetadata metadata = new GeneratedVeinMetadata(id, chunkPos, sourcePos, vein);
