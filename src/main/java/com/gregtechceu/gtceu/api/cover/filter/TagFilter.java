@@ -43,10 +43,10 @@ public class TagFilter<T, S> extends Filter<T> {
         this.tagHolderObject = tagHolderObjectSupplier;
         this.tagsSupplier = tagsSupplier;
 
-        var tag = stack.getOrCreateTag();
+        var tag = com.gregtechceu.gtceu.api.item.data.ItemStackData.read(stack);
 
         // oreDict is backwards compat
-        filterString = tag.contains("filter_string") ? tag.getString("filter_string") : tag.getString("oreDict");
+        filterString = tag.contains("filter_string") ? tag.getStringOr("filter_string", "") : tag.getStringOr("oreDict", "");
         matchExpr = TagExprFilter.parseExpression(filterString);
     }
 

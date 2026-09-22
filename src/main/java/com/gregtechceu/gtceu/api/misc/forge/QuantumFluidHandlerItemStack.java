@@ -41,7 +41,7 @@ public class QuantumFluidHandlerItemStack implements IFluidHandlerItem, ICapabil
         if (tagCompound == null || !tagCompound.contains("stored") || !tagCompound.contains("storedAmount")) {
             return FluidStack.EMPTY;
         }
-        FluidStack stack = FluidStack.loadFluidStackFromNBT(tagCompound.getCompound("stored"));
+        FluidStack stack = com.gregtechceu.gtceu.utils.data.StackPersistence.loadFluid(tagCompound.getCompoundOrEmpty("stored"));
         if (!stack.isEmpty()) {
             stack.setAmount(GTMath.saturatedCast(tagCompound.getLongOr("storedAmount", 0)));
         }
@@ -58,7 +58,7 @@ public class QuantumFluidHandlerItemStack implements IFluidHandlerItem, ICapabil
         fluid.setAmount(GTMath.saturatedCast(amount));
 
         CompoundTag fluidTag = new CompoundTag();
-        fluid.writeToNBT(fluidTag);
+        fluidTag.merge(com.gregtechceu.gtceu.utils.data.StackPersistence.saveFluid(fluid));
 
         CompoundTag containerTag = this.container.getOrCreateTag();
         containerTag.put("stored", fluidTag);

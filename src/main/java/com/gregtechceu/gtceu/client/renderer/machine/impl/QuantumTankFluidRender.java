@@ -55,11 +55,11 @@ public class QuantumTankFluidRender extends DynamicRender<QuantumTankMachine, Qu
     public void renderByItem(ItemStack stack, ItemDisplayContext displayContext,
                              PoseStack poseStack, MultiBufferSource buffer, int packedLight, int packedOverlay) {
         if (CREATIVE_FLUID_ITEM == null) CREATIVE_FLUID_ITEM = GTMachines.CREATIVE_FLUID.getItem();
-        if (stack.hasTag()) {
+        if (stack.has(net.minecraft.core.component.DataComponents.CUSTOM_DATA)) {
             poseStack.pushPose();
 
-            FluidStack stored = FluidStack.loadFluidStackFromNBT(stack.getOrCreateTagElement("stored"));
-            long storedAmount = stack.getOrCreateTag().getLong("storedAmount");
+            FluidStack stored = com.gregtechceu.gtceu.utils.data.StackPersistence.loadFluid(com.gregtechceu.gtceu.api.item.data.ItemStackData.read(stack).getCompoundOrEmpty("stored"));
+            long storedAmount = com.gregtechceu.gtceu.api.item.data.ItemStackData.read(stack).getLongOr("storedAmount", 0L);
             if (storedAmount == 0 && !stored.isEmpty()) storedAmount = stored.getAmount();
             long maxAmount = 0;
             if (stack.getItem() instanceof MetaMachineItem machineItem) {

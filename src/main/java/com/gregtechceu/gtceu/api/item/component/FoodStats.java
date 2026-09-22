@@ -9,7 +9,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.item.ItemUseAnimation;
 import net.minecraft.world.level.Level;
 
 import org.jetbrains.annotations.Nullable;
@@ -63,8 +63,8 @@ public class FoodStats implements IEdibleItem, IInteractionItem, IAddInformation
     }
 
     @Override
-    public UseAnim getUseAnimation(ItemStack stack) {
-        return isDrink ? UseAnim.DRINK : UseAnim.EAT;
+    public ItemUseAnimation getUseAnimation(ItemStack stack) {
+        return isDrink ? ItemUseAnimation.DRINK : ItemUseAnimation.EAT;
     }
 
     @Override

@@ -97,13 +97,13 @@ public class DrumMachine extends MetaMachine {
     @Override
     public void saveToItem(CompoundTag tag, boolean clone) {
         if (clone || stored.isEmpty()) return;
-        tag.put("Fluid", stored.writeToNBT(new CompoundTag()));
+        tag.put("Fluid", com.gregtechceu.gtceu.utils.data.StackPersistence.saveFluid(stored));
     }
 
     @Override
     public void loadFromItem(CompoundTag tag) {
         if (tag.contains("Fluid")) {
-            stored = FluidStack.loadFluidStackFromNBT(tag.getCompound("Fluid"));
+            stored = com.gregtechceu.gtceu.utils.data.StackPersistence.loadFluid(tag.getCompoundOrEmpty("Fluid"));
         } else {
             stored = FluidStack.EMPTY;
         }

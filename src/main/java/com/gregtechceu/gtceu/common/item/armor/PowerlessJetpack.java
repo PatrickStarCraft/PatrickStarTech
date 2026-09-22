@@ -1,6 +1,7 @@
 package com.gregtechceu.gtceu.common.item.armor;
 
 import com.gregtechceu.gtceu.GTCEu;
+import com.gregtechceu.gtceu.api.item.data.ItemStackData;
 import com.gregtechceu.gtceu.api.item.armor.ArmorComponentItem;
 import com.gregtechceu.gtceu.api.item.armor.ArmorUtils;
 import com.gregtechceu.gtceu.api.item.armor.IArmorLogic;
@@ -63,7 +64,7 @@ public class PowerlessJetpack implements IArmorLogic, IJetpack, IItemHUDProvider
     public void onArmorTick(Level world, Player player, @NotNull ItemStack stack) {
         if (!FluidUtil.getFluidHandler(stack).isPresent()) return;
 
-        CompoundTag data = stack.getOrCreateTag();
+        CompoundTag data = ItemStackData.read(stack);
 
         if (data.contains("burnTimer")) burnTimer = data.getShortOr("burnTimer", (short) 0);
         if (!data.contains("enabled")) {
@@ -97,13 +98,20 @@ public class PowerlessJetpack implements IArmorLogic, IJetpack, IItemHUDProvider
         if (toggleTimer > 0) toggleTimer--;
         data.putByte("toggleTimer", toggleTimer);
 
+        // Commit controls before flying/charging can modify other custom-data fields.
+        ItemStackData.update(stack, tag -> {
+            tag.putBoolean("enabled", data.getBooleanOr("enabled", true));
+            tag.putBoolean("hover", data.getBooleanOr("hover", false));
+            tag.putByte("toggleTimer", data.getByteOr("toggleTimer", (byte) 0));
+        });
+
         performFlying(player, jetpackEnabled, hoverMode, stack);
 
         if (!world.isClientSide()) {
             if (currentFuel.isEmpty())
                 findNewRecipe(stack);
 
-            data.putShort("burnTimer", (short) burnTimer);
+            ItemStackData.update(stack, tag -> tag.putShort("burnTimer", (short) burnTimer));
         }
     }
 
@@ -136,7 +144,7 @@ public class PowerlessJetpack implements IArmorLogic, IJetpack, IItemHUDProvider
             String formated = String.format("%.1f",
                     (tank.getFluidInTank(0).getAmount() * 100.0F / tank.getTankCapacity(0)));
             this.HUD.newString(Component.translatable("metaarmor.hud.fuel_lvl", formated + "%"));
-            CompoundTag data = item.getTag();
+            CompoundTag data = ItemStackData.read(item);
 
             if (data != null) {
                 if (data.contains("enabled")) {
@@ -261,7 +269,7 @@ public class PowerlessJetpack implements IArmorLogic, IJetpack, IItemHUDProvider
         @Override
         public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltipComponents,
                                     TooltipFlag isAdvanced) {
-            CompoundTag data = stack.getOrCreateTag();
+            CompoundTag data = ItemStackData.read(stack);
             Component state;
             boolean enabled = !data.contains("enabled") || data.getBooleanOr("enabled", false);
             state = enabled ? Component.translatable("metaarmor.hud.status.enabled") :

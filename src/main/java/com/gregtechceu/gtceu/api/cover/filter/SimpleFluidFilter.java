@@ -47,7 +47,7 @@ public class SimpleFluidFilter extends Filter<FluidStack> {
 
     public SimpleFluidFilter(ItemStack stack) {
         super(stack);
-        var tag = stack.getOrCreateTag();
+        var tag = com.gregtechceu.gtceu.api.item.data.ItemStackData.read(stack);
 
         for (int i = 0; i < 9; i++) {
             int finalI = i;
@@ -61,11 +61,11 @@ public class SimpleFluidFilter extends Filter<FluidStack> {
 
         if (tag.isEmpty()) return;
 
-        isBlackList = tag.getBoolean("isBlackList");
-        ignoreNbt = tag.getBoolean("matchNbt");
+        isBlackList = tag.getBooleanOr("isBlackList", false);
+        ignoreNbt = tag.getBooleanOr("matchNbt", false);
         var list = com.gregtechceu.gtceu.utils.data.TypedTagList.read(tag, "matches", Tag.TAG_COMPOUND);
-        for (int i = 0; i < list.size(); i++) {
-            matches[i] = FluidStack.loadFluidStackFromNBT((CompoundTag) list.get(i));
+        for (int i = 0; i < Math.min(list.size(), matches.length); i++) {
+            matches[i] = com.gregtechceu.gtceu.utils.data.StackPersistence.loadFluid((CompoundTag) list.get(i));
             fluidStorageSlots[i].setFluid(matches[i]);
         }
     }
@@ -79,7 +79,7 @@ public class SimpleFluidFilter extends Filter<FluidStack> {
         tag.putBoolean("matchNbt", ignoreNbt);
         var list = new ListTag();
         for (var match : matches) {
-            list.add(match.writeToNBT(new CompoundTag()));
+            list.add(com.gregtechceu.gtceu.utils.data.StackPersistence.saveFluid(match));
         }
         tag.put("matches", list);
         return tag;

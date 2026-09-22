@@ -305,7 +305,7 @@ public interface ICoverable extends ITickSubscription, ISyncManaged, ICopyable {
         if (cover == null) return new CompoundTag();
         var tag = new CompoundTag();
         tag.putString("id", GTRegistries.COVERS.getKey(cover.coverDefinition).toString());
-        tag.put("item", cover.getAttachItem().serializeNBT());
+        tag.put("item", com.gregtechceu.gtceu.utils.data.StackPersistence.saveItem(cover.getAttachItem()));
         var dataTag = new CompoundTag();
         cover.copyConfig(dataTag);
         tag.put("data", dataTag);
@@ -315,7 +315,7 @@ public interface ICoverable extends ITickSubscription, ISyncManaged, ICopyable {
     private void applyCoverConfigTag(ServerPlayer player, Direction dir, CompoundTag tag) {
         if (tag.isEmpty()) return;
         var def = GTRegistries.COVERS.get(Identifier.parse(tag.getStringOr("id", "")));
-        ItemStack stack = ItemStack.of(tag.getCompound("item"));
+        ItemStack stack = com.gregtechceu.gtceu.utils.data.StackPersistence.loadItem(tag.getCompoundOrEmpty("item"));
         if (def == null) return;
 
         placeCoverOnSide(dir, stack, def, player);

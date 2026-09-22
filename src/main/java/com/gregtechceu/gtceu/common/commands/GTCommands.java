@@ -20,7 +20,7 @@ import com.gregtechceu.gtceu.data.pack.GTDynamicDataPack;
 
 import net.minecraft.commands.*;
 import net.minecraft.commands.arguments.EntityArgument;
-import net.minecraft.commands.arguments.ResourceLocationArgument;
+import net.minecraft.commands.arguments.IdentifierArgument;
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -104,11 +104,11 @@ public class GTCommands {
                                 .then(literal("give")
                                         .requires(ctx -> LEVEL_GAMEMASTERS.check(ctx.permissions()))
                                         .then(argument("targets", EntityArgument.players())
-                                                .then(argument("cape", ResourceLocationArgument.id())
+                                                .then(argument("cape", IdentifierArgument.id())
                                                         .suggests(NOT_OWNED_CAPES)
                                                         .executes(ctx -> {
                                                             Collection<ServerPlayer> players = EntityArgument.getPlayers(ctx, "targets");
-                                                            Collection<Identifier> cape = Collections.singleton(ResourceLocationArgument.getId(ctx, "cape"));
+                                                            Collection<Identifier> cape = Collections.singleton(IdentifierArgument.getId(ctx, "cape"));
                                                             return giveCapes(ctx.getSource(), players, cape);
                                                         }))
                                                 .then(literal("*")
@@ -119,11 +119,11 @@ public class GTCommands {
                                 .then(literal("take")
                                         .requires(ctx -> LEVEL_GAMEMASTERS.check(ctx.permissions()))
                                         .then(argument("targets", EntityArgument.players())
-                                                .then(argument("cape", ResourceLocationArgument.id())
+                                                .then(argument("cape", IdentifierArgument.id())
                                                         .suggests(OWNED_CAPES)
                                                         .executes(ctx -> {
                                                             Collection<ServerPlayer> players = EntityArgument.getPlayers(ctx, "targets");
-                                                            Collection<Identifier> cape = Collections.singleton(ResourceLocationArgument.getId(ctx, "cape"));
+                                                            Collection<Identifier> cape = Collections.singleton(IdentifierArgument.getId(ctx, "cape"));
                                                             return takeCapes(ctx.getSource(), players, cape);
                                                         }))
                                                 .then(literal("*")
@@ -134,11 +134,11 @@ public class GTCommands {
                                 .then(literal("use")
                                         .then(argument("target", EntityArgument.player())
                                                 .requires(ctx -> LEVEL_ADMINS.check(ctx.permissions()))
-                                                .then(argument("cape", ResourceLocationArgument.id())
+                                                .then(argument("cape", IdentifierArgument.id())
                                                         .suggests(OWNED_CAPES)
                                                         .executes(ctx -> {
                                                             ServerPlayer player = EntityArgument.getPlayer(ctx, "target");
-                                                            Identifier cape = ResourceLocationArgument.getId(ctx, "cape");
+                                                            Identifier cape = IdentifierArgument.getId(ctx, "cape");
                                                             return setActiveCape(ctx.getSource(), player, cape);
                                                         }))
                                                 .then(literal("none")
@@ -146,11 +146,11 @@ public class GTCommands {
                                                             ServerPlayer player = ctx.getSource().getPlayerOrException();
                                                             return setActiveCape(ctx.getSource(), player, null);
                                                         })))
-                                        .then(argument("cape", ResourceLocationArgument.id())
+                                        .then(argument("cape", IdentifierArgument.id())
                                                 .suggests(OWNED_CAPES)
                                                 .executes(ctx -> {
                                                     ServerPlayer player = ctx.getSource().getPlayerOrException();
-                                                    Identifier cape = ResourceLocationArgument.getId(ctx, "cape");
+                                                    Identifier cape = IdentifierArgument.getId(ctx, "cape");
                                                     return setActiveCape(ctx.getSource(), player, cape);
                                                 }))
                                         .then(literal("none")

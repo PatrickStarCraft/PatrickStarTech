@@ -103,7 +103,7 @@ public interface ItemStackHashStrategy extends Hash.Strategy<ItemStack> {
                     return o == null || o.isEmpty() ? 0 : Objects.hash(
                             item ? o.getItem() : null,
                             count ? o.getCount() : null,
-                            tag ? o.getTag() : null);
+                            tag ? o.getComponents() : null);
                 }
 
                 @Override
@@ -113,7 +113,7 @@ public interface ItemStackHashStrategy extends Hash.Strategy<ItemStack> {
 
                     return (!item || a.getItem() == b.getItem()) &&
                             (!count || a.getCount() == b.getCount()) &&
-                            (!tag || Objects.equals(a.getTag(), b.getTag()));
+                            (!tag || Objects.equals(a.getComponents(), b.getComponents()));
                 }
             };
         }

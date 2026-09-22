@@ -18,7 +18,7 @@ public class ModulePlaceholderRenderer implements IPlaceholderRenderer {
     @Override
     public void render(CentralMonitorMachine machine, MonitorGroup group, float partialTick, PoseStack poseStack,
                        MultiBufferSource buffer, int packedLight, int packedOverlay, CompoundTag tag) {
-        ItemStack stack = ItemStack.of(tag);
+        ItemStack stack = com.gregtechceu.gtceu.utils.data.StackPersistence.loadItem(tag);
         if (stack.getItem() instanceof IComponentItem componentItem) {
             for (IItemComponent component : componentItem.getComponents()) {
                 if (component instanceof IMonitorModuleItem module) {

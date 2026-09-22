@@ -80,20 +80,22 @@ public class ItemMagnetBehavior implements IInteractionItem, IItemLifeCycle, IAd
     @Override
     public ModularPanel<?> buildUI(PlayerInventoryGuiData<?> data, PanelSyncManager syncManager, UISettings settings) {
         ItemStack held = data.getUsedItemStack();
-        CompoundTag heldTag = held.getOrCreateTag();
+        CompoundTag heldTag = com.gregtechceu.gtceu.api.item.data.ItemStackData.read(held);
 
         FilterMode selectedFilterMode = FilterMode.get(heldTag.getIntOr(FILTER_ORDINAL_TAG, 0));
         Map<FilterMode, ItemStack> stacks = new EnumMap<>(FilterMode.class);
-        CompoundTag startFilterTag = heldTag.getCompound(FILTER_TAG).copy();
+        CompoundTag startFilterTag = heldTag.getCompoundOrEmpty(FILTER_TAG).copy();
         for (FilterMode filterMode : FilterMode.values()) {
             ItemStack stack = filterMode.getFilter(held);
-            stack.setTag(startFilterTag.copy());
+            net.minecraft.world.item.component.CustomData.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA,
+                    stack, startFilterTag);
             stacks.put(filterMode, stack);
         }
 
         EnumSyncValue<FilterMode> filterSync = new EnumSyncValue<>(FilterMode.class,
-                () -> FilterMode.get(data.getUsedItemStack().getOrCreateTag().getInt(FILTER_ORDINAL_TAG)),
-                filterMode -> data.getUsedItemStack().getOrCreateTag().putInt(FILTER_ORDINAL_TAG, filterMode.ordinal()))
+                () -> FilterMode.get(com.gregtechceu.gtceu.api.item.data.ItemStackData.read(data.getUsedItemStack()).getIntOr(FILTER_ORDINAL_TAG, 0)),
+                filterMode -> com.gregtechceu.gtceu.api.item.data.ItemStackData.update(data.getUsedItemStack(),
+                        tag -> tag.putInt(FILTER_ORDINAL_TAG, filterMode.ordinal())))
                 .allowC2S();
 
         PagedWidget<?> pages = new PagedWidget<>()
@@ -114,9 +116,10 @@ public class ItemMagnetBehavior implements IInteractionItem, IItemLifeCycle, IAd
 
         syncManager.addCloseListener(player -> {
             ItemStack stack = data.getUsedItemStack();
-            CompoundTag tag = stack.getOrCreateTag();
-            FilterMode selected = FilterMode.get(tag.getIntOr(FILTER_ORDINAL_TAG, 0));
-            tag.put(FILTER_TAG, stacks.get(selected).getOrCreateTag().copy());
+            com.gregtechceu.gtceu.api.item.data.ItemStackData.update(stack, tag -> {
+                FilterMode selected = FilterMode.get(tag.getIntOr(FILTER_ORDINAL_TAG, 0));
+                tag.put(FILTER_TAG, com.gregtechceu.gtceu.api.item.data.ItemStackData.read(stacks.get(selected)));
+            });
         });
 
         return new ModularPanel<>("item_magnet")
@@ -206,7 +209,7 @@ public class ItemMagnetBehavior implements IInteractionItem, IItemLifeCycle, IAd
         if (stack == ItemStack.EMPTY) {
             return false;
         }
-        CompoundTag tag = stack.getTag();
+        CompoundTag tag = com.gregtechceu.gtceu.api.item.data.ItemStackData.read(stack);
         if (tag == null) {
             return false;
         }
@@ -219,7 +222,7 @@ public class ItemMagnetBehavior implements IInteractionItem, IItemLifeCycle, IAd
     private static boolean toggleActive(ItemStack stack) {
         boolean isActive = isActive(stack);
         // noinspection ConstantConditions
-        stack.getOrCreateTag().putBoolean("IsActive", !isActive);
+        com.gregtechceu.gtceu.api.item.data.ItemStackData.update(stack, tag -> tag.putBoolean("IsActive", !isActive));
         return !isActive;
     }
 
@@ -262,7 +265,8 @@ public class ItemMagnetBehavior implements IInteractionItem, IItemLifeCycle, IAd
 
                 if (!world.isClientSide()) {
                     if (filter == null) {
-                        filter = FilterMode.get(stack.getOrCreateTag().getInt(FILTER_ORDINAL_TAG)).loadFilter(stack);
+                        filter = FilterMode.get(com.gregtechceu.gtceu.api.item.data.ItemStackData.read(stack)
+                                .getIntOr(FILTER_ORDINAL_TAG, 0)).loadFilter(stack);
                     }
 
                     if (!filter.test(itemEntity.getItem())) {
@@ -382,9 +386,10 @@ public class ItemMagnetBehavior implements IInteractionItem, IItemLifeCycle, IAd
         }
 
         public ItemStack getFilter(ItemStack magnet) {
-            var tag = magnet.getOrCreateTag();
+            var tag = com.gregtechceu.gtceu.api.item.data.ItemStackData.read(magnet);
             var mockStack = new ItemStack(item);
-            mockStack.setTag(tag.getCompound(FILTER_TAG));
+            net.minecraft.world.item.component.CustomData.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA,
+                    mockStack, tag.getCompoundOrEmpty(FILTER_TAG));
             return mockStack;
         }
 

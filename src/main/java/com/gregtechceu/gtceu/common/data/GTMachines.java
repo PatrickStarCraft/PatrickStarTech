@@ -611,9 +611,9 @@ public class GTMachines {
             .allowExtendedFacing(true)
             .tooltipBuilder((stack, list) -> {
                 CREATIVE_TOOLTIPS.accept(stack, list);
-                if (stack.hasTag()) {
-                    FluidStack f = FluidStack.loadFluidStackFromNBT(stack.getOrCreateTagElement("stored"));
-                    int perCycle = stack.getOrCreateTag().getInt("mBPerCycle");
+                if (stack.has(net.minecraft.core.component.DataComponents.CUSTOM_DATA)) {
+                    FluidStack f = com.gregtechceu.gtceu.utils.data.StackPersistence.loadFluid(com.gregtechceu.gtceu.api.item.data.ItemStackData.read(stack).getCompoundOrEmpty("stored"));
+                    int perCycle = com.gregtechceu.gtceu.api.item.data.ItemStackData.read(stack).getIntOr("mBPerCycle", 0);
                     list.add(1, Component.translatable("gtceu.universal.tooltip.fluid_stored", f.getHoverName(),
                             FormattingUtil.formatNumbers(perCycle)));
                 }
@@ -629,9 +629,9 @@ public class GTMachines {
             .allowExtendedFacing(true)
             .tooltipBuilder((stack, list) -> {
                 CREATIVE_TOOLTIPS.accept(stack, list);
-                if (stack.hasTag()) {
-                    ItemStack i = ItemStack.of(stack.getOrCreateTagElement("stored"));
-                    int perCycle = stack.getOrCreateTag().getInt("itemsPerCycle");
+                if (stack.has(net.minecraft.core.component.DataComponents.CUSTOM_DATA)) {
+                    ItemStack i = com.gregtechceu.gtceu.utils.data.StackPersistence.loadItem(com.gregtechceu.gtceu.api.item.data.ItemStackData.read(stack).getCompoundOrEmpty("stored"));
+                    int perCycle = com.gregtechceu.gtceu.api.item.data.ItemStackData.read(stack).getIntOr("itemsPerCycle", 0);
                     list.add(1, Component.translatable("gtceu.universal.tooltip.item_stored", i.getHoverName(),
                             FormattingUtil.formatNumbers(perCycle)));
                 }

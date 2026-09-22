@@ -165,7 +165,7 @@ public class MultiLineComponent extends ArrayList<MutableComponent> {
         CompoundTag compoundTag = new CompoundTag();
         ListTag tag = new ListTag();
         for (MutableComponent component : this) {
-            tag.add(StringTag.valueOf(Component.Serializer.toJson(component)));
+            tag.add(StringTag.valueOf(com.gregtechceu.gtceu.utils.data.ComponentJson.toJson(component)));
         }
         compoundTag.put("text", tag);
         ListTag graphicsTag = new ListTag();
@@ -182,11 +182,11 @@ public class MultiLineComponent extends ArrayList<MutableComponent> {
         if (tag == null) return out;
         if (tag instanceof ListTag listTag) {
             for (Tag i : listTag) {
-                out.add(Component.Serializer.fromJson(i.asString().orElseThrow()));
+                out.add(com.gregtechceu.gtceu.utils.data.ComponentJson.fromJson(i.asString().orElseThrow()));
             }
         } else if (tag instanceof CompoundTag compoundTag) {
             ListTag textTag = com.gregtechceu.gtceu.utils.data.TypedTagList.read(compoundTag, "text", Tag.TAG_STRING);
-            for (Tag i : textTag) out.add(Component.Serializer.fromJson(i.asString().orElseThrow()));
+            for (Tag i : textTag) out.add(com.gregtechceu.gtceu.utils.data.ComponentJson.fromJson(i.asString().orElseThrow()));
             ListTag graphicsTag = com.gregtechceu.gtceu.utils.data.TypedTagList.read(compoundTag, "graphics", Tag.TAG_COMPOUND);
             for (Tag i : graphicsTag) out.addGraphics(GraphicsComponent.fromTag(i));
         }

@@ -50,12 +50,12 @@ public class QuantumChestItemRender extends DynamicRender<QuantumChestMachine, Q
     public void renderByItem(ItemStack stack, ItemDisplayContext displayContext,
                              PoseStack poseStack, MultiBufferSource buffer, int packedLight, int packedOverlay) {
         if (CREATIVE_CHEST_ITEM == null) CREATIVE_CHEST_ITEM = GTMachines.CREATIVE_ITEM.getItem();
-        if (stack.hasTag()) {
+        if (stack.has(net.minecraft.core.component.DataComponents.CUSTOM_DATA)) {
             poseStack.pushPose();
             poseStack.translate(-0.5f, -0.5f, -0.5f);
 
-            ItemStack itemStack = ItemStack.of(stack.getOrCreateTagElement("stored"));
-            long storedAmount = stack.getOrCreateTag().getLong("storedAmount");
+            ItemStack itemStack = com.gregtechceu.gtceu.utils.data.StackPersistence.loadItem(com.gregtechceu.gtceu.api.item.data.ItemStackData.read(stack).getCompoundOrEmpty("stored"));
+            long storedAmount = com.gregtechceu.gtceu.api.item.data.ItemStackData.read(stack).getLongOr("storedAmount", 0L);
             float totalTick = Minecraft.getInstance().level.getGameTime() + Minecraft.getInstance().getFrameTime();
             // Don't need to handle locked items here since they don't get saved to the item
             renderChestItem(poseStack, buffer, totalTick, Direction.NORTH,

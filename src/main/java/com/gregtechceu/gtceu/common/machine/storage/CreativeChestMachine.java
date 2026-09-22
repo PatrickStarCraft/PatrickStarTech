@@ -111,7 +111,7 @@ public class CreativeChestMachine extends QuantumChestMachine {
     public void buildMainUI(ParentWidget<?> mainWidget, PosGuiData guiData, PanelSyncManager syncManager,
                             UISettings settings) {
         PhantomItemSlotSyncHandler storedSlot = new PhantomItemSlotSyncHandler(new ModularSlot(cache, 0).filter(
-                stack -> stored.isEmpty() || ItemStack.isSameItemSameTags(stack, stored)));
+                stack -> stored.isEmpty() || ItemStack.isSameItemSameComponents(stack, stored)));
 
         syncManager.syncValue("stored", storedSlot);
 

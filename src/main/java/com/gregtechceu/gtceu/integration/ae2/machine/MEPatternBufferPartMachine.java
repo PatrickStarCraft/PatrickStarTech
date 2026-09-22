@@ -1143,7 +1143,7 @@ public class MEPatternBufferPartMachine extends MEBusPartMachine
 
             ListTag itemsTag = new ListTag();
             for (var entry : itemInventory.object2LongEntrySet()) {
-                var ct = entry.getKey().serializeNBT();
+                var ct = com.gregtechceu.gtceu.utils.data.StackPersistence.saveItem(entry.getKey());
                 ct.putLong("real", entry.getLongValue());
                 itemsTag.add(ct);
             }
@@ -1151,7 +1151,7 @@ public class MEPatternBufferPartMachine extends MEBusPartMachine
 
             ListTag fluidsTag = new ListTag();
             for (var entry : fluidInventory.object2LongEntrySet()) {
-                var ct = entry.getKey().writeToNBT(new CompoundTag());
+                var ct = com.gregtechceu.gtceu.utils.data.StackPersistence.saveFluid(entry.getKey());
                 ct.putLong("real", entry.getLongValue());
                 fluidsTag.add(ct);
             }
@@ -1165,7 +1165,7 @@ public class MEPatternBufferPartMachine extends MEBusPartMachine
             ListTag items = com.gregtechceu.gtceu.utils.data.TypedTagList.read(tag, "inventory", Tag.TAG_COMPOUND);
             for (Tag t : items) {
                 if (!(t instanceof CompoundTag ct)) continue;
-                var stack = ItemStack.of(ct);
+                var stack = com.gregtechceu.gtceu.utils.data.StackPersistence.loadItem(ct);
             var count = ct.getLongOr("real", 0);
                 if (!stack.isEmpty() && count > 0) {
                     itemInventory.put(stack, count);
@@ -1175,7 +1175,7 @@ public class MEPatternBufferPartMachine extends MEBusPartMachine
             ListTag fluids = com.gregtechceu.gtceu.utils.data.TypedTagList.read(tag, "fluidInventory", Tag.TAG_COMPOUND);
             for (Tag t : fluids) {
                 if (!(t instanceof CompoundTag ct)) continue;
-                var stack = FluidStack.loadFluidStackFromNBT(ct);
+                var stack = com.gregtechceu.gtceu.utils.data.StackPersistence.loadFluid(ct);
             var amount = ct.getLongOr("real", 0);
                 if (!stack.isEmpty() && amount > 0) {
                     fluidInventory.put(stack, amount);

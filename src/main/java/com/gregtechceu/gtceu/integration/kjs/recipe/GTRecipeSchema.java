@@ -910,7 +910,7 @@ public interface GTRecipeSchema {
         }
 
         public GTRecipeJS explosivesType(ItemStack explosivesType) {
-            return addData("explosives_type", explosivesType.save(new CompoundTag()));
+            return addData("explosives_type", com.gregtechceu.gtceu.utils.data.StackPersistence.saveItem(explosivesType));
         }
 
         public GTRecipeJS solderMultiplier(int multiplier) {

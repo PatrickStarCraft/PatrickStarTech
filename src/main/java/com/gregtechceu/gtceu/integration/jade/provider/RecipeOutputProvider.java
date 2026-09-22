@@ -108,7 +108,7 @@ public class RecipeOutputProvider extends MachineTraitProvider<RecipeLogic, Comp
                         if (stacks[0].isEmpty()) continue;
                         var stack = stacks[0];
                         fluidTag = new CompoundTag();
-                        stack.writeToNBT(fluidTag);
+                        fluidTag.merge(com.gregtechceu.gtceu.utils.data.StackPersistence.saveFluid(stack));
 
                         if (fluid.chance() < fluid.maxChance()) {
                             int amount = stacks[0].getAmount();
@@ -161,7 +161,7 @@ public class RecipeOutputProvider extends MachineTraitProvider<RecipeLogic, Comp
                             var ingredient = IntProviderFluidIngredient.fromNBT(tCompoundTag);
                             outputFluids.add(ingredient);
                         } else {
-                            var stack = FluidStack.loadFluidStackFromNBT(tCompoundTag);
+                            var stack = com.gregtechceu.gtceu.utils.data.StackPersistence.loadFluid(tCompoundTag);
                             if (!stack.isEmpty()) {
                                 outputFluids.add(FluidIngredient.of(stack));
                             }

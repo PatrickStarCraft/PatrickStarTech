@@ -55,10 +55,9 @@ public class FacadeItemBehaviour implements ISubItemHandler, ICustomDescriptionI
         if (!isValidFacade(facadeState)) {
             facadeState = Blocks.STONE.defaultBlockState();
         }
-        var tagCompound = itemStack.getOrCreateTag();
         Tag stateTag = BlockState.CODEC.encodeStart(NbtOps.INSTANCE, facadeState)
                 .result().orElse(new CompoundTag());
-        tagCompound.put("Facade", stateTag);
+        com.gregtechceu.gtceu.api.item.data.ItemStackData.update(itemStack, tag -> tag.put("Facade", stateTag));
     }
 
     public static boolean isValidFacade(ItemStack itemStack) {
@@ -100,11 +99,11 @@ public class FacadeItemBehaviour implements ISubItemHandler, ICustomDescriptionI
 
     @Nullable
     private static BlockState getFacadeStateUnsafe(ItemStack itemStack) {
-        var tagCompound = itemStack.getTag();
-        if (tagCompound == null || !tagCompound.contains("Facade", Tag.TAG_COMPOUND)) {
+        var tagCompound = com.gregtechceu.gtceu.api.item.data.ItemStackData.read(itemStack);
+        if (!(tagCompound.get("Facade") instanceof CompoundTag facade)) {
             return null;
         }
-        return BlockState.CODEC.parse(NbtOps.INSTANCE, tagCompound.getCompound("Facade"))
+        return BlockState.CODEC.parse(NbtOps.INSTANCE, facade)
                 .result().orElse(null);
     }
 
@@ -112,11 +111,11 @@ public class FacadeItemBehaviour implements ISubItemHandler, ICustomDescriptionI
     @Deprecated
     @NotNull
     private static ItemStack getFacadeStackUnsafe(ItemStack itemStack) {
-        var tagCompound = itemStack.getTag();
-        if (tagCompound == null || !tagCompound.contains("Facade", Tag.TAG_COMPOUND)) {
+        var tagCompound = com.gregtechceu.gtceu.api.item.data.ItemStackData.read(itemStack);
+        if (!(tagCompound.get("Facade") instanceof CompoundTag facade) || !facade.contains("id")) {
             return ItemStack.EMPTY;
         }
-        ItemStack facadeStack = ItemStack.of(tagCompound.getCompound("Facade"));
+        ItemStack facadeStack = com.gregtechceu.gtceu.utils.data.StackPersistence.loadItem(tagCompound.getCompoundOrEmpty("Facade"));
         if (facadeStack.isEmpty() || !isValidFacade(facadeStack)) {
             return ItemStack.EMPTY;
         }

@@ -245,7 +245,7 @@ public class GTBlocks {
             GTCEu.id("block/casings/solid/machine_casing_sturdy_hsse"));
     public static final BlockEntry<Block> CASING_PALLADIUM_SUBSTATION = createCasingBlock("palladium_substation",
             GTCEu.id("block/casings/solid/machine_casing_palladium_substation"));
-    public static final BlockEntry<GlassBlock> CASING_TEMPERED_GLASS = createGlassCasingBlock("tempered_glass",
+    public static final BlockEntry<TransparentBlock> CASING_TEMPERED_GLASS = createGlassCasingBlock("tempered_glass",
             GTCEu.id("block/casings/transparent/tempered_glass"), () -> RenderType::translucent);
     public static final ImmutableMap<Material, BlockEntry<Block>> MATERIALS_TO_CASINGS;
 
@@ -281,7 +281,7 @@ public class GTBlocks {
             GTCEu.id("block/casings/pipe/machine_casing_grate"));
     public static final BlockEntry<Block> CASING_ASSEMBLY_CONTROL = createCasingBlock("assembly_line_casing",
             GTCEu.id("block/casings/mechanic/machine_casing_assembly_control"));
-    public static final BlockEntry<GlassBlock> CASING_LAMINATED_GLASS = createGlassCasingBlock("laminated_glass",
+    public static final BlockEntry<TransparentBlock> CASING_LAMINATED_GLASS = createGlassCasingBlock("laminated_glass",
             GTCEu.id("block/casings/transparent/laminated_glass"), () -> RenderType::cutoutMipped);
     public static final BlockEntry<ActiveBlock> CASING_ASSEMBLY_LINE = createActiveCasing("assembly_line_unit",
             "block/variant/assembly_line");
@@ -406,14 +406,14 @@ public class GTBlocks {
     public static final BlockEntry<FusionCasingBlock> FUSION_CASING = createFusionCasing(FusionCasingBlock.CasingType.FUSION_CASING);
     public static final BlockEntry<FusionCasingBlock> FUSION_CASING_MK2 = createFusionCasing(FusionCasingBlock.CasingType.FUSION_CASING_MK2);
     public static final BlockEntry<FusionCasingBlock> FUSION_CASING_MK3 = createFusionCasing(FusionCasingBlock.CasingType.FUSION_CASING_MK3);
-    public static final BlockEntry<GlassBlock> FUSION_GLASS = createGlassCasingBlock("fusion_glass",
+    public static final BlockEntry<TransparentBlock> FUSION_GLASS = createGlassCasingBlock("fusion_glass",
             GTCEu.id("block/casings/transparent/fusion_glass"), () -> RenderType::cutoutMipped);
 
     // Cleanroom
     public static final BlockEntry<Block> PLASTCRETE = createCasingBlock("plascrete", GTCEu.id("block/casings/cleanroom/plascrete"));
     public static final BlockEntry<Block> FILTER_CASING = createCleanroomFilter(CleanroomFilterType.FILTER_CASING);
     public static final BlockEntry<Block> FILTER_CASING_STERILE = createCleanroomFilter(CleanroomFilterType.FILTER_CASING_STERILE);
-    public static final BlockEntry<GlassBlock> CLEANROOM_GLASS = createGlassCasingBlock("cleanroom_glass", GTCEu.id("block/casings/transparent/cleanroom_glass"), () -> RenderType::cutoutMipped);
+    public static final BlockEntry<TransparentBlock> CLEANROOM_GLASS = createGlassCasingBlock("cleanroom_glass", GTCEu.id("block/casings/transparent/cleanroom_glass"), () -> RenderType::cutoutMipped);
 
     // Fireboxes
     public static final Map<BoilerFireboxType, BlockEntry<ActiveBlock>> ALL_FIREBOXES = new HashMap<>();
@@ -477,7 +477,7 @@ public class GTBlocks {
     }
 
     private static BlockEntry<Block> createBrickCasingBlock(String name, Identifier texture) {
-        // return createCasingBlock(name, GlassBlock::new, texture, () -> Blocks.GLASS, type);
+        // return createCasingBlock(name, TransparentBlock::new, texture, () -> Blocks.GLASS, type);
         return REGISTRATE.block(name, Block::new)
                 .initialProperties(() -> Blocks.IRON_BLOCK)
                 .properties(p -> p.isValidSpawn((state, level, pos, ent) -> false))
@@ -488,9 +488,9 @@ public class GTBlocks {
                 .register();
     }
 
-    private static BlockEntry<GlassBlock> createGlassCasingBlock(String name, Identifier texture,
+    private static BlockEntry<TransparentBlock> createGlassCasingBlock(String name, Identifier texture,
                                                                  Supplier<Supplier<RenderType>> type) {
-        return REGISTRATE.block(name, GlassBlock::new)
+        return REGISTRATE.block(name, TransparentBlock::new)
                 .initialProperties(() -> Blocks.GLASS)
                 .properties(p -> p.isValidSpawn((state, level, pos, ent) -> false))
                 .addLayer(type)
@@ -714,7 +714,7 @@ public class GTBlocks {
                                                     .hasProperty(RubberLogBlock.NATURAL, true)))
                                     .when(LootItemRandomChanceCondition.randomChance(0.85F))))))
             .lang("Rubber Log")
-            .tag(BlockTags.LOGS_THAT_BURN, BlockTags.OVERWORLD_NATURAL_LOGS)
+            .tag(net.minecraft.tags.BlockItemTags.LOGS_THAT_BURN.block(), BlockTags.OVERWORLD_NATURAL_LOGS)
             .blockstate((ctx, provider) -> provider.logBlock(ctx.get()))
             .item()
             .tag(ItemTags.LOGS_THAT_BURN, CustomTags.RUBBER_LOGS)
@@ -767,7 +767,7 @@ public class GTBlocks {
             .initialProperties(() -> Blocks.STRIPPED_SPRUCE_LOG)
             .lang("Stripped Rubber Log")
             .blockstate((ctx, provider) -> provider.logBlock(ctx.get()))
-            .tag(BlockTags.LOGS_THAT_BURN, BlockTags.MINEABLE_WITH_AXE)
+            .tag(net.minecraft.tags.BlockItemTags.LOGS_THAT_BURN.block(), BlockTags.MINEABLE_WITH_AXE)
             .item()
             .tag(ItemTags.LOGS_THAT_BURN, CustomTags.RUBBER_LOGS)
             .build()
@@ -778,7 +778,7 @@ public class GTBlocks {
             .lang("Rubber Wood")
             .blockstate((ctx, provider) -> provider.axisBlock(ctx.get(),
                     provider.blockTexture(GTBlocks.RUBBER_LOG.get()), provider.blockTexture(GTBlocks.RUBBER_LOG.get())))
-            .tag(BlockTags.LOGS_THAT_BURN, BlockTags.MINEABLE_WITH_AXE)
+            .tag(net.minecraft.tags.BlockItemTags.LOGS_THAT_BURN.block(), BlockTags.MINEABLE_WITH_AXE)
             .item()
             .tag(ItemTags.LOGS_THAT_BURN, CustomTags.RUBBER_LOGS)
             .build()
@@ -789,7 +789,7 @@ public class GTBlocks {
             .lang("Stripped Rubber Wood")
             .blockstate((ctx, provider) -> provider.axisBlock(ctx.get(), provider.blockTexture(ctx.get()),
                     provider.blockTexture(ctx.get())))
-            .tag(BlockTags.LOGS_THAT_BURN, BlockTags.MINEABLE_WITH_AXE)
+            .tag(net.minecraft.tags.BlockItemTags.LOGS_THAT_BURN.block(), BlockTags.MINEABLE_WITH_AXE)
             .item()
             .tag(ItemTags.LOGS_THAT_BURN, CustomTags.RUBBER_LOGS)
             .build()

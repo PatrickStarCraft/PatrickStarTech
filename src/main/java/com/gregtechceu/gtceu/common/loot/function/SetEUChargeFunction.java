@@ -19,20 +19,20 @@ public class SetEUChargeFunction extends LootItemConditionalFunction {
 
     // spotless:off
     public static final MapCodec<SetEUChargeFunction> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-             LootModifier.LOOT_CONDITIONS_CODEC.fieldOf("conditions").forGetter(fn -> fn.predicates),
+             LootItemCondition.DIRECT_CODEC.listOf().optionalFieldOf("conditions", java.util.List.of()).forGetter(fn -> fn.predicates),
              GTCodecUtils.NON_NEGATIVE_LONG.fieldOf("charge").forGetter(fn -> fn.charge)
     ).apply(instance, SetEUChargeFunction::new));
     // spotless:on
 
     protected final long charge;
 
-    protected SetEUChargeFunction(LootItemCondition[] conditions, long charge) {
+    protected SetEUChargeFunction(java.util.List<LootItemCondition> conditions, long charge) {
         super(conditions);
         this.charge = charge;
     }
 
     @Override
-    public LootItemFunctionType getType() {
+    public MapCodec<SetEUChargeFunction> codec() {
         return GTLootFunctions.SET_EU_CHARGE.get();
     }
 

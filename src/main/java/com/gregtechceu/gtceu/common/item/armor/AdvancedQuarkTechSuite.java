@@ -1,6 +1,7 @@
 package com.gregtechceu.gtceu.common.item.armor;
 
 import com.gregtechceu.gtceu.GTCEu;
+import com.gregtechceu.gtceu.api.item.data.ItemStackData;
 import com.gregtechceu.gtceu.api.capability.GTCapabilityHelper;
 import com.gregtechceu.gtceu.api.capability.IElectricItem;
 import com.gregtechceu.gtceu.api.item.armor.ArmorComponentItem;
@@ -48,7 +49,7 @@ public class AdvancedQuarkTechSuite extends QuarkTechSuite implements IJetpack {
             return;
         }
 
-        CompoundTag data = item.getOrCreateTag();
+        CompoundTag data = ItemStackData.read(item);
         // Assume no tags exist if we don't see the enabled tag
         if (!data.contains("enabled")) {
             data.putBoolean("enabled", true);
@@ -91,6 +92,14 @@ public class AdvancedQuarkTechSuite extends QuarkTechSuite implements IJetpack {
 
         if (toggleTimer > 0) toggleTimer--;
         data.putByte("toggleTimer", toggleTimer);
+
+        // Commit controls before flying/charging can modify other custom-data fields.
+        ItemStackData.update(item, tag -> {
+            tag.putBoolean("enabled", data.getBooleanOr("enabled", true));
+            tag.putBoolean("hover", data.getBooleanOr("hover", false));
+            tag.putByte("toggleTimer", data.getByteOr("toggleTimer", (byte) 0));
+            tag.putBoolean("canShare", data.getBooleanOr("canShare", false));
+        });
 
         performFlying(player, jetpackEnabled, hoverMode, item);
 
@@ -150,7 +159,7 @@ public class AdvancedQuarkTechSuite extends QuarkTechSuite implements IJetpack {
     @Override
     public void addInfo(ItemStack itemStack, List<Component> lines) {
         super.addInfo(itemStack, lines);
-        CompoundTag data = itemStack.getOrCreateTag();
+        CompoundTag data = ItemStackData.read(itemStack);
         Component state;
         boolean enabled = !data.contains("enabled") || data.getBooleanOr("enabled", false);
         state = enabled ? Component.translatable("metaarmor.hud.status.enabled") :
@@ -173,7 +182,7 @@ public class AdvancedQuarkTechSuite extends QuarkTechSuite implements IJetpack {
     public InteractionResult onRightClick(Level world, Player player, InteractionHand hand) {
         ItemStack armor = player.getItemInHand(hand);
         if (armor.getItem() instanceof ArmorComponentItem && player.isShiftKeyDown()) {
-            CompoundTag data = armor.getOrCreateTag();
+            CompoundTag data = ItemStackData.read(armor);
             boolean canShare = data.contains("canShare") && data.getBooleanOr("canShare", false);
             IElectricItem cont = GTCapabilityHelper.getElectricItem(armor);
             if (cont == null) {
@@ -192,7 +201,8 @@ public class AdvancedQuarkTechSuite extends QuarkTechSuite implements IJetpack {
             }
 
             canShare = canShare && (cont.getCharge() != 0);
-            data.putBoolean("canShare", canShare);
+            boolean sharingEnabled = canShare;
+            ItemStackData.update(armor, tag -> tag.putBoolean("canShare", sharingEnabled));
             return InteractionResult.SUCCESS.heldItemTransformedTo(armor);
         } else {
             return super.onRightClick(world, player, hand);
@@ -206,7 +216,7 @@ public class AdvancedQuarkTechSuite extends QuarkTechSuite implements IJetpack {
         IElectricItem cont = GTCapabilityHelper.getElectricItem(item);
         if (cont == null) return;
         if (!cont.canUse(energyPerUse)) return;
-        CompoundTag data = item.getTag();
+        CompoundTag data = ItemStackData.read(item);
         if (data != null) {
             if (data.contains("enabled")) {
                 Component status = (data.getBooleanOr("enabled", false) ?

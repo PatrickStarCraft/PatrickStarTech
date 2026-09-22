@@ -42,7 +42,7 @@ public class CompositeFilter<T> extends Filter<T> {
     public CompositeFilter(ItemStack stack, Class<T> filterableType) {
         super(stack);
 
-        CompoundTag tag = stack.getOrCreateTag();
+        CompoundTag tag = com.gregtechceu.gtceu.api.item.data.ItemStackData.read(stack);
         this.filterableType = filterableType;
         this.itemStacks.setFilter(s -> Filters.isValidFilter(filterableType, s.getItem()));
 

@@ -136,14 +136,14 @@ public class FluidFilterCover extends CoverBehavior implements IMuiCover {
     public void copyConfig(CompoundTag tag) {
         tag.putInt("manualIO", getAllowFlow().ordinal());
         tag.putInt("filterMode", getFilterMode().ordinal());
-        tag.put("filter", attachItem.serializeNBT());
+        tag.put("filter", com.gregtechceu.gtceu.utils.data.StackPersistence.saveItem(attachItem));
     }
 
     @Override
     public void pasteConfig(ServerPlayer player, CompoundTag tag) {
         setAllowFlow(ManualIOMode.values()[tag.getIntOr("manualIO", 0)]);
         setFilterMode(FilterMode.values()[tag.getIntOr("filterMode", 0)]);
-        fluidFilter = Filters.loadFluidFilter(ItemStack.of(tag.getCompound("filter")));
+        fluidFilter = Filters.loadFluidFilter(com.gregtechceu.gtceu.utils.data.StackPersistence.loadItem(tag.getCompoundOrEmpty("filter")));
         super.pasteConfig(player, tag);
     }
 }

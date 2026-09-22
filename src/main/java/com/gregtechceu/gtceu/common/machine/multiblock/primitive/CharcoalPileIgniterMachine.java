@@ -164,11 +164,11 @@ public class CharcoalPileIgniterMachine extends WorkableMultiblockMachine implem
 
     private static MultiPredicate logPredicate() {
         return Predicates.builder("LogPredicate")
-                .predicate(ctx -> ctx.state().is(BlockTags.LOGS_THAT_BURN))
+                .predicate(ctx -> ctx.state().is(net.minecraft.tags.BlockItemTags.LOGS_THAT_BURN.block()))
                 .errorFunction(ctx -> PatternStringError.translatable(
                         "gtceu.predicate_error.charcoal.logs"))
-                .blockTag(BlockTags.LOGS_THAT_BURN)
-                .contents(builder -> builder.append(BlockTags.LOGS_THAT_BURN.location()))
+                .blockTag(net.minecraft.tags.BlockItemTags.LOGS_THAT_BURN.block())
+                .contents(builder -> builder.append(net.minecraft.tags.BlockItemTags.LOGS_THAT_BURN.block().location()))
                 .toMultiPredicate();
     }
 

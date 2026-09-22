@@ -824,18 +824,18 @@ public class GTPlaceholders {
                 int slot = PlaceholderUtils.toInt(args.get(0));
                 PlaceholderUtils.checkRange("slot index", 1, ctx.itemStackHandler().getSlots(), slot);
                 ItemStack stack = ctx.itemStackHandler().getStackInSlot(slot - 1);
-                if (!stack.getOrCreateTag().contains("boundPlayerPermLevel"))
+                if (!com.gregtechceu.gtceu.api.item.data.ItemStackData.read(stack).contains("boundPlayerPermLevel"))
                     throw new MissingItemException("any data item bound to player", slot);
-                int perm = stack.getOrCreateTag().getInt("boundPlayerPermLevel");
-                Component displayName = Component.Serializer
-                        .fromJson(stack.getOrCreateTag().getString("boundPlayerName"));
+                int perm = com.gregtechceu.gtceu.api.item.data.ItemStackData.read(stack).getIntOr("boundPlayerPermLevel", 0);
+                Component displayName = com.gregtechceu.gtceu.utils.data.ComponentJson
+                        .fromJson(com.gregtechceu.gtceu.api.item.data.ItemStackData.read(stack).getStringOr("boundPlayerName", ""));
                 if (displayName == null) displayName = Component.literal("Placeholder processor");
                 if (ctx.level() instanceof ServerLevel serverLevel) {
                     MinecraftServer server = serverLevel.getServer();
                     MultiLineComponent output = MultiLineComponent.empty();
                     UUID playerUUID = null;
                     try {
-                        playerUUID = UUID.fromString(stack.getOrCreateTag().getString("boundPlayerUUID"));
+                        playerUUID = UUID.fromString(com.gregtechceu.gtceu.api.item.data.ItemStackData.read(stack).getStringOr("boundPlayerUUID", ""));
                     } catch (RuntimeException ignored) {}
                     ServerPlayer player = playerUUID == null ? null : server.getPlayerList().getPlayer(playerUUID);
                     CommandSource customSource = new CommandSource() {
@@ -866,7 +866,8 @@ public class GTPlaceholders {
                             ctx.pos() == null ? Vec3.ZERO : net.minecraft.world.phys.Vec3.atCenterOf(ctx.pos()),
                             Vec2.ZERO,
                             serverLevel,
-                            perm,
+                            net.minecraft.server.permissions.LevelBasedPermissionSet.forLevel(
+                                    net.minecraft.server.permissions.PermissionLevel.byId(perm)),
                             displayName.getString(),
                             displayName,
                             server,
@@ -949,8 +950,8 @@ public class GTPlaceholders {
                     int slot = PlaceholderUtils.toInt(args.get(2));
                     PlaceholderUtils.checkRange("slot index", 1, ctx.itemStackHandler().getSlots(), slot);
                     ItemStack stack = ctx.itemStackHandler().getStackInSlot(slot - 1);
-                    if (stack.getOrCreateTag().contains("boundPlayerUUID"))
-                        owner = UUID.fromString(stack.getOrCreateTag().getString("boundPlayerUUID"));
+                    if (com.gregtechceu.gtceu.api.item.data.ItemStackData.read(stack).contains("boundPlayerUUID"))
+                        owner = UUID.fromString(com.gregtechceu.gtceu.api.item.data.ItemStackData.read(stack).getStringOr("boundPlayerUUID", ""));
                 }
                 VirtualEnderRegistry ender = VirtualEnderRegistry.get((ServerLevel) ctx.level());
                 switch (type) {
@@ -1041,7 +1042,7 @@ public class GTPlaceholders {
                 return MultiLineComponent.empty().addGraphics(new GraphicsComponent(
                         x, y, x, y,
                         "module",
-                        stack.serializeNBT()));
+                        com.gregtechceu.gtceu.utils.data.StackPersistence.saveItem(stack)));
             }
         });
         PlaceholderHandler.addPlaceholder(new Placeholder("setImage") {

@@ -66,7 +66,7 @@ public class FilterHandler<T> implements ISyncManaged {
             @Override
             public void deserializeNBT(CompoundTag nbt) {
                 if (!(nbt.get("Items") instanceof ListTag) && (nbt.get("id") instanceof StringTag)) {
-                    setStackInSlot(0, ItemStack.of(nbt));
+                    setStackInSlot(0, com.gregtechceu.gtceu.utils.data.StackPersistence.loadItem(nbt));
                     return;
                 }
 

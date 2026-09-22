@@ -34,7 +34,7 @@ public class PlaceholderSavedData extends CompoundTagSavedData {
     public CompoundTag getPlaceholderData(Placeholder placeholder) {
         if (!tag.contains(placeholder.getName()))
             tag.put(placeholder.getName(), new CompoundTag());
-        return tag.getCompound(placeholder.getName());
+        return tag.getCompoundOrEmpty(placeholder.getName());
     }
 
     @Override

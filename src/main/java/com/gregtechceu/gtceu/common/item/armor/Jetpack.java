@@ -1,6 +1,7 @@
 package com.gregtechceu.gtceu.common.item.armor;
 
 import com.gregtechceu.gtceu.GTCEu;
+import com.gregtechceu.gtceu.api.item.data.ItemStackData;
 import com.gregtechceu.gtceu.api.capability.GTCapabilityHelper;
 import com.gregtechceu.gtceu.api.capability.IElectricItem;
 import com.gregtechceu.gtceu.api.item.armor.ArmorLogicSuite;
@@ -48,7 +49,7 @@ public class Jetpack extends ArmorLogicSuite implements IJetpack {
             return;
         }
 
-        CompoundTag data = item.getOrCreateTag();
+        CompoundTag data = ItemStackData.read(item);
         // Assume no tags exist if we don't see the enabled tag
         if (!data.contains("enabled")) {
             data.putBoolean("enabled", true);
@@ -80,6 +81,13 @@ public class Jetpack extends ArmorLogicSuite implements IJetpack {
 
         if (toggleTimer > 0) toggleTimer--;
         data.putByte("toggleTimer", toggleTimer);
+
+        // Commit controls before flying/charging can modify other custom-data fields.
+        ItemStackData.update(item, tag -> {
+            tag.putBoolean("enabled", data.getBooleanOr("enabled", true));
+            tag.putBoolean("hover", data.getBooleanOr("hover", false));
+            tag.putByte("toggleTimer", data.getByteOr("toggleTimer", (byte) 0));
+        });
 
         performFlying(player, jetpackEnabled, hoverMode, item);
     }
@@ -130,7 +138,7 @@ public class Jetpack extends ArmorLogicSuite implements IJetpack {
     @Override
     public void drawHUD(ItemStack item, GuiGraphicsExtractor guiGraphics) {
         addCapacityHUD(item, this.HUD);
-        CompoundTag data = item.getTag();
+        CompoundTag data = ItemStackData.read(item);
         if (data != null) {
             if (data.contains("enabled")) {
                 Component status = (data.getBooleanOr("enabled", false) ?
@@ -153,7 +161,7 @@ public class Jetpack extends ArmorLogicSuite implements IJetpack {
     @Override
     public void addInfo(ItemStack itemStack, List<Component> lines) {
         super.addInfo(itemStack, lines);
-        CompoundTag data = itemStack.getOrCreateTag();
+        CompoundTag data = ItemStackData.read(itemStack);
 
         Component state;
         boolean enabled = !data.contains("enabled") || data.getBooleanOr("enabled", false);

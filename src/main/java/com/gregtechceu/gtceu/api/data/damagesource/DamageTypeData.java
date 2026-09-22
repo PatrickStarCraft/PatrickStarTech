@@ -61,7 +61,7 @@ public class DamageTypeData {
 
     private Holder<DamageType> getHolder(LevelAccessor level) {
         if (this.holder == null) {
-            Registry<DamageType> registry = level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE);
+            Registry<DamageType> registry = level.registryAccess().lookupOrThrow(Registries.DAMAGE_TYPE);
             this.holder = registry.getHolderOrThrow(key);
         }
         return holder;

@@ -48,17 +48,17 @@ public class SimpleItemFilter extends Filter<ItemStack> {
     public SimpleItemFilter(ItemStack stack) {
         super(stack);
 
-        var tag = stack.getOrCreateTag();
+        var tag = com.gregtechceu.gtceu.api.item.data.ItemStackData.read(stack);
 
         Arrays.fill(matches, ItemStack.EMPTY);
 
         if (tag.isEmpty()) return;
 
-        isBlackList = tag.getBoolean("isBlackList");
-        ignoreNbt = tag.getBoolean("matchNbt");
+        isBlackList = tag.getBooleanOr("isBlackList", false);
+        ignoreNbt = tag.getBooleanOr("matchNbt", false);
         var list = com.gregtechceu.gtceu.utils.data.TypedTagList.read(tag, "matches", Tag.TAG_COMPOUND);
-        for (int i = 0; i < list.size(); i++) {
-            matches[i] = ItemStack.of((CompoundTag) list.get(i));
+        for (int i = 0; i < Math.min(list.size(), matches.length); i++) {
+            matches[i] = com.gregtechceu.gtceu.utils.data.StackPersistence.loadItem((CompoundTag) list.get(i));
         }
     }
 
@@ -91,7 +91,7 @@ public class SimpleItemFilter extends Filter<ItemStack> {
         tag.putBoolean("matchNbt", ignoreNbt);
         var list = new ListTag();
         for (var match : matches) {
-            list.add(match.save(new CompoundTag()));
+            list.add(com.gregtechceu.gtceu.utils.data.StackPersistence.saveItem(match));
         }
         tag.put("matches", list);
         return tag;
@@ -203,7 +203,7 @@ public class SimpleItemFilter extends Filter<ItemStack> {
             if (ignoreNbt && ItemStack.isSameItem(candidate, itemStack)) {
                 totalCount += candidate.getCount();
             }
-            if (!ignoreNbt && ItemStack.isSameItemSameTags(candidate, itemStack)) {
+            if (!ignoreNbt && ItemStack.isSameItemSameComponents(candidate, itemStack)) {
                 totalCount += candidate.getCount();
             }
         }

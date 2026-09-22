@@ -114,13 +114,13 @@ public class QuantumChestMachine extends TieredMachine implements IControllable,
     @Override
     public void saveToItem(CompoundTag tag, boolean clone) {
         if (clone || stored.isEmpty()) return;
-        tag.put("stored", stored.save(new CompoundTag()));
+        tag.put("stored", com.gregtechceu.gtceu.utils.data.StackPersistence.saveItem(stored));
         tag.putLong("storedAmount", storedAmount);
     }
 
     @Override
     public void loadFromItem(CompoundTag tag) {
-        stored = ItemStack.of(tag.getCompound("stored"));
+        stored = com.gregtechceu.gtceu.utils.data.StackPersistence.loadItem(tag.getCompoundOrEmpty("stored"));
         storedAmount = tag.getLongOr("storedAmount", 0);
     }
 
@@ -285,7 +285,7 @@ public class QuantumChestMachine extends TieredMachine implements IControllable,
     private IWidget createPhantomLockeditemSlot(PanelSyncManager syncManager) {
         lockedItem.setOnContentsChanged(() -> lockedItem.getStackInSlot(0).setCount(1));
         PhantomItemSlotSyncHandler lockSlot = new PhantomItemSlotSyncHandler(new ModularSlot(lockedItem, 0).filter(
-                stack -> stored.isEmpty() || ItemStack.isSameItemSameTags(stack, stored)));
+                stack -> stored.isEmpty() || ItemStack.isSameItemSameComponents(stack, stored)));
 
         syncManager.syncValue("lock", lockSlot);
         return new PhantomItemSlot().syncHandler("lock");

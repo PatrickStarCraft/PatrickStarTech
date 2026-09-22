@@ -51,7 +51,7 @@ public final class ToolChargeBarRenderer {
     public static void renderBarsTool(GuiGraphicsExtractor graphics, IGTTool tool, ItemStack stack, int xPosition,
                                       int yPosition) {
         boolean renderedDurability = false;
-        CompoundTag tag = stack.getOrCreateTag();
+        CompoundTag tag = com.gregtechceu.gtceu.api.item.data.ItemStackData.read(stack);
         if (!tag.getBooleanOr(ToolHelper.UNBREAKABLE_KEY, false)) {
             renderedDurability = renderDurabilityBar(graphics, stack.getBarWidth(), xPosition, yPosition);
         }

@@ -540,7 +540,7 @@ public class ConveyorCover extends CoverBehavior implements IIOCover, IMuiCover,
         tag.putInt("io", getIo().ordinal());
         tag.putInt("distributionMode", getDistributionMode().ordinal());
         tag.putInt("manualIO", getManualIOMode().ordinal());
-        tag.put("filter", filterHandler.getFilterItem().serializeNBT());
+        tag.put("filter", com.gregtechceu.gtceu.utils.data.StackPersistence.saveItem(filterHandler.getFilterItem()));
     }
 
     @Override
@@ -549,7 +549,7 @@ public class ConveyorCover extends CoverBehavior implements IIOCover, IMuiCover,
         setIo(IO.values()[tag.getIntOr("io", 0)]);
         setDistributionMode(DistributionMode.values()[tag.getIntOr("distributionMode", 0)]);
         setManualIOMode(ManualIOMode.values()[tag.getIntOr("manualIO", 0)]);
-        filterHandler.setFilterItem(ItemStack.of(tag.getCompound("filter")));
+        filterHandler.setFilterItem(com.gregtechceu.gtceu.utils.data.StackPersistence.loadItem(tag.getCompoundOrEmpty("filter")));
         super.pasteConfig(player, tag);
     }
 }

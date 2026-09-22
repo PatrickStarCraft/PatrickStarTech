@@ -183,7 +183,7 @@ public class BedrockFluidDefinition {
         @HideFromJS
         public Builder biomes(int weight, TagKey<Biome> biomes) {
             this.biomes.add(new BiomeWeightModifier(() -> GTRegistries.builtinRegistry()
-                    .registryOrThrow(Registries.BIOME).getOrCreateTag(biomes), weight));
+                    .lookupOrThrow(Registries.BIOME).getOrThrow(biomes), weight));
             return this;
         }
 
@@ -191,7 +191,7 @@ public class BedrockFluidDefinition {
         @SafeVarargs
         public final Builder biomes(int weight, ResourceKey<Biome>... biomes) {
             this.biomes.add(new BiomeWeightModifier(() -> HolderSet.direct(GTRegistries.builtinRegistry()
-                    .registryOrThrow(Registries.BIOME)::getHolderOrThrow, biomes), weight));
+                    .lookupOrThrow(Registries.BIOME)::getOrThrow, biomes), weight));
             return this;
         }
 

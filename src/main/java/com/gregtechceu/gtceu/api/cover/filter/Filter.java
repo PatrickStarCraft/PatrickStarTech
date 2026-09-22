@@ -41,7 +41,7 @@ public abstract class Filter<T> implements Predicate<T> {
      */
     public ModularPanel<?> getPanel(GuiData data, PanelSyncManager syncManager, UISettings settings,
                                     boolean showPlayerInventory) {
-        return new Dialog<>(Objects.requireNonNull(data.getLevel().registryAccess().registryOrThrow(Registries.ITEM)
+        return new Dialog<>(Objects.requireNonNull(data.getLevel().registryAccess().lookupOrThrow(Registries.ITEM)
                 .getKey(filterItemStack.getItem())).toString())
                 .disablePanelsBelow(false)
                 .draggable(true)
@@ -57,7 +57,9 @@ public abstract class Filter<T> implements Predicate<T> {
      * Writes this filter to the filter item's NBT and calls the {@link #onUpdated} listener.
      */
     public void updateAndSaveFilter() {
-        filterItemStack.setTag(writeFilterNBT());
+        CompoundTag data = writeFilterNBT();
+        net.minecraft.world.item.component.CustomData.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA,
+                filterItemStack, data == null ? new CompoundTag() : data);
         onUpdated.accept(this);
     }
 

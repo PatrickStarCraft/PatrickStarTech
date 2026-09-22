@@ -31,11 +31,11 @@ public class GTLampItemOverlayRenderer implements IItemDecorator {
 
     @Override
     public boolean render(GuiGraphicsExtractor graphics, Font font, ItemStack stack, int xPosition, int yPosition) {
-        if (!stack.hasTag()) {
+        if (!stack.has(net.minecraft.core.component.DataComponents.CUSTOM_DATA)) {
             return false;
         }
         @SuppressWarnings("DataFlowIssue")
-        var overlayType = getOverlayType(isLightEnabled(stack.getTag()), isBloomEnabled(stack.getTag()));
+        var overlayType = getOverlayType(isLightEnabled(com.gregtechceu.gtceu.api.item.data.ItemStackData.read(stack)), isBloomEnabled(com.gregtechceu.gtceu.api.item.data.ItemStackData.read(stack)));
         if (overlayType == OverlayType.NONE) {
             return false;
         }

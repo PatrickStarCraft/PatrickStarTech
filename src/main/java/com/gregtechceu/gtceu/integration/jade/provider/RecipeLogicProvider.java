@@ -40,7 +40,7 @@ public class RecipeLogicProvider extends MachineTraitProvider<RecipeLogic, Compo
         if (!capability.isWorking() && capability.isWorkingEnabled()) {
             var failureReason = capability.getBestFailureReason();
             if (failureReason != null) {
-                data.putString("FailureReason", Component.Serializer.toJson(failureReason));
+                data.putString("FailureReason", com.gregtechceu.gtceu.utils.data.ComponentJson.toJson(failureReason));
                 data.putBoolean("Waiting", capability.isWaiting());
             }
         }
@@ -138,7 +138,7 @@ public class RecipeLogicProvider extends MachineTraitProvider<RecipeLogic, Compo
                 }
             }
         } else if ((capData.get("FailureReason") instanceof StringTag)) {
-            Component reason = Component.Serializer.fromJson(capData.getString("FailureReason"));
+            Component reason = com.gregtechceu.gtceu.utils.data.ComponentJson.fromJson(capData.getStringOr("FailureReason", ""));
             if (reason != null) {
                 tooltip.add(capData.getBooleanOr("Waiting", false) ?
                         Component.translatable("gtceu.recipe_logic.recipe_waiting").withStyle(ChatFormatting.YELLOW) :

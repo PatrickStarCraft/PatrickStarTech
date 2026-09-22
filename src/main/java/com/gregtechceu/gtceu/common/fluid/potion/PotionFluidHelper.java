@@ -121,7 +121,7 @@ public class PotionFluidHelper {
                         AttributeModifier modifier = entry.getValue();
                         AttributeModifier mutated = new AttributeModifier(modifier.getName(),
                                 effect.getAttributeModifierValue(effectInstance.getAmplifier(), modifier),
-                                modifier.getOperation());
+                                modifier.operation());
                         modifiers.add(Pair.of(
                                 entry.getKey().getDescriptionId(),
                                 mutated));
@@ -152,8 +152,8 @@ public class PotionFluidHelper {
                 AttributeModifier modifier2 = tuple.getSecond();
                 double d0 = modifier2.getAmount();
                 double d1;
-                if (modifier2.getOperation() != AttributeModifier.Operation.ADD_MULTIPLIED_BASE &&
-                        modifier2.getOperation() != AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL) {
+                if (modifier2.operation() != AttributeModifier.Operation.ADD_MULTIPLIED_BASE &&
+                        modifier2.operation() != AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL) {
                     d1 = modifier2.getAmount();
                 } else {
                     d1 = modifier2.getAmount() * 100.0D;
@@ -161,7 +161,7 @@ public class PotionFluidHelper {
 
                 if (d0 > 0.0D) {
                     tooltip.accept(Component.translatable(
-                            "attribute.modifier.plus." + modifier2.getOperation()
+                            "attribute.modifier.plus." + modifier2.operation()
                                     .toValue(),
                             ItemStack.ATTRIBUTE_MODIFIER_FORMAT.format(d1),
                             Component.translatable(tuple.getFirst()))
@@ -169,7 +169,7 @@ public class PotionFluidHelper {
                 } else if (d0 < 0.0D) {
                     d1 = d1 * -1.0D;
                     tooltip.accept(Component.translatable(
-                            "attribute.modifier.take." + modifier2.getOperation()
+                            "attribute.modifier.take." + modifier2.operation()
                                     .toValue(),
                             ItemStack.ATTRIBUTE_MODIFIER_FORMAT.format(d1),
                             Component.translatable(tuple.getFirst()))

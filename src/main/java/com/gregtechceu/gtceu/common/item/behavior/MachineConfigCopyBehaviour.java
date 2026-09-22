@@ -82,7 +82,7 @@ public class MachineConfigCopyBehaviour implements IInteractionItem, IAddInforma
 
                 ListTag itemsTag = new ListTag();
                 copyable.getItemsRequiredToPaste()
-                        .forEach(v -> itemsTag.add(v.serializeNBT()));
+                        .forEach(v -> itemsTag.add(com.gregtechceu.gtceu.utils.data.StackPersistence.saveItem(v)));
                 configTag.put(ITEMS_TO_PASTE, itemsTag);
             } else {
                 stack.removeTagKey(CONFIG_DATA);
@@ -98,7 +98,7 @@ public class MachineConfigCopyBehaviour implements IInteractionItem, IAddInforma
 
             List<ItemStack> items = new ArrayList<>();
             com.gregtechceu.gtceu.utils.data.TypedTagList.read(tag, ITEMS_TO_PASTE, CompoundTag.TAG_COMPOUND).forEach(t -> {
-                if (t instanceof CompoundTag c) items.add(ItemStack.of(c));
+                if (t instanceof CompoundTag c) items.add(com.gregtechceu.gtceu.utils.data.StackPersistence.loadItem(c));
             });
 
             if (!player.isCreative() && !GTTransferUtils.extractItemsFromPlayerInv(player, items, true)) {
@@ -192,7 +192,7 @@ public class MachineConfigCopyBehaviour implements IInteractionItem, IAddInforma
         if (tag.contains(ITEMS_TO_PASTE)) {
             List<ItemStack> items = new ArrayList<>();
             com.gregtechceu.gtceu.utils.data.TypedTagList.read(tag, ITEMS_TO_PASTE, CompoundTag.TAG_COMPOUND).forEach(t -> {
-                if (t instanceof CompoundTag c) items.add(ItemStack.of(c));
+                if (t instanceof CompoundTag c) items.add(com.gregtechceu.gtceu.utils.data.StackPersistence.loadItem(c));
             });
 
             if (items.isEmpty()) return;

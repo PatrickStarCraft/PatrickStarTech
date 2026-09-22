@@ -158,7 +158,7 @@ public class AdvancedFluidDetectorCover extends FluidDetectorCover implements IM
         tag.putInt("min", minValue);
         tag.putInt("max", maxValue);
         tag.putBoolean("latched", isLatched);
-        tag.put("filter", filterHandler.getFilterItem().serializeNBT());
+        tag.put("filter", com.gregtechceu.gtceu.utils.data.StackPersistence.saveItem(filterHandler.getFilterItem()));
     }
 
     @Override
@@ -166,7 +166,7 @@ public class AdvancedFluidDetectorCover extends FluidDetectorCover implements IM
         setMinValue(tag.getIntOr("min", 0));
         setMaxValue(tag.getIntOr("max", 0));
         setLatched(tag.getBooleanOr("latched", false));
-        filterHandler.setFilterItem(ItemStack.of(tag.getCompound("filter")));
+        filterHandler.setFilterItem(com.gregtechceu.gtceu.utils.data.StackPersistence.loadItem(tag.getCompoundOrEmpty("filter")));
         super.pasteConfig(player, tag);
     }
 }

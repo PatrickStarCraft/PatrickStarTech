@@ -183,13 +183,13 @@ public class QuantumTankMachine extends TieredMachine implements IControllable,
     @Override
     public void saveToItem(CompoundTag tag, boolean clone) {
         if (clone || stored.isEmpty()) return;
-        tag.put("stored", stored.writeToNBT(new CompoundTag()));
+        tag.put("stored", com.gregtechceu.gtceu.utils.data.StackPersistence.saveFluid(stored));
         tag.putLong("storedAmount", storedAmount);
     }
 
     @Override
     public void loadFromItem(CompoundTag tag) {
-        stored = FluidStack.loadFluidStackFromNBT(tag.getCompound("stored"));
+        stored = com.gregtechceu.gtceu.utils.data.StackPersistence.loadFluid(tag.getCompoundOrEmpty("stored"));
         storedAmount = tag.getLongOr("storedAmount", 0);
     }
 

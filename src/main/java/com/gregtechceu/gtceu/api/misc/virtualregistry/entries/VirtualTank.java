@@ -48,7 +48,7 @@ public class VirtualTank extends VirtualEntry {
         tag.putInt(CAPACITY_KEY, this.capacity);
 
         if (this.fluidTank.getFluid() != FluidStack.EMPTY)
-            tag.put(FLUID_KEY, this.fluidTank.getFluid().writeToNBT(new CompoundTag()));
+            tag.put(FLUID_KEY, com.gregtechceu.gtceu.utils.data.StackPersistence.saveFluid(this.fluidTank.getFluid()));
 
         return tag;
     }
@@ -59,7 +59,7 @@ public class VirtualTank extends VirtualEntry {
         this.capacity = nbt.getIntOr(CAPACITY_KEY, 0);
 
         if (nbt.contains(FLUID_KEY))
-            setFluid(FluidStack.loadFluidStackFromNBT(nbt.getCompound(FLUID_KEY)));
+            setFluid(com.gregtechceu.gtceu.utils.data.StackPersistence.loadFluid(nbt.getCompoundOrEmpty(FLUID_KEY)));
     }
 
     @Override

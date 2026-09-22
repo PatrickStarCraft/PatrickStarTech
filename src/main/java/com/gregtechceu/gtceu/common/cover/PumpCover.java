@@ -348,7 +348,7 @@ public class PumpCover extends CoverBehavior implements IIOCover, IMuiCover, ICo
         tag.putInt("transferRate", getTransferRate());
         tag.putInt("io", getIo().ordinal());
         tag.putInt("manualIO", getManualIOMode().ordinal());
-        tag.put("filter", filterHandler.getFilterItem().serializeNBT());
+        tag.put("filter", com.gregtechceu.gtceu.utils.data.StackPersistence.saveItem(filterHandler.getFilterItem()));
         tag.putInt("bucketMode", getBucketMode().ordinal());
     }
 
@@ -357,7 +357,7 @@ public class PumpCover extends CoverBehavior implements IIOCover, IMuiCover, ICo
         setTransferRate(tag.getIntOr("transferRate", 0));
         setIo(IO.values()[tag.getIntOr("io", 0)]);
         setManualIOMode(ManualIOMode.values()[tag.getIntOr("manualIO", 0)]);
-        filterHandler.setFilterItem(ItemStack.of(tag.getCompound("filter")));
+        filterHandler.setFilterItem(com.gregtechceu.gtceu.utils.data.StackPersistence.loadItem(tag.getCompoundOrEmpty("filter")));
         setBucketMode(BucketMode.values()[tag.getIntOr("bucketMode", 0)]);
         super.pasteConfig(player, tag);
     }

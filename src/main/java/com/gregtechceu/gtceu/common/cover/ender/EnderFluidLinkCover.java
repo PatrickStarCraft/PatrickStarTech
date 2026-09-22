@@ -120,12 +120,12 @@ public class EnderFluidLinkCover extends AbstractEnderLinkCover<VirtualTank> {
     @Override
     public void copyConfig(CompoundTag tag) {
         super.copyConfig(tag);
-        tag.put("filter", filterHandler.getFilterItem().serializeNBT());
+        tag.put("filter", com.gregtechceu.gtceu.utils.data.StackPersistence.saveItem(filterHandler.getFilterItem()));
     }
 
     @Override
     public void pasteConfig(ServerPlayer player, CompoundTag tag) {
-        filterHandler.setFilterItem(ItemStack.of(tag.getCompound("filter")));
+        filterHandler.setFilterItem(com.gregtechceu.gtceu.utils.data.StackPersistence.loadItem(tag.getCompoundOrEmpty("filter")));
         super.pasteConfig(player, tag);
     }
 

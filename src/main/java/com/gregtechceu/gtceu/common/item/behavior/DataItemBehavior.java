@@ -51,11 +51,18 @@ public class DataItemBehavior implements IInteractionItem, IAddInformation, IDat
     public InteractionResult use(Item item, Level level, Player player, InteractionHand usedHand) {
         if (player.isShiftKeyDown()) {
             ItemStack stack = player.getItemInHand(usedHand);
-            stack.getOrCreateTag().putString("boundPlayerName", Component.Serializer.toJson(player.getDisplayName()));
-            int perm = 0;
-            while (player.hasPermissions(perm)) perm++;
-            stack.getOrCreateTag().putInt("boundPlayerPermLevel", perm - 1);
-            stack.getOrCreateTag().putString("boundPlayerUUID", player.getStringUUID());
+            if (!level.isClientSide()) {
+                var permissions = player.permissions();
+                int perm = permissions.hasPermission(net.minecraft.server.permissions.Permissions.COMMANDS_OWNER) ? 4 :
+                        permissions.hasPermission(net.minecraft.server.permissions.Permissions.COMMANDS_ADMIN) ? 3 :
+                        permissions.hasPermission(net.minecraft.server.permissions.Permissions.COMMANDS_GAMEMASTER) ? 2 :
+                        permissions.hasPermission(net.minecraft.server.permissions.Permissions.COMMANDS_MODERATOR) ? 1 : 0;
+                com.gregtechceu.gtceu.api.item.data.ItemStackData.update(stack, tag -> {
+                    tag.putString("boundPlayerName", com.gregtechceu.gtceu.utils.data.ComponentJson.toJson(player.getDisplayName()));
+                    tag.putInt("boundPlayerPermLevel", perm);
+                    tag.putString("boundPlayerUUID", player.getStringUUID());
+                });
+            }
             return InteractionResult.SUCCESS.heldItemTransformedTo(stack);
         }
         return IInteractionItem.super.use(item, level, player, usedHand);
@@ -69,32 +76,33 @@ public class DataItemBehavior implements IInteractionItem, IAddInformation, IDat
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltipComponents,
                                 TooltipFlag isAdvanced) {
-        if (stack.getOrCreateTag().contains("boundPlayerName")) {
-            MutableComponent name = Component.Serializer.fromJson(stack.getOrCreateTag().getString("boundPlayerName"));
+        var data = com.gregtechceu.gtceu.api.item.data.ItemStackData.read(stack);
+        if (data.contains("boundPlayerName")) {
+            MutableComponent name = com.gregtechceu.gtceu.utils.data.ComponentJson.fromJson(data.getStringOr("boundPlayerName", ""));
             tooltipComponents.add(Component.translatable("gtceu.tooltip.player_bind", name));
         }
-        if (stack.getOrCreateTag().contains("targetX")) {
+        if (data.contains("targetX")) {
             tooltipComponents.add(Component.translatable(
                     "gtceu.tooltip.wireless_transmitter_bind",
-                    Component.literal("" + stack.getOrCreateTag().getInt("targetX")).withStyle(ChatFormatting.GOLD),
-                    Component.literal("" + stack.getOrCreateTag().getInt("targetY")).withStyle(ChatFormatting.GOLD),
-                    Component.literal("" + stack.getOrCreateTag().getInt("targetZ")).withStyle(ChatFormatting.GOLD),
-                    Component.literal(stack.getOrCreateTag().getString("face")).withStyle(ChatFormatting.DARK_PURPLE),
-                    Component.literal(stack.getOrCreateTag().getString("dim")).withStyle(ChatFormatting.GREEN)));
+                    Component.literal("" + data.getIntOr("targetX", 0)).withStyle(ChatFormatting.GOLD),
+                    Component.literal("" + data.getIntOr("targetY", 0)).withStyle(ChatFormatting.GOLD),
+                    Component.literal("" + data.getIntOr("targetZ", 0)).withStyle(ChatFormatting.GOLD),
+                    Component.literal(data.getStringOr("face", "")).withStyle(ChatFormatting.DARK_PURPLE),
+                    Component.literal(data.getStringOr("dim", "")).withStyle(ChatFormatting.GREEN)));
         }
-        if (stack.getOrCreateTag().contains("computer_monitor_cover_config")) {
+        if (data.contains("computer_monitor_cover_config")) {
             tooltipComponents.add(Component.translatable("gtceu.tooltip.computer_monitor_config"));
         }
-        if (stack.getOrCreateTag().contains("computer_monitor_cover_data")) {
+        if (data.contains("computer_monitor_cover_data")) {
             tooltipComponents.add(
                     Component.translatable("gtceu.tooltip.computer_monitor_data",
                             GTStringUtils.toComponent(
-                                    stack.getOrCreateTag().getList("computer_monitor_cover_data", Tag.TAG_STRING))));
+                                    com.gregtechceu.gtceu.utils.data.TypedTagList.read(data, "computer_monitor_cover_data", Tag.TAG_STRING))));
         }
         ResearchManager.ResearchItem researchData = ResearchManager.readResearchId(stack);
         if (researchData == null) {
-            if (stack.getOrCreateTag().contains("pos", Tag.TAG_INT_ARRAY) && stack.hasTag()) {
-                int[] posArray = stack.getOrCreateTag().getIntArray("pos");
+            int[] posArray = data.getIntArray("pos").orElseGet(() -> new int[0]);
+            if (posArray.length == 3) {
                 tooltipComponents.add(Component.translatable(
                         "gtceu.tooltip.proxy_bind",
                         Component.literal("" + posArray[0]).withStyle(ChatFormatting.LIGHT_PURPLE),
@@ -130,7 +138,7 @@ public class DataItemBehavior implements IInteractionItem, IAddInformation, IDat
                     FluidStack outputFluids = FluidRecipeCapability.CAP
                             .of(contents.get(0).content()).getStacks()[0];
                     for (var fluid : addedFluids) {
-                        if (outputFluids.isFluidStackIdentical(fluid)) continue outerFluids;
+                        if (FluidStack.matches(outputFluids, fluid)) continue outerFluids;
                     }
                     if (addedFluids.add(outputFluids)) {
                         tooltipComponents.add(

@@ -58,7 +58,7 @@ public class MEPatternBufferProvider extends MachineInfoProvider<MEPatternBuffer
 
         ListTag itemsTag = new ListTag();
         for (var entry : items.object2LongEntrySet()) {
-            var ct = entry.getKey().serializeNBT();
+            var ct = com.gregtechceu.gtceu.utils.data.StackPersistence.saveItem(entry.getKey());
             ct.putLong("real", entry.getLongValue());
             itemsTag.add(ct);
         }
@@ -66,7 +66,7 @@ public class MEPatternBufferProvider extends MachineInfoProvider<MEPatternBuffer
 
         ListTag fluidsTag = new ListTag();
         for (var entry : fluids.object2LongEntrySet()) {
-            var ct = entry.getKey().writeToNBT(new CompoundTag());
+            var ct = com.gregtechceu.gtceu.utils.data.StackPersistence.saveFluid(entry.getKey());
             ct.putLong("real", entry.getLongValue());
             fluidsTag.add(ct);
         }
@@ -79,7 +79,7 @@ public class MEPatternBufferProvider extends MachineInfoProvider<MEPatternBuffer
         ListTag itemsTag = com.gregtechceu.gtceu.utils.data.TypedTagList.read(serverData, "items", Tag.TAG_COMPOUND);
         for (Tag t : itemsTag) {
             if (!(t instanceof CompoundTag ct)) continue;
-            var stack = ItemStack.of(ct);
+            var stack = com.gregtechceu.gtceu.utils.data.StackPersistence.loadItem(ct);
             var count = ct.getLongOr("real", 0);
             if (!stack.isEmpty() && count > 0) {
                 iTooltip.add(helper.smallItem(stack));
@@ -94,7 +94,7 @@ public class MEPatternBufferProvider extends MachineInfoProvider<MEPatternBuffer
         ListTag fluidsTag = com.gregtechceu.gtceu.utils.data.TypedTagList.read(serverData, "fluids", Tag.TAG_COMPOUND);
         for (Tag t : fluidsTag) {
             if (!(t instanceof CompoundTag ct)) continue;
-            var stack = FluidStack.loadFluidStackFromNBT(ct);
+            var stack = com.gregtechceu.gtceu.utils.data.StackPersistence.loadFluid(ct);
             var amount = ct.getLongOr("real", 0);
             if (!stack.isEmpty() && amount > 0) {
                 iTooltip.add(GTElementHelper.smallFluid(JadeFluidObject.of(stack.getFluid())));

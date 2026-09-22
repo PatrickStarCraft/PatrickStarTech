@@ -775,10 +775,10 @@ public class GTMachineUtils {
     }
 
     public static BiConsumer<ItemStack, List<Component>> TANK_TOOLTIPS = (stack, list) -> {
-        if (stack.hasTag()) {
-            String key = stack.getTag().contains("stored") ? "stored" : "Fluid";
-            FluidStack stored = FluidStack.loadFluidStackFromNBT(stack.getOrCreateTagElement(key));
-            long storedAmount = stack.getOrCreateTag().getLong("storedAmount");
+        if (stack.has(net.minecraft.core.component.DataComponents.CUSTOM_DATA)) {
+            String key = com.gregtechceu.gtceu.api.item.data.ItemStackData.read(stack).contains("stored") ? "stored" : "Fluid";
+            FluidStack stored = com.gregtechceu.gtceu.utils.data.StackPersistence.loadFluid(com.gregtechceu.gtceu.api.item.data.ItemStackData.read(stack).getCompoundOrEmpty(key));
+            long storedAmount = com.gregtechceu.gtceu.api.item.data.ItemStackData.read(stack).getLongOr("storedAmount", 0L);
             if (storedAmount == 0 && !stored.isEmpty()) storedAmount = stored.getAmount();
             list.add(1, Component.translatable("gtceu.universal.tooltip.fluid_stored", stored.getHoverName(),
                     FormattingUtil.formatNumbers(storedAmount)));
@@ -786,9 +786,9 @@ public class GTMachineUtils {
     };
 
     public static BiConsumer<ItemStack, List<Component>> CHEST_TOOLTIPS = (stack, list) -> {
-        if (stack.hasTag()) {
-            ItemStack itemStack = ItemStack.of(stack.getOrCreateTagElement("stored"));
-            long storedAmount = stack.getOrCreateTag().getLong("storedAmount");
+        if (stack.has(net.minecraft.core.component.DataComponents.CUSTOM_DATA)) {
+            ItemStack itemStack = com.gregtechceu.gtceu.utils.data.StackPersistence.loadItem(com.gregtechceu.gtceu.api.item.data.ItemStackData.read(stack).getCompoundOrEmpty("stored"));
+            long storedAmount = com.gregtechceu.gtceu.api.item.data.ItemStackData.read(stack).getLongOr("storedAmount", 0L);
             list.add(1, Component.translatable("gtceu.universal.tooltip.item_stored", itemStack.getHoverName(),
                     FormattingUtil.formatNumbers(storedAmount)));
         }

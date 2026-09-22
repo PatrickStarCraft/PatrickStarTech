@@ -10,6 +10,8 @@ gradle.projectsEvaluated {
         'com/gregtechceu/gtceu/api/sync_system/ValueIOPersistence.java',
         'com/gregtechceu/gtceu/api/sync_system/CompoundTagSavedData.java',
         'com/gregtechceu/gtceu/utils/data/TypedTagList.java',
+        'com/gregtechceu/gtceu/utils/data/StackPersistence.java',
+        'com/gregtechceu/gtceu/utils/data/ComponentJson.java',
         'com/gregtechceu/gtceu/api/transfer/fluid/FluidHandlerList.java',
         'com/gregtechceu/gtceu/api/transfer/item/CustomItemStackHandler.java',
         'com/gregtechceu/gtceu/api/transfer/fluid/CustomFluidTank.java',

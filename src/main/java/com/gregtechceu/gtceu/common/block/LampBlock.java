@@ -142,15 +142,15 @@ public class LampBlock extends Block {
     public ItemStack getCloneItemStack(BlockState state, HitResult target,
                                        BlockGetter level, BlockPos pos, Player player) {
         ItemStack stack = super.getCloneItemStack(state, target, level, pos, player);
-        stack.setTag(getTagFromState(state));
+        net.minecraft.world.item.component.CustomData.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA, stack, getTagFromState(state));
         return stack;
     }
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable BlockGetter level, List<Component> tooltip,
                                 TooltipFlag flag) {
-        if (stack.hasTag()) {
-            var tag = stack.getTag();
+        if (stack.has(net.minecraft.core.component.DataComponents.CUSTOM_DATA)) {
+            var tag = com.gregtechceu.gtceu.api.item.data.ItemStackData.read(stack);
 
             if (isInverted(tag)) tooltip.add(Component.translatable("block.gtceu.lamp.tooltip.inverted"));
             if (!isBloomEnabled(tag)) tooltip.add(Component.translatable("block.gtceu.lamp.tooltip.no_bloom"));
@@ -164,7 +164,7 @@ public class LampBlock extends Block {
         List<ItemStack> returnValue = super.getDrops(state, params);
         for (ItemStack stack : returnValue) {
             if (stack.is(this.asItem())) {
-                stack.setTag(this.getTagFromState(state));
+                net.minecraft.world.item.component.CustomData.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA, stack, getTagFromState(state));
                 break;
             }
         }

@@ -193,7 +193,7 @@ public class SpoilableBehavior {
                 ItemStack total = prevResult.getSpoilResult(stack, spoilContext, simulate);
                 for (int i = 1; i < mult; i++) {
                     ItemStack temp = prevResult.getSpoilResult(stack, spoilContext, simulate);
-                    if (ItemStack.isSameItemSameTags(total, temp)) total.grow(temp.getCount());
+                    if (ItemStack.isSameItemSameComponents(total, temp)) total.grow(temp.getCount());
                 }
                 return total;
             }).tooltip(stack -> {

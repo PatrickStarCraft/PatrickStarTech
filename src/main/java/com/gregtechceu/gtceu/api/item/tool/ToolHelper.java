@@ -669,7 +669,7 @@ public class ToolHelper {
         if (stack.getItem() instanceof IGTTool) {
             damage = ((IGTTool) stack.getItem()).getToolStats().getToolDamagePerCraft(stack);
         } else {
-            if (stack.getTags().anyMatch(s -> s.location().getPath().startsWith("tool") ||
+            if (stack.typeHolder().tags().anyMatch(s -> s.location().getPath().startsWith("tool") ||
                     s.location().getPath().startsWith("crafting_tool"))) {
                 damage = 1;
             }

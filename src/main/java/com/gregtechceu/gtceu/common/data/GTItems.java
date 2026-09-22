@@ -1786,7 +1786,7 @@ public class GTItems {
             .lang("Item Tag Filter")
             .onRegister(attach(
                     new FilterBehaviour<>(ItemStack.class,
-                            stack -> new TagFilter<>(stack, ItemStack::getItem, ItemStack::getTags)),
+                            stack -> new TagFilter<>(stack, ItemStack::getItem, stack -> stack.typeHolder().tags())),
                     new CoverPlaceBehavior(GTCovers.ITEM_FILTER)))
             .onRegister(materialInfo(new ItemMaterialInfo(new MaterialStack(GTMaterials.Zinc, GTValues.M * 2))))
             .register();
@@ -1806,7 +1806,7 @@ public class GTItems {
             .lang("Fluid Tag Filter")
             .onRegister(attach(
                     new FilterBehaviour<>(FluidStack.class, stack -> new TagFilter<>(stack, FluidStack::getFluid,
-                            f -> f.getFluid().defaultFluidState().getTags())),
+                            f -> f.getFluid().defaultFluidState().typeHolder().tags())),
                     new CoverPlaceBehavior(GTCovers.FLUID_FILTER)))
             .onRegister(materialInfo(new ItemMaterialInfo(new MaterialStack(GTMaterials.Zinc, GTValues.M * 3 / 2))))
             .register();

@@ -15,6 +15,54 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class InventoryPersistencePortTest {
+    @Test void ownedStackPayloadsPreserveComponentsOversizedCountsAndEmptySlots() {
+        var stack = new ItemStack(Items.DIAMOND, 4096);
+        var custom = new CompoundTag();
+        custom.putLong("charge", 1234567890123L);
+        stack.set(DataComponents.CUSTOM_DATA, CustomData.of(custom));
+        var saved = com.gregtechceu.gtceu.utils.data.StackPersistence.saveItem(stack);
+        var original = saved.copy();
+        var loaded = com.gregtechceu.gtceu.utils.data.StackPersistence.loadItem(saved);
+        assertEquals(4096, loaded.getCount());
+        assertTrue(ItemStack.isSameItemSameComponents(stack, loaded));
+        assertEquals(original, saved);
+        assertTrue(com.gregtechceu.gtceu.utils.data.StackPersistence.loadItem(
+                com.gregtechceu.gtceu.utils.data.StackPersistence.saveItem(ItemStack.EMPTY)).isEmpty());
+
+        var fluid = new FluidStack(Fluids.WATER, 123456);
+        fluid.set(DataComponents.CUSTOM_DATA, CustomData.of(custom));
+        var loadedFluid = com.gregtechceu.gtceu.utils.data.StackPersistence.loadFluid(
+                com.gregtechceu.gtceu.utils.data.StackPersistence.saveFluid(fluid));
+        assertTrue(FluidStack.matches(fluid, loadedFluid));
+        assertTrue(com.gregtechceu.gtceu.utils.data.StackPersistence.loadFluid(
+                com.gregtechceu.gtceu.utils.data.StackPersistence.saveFluid(FluidStack.EMPTY)).isEmpty());
+    }
+
+    @Test void malformedOwnedStackPayloadFailsRatherThanLosingAnInventoryEntry() {
+        var malformed = new CompoundTag();
+        malformed.putString("id", "minecraft:diamond");
+        malformed.putInt("count", -2);
+        assertThrows(IllegalArgumentException.class,
+                () -> com.gregtechceu.gtceu.utils.data.StackPersistence.loadItem(malformed));
+    }
+
+    @Test void textJsonRetainsTranslationArgumentsStylesAndSiblings() {
+        var component = net.minecraft.network.chat.Component.translatable("test.translation", 42,
+                net.minecraft.network.chat.Component.literal("argument").withStyle(net.minecraft.ChatFormatting.GOLD))
+                .withStyle(net.minecraft.ChatFormatting.BOLD).append(" suffix");
+        var json = com.gregtechceu.gtceu.utils.data.ComponentJson.toJson(component);
+        var restored = com.gregtechceu.gtceu.utils.data.ComponentJson.fromJson(json);
+        // JSON normalizes numeric argument wrapper types; compare the persisted representation and styling.
+        assertEquals(json, com.gregtechceu.gtceu.utils.data.ComponentJson.toJson(restored));
+        assertEquals(component.getStyle(), restored.getStyle());
+        assertEquals(component.getSiblings(), restored.getSiblings());
+        var contents = (net.minecraft.network.chat.contents.TranslatableContents) restored.getContents();
+        assertEquals("test.translation", contents.getKey());
+        assertEquals("42", contents.getArgs()[0].toString());
+        assertEquals(net.minecraft.network.chat.Component.literal("argument").withStyle(net.minecraft.ChatFormatting.GOLD),
+                contents.getArgs()[1]);
+    }
+
     @Test void mixedFluidHandlerImplementationsKeepTheirSavedIndices() {
         var custom = new CustomFluidTank(2000);
         var nativeTank = new net.neoforged.neoforge.fluids.capability.templates.FluidTank(2000);
@@ -66,6 +114,10 @@ class InventoryPersistencePortTest {
 
     @BeforeAll
     static void bindComponents() {
+        if (!Items.DIAMOND.builtInRegistryHolder().areComponentsBound()) {
+            Items.DIAMOND.builtInRegistryHolder().bindComponents(DataComponentMap.builder()
+                    .set(DataComponents.MAX_STACK_SIZE, 64).build());
+        }
         if (!Fluids.WATER.builtInRegistryHolder().areComponentsBound()) {
             Fluids.WATER.builtInRegistryHolder().bindComponents(DataComponentMap.EMPTY);
         }

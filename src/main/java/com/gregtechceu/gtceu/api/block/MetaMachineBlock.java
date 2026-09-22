@@ -120,8 +120,8 @@ public class MetaMachineBlock extends Block implements ManagedSyncEntityBlock {
                     machine.setOwnerUUID(sPlayer.getUUID());
                 }
 
-                CompoundTag tag = pStack.getTag();
-                if (tag != null) machine.loadFromItem(tag);
+                CompoundTag tag = com.gregtechceu.gtceu.api.item.data.ItemStackData.read(pStack);
+                if (!tag.isEmpty()) machine.loadFromItem(tag);
             }
         }
     }
@@ -184,7 +184,8 @@ public class MetaMachineBlock extends Block implements ManagedSyncEntityBlock {
     public ItemStack getCloneItemStack(BlockGetter level, BlockPos pos, BlockState state) {
         ItemStack itemStack = super.getCloneItemStack(level, pos, state);
         var machine = MetaMachine.getMachine(level, pos);
-        if (machine != null) machine.saveToItem(itemStack.getOrCreateTag(), true);
+        if (machine != null) com.gregtechceu.gtceu.api.item.data.ItemStackData.update(itemStack,
+                tag -> machine.saveToItem(tag, true));
         return itemStack;
     }
 
@@ -239,11 +240,8 @@ public class MetaMachineBlock extends Block implements ManagedSyncEntityBlock {
             machine.modifyDrops(drops);
             for (ItemStack drop : drops) {
                 if (drop.getItem() instanceof MetaMachineItem item && item.getBlock() == this) {
-                    CompoundTag tag = drop.getOrCreateTag();
-                    machine.saveToItem(tag, false);
-                    if (tag.isEmpty()) {
-                        drop.setTag(null);
-                    }
+                    com.gregtechceu.gtceu.api.item.data.ItemStackData.update(drop,
+                            tag -> machine.saveToItem(tag, false));
                     // break here to not dupe contents if a machine drops multiple of itself for whatever reason.
                     break;
                 }

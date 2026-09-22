@@ -106,12 +106,12 @@ public class EnderItemLinkCover extends AbstractEnderLinkCover<VirtualItemStorag
 
     @Override
     public void copyConfig(CompoundTag tag) {
-        tag.put("filter", filterHandler.getFilterItem().serializeNBT());
+        tag.put("filter", com.gregtechceu.gtceu.utils.data.StackPersistence.saveItem(filterHandler.getFilterItem()));
     }
 
     @Override
     public void pasteConfig(ServerPlayer player, CompoundTag tag) {
-        filterHandler.setFilterItem(ItemStack.of(tag.getCompound("filter")));
+        filterHandler.setFilterItem(com.gregtechceu.gtceu.utils.data.StackPersistence.loadItem(tag.getCompoundOrEmpty("filter")));
         super.pasteConfig(player, tag);
     }
 

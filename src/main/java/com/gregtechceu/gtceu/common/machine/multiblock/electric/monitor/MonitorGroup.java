@@ -156,7 +156,7 @@ public class MonitorGroup {
         IMonitorComponent component = GTCapabilityHelper.getMonitorComponent(level, target, null);
         if (component != null && component.getDataItems() != null) {
             ItemStack stack = component.getDataItems().getStackInSlot(dataSlot);
-            CompoundTag tag = stack.getTag();
+            CompoundTag tag = com.gregtechceu.gtceu.api.item.data.ItemStackData.read(stack);
             if (tag == null) {
                 return null;
             }
@@ -179,7 +179,7 @@ public class MonitorGroup {
         IMonitorComponent component = GTCapabilityHelper.getMonitorComponent(level, target, null);
         if (component != null && component.getDataItems() != null) {
             ItemStack stack = component.getDataItems().getStackInSlot(dataSlot);
-            CompoundTag tag = stack.getTag();
+            CompoundTag tag = com.gregtechceu.gtceu.api.item.data.ItemStackData.read(stack);
             if (tag == null || !tag.contains("dim")) {
                 return level;
             }

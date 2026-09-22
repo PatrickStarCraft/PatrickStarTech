@@ -283,7 +283,7 @@ public class TagExprFilter {
      * @return if any of the items oreDicts matches the rules
      */
     public static boolean tagsMatch(TagExprParser.MatchExpr expr, ItemStack stack) {
-        Set<String> tags = stack.getTags()
+        Set<String> tags = stack.typeHolder().tags()
                 .map(TagKey::location)
                 .map(Identifier::toString)
                 .collect(Collectors.toSet());
@@ -292,7 +292,7 @@ public class TagExprFilter {
     }
 
     public static boolean tagsMatch(TagExprParser.MatchExpr expr, FluidStack stack) {
-        Set<String> tags = stack.getFluid().defaultFluidState().getTags()
+        Set<String> tags = stack.getFluid().defaultFluidState().typeHolder().tags()
                 .map(TagKey::location)
                 .map(Identifier::toString)
                 .collect(Collectors.toSet());

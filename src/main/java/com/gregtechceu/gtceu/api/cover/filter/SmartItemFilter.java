@@ -46,9 +46,9 @@ public class SmartItemFilter extends Filter<ItemStack> {
     public SmartItemFilter(ItemStack stack) {
         super(stack);
 
-        var tag = stack.getOrCreateTag();
+        var tag = com.gregtechceu.gtceu.api.item.data.ItemStackData.read(stack);
         if (tag.isEmpty()) return;
-        filterMode = SmartFilteringMode.VALUES[tag.getInt("filterMode")];
+        filterMode = SmartFilteringMode.VALUES[Math.floorMod(tag.getIntOr("filterMode", 0), SmartFilteringMode.VALUES.length)];
     }
 
     @Override
