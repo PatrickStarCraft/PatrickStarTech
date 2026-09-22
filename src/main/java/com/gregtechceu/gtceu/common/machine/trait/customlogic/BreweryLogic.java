@@ -20,7 +20,6 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionBrewing;
-import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.common.brewing.BrewingRecipe;
@@ -217,15 +216,16 @@ public enum BreweryLogic implements GTRecipeType.ICustomRecipeLogic {
     private static boolean testMixFluid(FluidStack fluidStack, FluidStack fromFluid) {
         var fromTag = FLUID_TAGS.apply(fromFluid.getFluid());
         return (fluidStack.getFluid() == fromFluid.getFluid() || fluidStack.getFluid().is(fromTag)) &&
-                Objects.equals(fromFluid.getTag(), fluidStack.getTag());
+                Objects.equals(com.gregtechceu.gtceu.api.transfer.fluid.FluidStackData.readNullable(fromFluid),
+                        com.gregtechceu.gtceu.api.transfer.fluid.FluidStackData.readNullable(fluidStack));
     }
 
     private static @NotNull GTRecipe forgePotionRecipe(BrewingRecipe brew, FluidIngredient fromFluid) {
         FluidStack toFluid = PotionFluidHelper.getFluidFromPotionItem(brew.getOutput(),
                 PotionFluidHelper.MB_PER_RECIPE);
         String name;
-        Potion output = PotionUtils.getPotion(brew.getOutput());
-        if (output != Potions.EMPTY) {
+        Potion output = PotionFluidHelper.getPotionFromItemStack(brew.getOutput());
+        if (output != null) {
             name = output.getName("");
         } else {
             name = toFluid.getFluid().builtInRegistryHolder().key().identifier().getPath();
@@ -311,7 +311,7 @@ public enum BreweryLogic implements GTRecipeType.ICustomRecipeLogic {
                     PotionFluidHelper.MB_PER_RECIPE);
 
             String name = toFluid.getFluid().builtInRegistryHolder().key().identifier().getPath();
-            Potion output = PotionUtils.getPotion(impl.getOutput());
+            Potion output = PotionFluidHelper.getPotionFromItemStack(impl.getOutput());
             if (output != null) {
                 name = output.getName("");
             }

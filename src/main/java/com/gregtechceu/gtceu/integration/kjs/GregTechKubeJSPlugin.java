@@ -660,7 +660,7 @@ public class GregTechKubeJSPlugin extends KubeJSPlugin {
             var values = ((IngredientAccessor) ingredient).getValues();
             if (values.length == 0) continue;
 
-            ItemStack[] stacks = ingredient.getItems();
+            ItemStack[] stacks = com.gregtechceu.gtceu.api.recipe.ingredient.IngredientStacks.getItems(ingredient);
             ItemStack stack;
             if (stacks.length == 0 || (stack = stacks[0]).isEmpty()) continue;
 

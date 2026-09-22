@@ -373,7 +373,7 @@ public class RenderUtil {
             // check item outputs first
             List<Content> outputs = recipe.getOutputContents(ItemRecipeCapability.CAP);
             if (!outputs.isEmpty()) {
-                ItemStack[] items = ItemRecipeCapability.CAP.of(outputs.get(0).content()).getItems();
+                ItemStack[] items = com.gregtechceu.gtceu.api.recipe.ingredient.IngredientStacks.getItems(ItemRecipeCapability.CAP.of(outputs.get(0).content()));
                 if (items.length > 0) {
                     ItemStack output = items[0];
                     if (!output.isEmpty() && !GTUtil.isSameItemSameTags(output, stack)) {

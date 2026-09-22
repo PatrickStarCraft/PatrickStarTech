@@ -120,8 +120,8 @@ public class DataItemBehavior implements IInteractionItem, IAddInformation, IDat
                 for (GTRecipe recipe : recipes) {
                     var contents = recipe.getOutputContents(ItemRecipeCapability.CAP);
                     if (contents.isEmpty()) continue;
-                    ItemStack outputItems = ItemRecipeCapability.CAP
-                            .of(contents.get(0).content()).getItems()[0];
+                    ItemStack outputItems = com.gregtechceu.gtceu.api.recipe.ingredient.IngredientStacks.getItems(
+                            ItemRecipeCapability.CAP.of(contents.get(0).content()))[0];
                     for (var item : addedItems) {
                         if (outputItems.is(item.getItem())) continue outerItems;
                     }

@@ -71,7 +71,7 @@ public class RecipeOutputProvider extends MachineTraitProvider<RecipeLogic, Comp
                         }
                         itemTag = (CompoundTag) JsonOps.INSTANCE.convertTo(NbtOps.INSTANCE, chanced.toJson());
                     } else {
-                        var stacks = ItemRecipeCapability.CAP.of(item.content()).getItems();
+                        var stacks = com.gregtechceu.gtceu.api.recipe.ingredient.IngredientStacks.getItems(ItemRecipeCapability.CAP.of(item.content()));
                         if (stacks.length == 0 || stacks[0].isEmpty()) continue;
                         var stack = stacks[0];
                         itemTag = new CompoundTag();
@@ -80,7 +80,7 @@ public class RecipeOutputProvider extends MachineTraitProvider<RecipeLogic, Comp
                             int count = stack.getCount();
                             double countD = ((double) count * runs * item.chance()) / item.maxChance();
                             count = Math.max(1, (int) Math.round(countD));
-                            itemTag.putInt("Count", count);
+                            itemTag.putInt("count", count);
                         }
                     }
                     itemTags.add(itemTag);
@@ -184,12 +184,12 @@ public class RecipeOutputProvider extends MachineTraitProvider<RecipeLogic, Comp
                 ItemStack item;
                 MutableComponent text = CommonComponents.space();
                 if (itemOutput instanceof IntProviderIngredient provider) {
-                    item = provider.getInner().getItems()[0];
+                    item = com.gregtechceu.gtceu.api.recipe.ingredient.IngredientStacks.getItems(provider.getInner())[0];
                     text = text.append(Component.translatable("gtceu.gui.content.range",
                             String.valueOf(provider.getCountProvider().minInclusive()),
                             String.valueOf(provider.getCountProvider().maxInclusive())));
                 } else {
-                    item = itemOutput.getItems()[0];
+                    item = com.gregtechceu.gtceu.api.recipe.ingredient.IngredientStacks.getItems(itemOutput)[0];
                     text.append(String.valueOf(item.getCount()));
                     item.setCount(1);
                 }

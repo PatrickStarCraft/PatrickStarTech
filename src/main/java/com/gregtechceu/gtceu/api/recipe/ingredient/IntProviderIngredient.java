@@ -114,8 +114,8 @@ public class IntProviderIngredient extends Ingredient implements IRangedIngredie
      * @return a {@link ItemStack} with count {@link IntProvider#maxInclusive()}
      */
     public @NotNull ItemStack getMaxSizeStack() {
-        if (inner.getItems().length == 0) return ItemStack.EMPTY;
-        else return inner.getItems()[0].copyWithCount(countProvider.maxInclusive());
+        if (com.gregtechceu.gtceu.api.recipe.ingredient.IngredientStacks.getItems(inner).length == 0) return ItemStack.EMPTY;
+        else return com.gregtechceu.gtceu.api.recipe.ingredient.IngredientStacks.getItems(inner)[0].copyWithCount(countProvider.maxInclusive());
     }
 
     /**

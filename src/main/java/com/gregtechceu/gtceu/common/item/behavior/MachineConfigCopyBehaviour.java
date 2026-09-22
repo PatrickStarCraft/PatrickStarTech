@@ -6,10 +6,11 @@ import com.gregtechceu.gtceu.api.item.component.IInteractionItem;
 import com.gregtechceu.gtceu.api.machine.MetaMachine;
 import com.gregtechceu.gtceu.api.machine.feature.*;
 import com.gregtechceu.gtceu.common.machine.owner.MachineOwner;
+import com.gregtechceu.gtceu.api.item.data.ItemStackData;
 import com.gregtechceu.gtceu.utils.GTTransferUtils;
+import com.gregtechceu.gtceu.utils.GTUtil;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -72,10 +73,8 @@ public class MachineConfigCopyBehaviour implements IInteractionItem, IAddInforma
             return InteractionResult.FAIL;
 
         if (context.isSecondaryUseActive()) {
-
-            var configTag = stack.getOrCreateTagElement(CONFIG_DATA);
-
             if (blockEntity instanceof ICopyable copyable) {
+                var configTag = new CompoundTag();
                 configTag.putString(COPY_SOURCE,
                         (new ItemStack(blockEntity.getBlockState().getBlock().asItem())).getDisplayName().getString());
                 copyable.copyConfig(configTag);
@@ -84,8 +83,9 @@ public class MachineConfigCopyBehaviour implements IInteractionItem, IAddInforma
                 copyable.getItemsRequiredToPaste()
                         .forEach(v -> itemsTag.add(com.gregtechceu.gtceu.utils.data.StackPersistence.saveItem(v)));
                 configTag.put(ITEMS_TO_PASTE, itemsTag);
+                ItemStackData.update(stack, tag -> tag.put(CONFIG_DATA, configTag));
             } else {
-                stack.removeTagKey(CONFIG_DATA);
+                ItemStackData.update(stack, tag -> tag.remove(CONFIG_DATA));
                 player.sendOverlayMessage(Component.translatable("behaviour.memory_card.client_msg.cleared"));
                 return InteractionResult.SUCCESS;
             }
@@ -93,7 +93,7 @@ public class MachineConfigCopyBehaviour implements IInteractionItem, IAddInforma
             player.sendOverlayMessage(Component.translatable("behaviour.memory_card.client_msg.copied"));
 
         } else {
-            var tag = stack.getTagElement(CONFIG_DATA);
+            var tag = configData(stack);
             if (tag == null) return InteractionResult.FAIL;
 
             List<ItemStack> items = new ArrayList<>();
@@ -212,13 +212,18 @@ public class MachineConfigCopyBehaviour implements IInteractionItem, IAddInforma
                                 TooltipFlag isAdvanced) {
         tooltipComponents.add(Component.translatable("behaviour.memory_card.tooltip.copy"));
         tooltipComponents.add(Component.translatable("behaviour.memory_card.tooltip.paste"));
-        CompoundTag data = stack.getTagElement(CONFIG_DATA);
+        CompoundTag data = configData(stack);
         if (data == null) return;
-        if (Screen.hasShiftDown()) {
+        if (GTUtil.isShiftDown()) {
             tooltipComponents.add(CommonComponents.EMPTY);
             addConfigTooltips(tooltipComponents, data);
         } else {
             tooltipComponents.add(Component.translatable("behaviour.memory_card.tooltip.view_stored"));
         }
+    }
+
+    @Nullable
+    private static CompoundTag configData(ItemStack stack) {
+        return ItemStackData.read(stack).getCompound(CONFIG_DATA).orElse(null);
     }
 }

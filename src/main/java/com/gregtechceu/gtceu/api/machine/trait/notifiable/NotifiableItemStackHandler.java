@@ -125,7 +125,7 @@ public class NotifiableItemStackHandler extends NotifiableRecipeHandlerTrait<Ing
                 items = new ItemStack[] { provider.getMaxSizeStack() };
                 amount = provider.getMaxRoll();
             } else {
-                items = ingredient.getItems();
+                items = com.gregtechceu.gtceu.api.recipe.ingredient.IngredientStacks.getItems(ingredient);
                 if (items.length == 0 || items[0].isEmpty()) {
                     it.remove();
                     continue;

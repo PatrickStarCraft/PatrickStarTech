@@ -269,9 +269,9 @@ public interface GTRecipeSchema {
 
             for (var stack : inputs) {
                 // test simple item that have pure singular material stack
-                var matStack = ChemicalHelper.getMaterialStack(stack.ingredient.getItems()[0].getItem());
+                var matStack = ChemicalHelper.getMaterialStack(com.gregtechceu.gtceu.api.recipe.ingredient.IngredientStacks.getItems(stack.ingredient)[0].getItem());
                 // test item that has multiple material stacks
-                var matInfo = ChemicalHelper.getMaterialInfo(stack.ingredient.getItems()[0].getItem());
+                var matInfo = ChemicalHelper.getMaterialInfo(com.gregtechceu.gtceu.api.recipe.ingredient.IngredientStacks.getItems(stack.ingredient)[0].getItem());
                 if (chance == maxChance && chance != 0) {
                     if (!matStack.isEmpty()) {
                         itemMaterialStacks.add(matStack.multiply(stack.count));
@@ -281,7 +281,7 @@ public interface GTRecipeSchema {
                             itemMaterialStacks.add(ms.multiply(stack.count));
                         }
                     } else {
-                        tempItemStacks.add(stack.ingredient.getItems()[0].copyWithCount(stack.count));
+                        tempItemStacks.add(com.gregtechceu.gtceu.api.recipe.ingredient.IngredientStacks.getItems(stack.ingredient)[0].copyWithCount(stack.count));
                     }
                 }
             }
@@ -770,7 +770,7 @@ public interface GTRecipeSchema {
                 if (stack == null || stack.isEmpty()) {
                     throw new RecipeExceptionJS(String.format("Invalid or empty %s item (recipe ID: %s)", type, id));
                 }
-                if (stack.ingredient.getItems().length == 0) {
+                if (com.gregtechceu.gtceu.api.recipe.ingredient.IngredientStacks.getItems(stack.ingredient).length == 0) {
                     String tagInfo = "";
                     var values = ((IngredientAccessor) stack.ingredient).getValues();
                     if (values.length == 1 && values[0] instanceof Ingredient.TagValue tagValue) {
@@ -1306,7 +1306,8 @@ public interface GTRecipeSchema {
             }
 
             var fluid = ((FluidStackJS) value).getFluidStack();
-            return FluidIngredient.of(fluid.getFluid(), (int) fluid.getAmount(), fluid.getTag()).toJson();
+            return FluidIngredient.of(fluid.getFluid(), (int) fluid.getAmount(),
+                    com.gregtechceu.gtceu.api.transfer.fluid.FluidStackData.readNullable(fluid)).toJson();
         }
 
         @Override
@@ -1323,7 +1324,8 @@ public interface GTRecipeSchema {
             }
 
             var fluid = ((FluidStackJS) value).getFluidStack();
-            return FluidIngredient.of(fluid.getFluid(), (int) fluid.getAmount(), fluid.getTag()).toJson();
+            return FluidIngredient.of(fluid.getFluid(), (int) fluid.getAmount(),
+                    com.gregtechceu.gtceu.api.transfer.fluid.FluidStackData.readNullable(fluid)).toJson();
         }
     }
 

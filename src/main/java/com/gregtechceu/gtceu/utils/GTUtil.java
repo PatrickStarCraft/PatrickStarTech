@@ -17,7 +17,6 @@ import com.gregtechceu.gtceu.integration.recipeviewer.jei.recipe.GTRecipeJEICate
 import net.minecraft.ChatFormatting;
 import net.minecraft.util.Util;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -47,7 +46,6 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
-import net.minecraftforge.common.ForgeHooks;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidType;
@@ -61,7 +59,6 @@ import dev.emi.emi.api.stack.EmiStack;
 import dev.emi.emi.screen.RecipeScreen;
 import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import mezz.jei.api.runtime.IRecipesGui;
 import org.apache.commons.lang3.ArrayUtils;
@@ -371,21 +368,21 @@ public class GTUtil {
 
     public static boolean isShiftDown() {
         if (GTCEu.isClientSide()) {
-            return Screen.hasShiftDown();
+            return Minecraft.getInstance().hasShiftDown();
         }
         return false;
     }
 
     public static boolean isCtrlDown() {
         if (GTCEu.isClientSide()) {
-            return Screen.hasControlDown();
+            return Minecraft.getInstance().hasControlDown();
         }
         return false;
     }
 
     public static boolean isAltDown() {
         if (GTCEu.isClientSide()) {
-            return Screen.hasAltDown();
+            return Minecraft.getInstance().hasAltDown();
         }
         return false;
     }
@@ -434,10 +431,6 @@ public class GTUtil {
                 itemStack.getCount() / divisor != 0;
     }
 
-    public static int getItemBurnTime(Item item) {
-        return ForgeHooks.getBurnTime(item.getDefaultInstance(), null);
-    }
-
     public static int getPumpBiomeModifier(Holder<Biome> biome) {
         if (biome.is(BiomeTags.IS_NETHER)) {
             return -1;
@@ -473,7 +466,7 @@ public class GTUtil {
      * Determines map color nearest to specified RGB color
      */
     public static MapColor determineMapColor(int rgbColor) {
-        return closestColor(rgbColor, MAP_COLORS, c -> c.calculateRGBColor(MapColor.Brightness.NORMAL));
+        return closestColor(rgbColor, MAP_COLORS, c -> c.calculateARGBColor(MapColor.Brightness.NORMAL));
     }
 
     private static <T> T closestColor(int rgbColor, T[] colors, Function<T, Integer> extractRgbColor) {
@@ -506,7 +499,14 @@ public class GTUtil {
     }
 
     public static int getFluidColor(FluidStack fluid) {
-        return IClientFluidTypeExtensions.of(fluid.getFluid()).getTintColor(fluid);
+        var potionContents = fluid.get(net.minecraft.core.component.DataComponents.POTION_CONTENTS);
+        if (potionContents != null) return potionContents.getColor() | 0xFF000000;
+
+        var extensions = IClientFluidTypeExtensions.of(fluid.getFluid());
+        if (extensions instanceof com.gregtechceu.gtceu.api.registry.registrate.forge.GTClientFluidTypeExtensions gtExtensions) {
+            return gtExtensions.getTintColor();
+        }
+        return fluid.getFluid().is(net.minecraft.tags.FluidTags.WATER) ? 0xFF3F76E4 : 0xFFFFFFFF;
     }
 
     public static boolean canSeeSunClearly(Level world, BlockPos blockPos) {
@@ -516,7 +516,8 @@ public class GTUtil {
 
         Holder<Biome> biome = world.getBiome(blockPos.above());
         if (world.isRaining()) {
-            if (biome.value().warmEnoughToRain(blockPos.above()) || biome.value().coldEnoughToSnow(blockPos.above())) {
+            if (biome.value().warmEnoughToRain(blockPos.above(), world.getSeaLevel()) ||
+                    biome.value().coldEnoughToSnow(blockPos.above(), world.getSeaLevel())) {
                 return false;
             }
         }
@@ -586,32 +587,13 @@ public class GTUtil {
     }
 
     public static CompoundTag saveItemStack(ItemStack itemStack, CompoundTag compoundTag) {
-        Identifier resourceLocation = BuiltInRegistries.ITEM.getKey(itemStack.getItem());
-        compoundTag.putString("id", resourceLocation.toString());
-        compoundTag.putInt("Count", itemStack.getCount());
-        if (itemStack.getTag() != null) {
-            compoundTag.put("tag", itemStack.getTag().copy());
-        }
-
+        compoundTag.merge(com.gregtechceu.gtceu.utils.data.StackPersistence.saveItem(itemStack));
         return compoundTag;
     }
 
     public static ItemStack loadItemStack(CompoundTag compoundTag) {
         try {
-            Item item = BuiltInRegistries.ITEM.getValue(Identifier.parse(compoundTag.getStringOr("id", "")));
-            int count = compoundTag.getIntOr("Count", 0);
-            ItemStack stack = new ItemStack(item, count);
-            if ((compoundTag.get("tag") instanceof CompoundTag)) {
-                stack.setTag(compoundTag.getCompound("tag"));
-                if (stack.getTag() != null) {
-                    stack.getItem().verifyTagAfterLoad(stack.getTag());
-                }
-            }
-
-            if (stack.isDamageableItem()) {
-                stack.setDamageValue(stack.getDamageValue());
-            }
-            return stack;
+            return com.gregtechceu.gtceu.utils.data.StackPersistence.loadItem(compoundTag);
         } catch (RuntimeException var2) {
             GTCEu.LOGGER.debug("Tried to load invalid item: {}", compoundTag, var2);
             return ItemStack.EMPTY;
@@ -655,7 +637,7 @@ public class GTUtil {
     }
 
     public static boolean isSameItemSameTags(ItemStack s1, ItemStack s2) {
-        return (ItemStack.isSameItem(s1, s2) && Objects.equals(s1.getTag(), s2.getTag()));
+        return ItemStack.isSameItemSameComponents(s1, s2);
     }
 
     public static <T> T getLast(List<T> list) {
@@ -672,7 +654,7 @@ public class GTUtil {
         return Direction.getNearest(
                 a.getStepY() * b.getStepZ() - a.getStepZ() * b.getStepY(),
                 a.getStepZ() * b.getStepX() - a.getStepX() * b.getStepZ(),
-                a.getStepX() * b.getStepY() - a.getStepY() * b.getStepX());
+                a.getStepX() * b.getStepY() - a.getStepY() * b.getStepX(), null);
     }
 
     public static void doExplosion(Level level, BlockPos pos, float explosionPower) {
@@ -777,7 +759,7 @@ public class GTUtil {
             EmiApiAccessor.gtceu$setPages(recipes, EmiStack.EMPTY);
 
             // switch to the requested category if possible
-            if (Minecraft.getInstance().screen instanceof RecipeScreen emiRecipeScreen) {
+            if (Minecraft.getInstance().gui.screen() instanceof RecipeScreen emiRecipeScreen) {
                 emiRecipeScreen.focusCategory(GTRecipeEMICategory.machineCategory(category));
             }
         }
@@ -786,7 +768,7 @@ public class GTUtil {
     private static class JeiCallWrapper {
 
         public static void openRecipeCategory(GTRecipeCategory category) {
-            List<RecipeType<?>> categories = category.getRecipeType().getCategories().stream()
+            List<mezz.jei.api.recipe.types.IRecipeType<?>> categories = category.getRecipeType().getCategories().stream()
                     .map(GTRecipeJEICategory::machineType)
                     .collect(Collectors.toList());
             IRecipesGui recipesGui = GTJEIPlugin.getRuntime().getRecipesGui();

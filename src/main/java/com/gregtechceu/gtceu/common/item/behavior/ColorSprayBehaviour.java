@@ -457,15 +457,15 @@ public class ColorSprayBehaviour implements IDurabilityBar, IInteractionItem, IA
     }
 
     public final int getUsesLeft(ItemStack stack) {
-        CompoundTag tagCompound = stack.getTag();
+        CompoundTag tagCompound = com.gregtechceu.gtceu.api.item.data.ItemStackData.readNullable(stack);
         if (tagCompound == null || !(tagCompound.get("UsesLeft") instanceof IntTag))
             return totalUses;
         return tagCompound.getIntOr("UsesLeft", 0);
     }
 
     public static void setUsesLeft(ItemStack itemStack, int usesLeft) {
-        CompoundTag tagCompound = itemStack.getOrCreateTag();
-        tagCompound.putInt("UsesLeft", usesLeft);
+        com.gregtechceu.gtceu.api.item.data.ItemStackData.update(itemStack,
+                tagCompound -> tagCompound.putInt("UsesLeft", usesLeft));
     }
 
     private static final TriPredicate<IPaintable, IPaintable, Direction> paintablePredicate = (parent, child, dir) -> {

@@ -198,7 +198,7 @@ public class ToolHelper {
         if (!(stack.getItem() instanceof IGTTool tool)) {
             if (user != null) stack.hurtAndBreak(damage, user, p -> {});
         } else {
-            if (stack.getTag() != null && stack.getTag().getBoolean(UNBREAKABLE_KEY)) {
+            if (com.gregtechceu.gtceu.api.item.data.ItemStackData.read(stack).getBoolean(UNBREAKABLE_KEY)) {
                 return;
             }
             if (!(user instanceof Player player) || !player.isCreative()) {
@@ -261,7 +261,7 @@ public class ToolHelper {
         var tool = GTMaterialItems.TOOL_ITEMS.get(material, toolType);
         if (tool == null) return ItemStack.EMPTY;
         ItemStack stack = tool.get().getRaw();
-        stack.getOrCreateTag().putInt(HIDE_FLAGS, 2);
+        com.gregtechceu.gtceu.api.item.data.ItemStackData.update(stack, tag -> tag.putInt(HIDE_FLAGS, 2));
         CompoundTag toolTag = getToolTag(stack);
         toolTag.putInt(MAX_DURABILITY_KEY, maxDurability);
         toolTag.putInt(HARVEST_LEVEL_KEY, harvestLevel);
@@ -443,14 +443,14 @@ public class ToolHelper {
                     if (prefix == null) {
                         for (Content output : hammerRecipe.getOutputContents(ItemRecipeCapability.CAP)) {
                             if (dropChance >= 1.0F || random.nextFloat() <= dropChance) {
-                                drops.add(SizedIngredient.copy(ItemRecipeCapability.CAP.of(output.content()))
-                                        .getItems()[0]);
+                                drops.add(com.gregtechceu.gtceu.api.recipe.ingredient.IngredientStacks.getItems(
+                                        SizedIngredient.copy(ItemRecipeCapability.CAP.of(output.content())))[0]);
                             }
                         }
                     } else if (TagPrefix.ORES.containsKey(prefix)) {
                         for (Content content : hammerRecipe.getOutputContents(ItemRecipeCapability.CAP)) {
                             if (dropChance >= 1.0F || random.nextFloat() <= dropChance) {
-                                ItemStack output = ItemRecipeCapability.CAP.of(content.content()).getItems()[0];
+                                ItemStack output = com.gregtechceu.gtceu.api.recipe.ingredient.IngredientStacks.getItems(ItemRecipeCapability.CAP.of(content.content()))[0];
                                 // Only apply fortune on ore -> crushed forge hammer recipes
                                 if (ChemicalHelper.getPrefix(output.getItem()) == TagPrefix.crushed) {
                                     output = output.copy();

@@ -13,11 +13,11 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraftforge.common.crafting.CraftingHelper;
 import net.neoforged.neoforge.fluids.FluidStack;
 
 import com.google.common.collect.Lists;
 import com.google.gson.*;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.Codec;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.Getter;
@@ -72,7 +72,8 @@ public class FluidIngredient implements Predicate<FluidStack> {
     }
 
     public void toNetwork(FriendlyByteBuf buffer) {
-        buffer.writeCollection(this.getFluids(), (buf, fluid) -> buf.writeId(BuiltInRegistries.FLUID, fluid));
+        buffer.writeCollection(this.getFluids(), (buf, fluid) ->
+                buf.writeVarInt(BuiltInRegistries.FLUID.getId(fluid)));
         buffer.writeVarInt(amount);
         buffer.writeNbt(nbt);
     }
@@ -107,7 +108,7 @@ public class FluidIngredient implements Predicate<FluidStack> {
         if (this.isEmpty()) {
             return stack.isEmpty();
         }
-        if (this.nbt != null && !this.nbt.equals(stack.getTag())) {
+        if (this.nbt != null && !this.nbt.equals(com.gregtechceu.gtceu.api.transfer.fluid.FluidStackData.read(stack))) {
             return false;
         }
         for (FluidStack fluidStack : this.getStacks()) {
@@ -174,7 +175,10 @@ public class FluidIngredient implements Predicate<FluidStack> {
                     if (found.contains(fluid)) continue;
                     found.add(fluid);
 
-                    fluidStacks.add(new FluidStack(fluid, this.amount, this.nbt));
+                    FluidStack stack = new FluidStack(fluid, this.amount);
+                    if (this.nbt != null) stack.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA,
+                            net.minecraft.world.item.component.CustomData.of(this.nbt));
+                    fluidStacks.add(stack);
                 }
             }
             this.stacks = fluidStacks.toArray(FluidStack[]::new);
@@ -222,7 +226,8 @@ public class FluidIngredient implements Predicate<FluidStack> {
 
     public static FluidIngredient of(FluidStack stack) {
         if (stack.isEmpty()) return FluidIngredient.EMPTY;
-        return FluidIngredient.fromValue(new FluidValue(stack.getFluid()), stack.getAmount(), stack.getTag());
+        return FluidIngredient.fromValue(new FluidValue(stack.getFluid()), stack.getAmount(),
+                com.gregtechceu.gtceu.api.transfer.fluid.FluidStackData.readNullable(stack));
     }
 
     public static FluidIngredient of(List<FluidStack> stacks) {
@@ -235,7 +240,7 @@ public class FluidIngredient implements Predicate<FluidStack> {
         for (FluidStack stack : stacks) {
             if (!stack.isEmpty()) {
                 values.add(new FluidValue(stack.getFluid()));
-                if (tag == null) tag = stack.getTag();
+                if (tag == null) tag = com.gregtechceu.gtceu.api.transfer.fluid.FluidStackData.readNullable(stack);
             }
         }
         return FluidIngredient.fromValues(values, stacks.get(0).getAmount(), tag);
@@ -255,7 +260,7 @@ public class FluidIngredient implements Predicate<FluidStack> {
     }
 
     public static FluidIngredient fromNetwork(FriendlyByteBuf buffer) {
-        List<Fluid> fluids = buffer.readList(buf -> buf.readById(BuiltInRegistries.FLUID));
+        List<Fluid> fluids = buffer.readList(buf -> buf.readById(BuiltInRegistries.FLUID::byId));
         return FluidIngredient.of(fluids, buffer.readVarInt(), buffer.readNbt());
     }
 
@@ -273,7 +278,7 @@ public class FluidIngredient implements Predicate<FluidStack> {
         }
 
         int amount = GsonHelper.getAsInt(jsonObject, "amount", 0);
-        CompoundTag nbt = jsonObject.has("nbt") ? CraftingHelper.getNBT(jsonObject.get("nbt")) : null;
+        CompoundTag nbt = jsonObject.has("nbt") ? parseNbt(jsonObject.get("nbt")) : null;
 
         if (GsonHelper.isObjectNode(jsonObject, "value")) {
             Value value = FluidIngredient.valueFromJson(GsonHelper.getAsJsonObject(jsonObject, "value"));
@@ -300,6 +305,14 @@ public class FluidIngredient implements Predicate<FluidStack> {
             }
         } else {
             throw new JsonSyntaxException("expected 'value' to be an object, an array or a string.");
+        }
+    }
+
+    private static CompoundTag parseNbt(JsonElement element) {
+        try {
+            return net.minecraft.nbt.TagParser.parseCompoundFully(GsonHelper.convertToString(element, "nbt"));
+        } catch (CommandSyntaxException exception) {
+            throw new JsonSyntaxException("Invalid fluid ingredient NBT", exception);
         }
     }
 

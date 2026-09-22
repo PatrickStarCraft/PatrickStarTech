@@ -697,7 +697,7 @@ public class VanillaRecipeHelper {
 
             ItemLike itemLike;
             if (ingredient instanceof Ingredient ingr) {
-                ItemStack[] stacks = ingr.getItems();
+                ItemStack[] stacks = com.gregtechceu.gtceu.api.recipe.ingredient.IngredientStacks.getItems(ingr);
                 if (stacks.length == 0) continue;
                 ItemStack stack = stacks[0];
                 if (stack == ItemStack.EMPTY) continue;

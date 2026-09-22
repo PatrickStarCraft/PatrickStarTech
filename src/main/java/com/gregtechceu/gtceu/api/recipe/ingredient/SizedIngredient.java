@@ -89,7 +89,7 @@ public class SizedIngredient extends Ingredient {
         } else if (ingredient instanceof IntProviderIngredient provider) {
             return provider.copy();
         }
-        return SizedIngredient.create(ingredient, ingredient.getItems()[0].getCount());
+        return SizedIngredient.create(ingredient, com.gregtechceu.gtceu.api.recipe.ingredient.IngredientStacks.getItems(ingredient)[0].getCount());
     }
 
     @Override
@@ -127,7 +127,7 @@ public class SizedIngredient extends Ingredient {
     @Override
     public ItemStack @NotNull [] getItems() {
         if (changed || itemStacks == null) {
-            var innerStacks = inner.getItems();
+            var innerStacks = com.gregtechceu.gtceu.api.recipe.ingredient.IngredientStacks.getItems(inner);
             this.itemStacks = new ItemStack[innerStacks.length];
             for (int i = 0; i < itemStacks.length; i++) {
                 itemStacks[i] = innerStacks[i].copyWithCount(amount);

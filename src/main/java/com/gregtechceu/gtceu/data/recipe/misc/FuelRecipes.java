@@ -2,14 +2,17 @@ package com.gregtechceu.gtceu.data.recipe.misc;
 
 import com.gregtechceu.gtceu.GTCEu;
 import com.gregtechceu.gtceu.api.fluids.store.FluidStorageKeys;
-import com.gregtechceu.gtceu.utils.GTUtil;
 import com.gregtechceu.gtceu.data.recipe.GeneratedRecipe;
 
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
+import net.minecraft.world.level.block.entity.FuelValues;
 import net.minecraft.world.level.material.Fluids;
+import net.neoforged.neoforge.registries.datamaps.builtin.NeoForgeDataMaps;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidUtil;
 
@@ -54,13 +57,16 @@ public class FuelRecipes {
 
     public static void init(Consumer<GeneratedRecipe> provider) {
         // TODO this all needs to be cleaned up, but this will make it somewhat work for now
-        // do these first because for some reason vanilla fuels are not set up yet at this phase?
         Set<Item> addedItems = new HashSet<>();
-        for (var fuelEntry : FurnaceBlockEntity.getFuel().entrySet()) {
-            addBoilerFuel(provider, addedItems, fuelEntry.getKey(), fuelEntry.getValue());
-        }
+        RegistryAccess registries = RegistryAccess.fromRegistryOfRegistries(BuiltInRegistries.REGISTRY);
+        FuelValues.Builder fuelValuesBuilder = new FuelValues.Builder(registries, FeatureFlags.DEFAULT_FLAGS);
+        FuelValues.vanillaBurnTimes(fuelValuesBuilder, 200);
+        var itemRegistry = registries.lookupOrThrow(Registries.ITEM);
+        itemRegistry.getDataMap(NeoForgeDataMaps.FURNACE_FUELS).forEach((key, fuel) ->
+                fuelValuesBuilder.add(itemRegistry.getValue(key), fuel.burnTime()));
+        FuelValues fuelValues = fuelValuesBuilder.build();
         for (Item item : BuiltInRegistries.ITEM) {
-            int burnTime = GTUtil.getItemBurnTime(item);
+            int burnTime = item.getDefaultInstance().getBurnTime(null, fuelValues);
             addBoilerFuel(provider, addedItems, item, burnTime);
         }
 

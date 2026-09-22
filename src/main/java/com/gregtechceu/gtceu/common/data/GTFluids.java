@@ -11,7 +11,7 @@ import com.gregtechceu.gtceu.data.recipe.CustomTags;
 
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraftforge.common.ForgeMod;
+import net.neoforged.neoforge.common.NeoForgeMod;
 
 import com.tterrag.registrate.util.entry.FluidEntry;
 import org.jetbrains.annotations.NotNull;
@@ -22,11 +22,11 @@ import static com.gregtechceu.gtceu.common.registry.GTRegistration.REGISTRATE;
 
 public class GTFluids {
 
-    public static final FluidEntry<PotionFluid> POTION = REGISTRATE
+    public static final FluidEntry<PotionFluid.Flowing> POTION = REGISTRATE
             .fluid("potion", GTCEu.id("block/fluids/fluid.potion"), GTCEu.id("block/fluids/fluid.potion"),
-                    PotionFluid.PotionFluidType::new, PotionFluid::new)
+                    PotionFluid.PotionFluidType::new, PotionFluid.Flowing::new)
             .lang("Potion")
-            .source(PotionFluid::new).noBlock().noBucket()
+            .source(PotionFluid.Source::new).noBlock().noBucket()
             .tag(CustomTags.POTION_FLUIDS)
             .register();
 
@@ -34,8 +34,8 @@ public class GTFluids {
         // Register fluids for non-materials
         handleNonMaterialFluids(GTMaterials.Water, Fluids.WATER);
         handleNonMaterialFluids(GTMaterials.Lava, Fluids.LAVA);
-        handleNonMaterialFluids(GTMaterials.Milk, ForgeMod.MILK);
-        ForgeMod.enableMilkFluid();
+        handleNonMaterialFluids(GTMaterials.Milk, NeoForgeMod.MILK);
+        NeoForgeMod.enableMilkFluid();
 
         // register fluids for materials
         REGISTRATE.creativeModeTab(() -> GTCreativeModeTabs.MATERIAL_FLUID);

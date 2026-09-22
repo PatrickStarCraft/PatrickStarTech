@@ -18,7 +18,8 @@ public class AEUtil {
 
     public static @Nullable GenericStack fromFluidStack(FluidStack stack) {
         if (stack == null || stack.isEmpty()) return null;
-        var key = AEFluidKey.of(stack.getFluid(), stack.getTag());
+        var key = AEFluidKey.of(stack.getFluid(),
+                com.gregtechceu.gtceu.api.transfer.fluid.FluidStackData.readNullable(stack));
         return new GenericStack(key, stack.getAmount());
     }
 
@@ -53,6 +54,6 @@ public class AEUtil {
 
     public static boolean matches(AEFluidKey key, FluidStack stack) {
         return !stack.isEmpty() && key.getFluid().isSame(stack.getFluid()) &&
-                Objects.equals(key.getTag(), stack.getTag());
+                Objects.equals(key.getTag(), com.gregtechceu.gtceu.api.transfer.fluid.FluidStackData.readNullable(stack));
     }
 }

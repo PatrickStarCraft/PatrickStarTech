@@ -1,9 +1,9 @@
 package com.gregtechceu.gtceu.integration.recipeviewer.jei.subtype;
 
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.item.alchemy.Potion;
-import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.world.item.alchemy.PotionContents;
 import net.neoforged.neoforge.fluids.FluidStack;
 
 import mezz.jei.api.ingredients.subtypes.IIngredientSubtypeInterpreter;
@@ -16,20 +16,16 @@ public class PotionFluidSubtypeInterpreter implements IIngredientSubtypeInterpre
 
     @Override
     public String apply(FluidStack ingredient, UidContext context) {
-        if (!ingredient.hasTag())
+        PotionContents contents = ingredient.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY);
+        if (contents.potion().isEmpty() && contents.customEffects().isEmpty())
             return IIngredientSubtypeInterpreter.NONE;
-
-        CompoundTag tag = ingredient.getOrCreateTag();
-        Potion potionType = PotionUtils.getPotion(tag);
-        String potionTypeString = potionType.getName("");
+        String potionTypeString = contents.potion().map(potion -> potion.value().name()).orElse("");
 
         StringBuilder stringBuilder = new StringBuilder(potionTypeString);
-        List<MobEffectInstance> effects = PotionUtils.getCustomEffects(tag);
+        List<MobEffectInstance> effects = contents.customEffects();
 
-        for (MobEffectInstance effect : potionType.getEffects()) {
-            stringBuilder.append(";")
-                    .append(effect);
-        }
+        contents.potion().ifPresent(potion -> potion.value().getEffects().forEach(effect -> stringBuilder.append(";")
+                .append(effect)));
         for (MobEffectInstance effect : effects) {
             stringBuilder.append(";")
                     .append(effect);

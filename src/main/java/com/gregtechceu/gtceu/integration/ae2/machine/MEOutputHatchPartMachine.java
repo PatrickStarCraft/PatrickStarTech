@@ -247,7 +247,8 @@ public class MEOutputHatchPartMachine extends MEHatchPartMachine {
 
         @Override
         public int fill(FluidStack resource, FluidAction action) {
-            var key = AEFluidKey.of(resource.getFluid(), resource.getTag());
+            var key = AEFluidKey.of(resource.getFluid(),
+                    com.gregtechceu.gtceu.api.transfer.fluid.FluidStackData.readNullable(resource));
             int amount = resource.getAmount();
             int oldValue = GTMath.saturatedCast(internalBuffer.storage.getOrDefault(key, 0));
             int changeValue = Math.min(Integer.MAX_VALUE - oldValue, amount);

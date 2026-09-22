@@ -556,9 +556,12 @@ public class GTPlaceholders {
                     }
                     if (capacity == -1) throw new MissingItemException("any data item", slot);
                     PlaceholderUtils.checkRange("index", 0, capacity - 1, PlaceholderUtils.toInt(args.get(2)));
-                    ListTag data = stack.getOrCreateTag().getList("computer_monitor_cover_data", Tag.TAG_STRING);
+                    CompoundTag itemData = com.gregtechceu.gtceu.api.item.data.ItemStackData.read(stack);
+                    ListTag data = itemData.getList("computer_monitor_cover_data", Tag.TAG_STRING);
                     while (data.size() <= PlaceholderUtils.toInt(args.get(2))) data.add(StringTag.valueOf(""));
-                    int p = stack.getOrCreateTag().getInt("computer_monitor_cover_p");
+                    int p = itemData.getIntOr("computer_monitor_cover_p", 0);
+                    com.gregtechceu.gtceu.api.item.data.ItemStackData.update(stack,
+                            tag -> tag.put("computer_monitor_cover_data", data));
                     if (GTStringUtils.equals(args.get(2), "")) args.set(2, MultiLineComponent.literal(p));
                     if (GTStringUtils.equals(args.get(0), "get"))
                         return MultiLineComponent
@@ -567,17 +570,21 @@ public class GTPlaceholders {
                     else if (args.get(0).equalsString("set")) {
                         data.set(PlaceholderUtils.toInt(args.get(2)) % capacity,
                                 StringTag.valueOf(args.get(3).toString()));
-                        stack.getOrCreateTag().put("computer_monitor_cover_data", data);
+                        com.gregtechceu.gtceu.api.item.data.ItemStackData.update(stack,
+                                tag -> tag.put("computer_monitor_cover_data", data));
                         return MultiLineComponent.empty();
                     } else if (args.get(0).equalsString("setp")) {
-                        stack.getOrCreateTag().putInt("computer_monitor_cover_p",
-                                PlaceholderUtils.toInt(args.get(3)) % capacity);
+                        com.gregtechceu.gtceu.api.item.data.ItemStackData.update(stack,
+                                tag -> tag.putInt("computer_monitor_cover_p",
+                                        PlaceholderUtils.toInt(args.get(3)) % capacity));
                         return MultiLineComponent.empty();
                     } else if (args.get(0).equalsString("inc")) {
-                        stack.getOrCreateTag().putInt("computer_monitor_cover_p", (p + 1) % capacity);
+                        com.gregtechceu.gtceu.api.item.data.ItemStackData.update(stack,
+                                tag -> tag.putInt("computer_monitor_cover_p", (p + 1) % capacity));
                         return MultiLineComponent.empty();
                     } else if (args.get(0).equalsString("dec")) {
-                        stack.getOrCreateTag().putInt("computer_monitor_cover_p", p == 0 ? capacity - 1 : p - 1);
+                        com.gregtechceu.gtceu.api.item.data.ItemStackData.update(stack,
+                                tag -> tag.putInt("computer_monitor_cover_p", p == 0 ? capacity - 1 : p - 1));
                         return MultiLineComponent.empty();
                     } else throw new InvalidArgsException();
                 } catch (IndexOutOfBoundsException e) {
@@ -611,7 +618,8 @@ public class GTPlaceholders {
                 int slot = GTStringUtils.toInt(args.get(0));
                 if (ctx.itemStackHandler() == null) throw new NotSupportedException();
                 PlaceholderUtils.checkRange("slot index", 1, ctx.itemStackHandler().getSlots(), slot);
-                Tag tag = ctx.itemStackHandler().getStackInSlot(slot - 1).getOrCreateTag();
+                Tag tag = com.gregtechceu.gtceu.api.item.data.ItemStackData
+                        .read(ctx.itemStackHandler().getStackInSlot(slot - 1));
                 for (int i = 1; i < args.size() - 1; i++) {
                     if (!(tag instanceof CompoundTag compoundTag)) return MultiLineComponent.empty();
                     tag = compoundTag.get(args.get(i).toString());
@@ -737,10 +745,8 @@ public class GTPlaceholders {
                     }
                 }
                 if (capacity == -1) throw new MissingItemException("any data item", slot);
-                if (!stack.getOrCreateTag().contains("computer_monitor_cover_data")) {
-                    stack.getOrCreateTag().put("computer_monitor_cover_data", new ListTag());
-                }
-                ListTag tag = stack.getOrCreateTag().getList("computer_monitor_cover_data", Tag.TAG_STRING);
+                CompoundTag itemData = com.gregtechceu.gtceu.api.item.data.ItemStackData.read(stack);
+                ListTag tag = itemData.getList("computer_monitor_cover_data", Tag.TAG_STRING);
                 int operationsLeft = 5000;
                 int p = 0, start = 0, cnt = 0;
                 String rawCode = args.get(1).toString().replaceAll("[^+\\-><\\[\\]]", "");
@@ -811,6 +817,8 @@ public class GTPlaceholders {
                     } else num = 0;
                     operationsLeft--;
                 }
+                com.gregtechceu.gtceu.api.item.data.ItemStackData.update(stack,
+                        root -> root.put("computer_monitor_cover_data", tag));
                 return MultiLineComponent.empty();
             }
         });

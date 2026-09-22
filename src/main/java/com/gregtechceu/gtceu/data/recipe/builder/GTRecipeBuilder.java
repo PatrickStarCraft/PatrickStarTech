@@ -989,7 +989,8 @@ public class GTRecipeBuilder {
                 }
 
                 TagKey<Fluid> tag = TagUtil.createFluidTag(BuiltInRegistries.FLUID.getKey(fluid.getFluid()).getPath());
-                ingredients.add(FluidIngredient.of(tag, fluid.getAmount(), fluid.getTag()));
+                ingredients.add(FluidIngredient.of(tag, fluid.getAmount(),
+                        com.gregtechceu.gtceu.api.transfer.fluid.FluidStackData.readNullable(fluid)));
             }
         }
         return input(FluidRecipeCapability.CAP, ingredients.toArray(FluidIngredient[]::new));
@@ -1541,14 +1542,14 @@ public class GTRecipeBuilder {
             int outputCount = 0;
 
             if (currOutput instanceof IntProviderIngredient intProvider) {
-                ItemStack[] items = intProvider.getInner().getItems();
+                ItemStack[] items = com.gregtechceu.gtceu.api.recipe.ingredient.IngredientStacks.getItems(intProvider.getInner());
                 if (items.length > 0) {
                     out = items[0].getItem();
                     // use the max amount of items for decomp info so dupes can't happen
                     outputCount = intProvider.getMaxRoll();
                 }
             } else if (!currOutput.isEmpty()) {
-                ItemStack[] items = currOutput.getItems();
+                ItemStack[] items = com.gregtechceu.gtceu.api.recipe.ingredient.IngredientStacks.getItems(currOutput);
                 if (items.length > 0) {
                     out = items[0].getItem();
                     outputCount = items[0].getCount();
@@ -1592,14 +1593,14 @@ public class GTRecipeBuilder {
             int outputCount = 0;
 
             if (currOutput instanceof IntProviderIngredient intProvider) {
-                ItemStack[] items = intProvider.getInner().getItems();
+                ItemStack[] items = com.gregtechceu.gtceu.api.recipe.ingredient.IngredientStacks.getItems(intProvider.getInner());
                 if (items.length > 0) {
                     out = items[0].getItem();
                     // use the max amount of items for decomp info so dupes can't happen
                     outputCount = intProvider.getMaxRoll();
                 }
             } else if (!currOutput.isEmpty()) {
-                ItemStack[] items = currOutput.getItems();
+                ItemStack[] items = com.gregtechceu.gtceu.api.recipe.ingredient.IngredientStacks.getItems(currOutput);
                 if (items.length > 0) {
                     out = items[0].getItem();
                     outputCount = items[0].getCount();

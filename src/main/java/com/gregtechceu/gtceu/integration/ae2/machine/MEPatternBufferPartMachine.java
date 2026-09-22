@@ -238,7 +238,7 @@ public class MEPatternBufferPartMachine extends MEBusPartMachine
                 if (!(obj instanceof Ingredient ing) || ing.isEmpty()) {
                     continue;
                 }
-                for (ItemStack stack : ing.getItems()) {
+                for (ItemStack stack : com.gregtechceu.gtceu.api.recipe.ingredient.IngredientStacks.getItems(ing)) {
                     if (itemTypes.contains(stack.getItem())) {
                         return true;
                     }
@@ -1045,7 +1045,7 @@ public class MEPatternBufferPartMachine extends MEBusPartMachine
                     continue;
                 }
 
-                var items = ingredient.getItems();
+                var items = com.gregtechceu.gtceu.api.recipe.ingredient.IngredientStacks.getItems(ingredient);
                 if (items.length == 0 || items[0].isEmpty()) {
                     it.remove();
                     continue;

@@ -441,7 +441,8 @@ public class GTItems {
             .onRegister(attach(new FilteredFluidContainer(100, true, x -> x.getFluid().is(CustomTags.LIGHTER_FLUIDS)),
                     new ItemFluidContainer()))
             .onRegister(modelPredicate(GTCEu.id("lighter_open"),
-                    (itemStack) -> itemStack.getOrCreateTag().getBoolean(LighterBehavior.LIGHTER_OPEN) ? 1.0f : 0.0f))
+                    (itemStack) -> com.gregtechceu.gtceu.api.item.data.ItemStackData.read(itemStack)
+                            .getBoolean(LighterBehavior.LIGHTER_OPEN) ? 1.0f : 0.0f))
             .tag(CustomTags.TOOLS_IGNITER)
             .register();
     public static ItemEntry<ComponentItem> TOOL_LIGHTER_PLATINUM = REGISTRATE
@@ -453,7 +454,8 @@ public class GTItems {
             .onRegister(attach(new FilteredFluidContainer(1000, true, x -> x.getFluid().is(CustomTags.LIGHTER_FLUIDS)),
                     new ItemFluidContainer()))
             .onRegister(modelPredicate(GTCEu.id("lighter_open"),
-                    (itemStack) -> itemStack.getOrCreateTag().getBoolean(LighterBehavior.LIGHTER_OPEN) ? 1.0f : 0.0f))
+                    (itemStack) -> com.gregtechceu.gtceu.api.item.data.ItemStackData.read(itemStack)
+                            .getBoolean(LighterBehavior.LIGHTER_OPEN) ? 1.0f : 0.0f))
             .tag(CustomTags.TOOLS_IGNITER)
             .register();
 

@@ -209,7 +209,7 @@ public class ItemRecipeCapability extends RecipeCapability<Ingredient> {
             } else {
                 boolean has = false;
                 for (var recipeIng : consumables.object2LongEntrySet()) {
-                    var stack = ing.getItems()[0];
+                    var stack = com.gregtechceu.gtceu.api.recipe.ingredient.IngredientStacks.getItems(ing)[0];
                     if (recipeIng.getKey().test(stack)) {
                         recipeIng.setValue(recipeIng.getLongValue() + stack.getCount());
                         has = true;
@@ -344,7 +344,7 @@ public class ItemRecipeCapability extends RecipeCapability<Ingredient> {
 
             if (sizedIngredient.getInner() instanceof IntProviderIngredient intProvider) {
                 ItemStackList stackList = new ItemStackList();
-                for (ItemStack i : intProvider.getInner().getItems()) {
+                for (ItemStack i : com.gregtechceu.gtceu.api.recipe.ingredient.IngredientStacks.getItems(intProvider.getInner())) {
                     stackList.add(i);
                 }
                 return stackList;
@@ -355,7 +355,7 @@ public class ItemRecipeCapability extends RecipeCapability<Ingredient> {
             if (mapped != null) return mapped;
 
             ItemStackList stackList = new ItemStackList();
-            for (ItemStack i : intProvider.getInner().getItems()) {
+            for (ItemStack i : com.gregtechceu.gtceu.api.recipe.ingredient.IngredientStacks.getItems(intProvider.getInner())) {
                 stackList.add(i);
             }
             return stackList;
@@ -367,7 +367,7 @@ public class ItemRecipeCapability extends RecipeCapability<Ingredient> {
         }
 
         ItemStackList stackList = new ItemStackList();
-        for (ItemStack i : ingredient.getItems()) {
+        for (ItemStack i : com.gregtechceu.gtceu.api.recipe.ingredient.IngredientStacks.getItems(ingredient)) {
             stackList.add(i);
         }
         return stackList;

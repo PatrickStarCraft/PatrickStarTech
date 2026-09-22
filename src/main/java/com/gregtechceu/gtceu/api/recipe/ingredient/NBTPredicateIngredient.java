@@ -52,8 +52,12 @@ public class NBTPredicateIngredient extends AbstractIngredient {
             return false;
         } else {
             return this.stack.getItem() == input.getItem() &&
-                    predicate.test(input.getOrCreateTag());
+                    predicate.test(com.gregtechceu.gtceu.api.item.data.ItemStackData.read(input));
         }
+    }
+
+    public ItemStack[] getItems() {
+        return new ItemStack[] { this.stack.copy() };
     }
 
     public boolean isSimple() {
@@ -69,8 +73,9 @@ public class NBTPredicateIngredient extends AbstractIngredient {
         json.addProperty("type", TYPE.toString());
         json.addProperty("item", BuiltInRegistries.ITEM.getKey(this.stack.getItem()).toString());
         json.addProperty("count", this.stack.getCount());
-        if (this.stack.hasTag()) {
-            json.addProperty("nbt", this.stack.getTag().toString());
+        var customData = com.gregtechceu.gtceu.api.item.data.ItemStackData.readNullable(this.stack);
+        if (customData != null) {
+            json.addProperty("nbt", customData.toString());
         }
         json.add("predicate", predicate.toJson());
         return json;

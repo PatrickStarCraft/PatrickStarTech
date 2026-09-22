@@ -47,7 +47,7 @@ public class FluidContainerIngredient extends Ingredient {
 
     public FluidContainerIngredient(FluidStack fluidStack) {
         this(FluidIngredient.of(TagUtil.createFluidTag(BuiltInRegistries.FLUID.getKey(fluidStack.getFluid()).getPath()),
-                fluidStack.getAmount(), fluidStack.getTag()));
+                fluidStack.getAmount(), com.gregtechceu.gtceu.api.transfer.fluid.FluidStackData.readNullable(fluidStack)));
     }
 
     public FluidContainerIngredient(TagKey<Fluid> tag, int amount) {

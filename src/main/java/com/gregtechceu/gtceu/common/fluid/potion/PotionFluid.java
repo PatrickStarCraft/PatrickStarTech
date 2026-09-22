@@ -1,44 +1,30 @@
 package com.gregtechceu.gtceu.common.fluid.potion;
 
-import com.gregtechceu.gtceu.GTCEu;
 import com.gregtechceu.gtceu.common.data.GTFluids;
 
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.resources.Identifier;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.Potion;
-import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.alchemy.Potions;
+import net.minecraft.world.item.alchemy.PotionContents;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
-import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidType;
-import net.minecraftforge.fluids.ForgeFlowingFluid;
+import net.neoforged.neoforge.fluids.BaseFlowingFluid;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.function.Consumer;
 
-public class PotionFluid extends ForgeFlowingFluid {
+public abstract class PotionFluid extends BaseFlowingFluid {
 
     public PotionFluid(Properties properties) {
-        super(properties
-                .bucket(() -> Items.AIR)
-                .block(() -> (LiquidBlock) Blocks.WATER));
-        registerDefaultState(getStateDefinition().any().setValue(LEVEL, 7));
-    }
-
-    @Override
-    protected void createFluidStateDefinition(StateDefinition.Builder<Fluid, FluidState> builder) {
-        super.createFluidStateDefinition(builder);
-        builder.add(LEVEL);
+        super(properties);
     }
 
     public static FluidStack of(int amount, Potion potion) {
@@ -55,77 +41,72 @@ public class PotionFluid extends ForgeFlowingFluid {
     }
 
     public static FluidStack addPotionToFluidStack(FluidStack fluidStack, Potion potion) {
-        Identifier resourcelocation = BuiltInRegistries.POTION.getKey(potion);
-        if (potion == Potions.EMPTY) {
-            fluidStack.removeChildTag("Potion");
+        if (potion == null) {
+            fluidStack.remove(DataComponents.POTION_CONTENTS);
             return fluidStack;
         }
-        fluidStack.getOrCreateTag()
-                .putString("Potion", resourcelocation.toString());
+        fluidStack.set(DataComponents.POTION_CONTENTS,
+                new PotionContents(BuiltInRegistries.POTION.wrapAsHolder(potion)));
         return fluidStack;
     }
 
     public static FluidStack appendEffects(FluidStack fluidStack, Collection<MobEffectInstance> customEffects) {
         if (customEffects.isEmpty())
             return fluidStack;
-        CompoundTag tag = fluidStack.getOrCreateTag();
-        ListTag effects = com.gregtechceu.gtceu.utils.data.TypedTagList.read(tag, "CustomPotionEffects", 9);
-        for (MobEffectInstance effect : customEffects)
-            effects.add(effect.save(new CompoundTag()));
-        tag.put("CustomPotionEffects", effects);
+        PotionContents contents = fluidStack.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY);
+        for (MobEffectInstance effect : customEffects) contents = contents.withEffectAdded(effect);
+        fluidStack.set(DataComponents.POTION_CONTENTS, contents);
         return fluidStack;
     }
 
-    @Override
-    public boolean isSource(FluidState state) {
-        return this == GTFluids.POTION.get().getSource();
+    public static class Flowing extends PotionFluid {
+        public Flowing(Properties properties) {
+            super(properties);
+            registerDefaultState(getStateDefinition().any().setValue(LEVEL, 7));
+        }
+
+        @Override
+        protected void createFluidStateDefinition(StateDefinition.Builder<Fluid, FluidState> builder) {
+            super.createFluidStateDefinition(builder);
+            builder.add(LEVEL);
+        }
+
+        @Override
+        public int getAmount(FluidState state) {
+            return state.getValue(LEVEL);
+        }
+
+        @Override
+        public boolean isSource(FluidState state) {
+            return false;
+        }
     }
 
-    @Override
-    public int getAmount(FluidState state) {
-        return state.getValue(LEVEL);
-    }
-
-    public static class PotionFluidType extends FluidType {
-
-        private static final Identifier texture = GTCEu.id("block/fluids/fluid.potion");
-
-        /**
-         * Default constructor.
-         *
-         * @param properties the general properties of the fluid type
-         */
-        public PotionFluidType(Properties properties, Identifier still, Identifier flow) {
+    public static class Source extends PotionFluid {
+        public Source(Properties properties) {
             super(properties);
         }
 
         @Override
-        public void initializeClient(Consumer<IClientFluidTypeExtensions> consumer) {
-            consumer.accept(new IClientFluidTypeExtensions() {
+        public int getAmount(FluidState state) {
+            return 8;
+        }
 
-                @Override
-                public Identifier getStillTexture() {
-                    return texture;
-                }
+        @Override
+        public boolean isSource(FluidState state) {
+            return true;
+        }
+    }
 
-                @Override
-                public Identifier getFlowingTexture() {
-                    return texture;
-                }
-
-                @Override
-                public int getTintColor(FluidStack stack) {
-                    CompoundTag tag = stack.getOrCreateTag();
-                    return PotionUtils.getColor(PotionUtils.getAllEffects(tag)) | 0xff000000;
-                }
-            });
+    public static class PotionFluidType extends FluidType {
+        public PotionFluidType(Properties properties) {
+            super(properties);
         }
 
         @Override
         public String getDescriptionId(FluidStack stack) {
-            CompoundTag tag = stack.getOrCreateTag();
-            return PotionUtils.getPotion(tag)
-                    .getName(Items.POTION.getDescriptionId() + ".effect.");
+            return stack.getOrDefault(DataComponents.POTION_CONTENTS, PotionContents.EMPTY)
+                    .getName(Items.POTION.getDescriptionId() + ".effect.").getString();
         }
     }
 }

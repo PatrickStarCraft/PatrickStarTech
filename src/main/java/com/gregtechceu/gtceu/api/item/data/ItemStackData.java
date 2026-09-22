@@ -17,6 +17,12 @@ public final class ItemStackData {
         return stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
     }
 
+    /** A detached nullable snapshot, retaining the distinction between absent and empty custom data. */
+    public static CompoundTag readNullable(ItemStack stack) {
+        CustomData data = stack.get(DataComponents.CUSTOM_DATA);
+        return data == null ? null : data.copyTag();
+    }
+
     /**
      * Mutate only the supplied tag, not the stack, inside the callback. Commits on normal return only.
      * The committed value is copied again so retaining the callback's tag cannot mutate the component.

@@ -538,7 +538,7 @@ public class GTMultiblockTextUtil {
             }
             countD = countD * provider.getMidRoll();
         } else {
-            var stacks = ItemRecipeCapability.CAP.of(itemOutput.content()).getItems();
+            var stacks = com.gregtechceu.gtceu.api.recipe.ingredient.IngredientStacks.getItems(ItemRecipeCapability.CAP.of(itemOutput.content()));
             if (stacks.length == 0) return Optional.empty();
             stack = stacks[0];
             count = stack.getCount();

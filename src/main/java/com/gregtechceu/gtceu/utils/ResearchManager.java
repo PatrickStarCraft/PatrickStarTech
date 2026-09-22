@@ -71,7 +71,7 @@ public final class ResearchManager {
      */
     @Nullable
     public static ResearchItem readResearchId(@NotNull ItemStack stack) {
-        CompoundTag compound = stack.getTag();
+        CompoundTag compound = com.gregtechceu.gtceu.api.item.data.ItemStackData.read(stack);
         if (!hasResearchTag(compound)) return null;
 
         CompoundTag researchCompound = compound.getCompoundOrEmpty(RESEARCH_NBT_TAG);
@@ -99,7 +99,7 @@ public final class ResearchManager {
      * @return if the stack has the research CompoundTag
      */
     public static boolean hasResearchTag(@NotNull ItemStack stack) {
-        return hasResearchTag(stack.getTag());
+        return hasResearchTag(com.gregtechceu.gtceu.api.item.data.ItemStackData.read(stack));
     }
 
     /**
@@ -137,8 +137,8 @@ public final class ResearchManager {
                                                    Consumer<GeneratedRecipe> provider) {
         if (!ConfigHolder.INSTANCE.machines.enableResearch) return;
 
-        CompoundTag compound = dataItem.getOrCreateTag();
-        writeResearchToNBT(compound, researchId, recipeType);
+        com.gregtechceu.gtceu.api.item.data.ItemStackData.update(dataItem,
+                compound -> writeResearchToNBT(compound, researchId, recipeType));
 
         if (CWUt > 0) {
             var builder = GTRecipeTypes.RESEARCH_STATION_RECIPES
@@ -201,15 +201,16 @@ public final class ResearchManager {
         }
 
         private GTRecipe createDataRecipe(@NotNull ItemStack first, @NotNull ItemStack second) {
-            CompoundTag compound = second.getTag();
-            if (compound == null) return null;
+            CompoundTag compound = com.gregtechceu.gtceu.api.item.data.ItemStackData.read(second);
+            if (compound.isEmpty()) return null;
 
             // Both must be data items
             if (!isStackDataItem(first, true)) return null;
             if (!isStackDataItem(second, true)) return null;
 
             ItemStack output = first.copy();
-            output.setTag(compound.copy());
+            net.minecraft.world.item.component.CustomData.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA,
+                    output, compound);
             return GTRecipeTypes.SCANNER_RECIPES.recipeBuilder(GTStringUtils.itemStackToString(output))
                     .inputItems(first)
                     .notConsumable(second)

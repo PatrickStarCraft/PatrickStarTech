@@ -43,10 +43,10 @@ public class LampBlockItem extends BlockItem {
     }
 
     public BlockState getStateFromStack(ItemStack stack, BlockState baseState) {
-        if (!stack.hasTag() || !stack.is(this)) {
+        if (com.gregtechceu.gtceu.api.item.data.ItemStackData.readNullable(stack) == null || !stack.is(this)) {
             return baseState;
         }
-        var tag = stack.getTag();
+        var tag = com.gregtechceu.gtceu.api.item.data.ItemStackData.read(stack);
         return baseState.setValue(LampBlock.INVERTED, isInverted(tag))
                 .setValue(LampBlock.BLOOM, isBloomEnabled(tag))
                 .setValue(LampBlock.LIGHT, isLightEnabled(tag));

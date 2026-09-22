@@ -5,7 +5,6 @@ import com.gregtechceu.gtceu.data.recipe.CustomTags;
 
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.alchemy.PotionUtils;
 import net.neoforged.neoforge.fluids.FluidStack;
 
 import org.jetbrains.annotations.NotNull;
@@ -19,7 +18,10 @@ public class BottleItemFluidHandler extends FilteredFluidHandlerItemStackSimple 
     @Override
     protected void setFluid(FluidStack fluid) {
         if (!fluid.isEmpty()) {
-            container = PotionUtils.setPotion(new ItemStack(Items.POTION), PotionUtils.getPotion(fluid.getTag()));
+            container = new ItemStack(Items.POTION);
+            container.set(net.minecraft.core.component.DataComponents.POTION_CONTENTS,
+                    fluid.getOrDefault(net.minecraft.core.component.DataComponents.POTION_CONTENTS,
+                            net.minecraft.world.item.alchemy.PotionContents.EMPTY));
         }
     }
 }

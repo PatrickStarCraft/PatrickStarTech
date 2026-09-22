@@ -121,15 +121,16 @@ public interface IGTTool extends IUIHolder<PlayerInventoryGuiData<?>>, ItemLike,
     default ItemStack get() {
         ItemStack stack = new ItemStack(asItem());
 
-        CompoundTag stackCompound = stack.getOrCreateTag();
-        stackCompound.putBoolean(DISALLOW_CONTAINER_ITEM_KEY, false);
+        ItemStackData.update(stack, tag -> {
+            tag.putBoolean(DISALLOW_CONTAINER_ITEM_KEY, false);
+            tag.putInt(HIDE_FLAGS, 2);
+        });
 
         CompoundTag toolTag = getToolTag(stack);
         IGTToolDefinition toolStats = getToolStats();
 
         // don't show the normal vanilla damage and attack speed tooltips,
         // we handle those ourselves
-        stackCompound.putInt(HIDE_FLAGS, 2);
 
         // Grab the definition here because we cannot use getMaxAoEDefinition as it is not initialized yet
         AoESymmetrical aoeDefinition = getToolStats().getAoEDefinition(stack);
@@ -154,7 +155,7 @@ public interface IGTTool extends IUIHolder<PlayerInventoryGuiData<?>>, ItemLike,
 
         toolTag.putInt(MAX_DURABILITY_KEY, durability - 1);
         if (toolProperty.isUnbreakable()) {
-            stackCompound.putBoolean(UNBREAKABLE_KEY, true);
+            ItemStackData.update(stack, tag -> tag.putBoolean(UNBREAKABLE_KEY, true));
         }
 
         // Set behaviours
@@ -510,8 +511,8 @@ public interface IGTTool extends IUIHolder<PlayerInventoryGuiData<?>>, ItemLike,
             return true;
         }
         if (newStack.isDamageableItem() && oldStack.isDamageableItem()) {
-            CompoundTag newTag = newStack.getTag();
-            CompoundTag oldTag = oldStack.getTag();
+            CompoundTag newTag = ItemStackData.readNullable(newStack);
+            CompoundTag oldTag = ItemStackData.readNullable(oldStack);
             if (newTag != null && oldTag != null) {
                 Set<String> newKeys = new HashSet<>(newTag.keySet());
                 Set<String> oldKeys = new HashSet<>(oldTag.keySet());
@@ -530,7 +531,7 @@ public interface IGTTool extends IUIHolder<PlayerInventoryGuiData<?>>, ItemLike,
     }
 
     default boolean definition$hasCraftingRemainingItem(ItemStack stack) {
-        return stack.getTag() == null || !stack.getTag().getBoolean(DISALLOW_CONTAINER_ITEM_KEY);
+        return !ItemStackData.read(stack).getBoolean(DISALLOW_CONTAINER_ITEM_KEY);
     }
 
     default ItemStack definition$getCraftingRemainingItem(ItemStack stack) {
@@ -694,7 +695,7 @@ public interface IGTTool extends IUIHolder<PlayerInventoryGuiData<?>>, ItemLike,
                                             @NotNull List<Component> tooltip, TooltipFlag flag) {
         if (!(stack.getItem() instanceof IGTTool tool)) return;
 
-        CompoundTag tagCompound = stack.getTag();
+        CompoundTag tagCompound = ItemStackData.readNullable(stack);
         if (tagCompound == null) return;
 
         IGTToolDefinition toolStats = tool.getToolStats();
@@ -860,7 +861,8 @@ public interface IGTTool extends IUIHolder<PlayerInventoryGuiData<?>>, ItemLike,
                 return getToolStats().isSuitableForAttacking(stack);
             }
             case BREAKABLE -> {
-                return stack.getTag() != null && !stack.getTag().getBoolean(UNBREAKABLE_KEY);
+                return ItemStackData.readNullable(stack) != null &&
+                        !ItemStackData.read(stack).getBoolean(UNBREAKABLE_KEY);
             }
             case VANISHABLE -> {
                 return true;
@@ -970,7 +972,8 @@ public interface IGTTool extends IUIHolder<PlayerInventoryGuiData<?>>, ItemLike,
                 return switch (index) {
                     case 0, -101 -> {
                         if (item.getToolClasses(itemStack).contains(GTToolType.CROWBAR)) {
-                            if (itemStack.hasTag() && getToolTag(itemStack).contains(TINT_COLOR_KEY, Tag.TAG_INT)) {
+                            if (ItemStackData.readNullable(itemStack) != null &&
+                                    getToolTag(itemStack).contains(TINT_COLOR_KEY, Tag.TAG_INT)) {
                                 yield getToolTag(itemStack).getInt(TINT_COLOR_KEY);
                             }
                         }
