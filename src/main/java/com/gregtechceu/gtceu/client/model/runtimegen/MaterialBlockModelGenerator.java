@@ -1,14 +1,16 @@
 package com.gregtechceu.gtceu.client.model.runtimegen;
 
+import com.gregtechceu.gtceu.api.block.MaterialBlock;
 import com.gregtechceu.gtceu.api.data.chemical.material.info.MaterialIconSet;
 import com.gregtechceu.gtceu.api.data.chemical.material.info.MaterialIconType;
+import com.gregtechceu.gtceu.data.model.builder.RuntimeModelResources;
 import com.gregtechceu.gtceu.data.pack.GTDynamicResourcePack;
 
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.client.data.models.BlockModelGenerators;
-import net.minecraft.data.models.model.*;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
+
+import com.google.gson.JsonArray;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -22,10 +24,24 @@ public class MaterialBlockModelGenerator {
             Identifier blockId = BuiltInRegistries.BLOCK.getKey(model.block);
             Identifier modelId = model.type.getBlockModelPath(model.iconSet, true);
 
-            GTDynamicResourcePack.addBlockState(blockId, BlockModelGenerators.createSimpleBlock(model.block, modelId));
-            GTDynamicResourcePack.addItemModel(BuiltInRegistries.ITEM.getKey(model.block.asItem()),
-                    new DelegatedModel(modelId));
+            RuntimeModelResources.emitBlockState(blockId, RuntimeModelResources.simpleBlockState(modelId),
+                    GTDynamicResourcePack::addResource);
+            if (model.block instanceof MaterialBlock materialBlock) {
+                RuntimeModelResources.emitItem(BuiltInRegistries.ITEM.getKey(model.block.asItem()), modelId,
+                        materialTints(materialBlock), GTDynamicResourcePack::addResource);
+            } else {
+                RuntimeModelResources.emitItem(BuiltInRegistries.ITEM.getKey(model.block.asItem()), modelId,
+                        GTDynamicResourcePack::addResource);
+            }
         }
+    }
+
+    private static JsonArray materialTints(MaterialBlock block) {
+        int[] colors = new int[10];
+        for (int index = 0; index < colors.length; index++) {
+            colors[index] = block.material.getLayerARGB(index);
+        }
+        return RuntimeModelResources.constantTints(colors);
     }
 
     private final Block block;

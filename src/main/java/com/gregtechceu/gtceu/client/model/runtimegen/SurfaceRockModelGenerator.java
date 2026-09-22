@@ -1,22 +1,20 @@
 package com.gregtechceu.gtceu.client.model.runtimegen;
 
 import com.gregtechceu.gtceu.GTCEu;
+import com.gregtechceu.gtceu.common.block.SurfaceRockBlock;
+import com.gregtechceu.gtceu.data.model.builder.RuntimeModelResources;
 import com.gregtechceu.gtceu.data.pack.GTDynamicResourcePack;
 
 import org.jspecify.annotations.NullMarked;
-import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.client.data.models.blockstates.MultiVariantGenerator;
-import net.minecraft.client.data.models.blockstates.PropertyDispatch;
-import net.minecraft.data.models.blockstates.Variant;
-import net.minecraft.data.models.blockstates.VariantProperties;
-import net.minecraft.client.data.models.model.DelegatedModel;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
 import java.util.HashSet;
 import java.util.Set;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -31,23 +29,43 @@ public class SurfaceRockModelGenerator {
             Identifier blockId = BuiltInRegistries.BLOCK.getKey(model.block);
             Identifier modelId = blockId.withPrefix("block/");
 
-            GTDynamicResourcePack.addBlockModel(blockId, new DelegatedModel(GTCEu.id("block/surface_rock")));
-            GTDynamicResourcePack.addBlockState(blockId, MultiVariantGenerator
-                    .multiVariant(model.block, Variant.variant().with(VariantProperties.MODEL, modelId))
-                    .with(PropertyDispatch.property(BlockStateProperties.FACING)
-                            .select(Direction.DOWN, Variant.variant())
-                            .select(Direction.UP,
-                                    Variant.variant().with(VariantProperties.X_ROT, VariantProperties.Rotation.R180))
-                            .select(Direction.NORTH,
-                                    Variant.variant().with(VariantProperties.Y_ROT, VariantProperties.Rotation.R90))
-                            .select(Direction.SOUTH,
-                                    Variant.variant().with(VariantProperties.Y_ROT, VariantProperties.Rotation.R270))
-                            .select(Direction.WEST,
-                                    Variant.variant().with(VariantProperties.X_ROT, VariantProperties.Rotation.R270))
-                            .select(Direction.EAST,
-                                    Variant.variant().with(VariantProperties.X_ROT, VariantProperties.Rotation.R90))));
-            GTDynamicResourcePack.addItemModel(blockId, new DelegatedModel(modelId));
+            JsonObject modelJson = new JsonObject();
+            modelJson.addProperty("parent", GTCEu.id("block/surface_rock").toString());
+            RuntimeModelResources.emitModel(modelId, modelJson, GTDynamicResourcePack::addResource);
+
+            JsonObject variants = new JsonObject();
+            variants.add("facing=down", variant(modelId, -1, -1));
+            variants.add("facing=up", variant(modelId, 180, -1));
+            variants.add("facing=north", variant(modelId, -1, 90));
+            variants.add("facing=south", variant(modelId, -1, 270));
+            variants.add("facing=west", variant(modelId, 270, -1));
+            variants.add("facing=east", variant(modelId, 90, -1));
+            JsonObject blockState = new JsonObject();
+            blockState.add("variants", variants);
+            RuntimeModelResources.emitBlockState(blockId, blockState, GTDynamicResourcePack::addResource);
+
+            JsonArray tints = new JsonArray();
+            if (model.block instanceof SurfaceRockBlock surfaceRock) {
+                JsonObject tint = new JsonObject();
+                tint.addProperty("type", "minecraft:constant");
+                tint.addProperty("value", surfaceRock.getMaterial().getMaterialRGB());
+                tints.add(tint);
+            }
+            RuntimeModelResources.emitItem(blockId, RuntimeModelResources.itemDefinition(modelId, tints),
+                    GTDynamicResourcePack::addResource);
         }
+    }
+
+    private static JsonObject variant(Identifier modelId, int xRotation, int yRotation) {
+        JsonObject variant = new JsonObject();
+        variant.addProperty("model", modelId.toString());
+        if (xRotation >= 0) {
+            variant.addProperty("x", xRotation);
+        }
+        if (yRotation >= 0) {
+            variant.addProperty("y", yRotation);
+        }
+        return variant;
     }
 
     private final Block block;
