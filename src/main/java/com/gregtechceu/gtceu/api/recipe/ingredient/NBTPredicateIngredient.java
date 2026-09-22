@@ -5,33 +5,38 @@ import com.gregtechceu.gtceu.api.recipe.ingredient.nbtpredicate.NBTPredicate;
 import com.gregtechceu.gtceu.api.recipe.ingredient.nbtpredicate.NBTPredicates;
 import com.gregtechceu.gtceu.api.recipe.ingredient.nbtpredicate.TrueNBTPredicate;
 
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.core.Holder;
 import net.minecraft.resources.Identifier;
-import net.minecraft.util.GsonHelper;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraftforge.common.crafting.AbstractIngredient;
-import net.minecraftforge.common.crafting.CraftingHelper;
-import net.minecraftforge.common.crafting.IIngredientSerializer;
+import net.neoforged.neoforge.common.crafting.ICustomIngredient;
+import net.neoforged.neoforge.common.crafting.IngredientType;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import java.util.Objects;
 import java.util.stream.Stream;
 
-public class NBTPredicateIngredient extends AbstractIngredient {
+public final class NBTPredicateIngredient implements ICustomIngredient {
 
     public static final Identifier TYPE = GTCEu.id("nbt_predicate");
     public static final NBTPredicate ALWAYS_TRUE = new TrueNBTPredicate();
+    private static final Codec<NBTPredicate> PREDICATE_CODEC = net.minecraft.util.ExtraCodecs.JSON.xmap(
+            json -> NBTPredicates.fromJson(net.minecraft.util.GsonHelper.convertToJsonObject(json, "predicate")),
+            NBTPredicate::toJson);
+    public static final MapCodec<NBTPredicateIngredient> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+            ItemStack.CODEC.fieldOf("stack").forGetter(ingredient -> ingredient.stack),
+            PREDICATE_CODEC.fieldOf("predicate").forGetter(ingredient -> ingredient.predicate))
+            .apply(instance, NBTPredicateIngredient::new));
+    public static final IngredientType<NBTPredicateIngredient> INGREDIENT_TYPE = new IngredientType<>(CODEC);
+
     private final NBTPredicate predicate;
     private final ItemStack stack;
 
     public NBTPredicateIngredient(ItemStack stack, NBTPredicate predicate) {
-        super(Stream.of(new Ingredient.ItemValue(stack)));
-        this.stack = stack;
+        this.stack = stack.copy();
         this.predicate = predicate;
     }
 
@@ -39,69 +44,48 @@ public class NBTPredicateIngredient extends AbstractIngredient {
         this(stack, ALWAYS_TRUE);
     }
 
-    public static NBTPredicateIngredient of(ItemStack stack, NBTPredicate predicate) {
-        return new NBTPredicateIngredient(stack, predicate);
+    public static net.minecraft.world.item.crafting.Ingredient of(ItemStack stack, NBTPredicate predicate) {
+        return new NBTPredicateIngredient(stack, predicate).toVanilla();
     }
 
-    public static NBTPredicateIngredient of(ItemStack stack) {
-        return NBTPredicateIngredient.of(stack, ALWAYS_TRUE);
+    public static net.minecraft.world.item.crafting.Ingredient of(ItemStack stack) {
+        return of(stack, ALWAYS_TRUE);
     }
 
-    public boolean test(@Nullable ItemStack input) {
-        if (input == null) {
-            return false;
-        } else {
-            return this.stack.getItem() == input.getItem() &&
-                    predicate.test(com.gregtechceu.gtceu.api.item.data.ItemStackData.read(input));
-        }
+    @Override
+    public boolean test(ItemStack input) {
+        return !input.isEmpty() && this.stack.getItem() == input.getItem() &&
+                predicate.test(com.gregtechceu.gtceu.api.item.data.ItemStackData.read(input));
+    }
+
+    @Override
+    public Stream<Holder<Item>> items() {
+        return Stream.of(stack.typeHolder());
     }
 
     public ItemStack[] getItems() {
         return new ItemStack[] { this.stack.copy() };
     }
 
+    @Override
     public boolean isSimple() {
         return false;
     }
 
-    public @NotNull IIngredientSerializer<? extends Ingredient> getSerializer() {
-        return NBTPredicateIngredient.Serializer.INSTANCE;
+    @Override
+    public IngredientType<NBTPredicateIngredient> getType() {
+        return INGREDIENT_TYPE;
     }
 
-    public JsonElement toJson() {
-        JsonObject json = new JsonObject();
-        json.addProperty("type", TYPE.toString());
-        json.addProperty("item", BuiltInRegistries.ITEM.getKey(this.stack.getItem()).toString());
-        json.addProperty("count", this.stack.getCount());
-        var customData = com.gregtechceu.gtceu.api.item.data.ItemStackData.readNullable(this.stack);
-        if (customData != null) {
-            json.addProperty("nbt", customData.toString());
-        }
-        json.add("predicate", predicate.toJson());
-        return json;
+    @Override
+    public boolean equals(Object obj) {
+        return this == obj || obj instanceof NBTPredicateIngredient other &&
+                ItemStack.matches(this.stack, other.stack) &&
+                this.predicate.toJson().equals(other.predicate.toJson());
     }
 
-    public static class Serializer implements IIngredientSerializer<NBTPredicateIngredient> {
-
-        public static final NBTPredicateIngredient.Serializer INSTANCE = new NBTPredicateIngredient.Serializer();
-
-        public @NotNull NBTPredicateIngredient parse(FriendlyByteBuf buffer) {
-            var stack = buffer.readItem();
-            var json = buffer.readUtf();
-            var predicate = NBTPredicates.fromJson(GsonHelper.parse(json));
-            return new NBTPredicateIngredient(stack, predicate);
-        }
-
-        public @NotNull NBTPredicateIngredient parse(@NotNull JsonObject json) {
-            var stack = CraftingHelper.getItemStack(json, true);
-            var predicate = NBTPredicates.fromJson(GsonHelper.getAsJsonObject(json, "predicate"));
-
-            return new NBTPredicateIngredient(stack, predicate);
-        }
-
-        public void write(FriendlyByteBuf buffer, NBTPredicateIngredient ingredient) {
-            buffer.writeItem(ingredient.stack);
-            buffer.writeUtf(ingredient.predicate.toJson().toString());
-        }
+    @Override
+    public int hashCode() {
+        return Objects.hash(ItemStack.hashItemAndComponents(stack), predicate.toJson());
     }
 }

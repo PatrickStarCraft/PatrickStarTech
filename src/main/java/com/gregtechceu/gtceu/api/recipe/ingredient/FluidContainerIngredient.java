@@ -3,45 +3,36 @@ package com.gregtechceu.gtceu.api.recipe.ingredient;
 import com.gregtechceu.gtceu.GTCEu;
 import com.gregtechceu.gtceu.api.data.tag.TagUtil;
 
+import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
-import net.minecraft.util.GsonHelper;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.common.crafting.IIngredientSerializer;
+import net.neoforged.neoforge.common.crafting.ICustomIngredient;
+import net.neoforged.neoforge.common.crafting.IngredientType;
 import net.neoforged.neoforge.fluids.FluidActionResult;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidUtil;
 import net.neoforged.neoforge.fluids.capability.templates.VoidFluidHandler;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.mojang.serialization.Codec;
-import lombok.Getter;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.mojang.serialization.MapCodec;
 
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.stream.Stream;
 
-import javax.annotation.Nonnull;
-
-public class FluidContainerIngredient extends Ingredient {
+public final class FluidContainerIngredient implements ICustomIngredient {
 
     public static final Identifier TYPE = GTCEu.id("fluid_container");
+    public static final MapCodec<FluidContainerIngredient> CODEC = FluidIngredient.CODEC.fieldOf("fluid")
+            .xmap(FluidContainerIngredient::new, ingredient -> ingredient.fluid);
+    public static final IngredientType<FluidContainerIngredient> INGREDIENT_TYPE = new IngredientType<>(CODEC);
 
-    public static final Codec<FluidContainerIngredient> CODEC = FluidIngredient.CODEC.xmap(
-            FluidContainerIngredient::new, FluidContainerIngredient::getFluid);
-
-    @Getter
     private final FluidIngredient fluid;
 
     public FluidContainerIngredient(FluidIngredient fluid) {
-        super(Stream.empty());
         this.fluid = fluid;
     }
 
@@ -54,38 +45,27 @@ public class FluidContainerIngredient extends Ingredient {
         this(FluidIngredient.of(tag, amount, null));
     }
 
-    private ItemStack[] cachedStacks;
+    public FluidIngredient getFluid() {
+        return fluid;
+    }
 
-    @Nonnull
     @Override
+    public Stream<Holder<Item>> items() {
+        return Arrays.stream(getItems()).filter(stack -> !stack.isEmpty()).map(ItemStack::typeHolder).distinct();
+    }
+
     public ItemStack[] getItems() {
-        if (cachedStacks == null)
-            cachedStacks = Arrays.stream(this.fluid.getStacks())
-                    .map(FluidUtil::getFilledBucket)
-                    .filter(s -> !s.isEmpty())
-                    .toArray(ItemStack[]::new);
-        return this.cachedStacks;
+        return Arrays.stream(this.fluid.getStacks())
+                .map(FluidUtil::getFilledBucket)
+                .filter(stack -> !stack.isEmpty())
+                .toArray(ItemStack[]::new);
     }
 
     @Override
-    public JsonElement toJson() {
-        JsonObject json = new JsonObject();
-        json.addProperty("type", TYPE.toString());
-        json.add("fluid", fluid.toJson());
-        return json;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return this.fluid.isEmpty();
-    }
-
-    @Override
-    public boolean test(@Nullable ItemStack stack) {
-        if (stack == null || stack.isEmpty())
-            return false;
-        return FluidUtil.getFluidContained(stack).map((s) -> fluid.test(s) && s.getAmount() >= fluid.getAmount())
-                .orElse(false) &&
+    public boolean test(ItemStack stack) {
+        if (stack.isEmpty()) return false;
+        return FluidUtil.getFluidContained(stack).map(contained -> fluid.test(contained) &&
+                contained.getAmount() >= fluid.getAmount()).orElse(false) &&
                 FluidUtil.tryEmptyContainer(stack, VoidFluidHandler.INSTANCE, fluid.getAmount(), null, false)
                         .isSuccess();
     }
@@ -95,42 +75,24 @@ public class FluidContainerIngredient extends Ingredient {
         return false;
     }
 
+    @Override
+    public IngredientType<FluidContainerIngredient> getType() {
+        return INGREDIENT_TYPE;
+    }
+
     public ItemStack getExtractedStack(ItemStack input) {
         FluidActionResult result = FluidUtil.tryEmptyContainer(input, VoidFluidHandler.INSTANCE, fluid.getAmount(),
-                ForgeHooks.getCraftingPlayer(), true);
-        if (result.isSuccess()) {
-            return result.getResult();
-        }
-        return input;
+                null, true);
+        return result.isSuccess() ? result.getResult() : input;
     }
 
     @Override
-    @NotNull
-    public IIngredientSerializer<? extends Ingredient> getSerializer() {
-        return SERIALIZER;
+    public boolean equals(Object obj) {
+        return this == obj || obj instanceof FluidContainerIngredient other && fluid.equals(other.fluid);
     }
 
-    public static FluidContainerIngredient fromJson(JsonObject json) {
-        return SERIALIZER.parse(json);
+    @Override
+    public int hashCode() {
+        return Objects.hash(fluid);
     }
-
-    public static final IIngredientSerializer<FluidContainerIngredient> SERIALIZER = new IIngredientSerializer<>() {
-
-        @Override
-        public @NotNull FluidContainerIngredient parse(FriendlyByteBuf buffer) {
-            FluidIngredient fluid = FluidIngredient.fromNetwork(buffer);
-            return new FluidContainerIngredient(fluid);
-        }
-
-        @Override
-        public @NotNull FluidContainerIngredient parse(JsonObject json) {
-            FluidIngredient fluid = FluidIngredient.fromJson(GsonHelper.getAsJsonObject(json, "fluid"));
-            return new FluidContainerIngredient(fluid);
-        }
-
-        @Override
-        public void write(FriendlyByteBuf buffer, FluidContainerIngredient ingredient) {
-            ingredient.fluid.toNetwork(buffer);
-        }
-    };
 }

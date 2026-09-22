@@ -121,7 +121,7 @@ public class NotifiableItemStackHandler extends NotifiableRecipeHandlerTrait<Ing
 
             ItemStack[] items;
             int amount;
-            if (ingredient instanceof IntProviderIngredient provider && simulate) {
+            if (com.gregtechceu.gtceu.api.recipe.ingredient.IngredientStacks.unwrap(ingredient) instanceof IntProviderIngredient provider && simulate) {
                 items = new ItemStack[] { provider.getMaxSizeStack() };
                 amount = provider.getMaxRoll();
             } else {
@@ -130,7 +130,7 @@ public class NotifiableItemStackHandler extends NotifiableRecipeHandlerTrait<Ing
                     it.remove();
                     continue;
                 }
-                if (ingredient instanceof SizedIngredient si) amount = si.getAmount();
+                if (com.gregtechceu.gtceu.api.recipe.ingredient.IngredientStacks.unwrap(ingredient) instanceof SizedIngredient si) amount = si.getAmount();
                 else amount = items[0].getCount();
             }
 
@@ -155,13 +155,13 @@ public class NotifiableItemStackHandler extends NotifiableRecipeHandlerTrait<Ing
                                         RecipeLogic logic = controller.getTrait(RecipeLogic.class);
                                         if (logic != null && logic.getStartingRecipe() == recipe) {
                                             logic.getConsumedInputs().addConsumedInput(GTRecipeCapabilities.ITEM,
-                                                    Ingredient.of(copied));
+                                                    SizedIngredient.create(copied));
                                         }
                                     }
                                 } else if (machine != null) machine.getTraitOptional(RecipeLogic.class)
                                         .map(RecipeLogic::getConsumedInputs)
                                         .ifPresent(inputs -> inputs.addConsumedInput(GTRecipeCapabilities.ITEM,
-                                                Ingredient.of(copied)));
+                                                SizedIngredient.create(copied)));
                             }
                         }
                         amount -= extracted.getCount();
@@ -191,10 +191,11 @@ public class NotifiableItemStackHandler extends NotifiableRecipeHandlerTrait<Ing
             }
             // Modify ingredient if we didn't finish it off
             if (amount > 0) {
-                if (ingredient instanceof SizedIngredient si) {
+                if (com.gregtechceu.gtceu.api.recipe.ingredient.IngredientStacks.unwrap(ingredient) instanceof SizedIngredient si) {
                     si.setAmount(amount);
                 } else {
-                    items[0].setCount(amount);
+                    // Representative stacks are copies, not mutable ingredient state.
+                    it.set(SizedIngredient.create(ingredient, amount));
                 }
             }
         }

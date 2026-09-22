@@ -22,9 +22,12 @@ import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.valueproviders.UniformInt;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.neoforged.neoforge.common.crafting.DataComponentIngredient;
 import net.minecraftforge.gametest.GameTestHolder;
 import net.minecraftforge.gametest.PrefixGameTestTemplate;
 
@@ -249,6 +252,21 @@ public class IntProviderIngredientTest {
                 "IntProviderIngredient.test doesn't match when it should have with value outside bounds");
         helper.assertFalse(ingredient.test(new ItemStack(Items.COBBLESTONE, 3)),
                 "IntProviderIngredient.test shouldn't match with different items");
+        helper.assertFalse(ingredient.isSimple(), "Ranged ingredients must retain their custom network metadata");
+
+        ItemStack namedBrick = new ItemStack(Items.BRICK);
+        namedBrick.set(DataComponents.CUSTOM_NAME, Component.literal("named brick"));
+        var componentAware = IntProviderIngredient.of(namedBrick, UniformInt.of(1, 5));
+        var rangedDelegate = (IntProviderIngredient) componentAware.getCustomIngredient();
+        helper.assertTrue(rangedDelegate.getInner().getCustomIngredient() instanceof DataComponentIngredient,
+                "Ranged ingredient should preserve stack data components");
+        var sizedComponentAware = SizedIngredient.create(namedBrick);
+        helper.assertFalse(sizedComponentAware.isSimple(), "Sized ingredients must retain count metadata when synced");
+        helper.assertTrue(((SizedIngredient) sizedComponentAware.getCustomIngredient()).getInner()
+                        .getCustomIngredient() instanceof DataComponentIngredient,
+                "Sized ingredient should preserve stack data components");
+        helper.assertTrue(SizedIngredient.create(ItemStack.EMPTY).test(ItemStack.EMPTY),
+                "An empty stack ingredient should retain empty-stack matching");
         helper.succeed();
     }
 
@@ -257,14 +275,16 @@ public class IntProviderIngredientTest {
     public static void rangedIngredientGetStacksTest(GameTestHelper helper) {
         var ingredient = IntProviderIngredient.of(new ItemStack(Items.BRICK, 1), UniformInt.of(1, 5000));
 
-        // This will print a "Cannot get items" warning to the log. Ignore it.
-        GTCEu.LOGGER.warn("This test will warn that it cannot get items. This is supposed to happen.");
-        helper.assertTrue(ingredient.getItems().length == 0,
-                "A ranged ingredient should not return items!");
-        GTCEu.LOGGER.warn("If you are reading this line it means the test passed.");
+        var ranged = (IntProviderIngredient) ingredient.getCustomIngredient();
+        helper.assertTrue(ranged.getItems().length == 1 && ranged.getItems()[0].getCount() == 5000,
+                "An unrolled ranged ingredient should return a representative maximum-count item");
 
-        ingredient.rollSampledCount();
-        var stacks = ingredient.collapse().getItems();
+        ranged.rollSampledCount();
+        var copied = (IntProviderIngredient) ranged.copy().getCustomIngredient();
+        helper.assertTrue(copied.getSampledCount() == ranged.getSampledCount(),
+                "Copying a ranged ingredient should preserve its sampled count");
+        var stacks = ranged.collapse().getCustomIngredient() instanceof SizedIngredient sized ?
+                sized.getItems() : new ItemStack[0];
         helper.assertTrue(stacks.length == 1,
                 "Replaced IntProviderIngredient should only return 1 item when made with 1 item");
         helper.assertTrue(stacks[0].is(new ItemStack(Items.BRICK, 1).getItem()),

@@ -65,7 +65,7 @@ public interface CapabilityContentBuilder {
                 .overlay(new ContentOverlay(content, perTick));
         recipeViewerSlotWidget.chance(chance);
 
-        if (io == IO.IN && (content.chance() == 0 || innerContent instanceof IntCircuitIngredient)) {
+        if (io == IO.IN && (content.chance() == 0 || com.gregtechceu.gtceu.api.recipe.ingredient.IngredientStacks.unwrap(innerContent) instanceof IntCircuitIngredient)) {
             recipeViewerSlotWidget.recipeSlotRole(RecipeSlotRole.CATALYST);
         } else if (io == IO.IN) {
             recipeViewerSlotWidget.recipeSlotRole(RecipeSlotRole.INPUT);
@@ -78,13 +78,13 @@ public interface CapabilityContentBuilder {
             Content.addChanceTooltips(tooltip, content,
                     recipe.getChanceLogicForCapability(ItemRecipeCapability.CAP, io, perTick));
 
-            if (innerContent instanceof IntProviderIngredient ingredient) {
+            if (com.gregtechceu.gtceu.api.recipe.ingredient.IngredientStacks.unwrap(innerContent) instanceof IntProviderIngredient ingredient) {
                 IntProvider countProvider = ingredient.getCountProvider();
                 tooltip.add(Component.translatable("gtceu.gui.content.count_range",
                         countProvider.minInclusive(), countProvider.maxInclusive())
                         .withStyle(ChatFormatting.GOLD));
-            } else if (innerContent instanceof SizedIngredient sizedIngredient &&
-                    sizedIngredient.getInner() instanceof IntProviderIngredient ingredient) {
+            } else if (com.gregtechceu.gtceu.api.recipe.ingredient.IngredientStacks.unwrap(innerContent) instanceof SizedIngredient sizedIngredient &&
+                    com.gregtechceu.gtceu.api.recipe.ingredient.IngredientStacks.unwrap(sizedIngredient.getInner()) instanceof IntProviderIngredient ingredient) {
 
                         IntProvider countProvider = ingredient.getCountProvider();
                         tooltip.add(Component.translatable("gtceu.gui.content.count_range",
@@ -113,7 +113,7 @@ public interface CapabilityContentBuilder {
         recipeViewerSlotWidget.chance(chance);
 
         recipeViewerSlotWidget.tooltipBuilder((tooltip) -> {
-            if (ingredient instanceof IRangedIngredient provider) {
+            if (com.gregtechceu.gtceu.api.recipe.ingredient.IngredientStacks.unwrap(ingredient) instanceof IRangedIngredient provider) {
                 IntProvider countProvider = provider.getCountProvider();
                 tooltip.addLine(Component.translatable("gtceu.gui.content.fluid_range",
                         countProvider.minInclusive(), countProvider.maxInclusive())

@@ -527,7 +527,7 @@ public class GTMultiblockTextUtil {
         double countD = 1;
         // number of items output which is actually displayed. Can be either a number, or a range.
         Component displaycount;
-        if (itemOutput.content() instanceof IntProviderIngredient provider) {
+        if (com.gregtechceu.gtceu.api.recipe.ingredient.IngredientStacks.unwrap(itemOutput.content()) instanceof IntProviderIngredient provider) {
             rounded = true;
             stack = provider.getMaxSizeStack();
             displaycount = Component.translatable("gtceu.gui.content.range",

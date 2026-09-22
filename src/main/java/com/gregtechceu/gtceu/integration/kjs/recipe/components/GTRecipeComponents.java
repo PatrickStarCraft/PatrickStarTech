@@ -401,7 +401,7 @@ public class GTRecipeComponents {
 
         @Override
         public long kjs$getAmount() {
-            return (ingredient instanceof IRangedIngredient ranged ? ranged.getMaxRoll() :
+            return (com.gregtechceu.gtceu.api.recipe.ingredient.IngredientStacks.unwrap(ingredient) instanceof IRangedIngredient ranged ? ranged.getMaxRoll() :
                     ingredient.getAmount());
         }
 

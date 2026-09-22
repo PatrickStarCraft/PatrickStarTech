@@ -148,7 +148,7 @@ public class ShapedFluidContainerRecipe extends NormalCraftingRecipe {
                     }
                 }
 
-                if (ingredient.orElse(null) instanceof FluidContainerIngredient fluidContainerIngredient) {
+                if (ingredient.map(Ingredient::getCustomIngredient).orElse(null) instanceof FluidContainerIngredient fluidContainerIngredient) {
                     int slot = x + y * inv.width();
                     ItemStack stack = inv.getItem(slot);
                     if (fluidContainerIngredient.test(stack)) {

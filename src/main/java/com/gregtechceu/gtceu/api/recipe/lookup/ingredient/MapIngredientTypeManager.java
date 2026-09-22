@@ -2,6 +2,9 @@ package com.gregtechceu.gtceu.api.recipe.lookup.ingredient;
 
 import com.gregtechceu.gtceu.api.capability.recipe.RecipeCapability;
 
+import net.minecraft.world.item.crafting.Ingredient;
+import net.neoforged.neoforge.common.crafting.ICustomIngredient;
+
 import net.minecraft.util.Util;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 
@@ -39,12 +42,22 @@ public final class MapIngredientTypeManager {
 
     @NotNull
     public static <T> List<AbstractMapIngredient> getFrom(T object, RecipeCapability<?> cap) {
+        // NeoForge custom ingredients live inside a vanilla Ingredient wrapper. Dispatch on
+        // the delegate so custom map ingredient registrations remain useful.
+        if (object instanceof Ingredient ingredient && ingredient.getCustomIngredient() != null) {
+            return getFrom((T) ingredient.getCustomIngredient(), cap);
+        }
         Class<? super T> objClass = (Class<? super T>) boxClass(object.getClass());
         Class<?> stopAt = boxClass(cap.serializer.contentClass());
         if (!stopAt.isAssignableFrom(objClass)) {
             stopAt = Object.class;
         }
-        var functions = getTypesForClass(objClass, stopAt);
+        List<? extends MapIngredientFunction<? super T>> functions = getTypesForClass(objClass, stopAt);
+        if (functions == null) functions = Collections.emptyList();
+        if (functions.isEmpty() && object instanceof ICustomIngredient customIngredient) {
+            return com.gregtechceu.gtceu.api.recipe.lookup.ingredient.item.CustomMapIngredient
+                    .from(customIngredient.toVanilla());
+        }
         // this is the same as writing `object instanceof stopClass`, but it keeps track of the boxed primitives
         if (!objClass.isAssignableFrom(stopAt)) {
             var defaults = getDefaultIngredients(object, cap, stopAt, functions);

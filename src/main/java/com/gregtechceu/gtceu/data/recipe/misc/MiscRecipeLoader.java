@@ -522,7 +522,7 @@ public class MiscRecipeLoader {
                     "MMM", "SES", " D ",
                     'E', Items.EGG,
                     'S', Items.SUGAR,
-                    'M', new FluidContainerIngredient(Milk.getFluidTag(), 1000),
+                    'M', new FluidContainerIngredient(Milk.getFluidTag(), 1000).toVanilla(),
                     'D', CustomTags.DOUGHS);
         } else {
             VanillaRecipeHelper.addShapedRecipe(provider, "flour_to_dough", new ItemStack(DOUGH, 4),
@@ -559,7 +559,7 @@ public class MiscRecipeLoader {
                     "BBB", "SMS", "DDD",
                     'B', Items.SWEET_BERRIES,
                     'S', Items.SUGAR,
-                    'M', new FluidContainerIngredient(Milk.getFluidTag(), 1000),
+                    'M', new FluidContainerIngredient(Milk.getFluidTag(), 1000).toVanilla(),
                     'D', CustomTags.DOUGHS);
         }
 

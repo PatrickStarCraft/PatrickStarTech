@@ -1077,7 +1077,7 @@ public class MEPatternBufferPartMachine extends MEBusPartMachine
                 }
 
                 if (amount > 0) {
-                    if (ingredient instanceof SizedIngredient si) {
+                    if (com.gregtechceu.gtceu.api.recipe.ingredient.IngredientStacks.unwrap(ingredient) instanceof SizedIngredient si) {
                         si.setAmount(amount);
                     } else {
                         items[0].setCount(amount);

@@ -402,7 +402,7 @@ public class RecipeHelper {
     }
 
     public static boolean isFluidStackDivisibleForDistillery(FluidIngredient fluidStack, int divisor) {
-        int amount = (fluidStack instanceof IRangedIngredient ranged ? ranged.getMaxRoll() : fluidStack.getAmount());
+        int amount = (com.gregtechceu.gtceu.api.recipe.ingredient.IngredientStacks.unwrap(fluidStack) instanceof IRangedIngredient ranged ? ranged.getMaxRoll() : fluidStack.getAmount());
         return amount % divisor == 0 && amount / divisor >= 25;
     }
 
@@ -424,7 +424,7 @@ public class RecipeHelper {
         for (List<Content> input : runningRecipe.inputs.values()) {
             for (ListIterator<Content> iterator = input.listIterator(); iterator.hasNext();) {
                 Content content = iterator.next();
-                if (content.content() instanceof IRangedIngredient ranged) {
+                if (com.gregtechceu.gtceu.api.recipe.ingredient.IngredientStacks.unwrap(content.content()) instanceof IRangedIngredient ranged) {
                     count = ranged.rollSampledCount();
                     zero = (count == 0);
                     if (zero) ranged.setSampledCount(ranged.getMaxRoll());
@@ -437,7 +437,7 @@ public class RecipeHelper {
         for (List<Content> output : runningRecipe.outputs.values()) {
             for (ListIterator<Content> iterator = output.listIterator(); iterator.hasNext();) {
                 Content content = iterator.next();
-                if (content.content() instanceof IRangedIngredient ranged) {
+                if (com.gregtechceu.gtceu.api.recipe.ingredient.IngredientStacks.unwrap(content.content()) instanceof IRangedIngredient ranged) {
                     count = ranged.rollSampledCount();
                     zero = (count == 0);
                     if (zero) ranged.setSampledCount(ranged.getMaxRoll());
@@ -476,7 +476,7 @@ public class RecipeHelper {
             List<Content> handler = entry.getValue();
             for (ListIterator<Content> iterator = handler.listIterator(); iterator.hasNext();) {
                 Content content = iterator.next();
-                if (content.content() instanceof IRangedIngredient ranged) {
+                if (com.gregtechceu.gtceu.api.recipe.ingredient.IngredientStacks.unwrap(content.content()) instanceof IRangedIngredient ranged) {
                     count = ranged.rollSampledCount();
                     zero = (count == 0);
                     if (zero) ranged.setSampledCount(ranged.getMaxRoll());
@@ -492,7 +492,7 @@ public class RecipeHelper {
             List<Content> handler = entry.getValue();
             for (ListIterator<Content> iterator = handler.listIterator(); iterator.hasNext();) {
                 Content content = iterator.next();
-                if (content.content() instanceof IRangedIngredient ranged) {
+                if (com.gregtechceu.gtceu.api.recipe.ingredient.IngredientStacks.unwrap(content.content()) instanceof IRangedIngredient ranged) {
                     count = ranged.rollSampledCount();
                     zero = (count == 0);
                     if (zero) ranged.setSampledCount(ranged.getMaxRoll());

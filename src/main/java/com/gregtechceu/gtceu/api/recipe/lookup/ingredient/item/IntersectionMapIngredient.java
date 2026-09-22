@@ -6,7 +6,6 @@ import com.gregtechceu.gtceu.api.data.chemical.material.stack.MaterialEntry;
 import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
 import com.gregtechceu.gtceu.api.recipe.lookup.ingredient.AbstractMapIngredient;
 import com.gregtechceu.gtceu.api.recipe.lookup.ingredient.MapIngredientTypeManager;
-import com.gregtechceu.gtceu.core.mixins.forge.IntersectionIngredientAccessor;
 
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -33,7 +32,7 @@ public class IntersectionMapIngredient extends AbstractMapIngredient {
 
     @NotNull
     public static List<AbstractMapIngredient> from(IntersectionIngredient ingredient) {
-        List<Ingredient> originalChildren = ((IntersectionIngredientAccessor) ingredient).getChildren();
+        List<Ingredient> originalChildren = ingredient.children();
         List<AbstractMapIngredient> mapChildren = new ObjectArrayList<>();
         for (var ing : originalChildren) {
             mapChildren.addAll(MapIngredientTypeManager.getFrom(ing, ItemRecipeCapability.CAP));

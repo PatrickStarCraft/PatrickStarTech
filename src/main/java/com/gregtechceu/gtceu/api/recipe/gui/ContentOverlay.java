@@ -37,7 +37,7 @@ public record ContentOverlay(Content content, boolean perTick)
     }
 
     public void drawRangeAmount(GuiGraphicsExtractor graphics, float x, float y, int width, int height) {
-        if (content.content() instanceof IntProviderIngredient ingredient) {
+        if (com.gregtechceu.gtceu.api.recipe.ingredient.IngredientStacks.unwrap(content.content()) instanceof IntProviderIngredient ingredient) {
             graphics.pose().pushPose();
             graphics.pose().translate(0, 0, 400);
             graphics.pose().scale(0.5f, 0.5f, 1);
@@ -65,7 +65,7 @@ public record ContentOverlay(Content content, boolean perTick)
             Font fontRenderer = Minecraft.getInstance().font;
             int color;
             String s;
-            if (content.content() instanceof IRangedIngredient) {
+            if (com.gregtechceu.gtceu.api.recipe.ingredient.IngredientStacks.unwrap(content.content()) instanceof IRangedIngredient) {
                 // with only 5 characters worth of space, that's not enough for a fluid range
                 color = net.minecraft.network.chat.TextColor.GOLD.getValue();
                 s = "X-Y";

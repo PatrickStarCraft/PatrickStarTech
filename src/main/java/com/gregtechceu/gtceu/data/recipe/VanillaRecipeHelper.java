@@ -104,22 +104,22 @@ public class VanillaRecipeHelper {
 
     public static void addBlastingRecipe(Consumer<GeneratedRecipe> provider, @NotNull String regName,
                                          ItemStack input, ItemStack output) {
-        addBlastingRecipe(provider, regName, Ingredient.of(input), output, 0.0f);
+        addBlastingRecipe(provider, regName, Ingredient.of(input.getItem()), output, 0.0f);
     }
 
     public static void addBlastingRecipe(Consumer<GeneratedRecipe> provider, @NotNull String regName,
                                          ItemStack input, ItemStack output, float experience) {
-        addBlastingRecipe(provider, regName, Ingredient.of(input), output, experience);
+        addBlastingRecipe(provider, regName, Ingredient.of(input.getItem()), output, experience);
     }
 
     public static void addBlastingRecipe(Consumer<GeneratedRecipe> provider, @NotNull Identifier regName,
                                          ItemStack input, ItemStack output) {
-        addBlastingRecipe(provider, regName, Ingredient.of(input), output, 0.0f);
+        addBlastingRecipe(provider, regName, Ingredient.of(input.getItem()), output, 0.0f);
     }
 
     public static void addBlastingRecipe(Consumer<GeneratedRecipe> provider, @NotNull Identifier regName,
                                          ItemStack input, ItemStack output, float experience) {
-        addBlastingRecipe(provider, regName, Ingredient.of(input), output, experience);
+        addBlastingRecipe(provider, regName, Ingredient.of(input.getItem()), output, experience);
     }
 
     public static void addBlastingRecipe(Consumer<GeneratedRecipe> provider, @NotNull String regName, TagKey<Item> input,

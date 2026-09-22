@@ -4,6 +4,9 @@ import com.gregtechceu.gtceu.api.recipe.ingredient.FluidIngredient;
 import com.gregtechceu.gtceu.api.recipe.lookup.ingredient.AbstractMapIngredient;
 
 import net.neoforged.neoforge.fluids.FluidStack;
+import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.item.component.CustomData;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.NotNull;
@@ -30,7 +33,11 @@ public class FluidStackMapIngredient extends AbstractMapIngredient {
         List<AbstractMapIngredient> ingredients = new ObjectArrayList<>();
         for (FluidIngredient.Value value : ingredient.values) {
             if (value instanceof FluidIngredient.FluidValue fluidValue) {
-                FluidStack stack = new FluidStack(fluidValue.fluid(), ingredient.getAmount(), ingredient.getNbt());
+                DataComponentPatch components = ingredient.getNbt() == null ? DataComponentPatch.EMPTY
+                        : DataComponentPatch.builder()
+                                .set(DataComponents.CUSTOM_DATA, CustomData.of(ingredient.getNbt()))
+                                .build();
+                FluidStack stack = new FluidStack(fluidValue.fluid(), ingredient.getAmount(), components);
                 ingredients.add(new FluidStackMapIngredient(stack, ingredient));
             }
         }

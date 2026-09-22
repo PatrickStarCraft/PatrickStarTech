@@ -2,6 +2,7 @@ package com.gregtechceu.gtceu.api.recipe.lookup.ingredient.item;
 
 import com.gregtechceu.gtceu.api.recipe.ingredient.NBTPredicateIngredient;
 import com.gregtechceu.gtceu.api.recipe.lookup.ingredient.AbstractMapIngredient;
+import com.gregtechceu.gtceu.utils.IngredientEquality;
 import com.gregtechceu.gtceu.utils.ItemStackHashStrategy;
 
 import net.minecraft.world.item.ItemStack;
@@ -11,13 +12,14 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
+import org.jetbrains.annotations.Nullable;
 
 public class NBTPredicateItemStackMapIngredient extends ItemStackMapIngredient {
 
-    protected NBTPredicateIngredient nbtIngredient;
+    protected @Nullable NBTPredicateIngredient nbtIngredient;
 
     public NBTPredicateItemStackMapIngredient(ItemStack stack, NBTPredicateIngredient nbtIngredient) {
-        super(stack, nbtIngredient);
+        super(stack, nbtIngredient == null ? null : nbtIngredient.toVanilla());
         this.nbtIngredient = nbtIngredient;
     }
 
@@ -32,11 +34,7 @@ public class NBTPredicateItemStackMapIngredient extends ItemStackMapIngredient {
 
     @NotNull
     public static List<AbstractMapIngredient> from(@NotNull ItemStack stack) {
-        if (stack.getShareTag() != null) {
-            return Collections.singletonList(new NBTPredicateItemStackMapIngredient(stack,
-                    NBTPredicateIngredient.of(stack)));
-        }
-        return Collections.emptyList();
+        return Collections.singletonList(new NBTPredicateItemStackMapIngredient(stack, null));
     }
 
     @Override
@@ -55,19 +53,14 @@ public class NBTPredicateItemStackMapIngredient extends ItemStackMapIngredient {
             }
             if (this.nbtIngredient != null) {
                 if (other.nbtIngredient != null) {
-                    if (this.nbtIngredient.getItems().length != other.nbtIngredient.getItems().length)
-                        return false;
-                    for (ItemStack stack : this.nbtIngredient.getItems()) {
-                        if (!other.nbtIngredient.test(stack)) {
-                            return false;
-                        }
-                    }
-                    return true;
+                    return IngredientEquality.ingredientEquals(nbtIngredient.toVanilla(), other.nbtIngredient.toVanilla());
                 } else {
-                    this.nbtIngredient.test(other.stack);
+                    return this.nbtIngredient.test(other.stack);
                 }
             } else if (other.nbtIngredient != null) {
                 return other.nbtIngredient.test(this.stack);
+            } else {
+                return ItemStack.isSameItemSameComponents(this.stack, other.stack);
             }
         }
         return false;

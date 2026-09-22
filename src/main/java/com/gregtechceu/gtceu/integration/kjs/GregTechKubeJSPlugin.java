@@ -70,7 +70,6 @@ import com.gregtechceu.gtceu.common.data.models.GTModels;
 import com.gregtechceu.gtceu.common.item.armor.PowerlessJetpack;
 import com.gregtechceu.gtceu.common.machine.multiblock.primitive.PrimitiveWorkableMachine;
 import com.gregtechceu.gtceu.common.mui.GTGuiTextures;
-import com.gregtechceu.gtceu.core.mixins.IngredientAccessor;
 import com.gregtechceu.gtceu.data.recipe.CraftingComponent;
 import com.gregtechceu.gtceu.data.recipe.GTCraftingComponents;
 import com.gregtechceu.gtceu.data.recipe.builder.GTRecipeBuilder;
@@ -657,8 +656,7 @@ public class GregTechKubeJSPlugin extends KubeJSPlugin {
             if (inCount == 0) continue;
 
             var ingredient = entry.value().kjs$asIngredient();
-            var values = ((IngredientAccessor) ingredient).getValues();
-            if (values.length == 0) continue;
+            if (ingredient.isEmpty()) continue;
 
             ItemStack[] stacks = com.gregtechceu.gtceu.api.recipe.ingredient.IngredientStacks.getItems(ingredient);
             ItemStack stack;

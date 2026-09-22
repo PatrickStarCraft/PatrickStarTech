@@ -62,10 +62,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
-import net.minecraftforge.common.crafting.CraftingHelper;
 import net.neoforged.neoforge.common.crafting.IntersectionIngredient;
-import net.minecraftforge.common.crafting.PartialNBTIngredient;
-import net.minecraftforge.common.crafting.StrictNBTIngredient;
+import net.neoforged.neoforge.common.crafting.DataComponentIngredient;
+import net.neoforged.neoforge.common.crafting.CompoundIngredient;
 import net.neoforged.neoforge.event.AddPackFindersEvent;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -106,6 +105,7 @@ public class CommonProxy {
         }
 
         GTValueProviderTypes.init(eventBus);
+        GTIngredientTypes.init(eventBus);
         GTPlacementModifiers.init(eventBus);
         GTGlobalLootModifiers.init(eventBus);
         GTLootConditions.init(eventBus);
@@ -281,12 +281,6 @@ public class CommonProxy {
     @SubscribeEvent
     public void commonSetup(FMLCommonSetupEvent event) {
         event.enqueueWork(() -> {
-            CraftingHelper.register(SizedIngredient.TYPE, SizedIngredient.SERIALIZER);
-            CraftingHelper.register(IntCircuitIngredient.TYPE, IntCircuitIngredient.SERIALIZER);
-            CraftingHelper.register(IntProviderIngredient.TYPE, IntProviderIngredient.SERIALIZER);
-            CraftingHelper.register(NBTPredicateIngredient.TYPE, NBTPredicateIngredient.Serializer.INSTANCE);
-            CraftingHelper.register(FluidContainerIngredient.TYPE, FluidContainerIngredient.SERIALIZER);
-
             // register the map ingredient converters for all of our ingredients
             MapIngredientTypeManager.registerMapIngredient(FluidIngredient.class, FluidTagMapIngredient::from);
             MapIngredientTypeManager.registerMapIngredient(FluidIngredient.class, FluidStackMapIngredient::from);
@@ -300,8 +294,8 @@ public class CommonProxy {
             MapIngredientTypeManager.registerMapIngredient(IntProviderIngredient.class,
                     (ingredient) -> MapIngredientTypeManager.getFrom(ingredient.getInner(), ItemRecipeCapability.CAP));
 
-            MapIngredientTypeManager.registerMapIngredient(StrictNBTIngredient.class, StrictNBTItemStackMapIngredient::from);
-            MapIngredientTypeManager.registerMapIngredient(PartialNBTIngredient.class, PartialNBTItemStackMapIngredient::from);
+            MapIngredientTypeManager.registerMapIngredient(DataComponentIngredient.class, DataComponentItemStackMapIngredient::from);
+            MapIngredientTypeManager.registerMapIngredient(CompoundIngredient.class, ItemStackMapIngredient::from);
             MapIngredientTypeManager.registerMapIngredient(NBTPredicateIngredient.class, NBTPredicateItemStackMapIngredient::from);
             MapIngredientTypeManager.registerMapIngredient(IntersectionIngredient.class, IntersectionMapIngredient::from);
             MapIngredientTypeManager.registerMapIngredient(Ingredient.class, ItemTagMapIngredient::from);
@@ -309,8 +303,7 @@ public class CommonProxy {
 
             MapIngredientTypeManager.registerMapIngredient(ItemStack.class, ItemStackMapIngredient::from);
             MapIngredientTypeManager.registerMapIngredient(ItemStack.class, ItemTagMapIngredient::from);
-            MapIngredientTypeManager.registerMapIngredient(ItemStack.class, StrictNBTItemStackMapIngredient::from);
-            MapIngredientTypeManager.registerMapIngredient(ItemStack.class, PartialNBTItemStackMapIngredient::from);
+            MapIngredientTypeManager.registerMapIngredient(ItemStack.class, DataComponentItemStackMapIngredient::from);
             MapIngredientTypeManager.registerMapIngredient(ItemStack.class, NBTPredicateItemStackMapIngredient::from);
             MapIngredientTypeManager.registerMapIngredient(ItemStack.class, IntersectionMapIngredient::from);
             MapIngredientTypeManager.registerMapIngredient(ItemStack.class, CustomMapIngredient::from);

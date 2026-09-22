@@ -24,8 +24,6 @@ import com.gregtechceu.gtceu.api.registry.GTRegistries;
 import com.gregtechceu.gtceu.common.item.behavior.IntCircuitBehaviour;
 import com.gregtechceu.gtceu.common.recipe.condition.*;
 import com.gregtechceu.gtceu.config.ConfigHolder;
-import com.gregtechceu.gtceu.core.mixins.IngredientAccessor;
-import com.gregtechceu.gtceu.core.mixins.TagValueAccessor;
 import com.gregtechceu.gtceu.data.recipe.builder.GTRecipeBuilder;
 import com.gregtechceu.gtceu.integration.kjs.recipe.components.CapabilityMap;
 import com.gregtechceu.gtceu.integration.kjs.recipe.components.ExtendedOutputItem;
@@ -44,10 +42,10 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
+import net.neoforged.neoforge.common.crafting.DataComponentIngredient;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraftforge.common.crafting.StrictNBTIngredient;
 import net.neoforged.neoforge.fluids.FluidStack;
 
 import com.google.gson.JsonElement;
@@ -300,7 +298,7 @@ public interface GTRecipeSchema {
             return input(ItemRecipeCapability.CAP,
                     Arrays.stream(inputs)
                             .map(stack -> InputItem.of(
-                                    stack.hasTag() ? StrictNBTIngredient.of(stack) : Ingredient.of(stack),
+                                    stack.hasTag() ? DataComponentIngredient.of(true, stack) : Ingredient.of(stack),
                                     stack.getCount()))
                             .toArray());
         }
@@ -374,7 +372,7 @@ public interface GTRecipeSchema {
             }
             gatherMaterialInfoFromStacks(itemStack);
 
-            return itemInputs(InputItem.of(new NBTPredicateIngredient(itemStack, predicate), itemStack.getCount()));
+            return itemInputs(InputItem.of(new NBTPredicateIngredient(itemStack, predicate).toVanilla(), itemStack.getCount()));
         }
 
         public GTRecipeJS itemOutputs(ExtendedOutputItem... outputs) {
@@ -772,9 +770,11 @@ public interface GTRecipeSchema {
                 }
                 if (com.gregtechceu.gtceu.api.recipe.ingredient.IngredientStacks.getItems(stack.ingredient).length == 0) {
                     String tagInfo = "";
-                    var values = ((IngredientAccessor) stack.ingredient).getValues();
-                    if (values.length == 1 && values[0] instanceof Ingredient.TagValue tagValue) {
-                        tagInfo = " (empty or unknown tag: #" + ((TagValueAccessor) tagValue).getTag().location() + ")";
+                    if (!stack.ingredient.isCustom()) {
+                        var tag = stack.ingredient.getValues().unwrapKey();
+                        if (tag.isPresent()) {
+                            tagInfo = " (empty or unknown tag: #" + tag.get().location() + ")";
+                        }
                     }
                     throw new RecipeExceptionJS(
                             String.format("Invalid or empty %s item (recipe ID: %s)%s", type, id, tagInfo));
@@ -1241,22 +1241,25 @@ public interface GTRecipeSchema {
         }
 
         public InputItem readInputItem(Object from) {
-            if (from instanceof SizedIngredient ingr) {
+            if (com.gregtechceu.gtceu.api.recipe.ingredient.IngredientStacks.unwrap(from) instanceof SizedIngredient ingr) {
                 return InputItem.of(ingr.getInner(), ingr.getAmount());
             } else if (from instanceof JsonObject jsonObject) {
                 if (!jsonObject.has("type") ||
                         !jsonObject.get("type").getAsString().equals(SizedIngredient.TYPE.toString())) {
                     return InputItem.of(from);
                 }
-                var sizedIngredient = SizedIngredient.fromJson(jsonObject);
+                var sizedIngredient = (SizedIngredient) com.gregtechceu.gtceu.api.recipe.content.SerializerIngredient.INSTANCE
+                        .fromJson(jsonObject).getCustomIngredient();
                 return InputItem.of(sizedIngredient.getInner(), sizedIngredient.getAmount());
             }
             return InputItem.of(from);
         }
 
         public JsonElement writeInputItem(InputItem value) {
-            if (value.ingredient instanceof SizedIngredient sized) return sized.toJson();
-            else return SizedIngredient.create(value.ingredient, value.count).toJson();
+            Ingredient ingredient = com.gregtechceu.gtceu.api.recipe.ingredient.IngredientStacks.unwrap(value.ingredient) instanceof SizedIngredient
+                    ? value.ingredient
+                    : SizedIngredient.create(value.ingredient, value.count);
+            return com.gregtechceu.gtceu.api.recipe.content.SerializerIngredient.INSTANCE.toJson(ingredient);
         }
 
         @Override
@@ -1275,8 +1278,10 @@ public interface GTRecipeSchema {
                 if (jsonObject.has("content")) {
                     jsonObject = jsonObject.getAsJsonObject("content");
                 }
-                var ingredient = Ingredient.fromJson(jsonObject);
-                return OutputItem.of(ingredient.getItems()[0], chance);
+                var ingredient = com.gregtechceu.gtceu.api.recipe.content.SerializerIngredient.INSTANCE.fromJson(jsonObject);
+                var stacks = com.gregtechceu.gtceu.api.recipe.ingredient.IngredientStacks.getItems(ingredient);
+                if (stacks.length == 0) throw new IllegalArgumentException("Output ingredient has no matching stacks");
+                return OutputItem.of(stacks[0], chance);
             }
             return OutputItem.of(from);
         }
@@ -1284,14 +1289,18 @@ public interface GTRecipeSchema {
         @Override
         public JsonElement writeOutputItem(OutputItem value) {
             if (value.rolls != null) {
-                return IntProviderIngredient.of(value.item, value.rolls).toJson();
+                return com.gregtechceu.gtceu.api.recipe.content.SerializerIngredient.INSTANCE
+                        .toJson(IntProviderIngredient.of(value.item, value.rolls));
             } else if (value instanceof ExtendedOutputItem extended) {
-                if (extended.ingredient.getInner() instanceof IntProviderIngredient intProvider) {
-                    return intProvider.toJson();
+                if (com.gregtechceu.gtceu.api.recipe.ingredient.IngredientStacks.unwrap(extended.ingredient.getInner()) instanceof IntProviderIngredient intProvider) {
+                    return com.gregtechceu.gtceu.api.recipe.content.SerializerIngredient.INSTANCE
+                            .toJson(intProvider.toVanilla());
                 }
-                return extended.ingredient.toJson();
+                return com.gregtechceu.gtceu.api.recipe.content.SerializerIngredient.INSTANCE.toJson(
+                        SizedIngredient.create(extended.ingredient.getInner(), extended.ingredient.getAmount()));
             }
-            return SizedIngredient.create(value.item).toJson();
+            return com.gregtechceu.gtceu.api.recipe.content.SerializerIngredient.INSTANCE
+                    .toJson(SizedIngredient.create(value.item));
         }
 
         @Override

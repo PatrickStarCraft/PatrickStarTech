@@ -1,187 +1,129 @@
 package com.gregtechceu.gtceu.api.recipe.ingredient;
 
 import com.gregtechceu.gtceu.GTCEu;
-import com.gregtechceu.gtceu.core.mixins.IngredientAccessor;
-import com.gregtechceu.gtceu.core.mixins.ItemValueAccessor;
-import com.gregtechceu.gtceu.core.mixins.TagValueAccessor;
-
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.core.Holder;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraftforge.common.crafting.IIngredientSerializer;
-import net.minecraftforge.common.crafting.StrictNBTIngredient;
-
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import it.unimi.dsi.fastutil.ints.IntList;
-import lombok.Getter;
+import net.neoforged.neoforge.common.crafting.ICustomIngredient;
+import net.neoforged.neoforge.common.crafting.IngredientType;
+import net.neoforged.neoforge.common.crafting.DataComponentIngredient;
+import com.gregtechceu.gtceu.data.recipe.builder.RecipeBuilderCodecs;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
+import java.util.Objects;
 import java.util.stream.Stream;
 
-public class SizedIngredient extends Ingredient {
+public class SizedIngredient implements ICustomIngredient {
 
     public static final Identifier TYPE = GTCEu.id("sized");
+    public static final MapCodec<SizedIngredient> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+            Ingredient.CODEC.fieldOf("ingredient").forGetter(SizedIngredient::getInner),
+            ExtraCodecs.NON_NEGATIVE_INT.fieldOf("count").forGetter(SizedIngredient::getAmount))
+            .apply(instance, SizedIngredient::new));
+    public static final IngredientType<SizedIngredient> INGREDIENT_TYPE = new IngredientType<>(CODEC);
 
-    @Getter
     protected int amount;
-    @Getter
     protected final Ingredient inner;
-    /**
-     * This array's elements must be treated as immutable.
-     */
-    protected ItemStack[] itemStacks = null;
-    private boolean changed = true;
-    @Getter
-    private final boolean isEmpty;
-    private final Value value;
-
     protected SizedIngredient(Ingredient inner, int amount) {
-        super(Stream.empty());
         this.amount = amount;
         this.inner = inner;
-        this.isEmpty = inner.isEmpty();
-        if (isEmpty || inner.getClass() != Ingredient.class) {
-            this.value = null;
-        } else {
-            var values = ((IngredientAccessor) inner).getValues();
-            this.value = values.length == 1 ? values[0] : null;
-        }
     }
 
     protected SizedIngredient(@NotNull TagKey<Item> tag, int amount) {
-        this(Ingredient.of(tag), amount);
+        this(RecipeBuilderCodecs.tag(tag), amount);
     }
 
     protected SizedIngredient(ItemStack itemStack) {
-        this(itemStack.hasTag() ? StrictNBTIngredient.of(itemStack) : Ingredient.of(itemStack), itemStack.getCount());
+        this(itemStack.isEmpty() ? EmptyIngredient.VANILLA : itemStack.getComponentsPatch().isEmpty() ? Ingredient.of(itemStack.getItem()) :
+                DataComponentIngredient.of(true, itemStack), itemStack.getCount());
     }
 
-    public static SizedIngredient create(ItemStack inner) {
-        return new SizedIngredient(inner);
+    public static Ingredient create(ItemStack inner) {
+        return new SizedIngredient(inner).toVanilla();
     }
 
-    public static SizedIngredient create(Ingredient inner, int amount) {
-        return new SizedIngredient(inner, amount);
+    public static Ingredient create(Ingredient inner, int amount) {
+        return new SizedIngredient(inner, amount).toVanilla();
     }
 
-    public static SizedIngredient create(Ingredient inner) {
-        return new SizedIngredient(inner, 1);
+    public static Ingredient create(Ingredient inner) {
+        return create(inner, 1);
     }
 
-    public static SizedIngredient create(TagKey<Item> tag, int amount) {
-        return new SizedIngredient(tag, amount);
+    public static Ingredient create(TagKey<Item> tag, int amount) {
+        return new SizedIngredient(tag, amount).toVanilla();
     }
+
+    public int getAmount() { return amount; }
+    public Ingredient getInner() { return inner; }
+    public boolean isEmpty() { return inner.isEmpty(); }
 
     public static Ingredient copy(Ingredient ingredient) {
-        if (ingredient instanceof SizedIngredient sizedIngredient) {
-            if (sizedIngredient.inner instanceof IntProviderIngredient intProviderIngredient) {
-                return copy(intProviderIngredient);
-            }
-            return SizedIngredient.create(sizedIngredient.inner, sizedIngredient.amount);
-        } else if (ingredient instanceof IntCircuitIngredient circuit) {
-            return circuit;
-        } else if (ingredient instanceof IntProviderIngredient provider) {
+        if (ingredient.getCustomIngredient() instanceof SizedIngredient sizedIngredient) {
+            return SizedIngredient.create(copyDelegate(sizedIngredient.inner), sizedIngredient.amount);
+        } else if (ingredient.getCustomIngredient() instanceof IntCircuitIngredient) {
+            return ingredient;
+        } else if (ingredient.getCustomIngredient() instanceof IntProviderIngredient provider) {
             return provider.copy();
         }
-        return SizedIngredient.create(ingredient, com.gregtechceu.gtceu.api.recipe.ingredient.IngredientStacks.getItems(ingredient)[0].getCount());
-    }
-
-    @Override
-    @NotNull
-    public IIngredientSerializer<? extends Ingredient> getSerializer() {
-        return SERIALIZER;
-    }
-
-    public static SizedIngredient fromJson(JsonObject json) {
-        return SERIALIZER.parse(json);
-    }
-
-    @Override
-    public @NotNull JsonElement toJson() {
-        JsonObject json = new JsonObject();
-        json.addProperty("type", TYPE.toString());
-        json.addProperty("count", amount);
-        json.add("ingredient", inner.toJson());
-        return json;
+        var items = IngredientStacks.getItems(ingredient);
+        return SizedIngredient.create(ingredient, items.length == 0 ? 1 : items[0].getCount());
     }
 
     @Override
     public boolean test(@Nullable ItemStack stack) {
         if (stack == null) return false;
-        if (this.isEmpty) return stack.isEmpty();
-
-        if (this.value instanceof TagValueAccessor tagValue) {
-            return stack.is(tagValue.getTag());
-        } else if (this.value instanceof ItemValueAccessor itemValue) {
-            return ItemStack.isSameItem(stack, itemValue.getItem());
-        }
-        return inner.test(stack);
+        return inner.isEmpty() ? stack.isEmpty() : inner.test(stack);
     }
 
-    @Override
+    /** Representative stacks, sized to this ingredient's configured count. */
     public ItemStack @NotNull [] getItems() {
-        if (changed || itemStacks == null) {
-            var innerStacks = com.gregtechceu.gtceu.api.recipe.ingredient.IngredientStacks.getItems(inner);
-            this.itemStacks = new ItemStack[innerStacks.length];
-            for (int i = 0; i < itemStacks.length; i++) {
-                itemStacks[i] = innerStacks[i].copyWithCount(amount);
-            }
-            changed = false;
-        }
-        return itemStacks;
+        var innerStacks = IngredientStacks.getItems(inner);
+        var stacks = new ItemStack[innerStacks.length];
+        for (int i = 0; i < stacks.length; i++) stacks[i] = innerStacks[i].copyWithCount(amount);
+        return stacks;
     }
 
-    public void setAmount(int amount) {
-        this.amount = amount;
-        this.changed = true;
-    }
+    public void setAmount(int amount) { this.amount = amount; }
 
     @Override
-    public @NotNull IntList getStackingIds() {
-        return inner.getStackingIds();
-    }
+    public Stream<Holder<Item>> items() { return inner.items(); }
 
     @Override
-    public int hashCode() {
-        int result = amount;
-        result = 31 * result + Arrays.hashCode(itemStacks);
-        return result;
-    }
+    public boolean isSimple() { return false; }
+
+    @Override
+    public IngredientType<SizedIngredient> getType() { return INGREDIENT_TYPE; }
 
     public static Ingredient getInner(Ingredient ingredient) {
-        if (ingredient instanceof SizedIngredient sizedIngredient) {
-            return getInner(sizedIngredient.getInner());
-        } else if (ingredient instanceof IntProviderIngredient intProviderIngredient) {
-            return getInner(intProviderIngredient.getInner());
-        }
+        var custom = ingredient.getCustomIngredient();
+        if (custom instanceof SizedIngredient sizedIngredient) return getInner(sizedIngredient.getInner());
+        if (custom instanceof IntProviderIngredient provider) return getInner(provider.getInner());
         return ingredient;
     }
 
-    public static final IIngredientSerializer<SizedIngredient> SERIALIZER = new IIngredientSerializer<>() {
-
-        @Override
-        public @NotNull SizedIngredient parse(FriendlyByteBuf buffer) {
-            int amount = buffer.readVarInt();
-            return new SizedIngredient(Ingredient.fromNetwork(buffer), amount);
+    /** Copies the mutable GT custom delegates while leaving immutable vanilla delegates shared. */
+    static Ingredient copyDelegate(Ingredient ingredient) {
+        var custom = ingredient.getCustomIngredient();
+        if (custom instanceof SizedIngredient sized) {
+            return new SizedIngredient(copyDelegate(sized.inner), sized.amount).toVanilla();
         }
+        if (custom instanceof IntProviderIngredient provider) return provider.copy();
+        return ingredient;
+    }
 
-        @Override
-        public @NotNull SizedIngredient parse(JsonObject json) {
-            int amount = json.get("count").getAsInt();
-            Ingredient inner = Ingredient.fromJson(json.get("ingredient"));
-            return new SizedIngredient(inner, amount);
-        }
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof SizedIngredient other && amount == other.amount && inner.equals(other.inner);
+    }
 
-        @Override
-        public void write(FriendlyByteBuf buffer, SizedIngredient ingredient) {
-            buffer.writeVarInt(ingredient.getAmount());
-            ingredient.inner.toNetwork(buffer);
-        }
-    };
+    @Override
+    public int hashCode() { return Objects.hash(inner, amount); }
 }

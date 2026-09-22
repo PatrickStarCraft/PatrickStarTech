@@ -152,7 +152,7 @@ public class RecipeAddition {
                     new ItemStack(Blocks.BRICKS, 2), "BBB",
                     "BWB", "BBB",
                     'B', new ItemStack(Items.BRICK),
-                    'W', new FluidContainerIngredient(Water.getFluidTag(), 1000));
+                    'W', new FluidContainerIngredient(Water.getFluidTag(), 1000).toVanilla());
 
             VanillaRecipeHelper.addShapedRecipe(provider, "bucket_of_concrete", new ItemStack(Concrete.getBucket()),
                     "CBS", "CWQ", " L ",
@@ -168,7 +168,7 @@ public class RecipeAddition {
                     "BGB", "BCB", "BGB",
                     'B', GTItems.FIRECLAY_BRICK.asStack(),
                     'G', new MaterialEntry(dust, Gypsum),
-                    'C', new FluidContainerIngredient(Concrete.getFluidTag(), 1000));
+                    'C', new FluidContainerIngredient(Concrete.getFluidTag(), 1000).toVanilla());
 
             VanillaRecipeHelper.addShapelessRecipe(provider, "compressed_clay", COMPRESSED_CLAY.asStack(),
                     WOODEN_FORM_BRICK.asStack(), new ItemStack(Items.CLAY_BALL));
@@ -1364,7 +1364,7 @@ public class RecipeAddition {
         VanillaRecipeHelper.addShapedFluidContainerRecipe(provider, "paper", new ItemStack(Items.PAPER, 2),
                 " r ", "SSS", " B ",
                 'S', new MaterialEntry(TagPrefix.dust, GTMaterials.Paper),
-                'B', new FluidContainerIngredient(Water.getFluidTag(), 1000));
+                'B', new FluidContainerIngredient(Water.getFluidTag(), 1000).toVanilla());
     }
 
     private static void hardAdvancedIronRecipes(Consumer<GeneratedRecipe> provider) {

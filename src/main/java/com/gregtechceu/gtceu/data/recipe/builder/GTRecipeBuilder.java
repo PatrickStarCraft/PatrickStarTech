@@ -471,7 +471,7 @@ public class GTRecipeBuilder {
         return inputItems(machine.asStack(count));
     }
 
-    public GTRecipeBuilder inputItemRanged(IntProviderIngredient provider) {
+    public GTRecipeBuilder inputItemRanged(Ingredient provider) {
         return inputItems(provider);
     }
 
@@ -626,7 +626,7 @@ public class GTRecipeBuilder {
         return output(ItemRecipeCapability.CAP, ingredient);
     }
 
-    public GTRecipeBuilder outputItemRanged(IntProviderIngredient provider) {
+    public GTRecipeBuilder outputItemRanged(Ingredient provider) {
         return outputItems(provider);
     }
 
@@ -971,7 +971,7 @@ public class GTRecipeBuilder {
         }
         return input(FluidRecipeCapability.CAP, FluidIngredient.of(
                 TagUtil.createFluidTag(BuiltInRegistries.FLUID.getKey(input.getFluid()).getPath()),
-                input.getAmount(), input.getTag()));
+                input.getAmount(), com.gregtechceu.gtceu.api.transfer.fluid.FluidStackData.readNullable(input)));
     }
 
     public GTRecipeBuilder inputFluids(FluidStack... inputs) {
@@ -1541,7 +1541,7 @@ public class GTRecipeBuilder {
             Item out = null;
             int outputCount = 0;
 
-            if (currOutput instanceof IntProviderIngredient intProvider) {
+            if (com.gregtechceu.gtceu.api.recipe.ingredient.IngredientStacks.unwrap(currOutput) instanceof IntProviderIngredient intProvider) {
                 ItemStack[] items = com.gregtechceu.gtceu.api.recipe.ingredient.IngredientStacks.getItems(intProvider.getInner());
                 if (items.length > 0) {
                     out = items[0].getItem();
@@ -1592,7 +1592,7 @@ public class GTRecipeBuilder {
             Item out = null;
             int outputCount = 0;
 
-            if (currOutput instanceof IntProviderIngredient intProvider) {
+            if (com.gregtechceu.gtceu.api.recipe.ingredient.IngredientStacks.unwrap(currOutput) instanceof IntProviderIngredient intProvider) {
                 ItemStack[] items = com.gregtechceu.gtceu.api.recipe.ingredient.IngredientStacks.getItems(intProvider.getInner());
                 if (items.length > 0) {
                     out = items[0].getItem();
@@ -1679,9 +1679,9 @@ public class GTRecipeBuilder {
 
     public int getSolderMultiplier() {
         if (data.contains("solderMultiplier")) {
-            return Math.max(1, data.getInt("solderMultiplier"));
+            return Math.max(1, data.getIntOr("solderMultiplier", 0));
         }
-        return Math.max(1, data.getInt("solder_multiplier"));
+        return Math.max(1, data.getIntOr("solder_multiplier", 0));
     }
 
     /**

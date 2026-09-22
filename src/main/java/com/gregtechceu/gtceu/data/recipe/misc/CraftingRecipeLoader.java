@@ -122,7 +122,7 @@ public class CraftingRecipeLoader {
         VanillaRecipeHelper.addShapedFluidContainerRecipe(provider, "treated_wood_planks",
                 GTBlocks.TREATED_WOOD_PLANK.asStack(8),
                 "PPP", "PBP", "PPP", 'P', ItemTags.PLANKS, 'B',
-                new FluidContainerIngredient(Creosote.getFluidTag(), 1000));
+                new FluidContainerIngredient(Creosote.getFluidTag(), 1000).toVanilla());
 
         VanillaRecipeHelper.addShapedRecipe(provider, "rubber_ring", ChemicalHelper.get(ring, Rubber), "k", "X", 'X',
                 new MaterialEntry(plate, Rubber));

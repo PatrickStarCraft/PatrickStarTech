@@ -62,14 +62,15 @@ public class RecipeOutputProvider extends MachineTraitProvider<RecipeLogic, Comp
                 ListTag itemTags = new ListTag();
                 for (var item : itemContents) {
                     CompoundTag itemTag;
-                    if (item.content() instanceof IntProviderIngredient provider) {
-                        IntProviderIngredient chanced = provider;
+                    if (com.gregtechceu.gtceu.api.recipe.ingredient.IngredientStacks.unwrap(item.content()) instanceof IntProviderIngredient provider) {
+                        Ingredient chanced = provider.toVanilla();
                         if (item.chance() < item.maxChance()) {
                             double countD = ((double) runs * item.chance()) / item.maxChance();
-                            chanced = (IntProviderIngredient) ItemRecipeCapability.CAP.copyWithModifier(provider,
+                            chanced = ItemRecipeCapability.CAP.copyWithModifier(provider.toVanilla(),
                                     ContentModifier.multiplier(countD));
                         }
-                        itemTag = (CompoundTag) JsonOps.INSTANCE.convertTo(NbtOps.INSTANCE, chanced.toJson());
+                        itemTag = (CompoundTag) com.gregtechceu.gtceu.api.recipe.content.SerializerIngredient.INSTANCE
+                                .toNbt(chanced, recipeLogic.getMachine().getLevel().registryAccess());
                     } else {
                         var stacks = com.gregtechceu.gtceu.api.recipe.ingredient.IngredientStacks.getItems(ItemRecipeCapability.CAP.of(item.content()));
                         if (stacks.length == 0 || stacks[0].isEmpty()) continue;
@@ -139,8 +140,8 @@ public class RecipeOutputProvider extends MachineTraitProvider<RecipeLogic, Comp
                     for (Tag tag : itemTags) {
                         if (tag instanceof CompoundTag tCompoundTag) {
                             if (tCompoundTag.contains("count_provider")) {
-                                var ingredient = IntProviderIngredient.SERIALIZER
-                                        .parse((JsonObject) NbtOps.INSTANCE.convertTo(JsonOps.INSTANCE, tCompoundTag));
+                                var ingredient = com.gregtechceu.gtceu.api.recipe.content.SerializerIngredient.INSTANCE
+                                        .fromNbt(tCompoundTag, player.level().registryAccess());
                                 outputItems.add(ingredient);
                             } else {
                                 var stack = GTUtil.loadItemStack(tCompoundTag);
@@ -183,7 +184,7 @@ public class RecipeOutputProvider extends MachineTraitProvider<RecipeLogic, Comp
             if (itemOutput != null && !itemOutput.isEmpty()) {
                 ItemStack item;
                 MutableComponent text = CommonComponents.space();
-                if (itemOutput instanceof IntProviderIngredient provider) {
+                if (com.gregtechceu.gtceu.api.recipe.ingredient.IngredientStacks.unwrap(itemOutput) instanceof IntProviderIngredient provider) {
                     item = com.gregtechceu.gtceu.api.recipe.ingredient.IngredientStacks.getItems(provider.getInner())[0];
                     text = text.append(Component.translatable("gtceu.gui.content.range",
                             String.valueOf(provider.getCountProvider().minInclusive()),
