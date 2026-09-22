@@ -2,10 +2,10 @@ package com.gregtechceu.gtceu.client.model.runtimegen;
 
 import com.gregtechceu.gtceu.api.data.chemical.material.info.MaterialIconSet;
 import com.gregtechceu.gtceu.api.data.chemical.material.info.MaterialIconType;
+import com.gregtechceu.gtceu.data.model.builder.RuntimeModelResources;
 import com.gregtechceu.gtceu.data.pack.GTDynamicResourcePack;
 
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.client.data.models.model.DelegatedModel;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 
@@ -19,8 +19,8 @@ public class TagPrefixItemModelGenerator {
     public static void reinitModels() {
         for (TagPrefixItemModelGenerator model : MODELS) {
             Identifier itemId = BuiltInRegistries.ITEM.getKey(model.item);
-            GTDynamicResourcePack.addItemModel(itemId,
-                    new DelegatedModel(model.type.getItemModelPath(model.iconSet, true)));
+            RuntimeModelResources.emitItem(itemId, model.type.getItemModelPath(model.iconSet, true),
+                    GTDynamicResourcePack::addResource);
         }
     }
 

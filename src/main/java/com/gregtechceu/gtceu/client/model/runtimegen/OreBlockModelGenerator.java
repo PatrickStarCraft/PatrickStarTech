@@ -7,6 +7,7 @@ import com.gregtechceu.gtceu.api.data.chemical.material.info.MaterialIconSet;
 import com.gregtechceu.gtceu.api.data.chemical.material.info.MaterialIconType;
 import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
 import com.gregtechceu.gtceu.api.registry.GTRegistries;
+import com.gregtechceu.gtceu.data.model.builder.RuntimeModelResources;
 import com.gregtechceu.gtceu.data.pack.GTDynamicResourcePack;
 import com.gregtechceu.gtceu.utils.memoization.GTMemoizer;
 import com.gregtechceu.gtceu.utils.memoization.function.MemoizedBiFunction;
@@ -14,8 +15,6 @@ import com.gregtechceu.gtceu.utils.memoization.function.MemoizedBiFunction;
 import org.jspecify.annotations.NullMarked;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.client.data.models.BlockModelGenerators;
-import net.minecraft.data.models.model.*;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -75,9 +74,10 @@ public class OreBlockModelGenerator {
             Identifier modelId = iconSet.id.withPath(ORE_MODEL_NAME_FORMAT
                     .formatted(iconSet.getName(), tagPrefix.name, iconType.name()));
 
-            GTDynamicResourcePack.addBlockState(blockId, BlockModelGenerators.createSimpleBlock(model.block, modelId));
-            GTDynamicResourcePack.addItemModel(BuiltInRegistries.ITEM.getKey(model.block.asItem()),
-                    new DelegatedModel(modelId));
+            RuntimeModelResources.emitBlockState(blockId, RuntimeModelResources.simpleBlockState(modelId),
+                    GTDynamicResourcePack::addResource);
+            RuntimeModelResources.emitItem(BuiltInRegistries.ITEM.getKey(model.block.asItem()), modelId,
+                    GTDynamicResourcePack::addResource);
         }
 
         TEMPLATE_MODEL_CACHE.getCache().clear();
@@ -107,10 +107,10 @@ public class OreBlockModelGenerator {
                 .getAsJsonObject("base_stone")
                 .addProperty("parent", oreType.baseModelLocation().toString());
 
-        GTDynamicResourcePack.addBlockModel(
+        RuntimeModelResources.emitModel(
                 iconSet.id
                         .withPath(ORE_MODEL_NAME_FORMAT.formatted(iconSet.getName(), tagPrefix.name, iconType.name())),
-                newJson);
+                newJson, GTDynamicResourcePack::addResource);
     }
 
     private static JsonObject loadTemplateOreModel(MaterialIconType iconType, MaterialIconSet iconSet) {

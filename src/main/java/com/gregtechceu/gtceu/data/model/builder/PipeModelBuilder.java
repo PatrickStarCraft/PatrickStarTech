@@ -4,7 +4,6 @@ import com.gregtechceu.gtceu.GTCEu;
 import com.gregtechceu.gtceu.api.blockentity.PipeBlockEntity;
 import com.gregtechceu.gtceu.api.registry.registrate.provider.GTBlockstateProvider;
 import com.gregtechceu.gtceu.client.model.pipe.PipeModelLoader;
-import com.gregtechceu.gtceu.core.mixins.forge.ConfiguredModelBuilderAccessor;
 import com.gregtechceu.gtceu.utils.GTMath;
 import com.gregtechceu.gtceu.utils.GTUtil;
 import com.gregtechceu.gtceu.utils.memoization.GTMemoizer;
@@ -13,9 +12,6 @@ import com.gregtechceu.gtceu.utils.memoization.function.MemoizedBiFunction;
 import net.minecraft.util.Util;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.Identifier;
-import net.minecraftforge.client.model.generators.*;
-import net.minecraftforge.client.model.generators.BlockStateProvider.ConfiguredModelList;
-import net.minecraftforge.common.data.ExistingFileHelper;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
@@ -39,7 +35,7 @@ import static com.gregtechceu.gtceu.data.model.builder.MachineModelBuilder.confi
 public class PipeModelBuilder<T extends ModelBuilder<T>> extends CustomLoaderBuilder<T> {
 
     // spotless:off
-    public static <T extends ModelBuilder<T>> BiFunction<T, ExistingFileHelper, PipeModelBuilder<T>> begin(@Range(from = 0, to = 16) float thickness,
+    public static <T extends ModelBuilder<T>> BiFunction<T, ModelFileHelper, PipeModelBuilder<T>> begin(@Range(from = 0, to = 16) float thickness,
                                                                                                            GTBlockstateProvider provider) {
         return (parent, existingFileHelper) -> new PipeModelBuilder<>(parent, existingFileHelper, thickness, provider);
     }
@@ -52,9 +48,9 @@ public class PipeModelBuilder<T extends ModelBuilder<T>> extends CustomLoaderBui
     private final GTBlockstateProvider provider;
     private BlockModelBuilder @Nullable [] restrictors = null;
 
-    protected PipeModelBuilder(T parent, ExistingFileHelper existingFileHelper,
+    protected PipeModelBuilder(T parent, ModelFileHelper existingFileHelper,
                                float thickness, GTBlockstateProvider provider) {
-        super(PipeModelLoader.ID, parent, existingFileHelper);
+        super(Identifier.fromNamespaceAndPath("gtceu", "pipe"), parent, existingFileHelper);
 
         Preconditions.checkArgument(thickness > 0.0f && thickness <= 16.0f,
                 "Thickness must be between 0 (exclusive) and 16 (inclusive). It is %s", thickness);
@@ -174,7 +170,7 @@ public class PipeModelBuilder<T extends ModelBuilder<T>> extends CustomLoaderBui
      * @see #connectionModels(Identifier...)
      */
     public ConfiguredModel.Builder<PipeModelBuilder<T>> connectionModels() {
-        return ConfiguredModelBuilderAccessor.builder(this::connectionModels, ImmutableList.of());
+        return ConfiguredModel.builder(this::connectionModels);
     }
 
     /**
@@ -222,7 +218,7 @@ public class PipeModelBuilder<T extends ModelBuilder<T>> extends CustomLoaderBui
      * @see #centerModels(Identifier...)
      */
     public ConfiguredModel.Builder<PipeModelBuilder<T>> centerModel() {
-        return ConfiguredModelBuilderAccessor.builder(this::centerModels, ImmutableList.of());
+        return ConfiguredModel.builder(this::centerModels);
     }
 
     /**
@@ -280,8 +276,7 @@ public class PipeModelBuilder<T extends ModelBuilder<T>> extends CustomLoaderBui
      * @see #modelsForDirection(Direction, Identifier...)
      */
     public ConfiguredModel.Builder<PipeModelBuilder<T>> modelsForDirection(@Nullable Direction direction) {
-        return ConfiguredModelBuilderAccessor.builder(models -> this.modelsForDirection(direction, models),
-                ImmutableList.of());
+        return ConfiguredModel.builder(models -> this.modelsForDirection(direction, models));
     }
 
     @Override

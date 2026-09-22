@@ -16,14 +16,15 @@ import com.gregtechceu.gtceu.client.model.machine.overlays.WorkableOverlays;
 import com.gregtechceu.gtceu.common.data.GTMaterials;
 import com.gregtechceu.gtceu.common.machine.electric.BatteryBufferMachine;
 import com.gregtechceu.gtceu.common.machine.multiblock.part.DiodePartMachine;
+import com.gregtechceu.gtceu.data.model.builder.BlockModelBuilder;
+import com.gregtechceu.gtceu.data.model.builder.BlockModelProvider;
 import com.gregtechceu.gtceu.data.model.builder.MachineModelBuilder;
+import com.gregtechceu.gtceu.data.model.builder.ModelFile;
 
 import net.minecraft.util.Util;
 import net.minecraft.core.Direction;
-import net.minecraft.data.models.blockstates.*;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.client.model.generators.*;
 
 import com.google.common.collect.ImmutableMap;
 import com.tterrag.registrate.providers.DataGenContext;
@@ -643,13 +644,7 @@ public class GTMachineModels {
 
             final BlockModelBuilder model = builder.end();
             model.parent(new ModelFile.UncheckedModelFile("block/block"));
-
-            var generator = prov.multiVariantGenerator(block,
-                    Variant.variant().with(VariantProperties.MODEL, model.getLocation()));
-            PropertyDispatch dispatch = GTBlockstateProvider.createFacingDispatch(definition);
-            if (dispatch != null) {
-                generator.with(dispatch);
-            }
+            prov.simpleBlockWithFacing(block, model, definition);
         };
     }
     // spotless:on

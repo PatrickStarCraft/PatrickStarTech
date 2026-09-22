@@ -3,19 +3,12 @@ package com.gregtechceu.gtceu.data.model.builder;
 import com.gregtechceu.gtceu.GTCEu;
 import com.gregtechceu.gtceu.api.machine.MachineDefinition;
 import com.gregtechceu.gtceu.api.registry.registrate.provider.GTBlockstateProvider;
-import com.gregtechceu.gtceu.client.model.machine.MachineModelLoader;
 import com.gregtechceu.gtceu.client.model.machine.MachineRenderState;
 import com.gregtechceu.gtceu.client.renderer.machine.DynamicRender;
-import com.gregtechceu.gtceu.core.mixins.forge.ConfiguredModelBuilderAccessor;
-import com.gregtechceu.gtceu.core.mixins.forge.ConfiguredModelListAccessor;
 
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.Property;
-import net.minecraftforge.client.model.generators.*;
-import net.minecraftforge.client.model.generators.BlockStateProvider.ConfiguredModelList;
-import net.minecraftforge.client.model.generators.ConfiguredModel;
-import net.minecraftforge.common.data.ExistingFileHelper;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.*;
@@ -36,7 +29,7 @@ import java.util.function.Supplier;
 public class MachineModelBuilder<T extends ModelBuilder<T>> extends CustomLoaderBuilder<T> {
 
     // spotless:off
-    public static <T extends ModelBuilder<T>> BiFunction<T, ExistingFileHelper, MachineModelBuilder<T>> begin(MachineDefinition owner) {
+    public static <T extends ModelBuilder<T>> BiFunction<T, ModelFileHelper, MachineModelBuilder<T>> begin(MachineDefinition owner) {
         return (parent, existingFileHelper) -> new MachineModelBuilder<>(parent, existingFileHelper, owner);
     }
     // spotless:on
@@ -54,8 +47,8 @@ public class MachineModelBuilder<T extends ModelBuilder<T>> extends CustomLoader
     @Getter
     private final SortedMap<String, Identifier> textureOverrides = new TreeMap<>();
 
-    protected MachineModelBuilder(T parent, ExistingFileHelper existingFileHelper, MachineDefinition owner) {
-        super(MachineModelLoader.ID, parent, existingFileHelper);
+    protected MachineModelBuilder(T parent, ModelFileHelper existingFileHelper, MachineDefinition owner) {
+        super(Identifier.fromNamespaceAndPath("gtceu", "machine"), parent, existingFileHelper);
         this.owner = owner;
     }
 
@@ -139,7 +132,7 @@ public class MachineModelBuilder<T extends ModelBuilder<T>> extends CustomLoader
     }
 
     public static JsonElement configuredModelListToJSON(ConfiguredModelList list) {
-        List<ConfiguredModel> models = ((ConfiguredModelListAccessor) list).gtceu$getModels();
+        List<ConfiguredModel> models = list.getModels();
 
         if (models.size() == 1) {
             return configuredModelToJSON(models.get(0), false);
@@ -158,6 +151,7 @@ public class MachineModelBuilder<T extends ModelBuilder<T>> extends CustomLoader
 
         if (model.rotationX != 0) modelJson.addProperty("x", model.rotationX);
         if (model.rotationY != 0) modelJson.addProperty("y", model.rotationY);
+        if (model.rotationZ != 0) modelJson.addProperty(GTBlockstateProvider.Z_ROT_PROPERTY_NAME, model.rotationZ);
         if (model.uvLock) modelJson.addProperty("uvlock", true);
         if (includeWeight && model.weight != ConfiguredModel.DEFAULT_WEIGHT) {
             modelJson.addProperty("weight", model.weight);
@@ -272,11 +266,11 @@ public class MachineModelBuilder<T extends ModelBuilder<T>> extends CustomLoader
      * @see ConfiguredModel.Builder
      */
     public ConfiguredModel.Builder<PartBuilder> part() {
-        return ConfiguredModelBuilderAccessor.builder(models -> {
+        return ConfiguredModel.builder(models -> {
             PartBuilder part = new PartBuilder(new ConfiguredModelList(models));
             this.parts.add(part);
             return part;
-        }, ImmutableList.of());
+        });
     }
 
     /**
@@ -345,9 +339,9 @@ public class MachineModelBuilder<T extends ModelBuilder<T>> extends CustomLoader
             }
             PartialState<T> partialState = new PartialState<>(owner, propertyValues, this);
             if (seen.add(partialState)) {
-                ConfiguredModelListAccessor old = (ConfiguredModelListAccessor) getModels().get(partialState);
+                ConfiguredModelList old = getModels().get(partialState);
                 if (old == null) continue;
-                ConfiguredModel[] oldModels = old.gtceu$getModels().toArray(ConfiguredModel[]::new);
+                ConfiguredModel[] oldModels = old.getModels().toArray(ConfiguredModel[]::new);
 
                 replaceModels(partialState, mapper.apply(fullState, oldModels));
             }
