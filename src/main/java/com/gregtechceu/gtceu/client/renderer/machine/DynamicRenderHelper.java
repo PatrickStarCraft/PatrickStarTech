@@ -5,7 +5,7 @@ import com.gregtechceu.gtceu.client.renderer.block.FluidBlockRenderer;
 import com.gregtechceu.gtceu.client.renderer.machine.impl.*;
 import com.gregtechceu.gtceu.common.block.BoilerFireboxType;
 
-import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.core.Vec3i;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.Fluid;
@@ -68,14 +68,14 @@ public class DynamicRenderHelper {
     public static DynamicRender<?, ?> makeRecipeFluidAreaRender() {
         return makeFluidAreaRender(FluidBlockRenderer.Builder.create()
                 .setFaceOffset(-0.125f)
-                .setForcedLight(LightTexture.FULL_BRIGHT)
+                .setForcedLight(LightCoordsUtil.FULL_BRIGHT)
                 .getRenderer(), Optional.empty(), FluidAreaRender.DEFAULT_FACES);
     }
 
     public static DynamicRender<?, ?> createPBFLavaRender() {
         return makeFluidAreaRender(FluidBlockRenderer.Builder.create()
                 .setFaceOffset(-0.125f)
-                .setForcedLight(LightTexture.FULL_BRIGHT)
+                .setForcedLight(LightCoordsUtil.FULL_BRIGHT)
                 .getRenderer(), Optional.of(Fluids.LAVA.getSource()), FluidAreaRender.DEFAULT_FACES);
     }
 

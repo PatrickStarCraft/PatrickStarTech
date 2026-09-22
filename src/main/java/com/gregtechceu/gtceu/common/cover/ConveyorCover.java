@@ -120,7 +120,7 @@ public class ConveyorCover extends CoverBehavior implements IIOCover, IMuiCover,
 
     protected @Nullable IItemHandler getAdjacentItemHandler() {
         return GTTransferUtils.getAdjacentItemHandler(coverHolder.getLevel(), coverHolder.getBlockPos(), attachedSide)
-                .resolve().orElse(null);
+                .orElse(null);
     }
 
     //////////////////////////////////////

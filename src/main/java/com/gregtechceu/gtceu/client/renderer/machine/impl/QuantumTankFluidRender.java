@@ -9,7 +9,7 @@ import com.gregtechceu.gtceu.common.data.GTMachines;
 import com.gregtechceu.gtceu.common.machine.storage.CreativeTankMachine;
 import com.gregtechceu.gtceu.common.machine.storage.QuantumTankMachine;
 
-import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.core.Direction;
@@ -131,7 +131,7 @@ public class QuantumTankFluidRender extends DynamicRender<QuantumTankMachine, Qu
             sidesToRender.add(gas ? Direction.DOWN : Direction.UP);
         }
         RenderBufferHelper.renderTexturedCube(builder, poseStack.last(), sidesToRender,
-                ext.getTintColor(fluid) | 0xff000000, LightTexture.FULL_BRIGHT, fluidSprite,
+                ext.getTintColor(fluid) | 0xff000000, LightCoordsUtil.FULL_BRIGHT, fluidSprite,
                 MIN, minY, minZ, MAX, maxY, maxZ);
 
         drawAmountText(poseStack, buffer, frontFacing, storedAmount, isCreative);

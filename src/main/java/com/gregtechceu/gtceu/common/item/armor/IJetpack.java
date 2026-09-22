@@ -74,7 +74,7 @@ public interface IJetpack {
     default void performFlying(@NotNull Player player, boolean flightEnabled, boolean hover, ItemStack stack) {
         double deltaY = player.getDeltaMovement().y();
 
-        if ((!flightEnabled || !hover) && player.getY() < player.level().getMinBuildHeight() - 5) {
+        if ((!flightEnabled || !hover) && player.getY() < player.level().getMinY() - 5) {
             performEHover(stack, player);
         } else if (!flightEnabled) {
             return;

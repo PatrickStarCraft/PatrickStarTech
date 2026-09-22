@@ -2,7 +2,7 @@ package com.gregtechceu.gtceu.utils;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.util.Tuple;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.common.util.TriPredicate;
@@ -99,21 +99,21 @@ public class BreadthFirstBlockSearch {
     public static Set<BlockPos> conditionalBlockPosSearch(BlockPos start, BiPredicate<BlockPos, BlockPos> condition,
                                                           int blockLimit, int iterationLimit) {
         var passed = new LinkedHashSet<BlockPos>();
-        var queue = new ObjectArrayFIFOQueue<Tuple<BlockPos, BlockPos>>(16);
-        queue.enqueue(new Tuple<>(null, start));
+        var queue = new ObjectArrayFIFOQueue<Pair<BlockPos, BlockPos>>(16);
+        queue.enqueue(Pair.of(null, start));
 
         var iterations = 0;
         while (!queue.isEmpty() && iterations < iterationLimit && passed.size() < blockLimit) {
             var tuple = queue.dequeue();
-            var next = tuple.getB();
+            var next = tuple.getSecond();
             if (passed.contains(next)) {
                 continue;
             }
-            if (condition.test(tuple.getA(), tuple.getB())) {
+            if (condition.test(tuple.getFirst(), tuple.getSecond())) {
                 passed.add(next);
                 getNeighbors(next).forEach(neighbor -> {
                     if (!passed.contains(neighbor)) {
-                        queue.enqueue(new Tuple<>(next, neighbor));
+                        queue.enqueue(Pair.of(next, neighbor));
                     }
                 });
             }

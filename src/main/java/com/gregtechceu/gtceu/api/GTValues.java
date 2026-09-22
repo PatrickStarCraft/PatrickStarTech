@@ -265,21 +265,21 @@ public class GTValues {
     // Main colour for each tier
     @SuppressWarnings("DataFlowIssue")
     public static final int[] VCM = new int[] {
-            DARK_GRAY.getColor(),
-            GRAY.getColor(),
-            AQUA.getColor(),
-            GOLD.getColor(),
-            DARK_PURPLE.getColor(),
-            BLUE.getColor(),
-            LIGHT_PURPLE.getColor(),
-            RED.getColor(),
-            DARK_AQUA.getColor(),
-            DARK_RED.getColor(),
-            GREEN.getColor(),
-            DARK_GREEN.getColor(),
-            YELLOW.getColor(),
-            BLUE.getColor(),
-            RED.getColor()
+            net.minecraft.network.chat.TextColor.DARK_GRAY.getValue(),
+            net.minecraft.network.chat.TextColor.GRAY.getValue(),
+            net.minecraft.network.chat.TextColor.AQUA.getValue(),
+            net.minecraft.network.chat.TextColor.GOLD.getValue(),
+            net.minecraft.network.chat.TextColor.DARK_PURPLE.getValue(),
+            net.minecraft.network.chat.TextColor.BLUE.getValue(),
+            net.minecraft.network.chat.TextColor.LIGHT_PURPLE.getValue(),
+            net.minecraft.network.chat.TextColor.RED.getValue(),
+            net.minecraft.network.chat.TextColor.DARK_AQUA.getValue(),
+            net.minecraft.network.chat.TextColor.DARK_RED.getValue(),
+            net.minecraft.network.chat.TextColor.GREEN.getValue(),
+            net.minecraft.network.chat.TextColor.DARK_GREEN.getValue(),
+            net.minecraft.network.chat.TextColor.YELLOW.getValue(),
+            net.minecraft.network.chat.TextColor.BLUE.getValue(),
+            net.minecraft.network.chat.TextColor.RED.getValue()
     };
 
     // Main color for steam machines

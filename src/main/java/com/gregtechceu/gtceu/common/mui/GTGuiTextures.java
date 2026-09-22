@@ -664,8 +664,8 @@ public interface GTGuiTextures {
             false,
             28, 32, 4);
 
-    UITexture MONITOR = UITexture.fullImage(GTCEu.MOD_ID, "item/computer_monitor_cover");
-    UITexture DATA_HATCH = UITexture.fullImage(GTCEu.MOD_ID, "textures/item/data_module.png")
+    UITexture MONITOR = UITexture.fullImage(GTCEu.id("item/computer_monitor_cover"));
+    UITexture DATA_HATCH = UITexture.fullImage(GTCEu.id("textures/item/data_module.png"))
             .getSubArea(0, 0, 1, 1 / 13f);
 
     UITexture SEPERATOR_SIMPLE = UITexture.builder()
@@ -753,7 +753,7 @@ public interface GTGuiTextures {
     }
 
     private static UITexture fullImage(String path, @Nullable ColorType colorType) {
-        return UITexture.fullImage(GTCEu.MOD_ID, path, colorType);
+        return UITexture.fullImage(GTCEu.id(path), colorType);
     }
 
     @SuppressWarnings("SameParameterValue")

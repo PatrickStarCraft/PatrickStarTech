@@ -53,7 +53,7 @@ public class TextModuleBehaviour implements IMonitorModuleItem, IAddInformation 
         MultiLineComponent text = PlaceholderHandler.processPlaceholders(
                 getPlaceholderText(stack), getContext(stack, machine, group));
         ItemStackData.update(stack, tag -> tag.put("text",
-                text.withStyle(style -> style.withFont(GTGuiTextures.MONOCRAFT_FONT)).toTag()));
+                text.withStyle(style -> style.withFont(new net.minecraft.network.chat.FontDescription.Resource(GTGuiTextures.MONOCRAFT_FONT))).toTag()));
     }
 
     @Override

@@ -22,7 +22,6 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -90,6 +89,6 @@ public class ItemPipeBlock extends MaterialPipeBlock<ItemPipeType, ItemPipePrope
     public boolean canPipeConnectToBlock(IPipeNode<ItemPipeType, ItemPipeProperties> selfTile, Direction side,
                                          @Nullable BlockEntity tile) {
         return tile != null &&
-                tile.getCapability(ForgeCapabilities.ITEM_HANDLER, side.getOpposite()).isPresent();
+                com.gregtechceu.gtceu.api.capability.GTCapabilityHelper.getItemHandler(tile.getLevel(), tile.getBlockPos(), side.getOpposite()) != null;
     }
 }

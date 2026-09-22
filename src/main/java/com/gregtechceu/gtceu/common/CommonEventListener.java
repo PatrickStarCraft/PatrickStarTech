@@ -419,7 +419,7 @@ public class CommonEventListener {
             if (speedBoost != 0.0f) {
                 speedAttrib.addTransientModifier(
                         new AttributeModifier(BlockAttributes.BLOCK_SPEED_BOOST, "GT Block Speed Boost",
-                                speedBoost, AttributeModifier.Operation.MULTIPLY_BASE));
+                                speedBoost, AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
             }
         }
     }

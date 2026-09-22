@@ -52,9 +52,9 @@ public class GTMultiblockTextUtil {
         BooleanSyncValue hasSyncError = syncManager.getOrCreateSyncHandler("hasSyncError", BooleanSyncValue.class,
                 () -> new BooleanSyncValue(
                         () -> controller.getPatternState(MultiblockControllerMachine.DEFAULT_STRUCTURE).hasErrors()));
-        GenericListSyncHandler<PatternError> patternErrors = syncManager.getOrCreateSyncHandler("patternErrors",
+        GenericListSyncHandler<net.minecraft.network.RegistryFriendlyByteBuf, PatternError> patternErrors = syncManager.getOrCreateSyncHandler("patternErrors",
                 GenericListSyncHandler.class,
-                () -> GenericListSyncHandler.<PatternError>builder()
+                () -> GenericListSyncHandler.<net.minecraft.network.RegistryFriendlyByteBuf, PatternError>builder()
                         .getter(() -> {
                             var list = new ArrayList<PatternError>();
                             for (String structureName : controller.getStructurePatterns().keySet()) {
@@ -68,7 +68,7 @@ public class GTMultiblockTextUtil {
                         .adapter(GTByteBufAdapters.PATTERN_ERRORS)
                         .build());
 
-        DynamicLinkedSyncHandler<GenericListSyncHandler<PatternError>> dynamicLinkedSyncHandler = new DynamicLinkedSyncHandler<>(
+        DynamicLinkedSyncHandler<net.minecraft.network.RegistryFriendlyByteBuf, GenericListSyncHandler<net.minecraft.network.RegistryFriendlyByteBuf, PatternError>> dynamicLinkedSyncHandler = new DynamicLinkedSyncHandler<>(
                 patternErrors)
                 .widgetProvider((widgetSyncManager, listSyncHandler) -> {
                     Flow unformed = Flow.col().coverChildrenHeight()
@@ -422,9 +422,9 @@ public class GTMultiblockTextUtil {
                 () -> new BooleanSyncValue(() -> rlMachine.getRecipeLogic().getLastRecipe() != null));
         BooleanSyncValue isWaiting = syncManager.getOrCreateSyncHandler("isWaiting", BooleanSyncValue.class,
                 () -> new BooleanSyncValue(() -> rlMachine.getRecipeLogic().isWaiting()));
-        GenericSyncValue<Component> bestFailureReason = (GenericSyncValue<Component>) syncManager
+        GenericSyncValue<net.minecraft.network.RegistryFriendlyByteBuf, Component> bestFailureReason = (GenericSyncValue<net.minecraft.network.RegistryFriendlyByteBuf, Component>) syncManager
                 .getOrCreateSyncHandler("bestFailureReason", GenericSyncValue.class,
-                        () -> GenericSyncValue.builder(Component.class)
+                        () -> GenericSyncValue.<net.minecraft.network.RegistryFriendlyByteBuf, Component>builder(Component.class)
                                 .nullable()
                                 .adapter(GTByteBufAdapters.COMPONENT)
                                 .getter(() -> rlMachine.getRecipeLogic().getBestFailureReason())
@@ -469,10 +469,10 @@ public class GTMultiblockTextUtil {
     @SuppressWarnings("unchecked")
     public static DynamicWidget<?> addOutputLines(WorkableMultiblockMachine rlmachine,
                                                   PanelSyncManager syncManager) {
-        GenericSyncValue<GTRecipe> recipeSyncValue = (GenericSyncValue<GTRecipe>) syncManager.getOrCreateSyncHandler(
+        GenericSyncValue<net.minecraft.network.RegistryFriendlyByteBuf, GTRecipe> recipeSyncValue = (GenericSyncValue<net.minecraft.network.RegistryFriendlyByteBuf, GTRecipe>) syncManager.getOrCreateSyncHandler(
                 "GTRecipe",
                 GenericSyncValue.class,
-                () -> GenericSyncValue.builder(GTRecipe.class)
+                () -> GenericSyncValue.<net.minecraft.network.RegistryFriendlyByteBuf, GTRecipe>builder(GTRecipe.class)
                         .getter(() -> rlmachine.getRecipeLogic().getLastUnrolledRecipe())
                         .setter((newRecipe) -> {})
                         .adapter(GTByteBufAdapters.GTRECIPE)
@@ -483,7 +483,7 @@ public class GTMultiblockTextUtil {
                 BooleanSyncValue.class,
                 () -> new BooleanSyncValue(() -> rlmachine.getRecipeLogic().getLastRecipe() != null));
 
-        DynamicLinkedSyncHandler<GenericSyncValue<GTRecipe>> dynamicLinkedSyncHandler = new DynamicLinkedSyncHandler<>(
+        DynamicLinkedSyncHandler<net.minecraft.network.RegistryFriendlyByteBuf, GenericSyncValue<net.minecraft.network.RegistryFriendlyByteBuf, GTRecipe>> dynamicLinkedSyncHandler = new DynamicLinkedSyncHandler<>(
                 recipeSyncValue)
                 .widgetProvider((syncManager1, recipeSyncHandler) -> {
                     var list = Flow.column()
@@ -627,10 +627,10 @@ public class GTMultiblockTextUtil {
                             .childPadding(2)
                             .child(new FluidDrawable(stack).asWidget()
                                     .size(16)
-                                    .tooltip(r -> r.add(stack.getDisplayName())))
+                                    .tooltip(r -> r.add(stack.getHoverName())))
                             .child(
                                     Text.lang(
-                                            key, stack.getDisplayName(), displaycount,
+                                            key, stack.getHoverName(), displaycount,
                                             FormattingUtil.formatNumber2Places(maxDurationSec / amountD))
                                             .asWidget()));
         } else {
@@ -641,9 +641,9 @@ public class GTMultiblockTextUtil {
                             .childPadding(2)
                             .child(new FluidDrawable(stack).asWidget()
                                     .size(16)
-                                    .tooltip(r -> r.add(stack.getDisplayName())))
+                                    .tooltip(r -> r.add(stack.getHoverName())))
                             .child(
-                                    Text.lang(key, stack.getDisplayName(), displaycount,
+                                    Text.lang(key, stack.getHoverName(), displaycount,
                                             FormattingUtil.formatNumber2Places(amountD / maxDurationSec))
                                             .asWidget()));
         }

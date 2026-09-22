@@ -116,7 +116,7 @@ public class PumpCover extends CoverBehavior implements IIOCover, IMuiCover, ICo
 
     protected @Nullable IFluidHandler getAdjacentFluidHandler() {
         return GTTransferUtils.getAdjacentFluidHandler(coverHolder.getLevel(), coverHolder.getBlockPos(), attachedSide)
-                .resolve()
+                
                 .orElse(null);
     }
 

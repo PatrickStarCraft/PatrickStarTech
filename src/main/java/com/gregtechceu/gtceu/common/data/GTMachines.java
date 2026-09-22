@@ -614,7 +614,7 @@ public class GTMachines {
                 if (stack.hasTag()) {
                     FluidStack f = FluidStack.loadFluidStackFromNBT(stack.getOrCreateTagElement("stored"));
                     int perCycle = stack.getOrCreateTag().getInt("mBPerCycle");
-                    list.add(1, Component.translatable("gtceu.universal.tooltip.fluid_stored", f.getDisplayName(),
+                    list.add(1, Component.translatable("gtceu.universal.tooltip.fluid_stored", f.getHoverName(),
                             FormattingUtil.formatNumbers(perCycle)));
                 }
             })

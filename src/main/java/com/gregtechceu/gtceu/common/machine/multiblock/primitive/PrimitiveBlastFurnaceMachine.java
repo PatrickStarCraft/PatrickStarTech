@@ -89,7 +89,7 @@ public class PrimitiveBlastFurnaceMachine extends PrimitiveWorkableMachine imple
     }
 
     public Set<BlockPos> saveOffsets() {
-        return Collections.singleton(new BlockPos(getFrontFacing().getOpposite().getNormal()));
+        return Collections.singleton(new BlockPos(getFrontFacing().getOpposite().getUnitVec3i()));
     }
 
     @Override
@@ -239,7 +239,7 @@ public class PrimitiveBlastFurnaceMachine extends PrimitiveWorkableMachine imple
     }
 
     private void hurtEntitiesAndBreakSnow() {
-        BlockPos middlePos = getBlockPos().offset(getFrontFacing().getOpposite().getNormal());
+        BlockPos middlePos = getBlockPos().offset(getFrontFacing().getOpposite().getUnitVec3i());
         getLevel().getEntities(null, new AABB(middlePos)).forEach(e -> e.hurt(e.damageSources().lava(), 3.0f));
 
         if (getOffsetTimer() % 10 == 0) {

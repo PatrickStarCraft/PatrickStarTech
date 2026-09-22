@@ -9,7 +9,7 @@ import com.gregtechceu.gtceu.core.mixins.client.GuiGraphicsAccessor;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.util.FastColor;
+import net.minecraft.util.ARGB;
 import net.minecraft.world.item.ItemStack;
 
 import brachy.modularui.drawable.GuiDraw;
@@ -19,17 +19,17 @@ public final class ToolChargeBarRenderer {
 
     private static final int BAR_W = 12;
 
-    private static final int colorShadow = FastColor.ARGB32.color(255, 0, 0, 0);
-    private static final int colorBG = FastColor.ARGB32.color(255, 0x0E, 0x01, 0x16);
+    private static final int colorShadow = ARGB.color(255, 0, 0, 0);
+    private static final int colorBG = ARGB.color(255, 0x0E, 0x01, 0x16);
 
-    private static final int colorBarLeftEnergy = FastColor.ARGB32.color(255, 0, 101, 178);
-    private static final int colorBarRightEnergy = FastColor.ARGB32.color(255, 217, 238, 255);
+    private static final int colorBarLeftEnergy = ARGB.color(255, 0, 101, 178);
+    private static final int colorBarRightEnergy = ARGB.color(255, 217, 238, 255);
 
-    private static final int colorBarLeftDurability = FastColor.ARGB32.color(255, 20, 124, 0);
-    private static final int colorBarRightDurability = FastColor.ARGB32.color(255, 115, 255, 89);
+    private static final int colorBarLeftDurability = ARGB.color(255, 20, 124, 0);
+    private static final int colorBarRightDurability = ARGB.color(255, 115, 255, 89);
 
-    private static final int colorBarLeftDepleted = FastColor.ARGB32.color(255, 122, 0, 0);
-    private static final int colorBarRightDepleted = FastColor.ARGB32.color(255, 255, 27, 27);
+    private static final int colorBarLeftDepleted = ARGB.color(255, 122, 0, 0);
+    private static final int colorBarRightDepleted = ARGB.color(255, 255, 27, 27);
 
     public static void render(GuiGraphicsExtractor graphics, int level, int xPosition, int yPosition, int offset, boolean shadow,
                               int left, int right, boolean doDepletedColor) {

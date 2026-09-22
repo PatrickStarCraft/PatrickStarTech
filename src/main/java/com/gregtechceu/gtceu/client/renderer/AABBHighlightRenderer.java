@@ -6,7 +6,7 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.BlockPos;
-import net.minecraft.util.FastColor;
+import net.minecraft.util.ARGB;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
@@ -34,7 +34,7 @@ public class AABBHighlightRenderer {
 
     public void tick(PoseStack stack, MultiBufferSource.BufferSource multiBuf, Camera camera) {
         if (GameRenderer.getPositionColorShader() == null || !camera.isInitialized()) return;
-        Vec3 offset = camera.getPosition().reverse();
+        Vec3 offset = camera.position().reverse();
 
         RenderSystem.disableDepthTest();
         RenderSystem.enableBlend();
@@ -109,7 +109,7 @@ public class AABBHighlightRenderer {
         }
 
         public AABBHighlightBuilder colorARGB(int alpha, int red, int green, int blue) {
-            this.colorARGB = FastColor.ARGB32.color(alpha, red, green, blue);
+            this.colorARGB = ARGB.color(alpha, red, green, blue);
             return this;
         }
 

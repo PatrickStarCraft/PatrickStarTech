@@ -283,7 +283,7 @@ public class FormattingUtil {
     }
 
     private static boolean isEmptyComponent(Component component) {
-        return component.getContents() == ComponentContents.EMPTY && component.getSiblings().isEmpty();
+        return component.getContents() == net.minecraft.network.chat.contents.PlainTextContents.EMPTY && component.getSiblings().isEmpty();
     }
 
     public static String formatTemperature(int temperature) {

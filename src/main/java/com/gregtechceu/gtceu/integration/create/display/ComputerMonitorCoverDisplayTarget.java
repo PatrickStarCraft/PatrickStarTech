@@ -19,7 +19,7 @@ public class ComputerMonitorCoverDisplayTarget extends DisplayTarget {
     @Override
     public void acceptText(int line, List<MutableComponent> text, DisplayLinkContext context) {
         ICoverable coverable = GTCapabilityHelper.getCoverable(context.level(), context.getTargetPos(), Direction.DOWN);
-        MutableComponent component = MutableComponent.create(ComponentContents.EMPTY);
+        MutableComponent component = MutableComponent.create(net.minecraft.network.chat.contents.PlainTextContents.EMPTY);
         text.forEach(component::append);
         if (coverable != null) {
             for (Direction face : Direction.values()) {

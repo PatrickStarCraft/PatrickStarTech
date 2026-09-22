@@ -50,8 +50,7 @@ public class CoverUIFactory extends AbstractUIFactory<SidedPosGuiData> {
         if (be == null) {
             throw new IllegalStateException("Could not get gui for null BlockEntity!");
         }
-        ICoverable coverHolder = be.getCapability(GTCapability.CAPABILITY_COVERABLE, data.getSide())
-                .resolve().orElse(null);
+        ICoverable coverHolder = com.gregtechceu.gtceu.api.capability.GTCapabilityHelper.getBlockEntityCapability(be, GTCapability.CAPABILITY_COVERABLE, data.getSide());
         if (coverHolder == null) {
             throw new IllegalStateException("Could not get CoverHolder for found BlockEntity!");
         }

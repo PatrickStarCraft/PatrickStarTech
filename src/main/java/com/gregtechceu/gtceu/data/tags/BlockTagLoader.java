@@ -18,17 +18,17 @@ public class BlockTagLoader {
 
     public static void init(RegistrateTagsProvider.IntrinsicImpl<Block> provider) {
         provider.addTag(CustomTags.CONCRETE_BLOCK)
-                .add(Blocks.WHITE_CONCRETE, Blocks.ORANGE_CONCRETE, Blocks.MAGENTA_CONCRETE, Blocks.LIGHT_BLUE_CONCRETE,
-                        Blocks.YELLOW_CONCRETE, Blocks.LIME_CONCRETE, Blocks.PINK_CONCRETE, Blocks.GRAY_CONCRETE,
-                        Blocks.LIGHT_GRAY_CONCRETE, Blocks.CYAN_CONCRETE, Blocks.PURPLE_CONCRETE, Blocks.BLUE_CONCRETE,
-                        Blocks.BROWN_CONCRETE, Blocks.GREEN_CONCRETE, Blocks.RED_CONCRETE, Blocks.BLACK_CONCRETE);
+                .add(Blocks.CONCRETE.white(), Blocks.CONCRETE.orange(), Blocks.CONCRETE.magenta(), Blocks.CONCRETE.lightBlue(),
+                        Blocks.CONCRETE.yellow(), Blocks.CONCRETE.lime(), Blocks.CONCRETE.pink(), Blocks.CONCRETE.gray(),
+                        Blocks.CONCRETE.lightGray(), Blocks.CONCRETE.cyan(), Blocks.CONCRETE.purple(), Blocks.CONCRETE.blue(),
+                        Blocks.CONCRETE.brown(), Blocks.CONCRETE.green(), Blocks.CONCRETE.red(), Blocks.CONCRETE.black());
         provider.addTag(CustomTags.CONCRETE_POWDER_BLOCK)
-                .add(Blocks.WHITE_CONCRETE_POWDER, Blocks.ORANGE_CONCRETE_POWDER, Blocks.MAGENTA_CONCRETE_POWDER,
-                        Blocks.LIGHT_BLUE_CONCRETE_POWDER, Blocks.YELLOW_CONCRETE_POWDER, Blocks.LIME_CONCRETE_POWDER,
-                        Blocks.PINK_CONCRETE_POWDER, Blocks.GRAY_CONCRETE_POWDER, Blocks.LIGHT_GRAY_CONCRETE_POWDER,
-                        Blocks.CYAN_CONCRETE_POWDER, Blocks.PURPLE_CONCRETE_POWDER, Blocks.BLUE_CONCRETE_POWDER,
-                        Blocks.BROWN_CONCRETE_POWDER, Blocks.GREEN_CONCRETE_POWDER, Blocks.RED_CONCRETE_POWDER,
-                        Blocks.BLACK_CONCRETE_POWDER);
+                .add(Blocks.CONCRETE_POWDER.white(), Blocks.CONCRETE_POWDER.orange(), Blocks.CONCRETE_POWDER.magenta(),
+                        Blocks.CONCRETE_POWDER.lightBlue(), Blocks.CONCRETE_POWDER.yellow(), Blocks.CONCRETE_POWDER.lime(),
+                        Blocks.CONCRETE_POWDER.pink(), Blocks.CONCRETE_POWDER.gray(), Blocks.CONCRETE_POWDER.lightGray(),
+                        Blocks.CONCRETE_POWDER.cyan(), Blocks.CONCRETE_POWDER.purple(), Blocks.CONCRETE_POWDER.blue(),
+                        Blocks.CONCRETE_POWDER.brown(), Blocks.CONCRETE_POWDER.green(), Blocks.CONCRETE_POWDER.red(),
+                        Blocks.CONCRETE_POWDER.black());
 
         var speedConcretes = provider.addTag(CustomTags.VERY_FAST_WALKABLE_BLOCKS);
         speedConcretes.add(GTBlocks.LIGHT_CONCRETE.get(), GTBlocks.DARK_CONCRETE.get());
@@ -85,7 +85,7 @@ public class BlockTagLoader {
                 .addTag(BlockTags.LEAVES)
                 .addTag(BlockTags.WOOL)
                 .add(Blocks.COBWEB, Blocks.DEAD_BUSH, Blocks.FERN, Blocks.GLOW_LICHEN, Blocks.HANGING_ROOTS,
-                        Blocks.LARGE_FERN, Blocks.NETHER_SPROUTS, Blocks.SEAGRASS, Blocks.GRASS, Blocks.SMALL_DRIPLEAF,
+                        Blocks.LARGE_FERN, Blocks.NETHER_SPROUTS, Blocks.SEAGRASS, Blocks.SHORT_GRASS, Blocks.SMALL_DRIPLEAF,
                         Blocks.TALL_GRASS, Blocks.TALL_SEAGRASS, Blocks.TRIPWIRE, Blocks.TWISTING_VINES, Blocks.VINE,
                         Blocks.WEEPING_VINES);
 
@@ -101,7 +101,7 @@ public class BlockTagLoader {
                 .addTag(BlockTags.DIRT) // any dirt blocks
                 .remove(Blocks.MOSS_BLOCK, Blocks.MUD, Blocks.MUDDY_MANGROVE_ROOTS) // except moss and mud
                 .add(Blocks.DIRT_PATH) // path blocks
-                .addTag(Tags.Blocks.SAND).addTag(BlockTags.SAND) // any sand blocks
+                .addTag(Tags.Blocks.SANDS).addTag(BlockTags.SAND) // any sand blocks
                 .addTag(BlockTags.TERRACOTTA); // any terracotta
 
         provider.addTag(CustomTags.CLEANROOM_DOORS).add(Blocks.IRON_DOOR).addTag(BlockTags.WOODEN_DOORS);

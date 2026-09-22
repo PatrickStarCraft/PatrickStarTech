@@ -326,8 +326,8 @@ public class GTMath {
     }
 
     public static Vec3 getCenter(BlockPos a, BlockPos b) {
-        Vec3 ac = a.getCenter();
-        Vec3 bc = b.getCenter();
+        Vec3 ac = net.minecraft.world.phys.Vec3.atCenterOf(a);
+        Vec3 bc = net.minecraft.world.phys.Vec3.atCenterOf(b);
         return ac.add(bc).scale(0.5F);
     }
 }

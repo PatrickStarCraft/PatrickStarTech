@@ -56,10 +56,10 @@ public class QuarkTechSuite extends ArmorLogicSuite implements IStepAssist {
         super(energyPerUse, capacity, tier, slot);
         potionRemovalCost.put(MobEffects.POISON, 10000);
         potionRemovalCost.put(MobEffects.WITHER, 25000);
-        potionRemovalCost.put(MobEffects.CONFUSION, 8000);
-        potionRemovalCost.put(MobEffects.DIG_SLOWDOWN, 12500);
+        potionRemovalCost.put(MobEffects.NAUSEA, 8000);
+        potionRemovalCost.put(MobEffects.MINING_FATIGUE, 12500);
         // potionRemovalCost.put(MobEffects.BAD_OMEN, 30000);
-        potionRemovalCost.put(MobEffects.MOVEMENT_SLOWDOWN, 9000);
+        potionRemovalCost.put(MobEffects.SLOWNESS, 9000);
         potionRemovalCost.put(MobEffects.UNLUCK, 5000);
         if (GTCEu.isClientSide() && this.shouldDrawHUD()) {
             HUD = new ArmorUtils.ModularHUD();

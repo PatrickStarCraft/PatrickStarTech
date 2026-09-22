@@ -7,7 +7,7 @@ import com.gregtechceu.gtceu.common.machine.multiblock.electric.monitor.MonitorG
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -81,7 +81,7 @@ public class MonitorTextRenderer implements IMonitorRenderer {
                         buffer,
                         Font.DisplayMode.NORMAL,
                         0,
-                        LightTexture.FULL_BRIGHT);
+                        LightCoordsUtil.FULL_BRIGHT);
                 y += Minecraft.getInstance().font.lineHeight * scale;
                 didAnything = true;
             }

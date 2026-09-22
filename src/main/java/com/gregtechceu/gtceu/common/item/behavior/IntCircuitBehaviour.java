@@ -42,27 +42,17 @@ public class IntCircuitBehaviour implements IAddInformation, IItemUIHolder {
             GTCEu.LOGGER.error("Given circuit configuration %d is out of range!".formatted(configuration));
             configuration = 0;
         }
-        var tagCompound = itemStack.getOrCreateTag();
-        tagCompound.putInt("Configuration", configuration);
+        int value = configuration;
+        com.gregtechceu.gtceu.api.item.data.ItemStackData.update(itemStack, tag -> tag.putInt("Configuration", value));
     }
 
     public static int getCircuitConfiguration(ItemStack itemStack) {
         if (!isIntegratedCircuit(itemStack)) return 0;
-        var tagCompound = itemStack.getTag();
-        if (tagCompound != null) {
-            return tagCompound.getInt("Configuration");
-        }
-        return 0;
+        return com.gregtechceu.gtceu.api.item.data.ItemStackData.read(itemStack).getIntOr("Configuration", 0);
     }
 
     public static boolean isIntegratedCircuit(ItemStack itemStack) {
-        boolean isCircuit = GTItems.PROGRAMMED_CIRCUIT.isIn(itemStack);
-        if (isCircuit && !itemStack.hasTag()) {
-            var compound = new CompoundTag();
-            compound.putInt("Configuration", 0);
-            itemStack.setTag(compound);
-        }
-        return isCircuit;
+        return GTItems.PROGRAMMED_CIRCUIT.isIn(itemStack);
     }
 
     @Override

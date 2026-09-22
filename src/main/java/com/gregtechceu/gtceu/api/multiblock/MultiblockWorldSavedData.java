@@ -6,18 +6,18 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.saveddata.SavedData;
+import com.gregtechceu.gtceu.api.sync_system.CompoundTagSavedData;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
 import java.util.*;
 import java.util.concurrent.*;
 
-public class MultiblockWorldSavedData extends SavedData {
+public class MultiblockWorldSavedData extends CompoundTagSavedData {
 
     public static MultiblockWorldSavedData getOrCreate(ServerLevel serverLevel) {
         return serverLevel.getDataStorage()
-                .computeIfAbsent(MultiblockWorldSavedData::new, MultiblockWorldSavedData::new, "gtceu_multiblock");
+                .computeIfAbsent(com.gregtechceu.gtceu.api.sync_system.CompoundTagSavedData.type(MultiblockWorldSavedData::new, MultiblockWorldSavedData::new, "gtceu_multiblock"));
     }
 
     /**

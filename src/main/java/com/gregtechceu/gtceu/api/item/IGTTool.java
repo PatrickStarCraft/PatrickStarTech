@@ -482,9 +482,9 @@ public interface IGTTool extends IUIHolder<PlayerInventoryGuiData<?>>, ItemLike,
         Multimap<Attribute, AttributeModifier> multimap = HashMultimap.create();
         if (equipmentSlot == EquipmentSlot.MAINHAND) {
             multimap.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_UUID, "Weapon modifier",
-                    getTotalAttackDamage(stack), AttributeModifier.Operation.ADDITION));
+                    getTotalAttackDamage(stack), AttributeModifier.Operation.ADD_VALUE));
             multimap.put(Attributes.ATTACK_SPEED, new AttributeModifier(BASE_ATTACK_SPEED_UUID, "Weapon modifier",
-                    Math.max(-3.9D, getTotalAttackSpeed(stack)), AttributeModifier.Operation.ADDITION));
+                    Math.max(-3.9D, getTotalAttackSpeed(stack)), AttributeModifier.Operation.ADD_VALUE));
         }
         return multimap;
     }

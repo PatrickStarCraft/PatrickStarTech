@@ -4,11 +4,11 @@ import com.gregtechceu.gtceu.integration.map.cache.DimensionCache;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.saveddata.SavedData;
+import com.gregtechceu.gtceu.api.sync_system.CompoundTagSavedData;
 
 import org.jetbrains.annotations.NotNull;
 
-public class ServerCacheSavedData extends SavedData {
+public class ServerCacheSavedData extends CompoundTagSavedData {
 
     public static final String DATA_NAME = "gtceu_ore_vein_cache";
 
@@ -17,8 +17,8 @@ public class ServerCacheSavedData extends SavedData {
 
     public static ServerCacheSavedData init(ServerLevel world, final DimensionCache backingCache) {
         ServerCacheSavedData instance = world.getDataStorage()
-                .computeIfAbsent(tag -> new ServerCacheSavedData(backingCache, tag),
-                        () -> new ServerCacheSavedData(backingCache), DATA_NAME);
+                .computeIfAbsent(com.gregtechceu.gtceu.api.sync_system.CompoundTagSavedData.type(tag -> new ServerCacheSavedData(backingCache, tag),
+                        () -> new ServerCacheSavedData(backingCache), DATA_NAME));
 
         instance.backingCache = backingCache;
         if (backingCache.dirty) {

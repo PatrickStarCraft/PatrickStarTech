@@ -11,7 +11,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.saveddata.SavedData;
+import com.gregtechceu.gtceu.api.sync_system.CompoundTagSavedData;
 
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
@@ -310,7 +310,7 @@ public class LongDistanceNetwork {
     /**
      * Stores all pipe data for a world/dimension
      */
-    public static class WorldData extends SavedData {
+    public static class WorldData extends CompoundTagSavedData {
 
         // A chunk pos to block pos to network map map
         private final Long2ObjectMap<Object2ObjectMap<BlockPos, LongDistanceNetwork>> networks = new Long2ObjectOpenHashMap<>();
@@ -330,14 +330,14 @@ public class LongDistanceNetwork {
 
         public static WorldData get(LevelAccessor level) {
             if (level instanceof ServerLevel serverLevel) {
-                return serverLevel.getDataStorage().computeIfAbsent((tag) -> WorldData.load(tag, serverLevel),
-                        () -> WorldData.create(serverLevel), "gtceu_long_dist_pipe");
+                return serverLevel.getDataStorage().computeIfAbsent(com.gregtechceu.gtceu.api.sync_system.CompoundTagSavedData.type((tag) -> WorldData.load(tag, serverLevel),
+                        () -> WorldData.create(serverLevel), "gtceu_long_dist_pipe"));
             }
             return null;
         }
 
         private static long getChunkPos(BlockPos pos) {
-            return ChunkPos.asLong(pos.getX() >> 4, pos.getZ() >> 4);
+            return ChunkPos.pack(pos.getX() >> 4, pos.getZ() >> 4);
         }
 
         /**

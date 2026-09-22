@@ -307,7 +307,7 @@ public class ColorSprayBehaviour implements IDurabilityBar, IInteractionItem, IA
     }
 
     private boolean tryPaintSpecialBlock(Level world, BlockPos pos, Block block) {
-        if (block.defaultBlockState().is(Tags.Blocks.GLASS)) {
+        if (block.defaultBlockState().is(Tags.Blocks.GLASS_BLOCKS)) {
             if (recolorBlockNoState(GLASS_MAP, this.color, world, pos, Blocks.GLASS)) {
                 return true;
             }
@@ -391,23 +391,23 @@ public class ColorSprayBehaviour implements IDurabilityBar, IInteractionItem, IA
             world.setBlockAndUpdate(pos, Blocks.TERRACOTTA.defaultBlockState());
             return true;
         }
-        if (block.defaultBlockState().is(BlockTags.WOOL) && block != Blocks.WHITE_WOOL) {
-            world.setBlockAndUpdate(pos, Blocks.WHITE_WOOL.defaultBlockState());
+        if (block.defaultBlockState().is(BlockTags.WOOL) && block != Blocks.WOOL.white()) {
+            world.setBlockAndUpdate(pos, Blocks.WOOL.white().defaultBlockState());
             return true;
         }
-        if (block.defaultBlockState().is(BlockTags.WOOL_CARPETS) && block != Blocks.WHITE_CARPET) {
-            world.setBlockAndUpdate(pos, Blocks.WHITE_CARPET.defaultBlockState());
+        if (block.defaultBlockState().is(BlockTags.WOOL_CARPETS) && block != Blocks.CARPET.white()) {
+            world.setBlockAndUpdate(pos, Blocks.CARPET.white().defaultBlockState());
             return true;
         }
-        if (block.defaultBlockState().is(CustomTags.CONCRETE_BLOCK) && block != Blocks.WHITE_CONCRETE) {
-            world.setBlockAndUpdate(pos, Blocks.WHITE_CONCRETE.defaultBlockState());
+        if (block.defaultBlockState().is(CustomTags.CONCRETE_BLOCK) && block != Blocks.CONCRETE.white()) {
+            world.setBlockAndUpdate(pos, Blocks.CONCRETE.white().defaultBlockState());
             return true;
         }
-        if (block.defaultBlockState().is(CustomTags.CONCRETE_POWDER_BLOCK) && block != Blocks.WHITE_CONCRETE_POWDER) {
-            world.setBlockAndUpdate(pos, Blocks.WHITE_CONCRETE_POWDER.defaultBlockState());
+        if (block.defaultBlockState().is(CustomTags.CONCRETE_POWDER_BLOCK) && block != Blocks.CONCRETE_POWDER.white()) {
+            world.setBlockAndUpdate(pos, Blocks.CONCRETE_POWDER.white().defaultBlockState());
             return true;
         }
-        if (block.defaultBlockState().is(BlockTags.CANDLES) && block != Blocks.WHITE_CANDLE) {
+        if (block.defaultBlockState().is(BlockTags.CANDLES) && block != Blocks.DYED_CANDLE.white()) {
             recolorBlockNoState(CANDLE_MAP, DyeColor.WHITE, world, pos);
             return true;
         }

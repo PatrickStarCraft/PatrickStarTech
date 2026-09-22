@@ -125,8 +125,8 @@ public class WorldAcceleratorMachine extends TieredEnergyMachine implements ICon
                         GTValues.RNG.nextInt(randRange),
                         GTValues.RNG.nextInt(randRange),
                         GTValues.RNG.nextInt(randRange));
-                if (randomPos.getY() > getLevel().getMaxBuildHeight() ||
-                        randomPos.getY() < getLevel().getMinBuildHeight() || !getLevel().isLoaded(randomPos) ||
+                if (randomPos.getY() > (getLevel().getMaxY() + 1) ||
+                        randomPos.getY() < getLevel().getMinY() || !getLevel().isLoaded(randomPos) ||
                         randomPos.equals(getBlockPos()))
                     continue;
                 if (getLevel().getBlockState(randomPos).isRandomlyTicking()) {

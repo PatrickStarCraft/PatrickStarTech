@@ -21,7 +21,7 @@ import com.gregtechceu.gtceu.client.model.quad.MutableQuadView;
 import com.gregtechceu.gtceu.client.model.quad.QuadView;
 import com.gregtechceu.gtceu.client.model.quad.transform.QuadTransform;
 
-import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.core.Direction;
 
 /**
@@ -148,16 +148,16 @@ public class QuadReInterpolator implements QuadTransform {
         }
 
         // Interpolate both lightmap components separately
-        int p1l = LightTexture.block(p1);
-        int p2l = LightTexture.block(p2);
-        int p3l = LightTexture.block(p3);
-        int p4l = LightTexture.block(p4);
+        int p1l = LightCoordsUtil.block(p1);
+        int p2l = LightCoordsUtil.block(p2);
+        int p3l = LightCoordsUtil.block(p3);
+        int p4l = LightCoordsUtil.block(p4);
         int block = (int) interpolationHelper.interpolate(p1l, p2l, p3l, p4l);
 
-        p1l = LightTexture.sky(p1);
-        p2l = LightTexture.sky(p2);
-        p3l = LightTexture.sky(p3);
-        p4l = LightTexture.sky(p4);
+        p1l = LightCoordsUtil.sky(p1);
+        p2l = LightCoordsUtil.sky(p2);
+        p3l = LightCoordsUtil.sky(p3);
+        p4l = LightCoordsUtil.sky(p4);
         int sky = (int) interpolationHelper.interpolate(p1l, p2l, p3l, p4l);
 
         quad.lightmap(vertexIndex, block, sky);

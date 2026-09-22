@@ -241,7 +241,7 @@ public abstract class GTRegistry<K, V> implements Iterable<V> {
 
         @Override
         public V loadFromNBT(Tag tag) {
-            return get(Identifier.parse(tag.getAsString()));
+            return get(Identifier.parse(tag.asString().orElseThrow()));
         }
 
         @Override

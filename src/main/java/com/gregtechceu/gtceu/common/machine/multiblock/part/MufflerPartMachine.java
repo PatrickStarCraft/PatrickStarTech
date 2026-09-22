@@ -154,7 +154,7 @@ public class MufflerPartMachine extends TieredPartMachine implements IMuiMachine
             return;
         }
 
-        var center = pos.getCenter();
+        var center = net.minecraft.world.phys.Vec3.atCenterOf(pos);
         var offset = .75f;
         var xPos = (float) (center.x + facing.getStepX() * offset + (GTValues.RNG.nextFloat() - .5f) * .35f);
         var yPos = (float) (center.y + facing.getStepY() * offset + (GTValues.RNG.nextFloat() - .5f) * .35f);

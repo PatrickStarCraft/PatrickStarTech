@@ -261,14 +261,14 @@ public abstract class AbstractEnderLinkCover<T extends VirtualEntry> extends Cov
         syncManager.syncValue("io", ioSync);
         syncManager.syncValue("color", colorSyncer);
 
-        var currentEntry = GenericSyncValue.builder(VirtualEntry.class)
+        var currentEntry = GenericSyncValue.<net.minecraft.network.FriendlyByteBuf, VirtualEntry>builder(VirtualEntry.class)
                 .getter(this::getEntry)
                 .adapter(new VirtualEntryAdapter())
                 .allowC2S()
                 .build();
         syncManager.syncValue("currentEntry", currentEntry);
 
-        DynamicLinkedSyncHandler<GenericSyncValue<VirtualEntry>> dynamicLinkedSyncHandler = new DynamicLinkedSyncHandler<>(
+        DynamicLinkedSyncHandler<net.minecraft.network.FriendlyByteBuf, GenericSyncValue<net.minecraft.network.FriendlyByteBuf, VirtualEntry>> dynamicLinkedSyncHandler = new DynamicLinkedSyncHandler<>(
                 currentEntry)
                 .widgetProvider((manager, entriesListSyncer) -> createVirtualEntryWidget(manager,
                         entriesListSyncer.getValue(), 18, 18, 0));
@@ -370,13 +370,13 @@ public abstract class AbstractEnderLinkCover<T extends VirtualEntry> extends Cov
                         .widthRelOffset(1f, -20)
                         .value(searchSync)));
 
-        var entries = new GenericListSyncHandler.Builder<VirtualEntry>()
+        var entries = new GenericListSyncHandler.Builder<net.minecraft.network.FriendlyByteBuf, VirtualEntry>()
                 .getter(() -> this.getVirtualEntries(entry -> entry.getDescription().contains(searchString.get())))
                 .adapter(new VirtualEntryAdapter())
                 .build();
         syncManager.syncValue("entries", entries);
 
-        DynamicLinkedSyncHandler<GenericListSyncHandler<VirtualEntry>> dynamicLinkedSyncHandler = new DynamicLinkedSyncHandler<>(
+        DynamicLinkedSyncHandler<net.minecraft.network.FriendlyByteBuf, GenericListSyncHandler<net.minecraft.network.FriendlyByteBuf, VirtualEntry>> dynamicLinkedSyncHandler = new DynamicLinkedSyncHandler<>(
                 entries)
                 .widgetProvider((manager, entriesListSyncer) -> {
                     if (entriesListSyncer == null || entriesListSyncer.getValue() == null) return new EmptyWidget();

@@ -232,7 +232,7 @@ public class RecipeOutputProvider extends MachineTraitProvider<RecipeLogic, Comp
     }
 
     private Component getFluidName(FluidStack stack) {
-        return ComponentUtils.wrapInSquareBrackets(stack.getDisplayName()).withStyle(ChatFormatting.WHITE);
+        return ComponentUtils.wrapInSquareBrackets(stack.getHoverName()).withStyle(ChatFormatting.WHITE);
     }
 
     private JadeFluidObject getFluid(FluidStack stack) {

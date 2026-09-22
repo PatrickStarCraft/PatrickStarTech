@@ -15,7 +15,7 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.XoroshiroRandomSource;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraft.world.level.saveddata.SavedData;
+import com.gregtechceu.gtceu.api.sync_system.CompoundTagSavedData;
 
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
@@ -27,7 +27,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 @NullMarked
-public class BedrockFluidVeinSavedData extends SavedData {
+public class BedrockFluidVeinSavedData extends CompoundTagSavedData {
 
     public static final int VEIN_CHUNK_SIZE = 8; // veins are 8x8 chunk squares
     public static final int MAXIMUM_VEIN_OPERATIONS = 100_000;
@@ -39,8 +39,8 @@ public class BedrockFluidVeinSavedData extends SavedData {
     private final ServerLevel serverLevel;
 
     public static BedrockFluidVeinSavedData getOrCreate(ServerLevel serverLevel) {
-        return serverLevel.getDataStorage().computeIfAbsent(tag -> new BedrockFluidVeinSavedData(serverLevel, tag),
-                () -> new BedrockFluidVeinSavedData(serverLevel), "gtceu_bedrock_fluid");
+        return serverLevel.getDataStorage().computeIfAbsent(com.gregtechceu.gtceu.api.sync_system.CompoundTagSavedData.type(tag -> new BedrockFluidVeinSavedData(serverLevel, tag),
+                () -> new BedrockFluidVeinSavedData(serverLevel), "gtceu_bedrock_fluid"));
     }
 
     public BedrockFluidVeinSavedData(ServerLevel serverLevel) {
@@ -62,7 +62,7 @@ public class BedrockFluidVeinSavedData extends SavedData {
         var oilList = new ListTag();
         for (var entry : veinFluids.entrySet()) {
             var tag = new CompoundTag();
-            tag.putLong("p", entry.getKey().toLong());
+            tag.putLong("p", entry.getKey().pack());
             tag.put("d", entry.getValue().writeToNBT());
             oilList.add(tag);
         }
@@ -86,7 +86,7 @@ public class BedrockFluidVeinSavedData extends SavedData {
         if (!veinFluids.containsKey(pos)) {
             BedrockFluidDefinition definition = null;
             int query = new XoroshiroRandomSource(
-                    serverLevel.getSeed() ^ ChunkPos.asLong(getVeinCoord(chunkX), getVeinCoord(chunkZ)))
+                    serverLevel.getSeed() ^ ChunkPos.pack(getVeinCoord(chunkX), getVeinCoord(chunkZ)))
                     .nextInt();
             var biome = serverLevel.getBiome(new BlockPos(chunkX << 4, 64, chunkZ << 4));
             int totalWeight = getTotalWeight(biome);
@@ -107,7 +107,7 @@ public class BedrockFluidVeinSavedData extends SavedData {
                 }
             }
 
-            var random = new XoroshiroRandomSource(serverLevel.getSeed() ^ ChunkPos.asLong(chunkX, chunkZ));
+            var random = new XoroshiroRandomSource(serverLevel.getSeed() ^ ChunkPos.pack(chunkX, chunkZ));
 
             int maximumYield = 0;
             if (definition != null) {

@@ -57,7 +57,7 @@ public class Symptom {
 
                 if (stage != 0) {
                     instance.addPermanentModifier(new AttributeModifier(SYMPTOM_HEALTH_DEBUFF_UUID, symptom.name,
-                            -stage, AttributeModifier.Operation.ADDITION));
+                            -stage, AttributeModifier.Operation.ADD_VALUE));
                 }
                 // reset the health data value so the max health change is applied immediately
                 if (player.getHealth() > player.getMaxHealth()) {
@@ -86,7 +86,7 @@ public class Symptom {
 
     public static final Symptom BLINDNESS = Symptom.ofEffect(defaultKey("blindness"), 10, 0.0f, 1.0f, MobEffects.BLINDNESS);
     public static final Symptom DARKNESS = Symptom.ofEffect(defaultKey("darkness"), 10, 0.0f, 1.0f, MobEffects.DARKNESS);
-    public static final Symptom NAUSEA = Symptom.ofEffect(defaultKey("nausea"), 1, 0.95f, 1.0f, MobEffects.CONFUSION);
+    public static final Symptom NAUSEA = Symptom.ofEffect(defaultKey("nausea"), 1, 0.95f, 1.0f, MobEffects.NAUSEA);
     public static final Symptom WITHER = Symptom.ofEffect(defaultKey("wither"), 1, 1.0f, 1.0f, MobEffects.WITHER);
     public static final Symptom WEAK_POISONING = Symptom.ofEffect(defaultKey("weak_poisoning"), 10, 0.0f, 1.0f, GTMobEffects.WEAK_POISON);
     public static final Symptom POISONING = Symptom.ofEffect(defaultKey("poisoning"), 10, 0.0f, 1.0f, MobEffects.POISON);
@@ -161,7 +161,7 @@ public class Symptom {
 
                     if (stage != 0) {
                         instance.addPermanentModifier(new AttributeModifier(uuid, name,
-                                -stage * multiplier, AttributeModifier.Operation.MULTIPLY_BASE));
+                                -stage * multiplier, AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
                     }
                 });
     }

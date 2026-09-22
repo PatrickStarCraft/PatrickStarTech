@@ -2,11 +2,11 @@ package com.gregtechceu.gtceu.common.capability;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.saveddata.SavedData;
+import com.gregtechceu.gtceu.api.sync_system.CompoundTagSavedData;
 
 import java.util.UUID;
 
-public class WorldIDSaveData extends SavedData {
+public class WorldIDSaveData extends CompoundTagSavedData {
 
     private static WorldIDSaveData instance;
     private static final String DATA_NAME = "gtceu_world_id";
@@ -31,7 +31,7 @@ public class WorldIDSaveData extends SavedData {
 
     public static void init(ServerLevel world) {
         instance = world.getDataStorage()
-                .computeIfAbsent(WorldIDSaveData::new, () -> new WorldIDSaveData(world), DATA_NAME);
+                .computeIfAbsent(com.gregtechceu.gtceu.api.sync_system.CompoundTagSavedData.type(WorldIDSaveData::new, () -> new WorldIDSaveData(world), DATA_NAME));
     }
 
     public static String getWorldID() {

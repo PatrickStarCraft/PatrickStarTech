@@ -55,7 +55,7 @@ public class CentralMonitorUIFactory implements PanelFactory {
                                            MetaMachine metaMachine) {
         if (!(metaMachine instanceof CentralMonitorMachine machine)) return new ModularPanel<>("main");
         // avoid .allowC2S() here since that will allow unchecked item stack modifying from client-side
-        GenericListSyncHandler<MonitorGroup> groupSync = new GenericListSyncHandler<>(machine::getMonitorGroups,
+        GenericListSyncHandler<net.minecraft.network.RegistryFriendlyByteBuf, MonitorGroup> groupSync = new GenericListSyncHandler<>(machine::getMonitorGroups,
                 machine::setMonitorGroups, MONITOR_GROUPS, MONITOR_GROUPS,
                 MONITOR_GROUPS, null);
         syncManager.syncValue("monitor_groups_sync", groupSync);
@@ -121,7 +121,7 @@ public class CentralMonitorUIFactory implements PanelFactory {
                                 return true;
                             }));
         };
-        DynamicLinkedSyncHandler<GenericListSyncHandler<MonitorGroup>> listHandler = new DynamicLinkedSyncHandler<>(
+        DynamicLinkedSyncHandler<net.minecraft.network.RegistryFriendlyByteBuf, GenericListSyncHandler<net.minecraft.network.RegistryFriendlyByteBuf, MonitorGroup>> listHandler = new DynamicLinkedSyncHandler<>(
                 groupSync)
                 .widgetProvider((psm, list) -> new ListWidget<>()
                         .children(list.getValue().stream()
@@ -183,7 +183,7 @@ public class CentralMonitorUIFactory implements PanelFactory {
     }
 
     private ModularPanel<?> createGroupEditorPanel(PanelSyncManager syncManager,
-                                                   GenericListSyncHandler<MonitorGroup> groupSync,
+                                                   GenericListSyncHandler<net.minecraft.network.RegistryFriendlyByteBuf, MonitorGroup> groupSync,
                                                    int groupIndex,
                                                    CentralMonitorMachine machine,
                                                    IPanelHandler moduleEditor) {

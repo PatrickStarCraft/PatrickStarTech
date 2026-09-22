@@ -863,7 +863,7 @@ public class GTPlaceholders {
                     };
                     CommandSourceStack source = new CommandSourceStack(
                             customSource,
-                            ctx.pos() == null ? Vec3.ZERO : ctx.pos().getCenter(),
+                            ctx.pos() == null ? Vec3.ZERO : net.minecraft.world.phys.Vec3.atCenterOf(ctx.pos()),
                             Vec2.ZERO,
                             serverLevel,
                             perm,

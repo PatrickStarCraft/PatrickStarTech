@@ -11,7 +11,7 @@ import net.minecraft.nbt.*;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.level.saveddata.SavedData;
+import com.gregtechceu.gtceu.api.sync_system.CompoundTagSavedData;
 import net.neoforged.neoforge.common.NeoForge;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -25,7 +25,7 @@ import java.util.*;
 
 import static com.gregtechceu.gtceu.common.commands.GTCommands.ERROR_NO_SUCH_CAPE;
 
-public class CapeRegistry extends SavedData {
+public class CapeRegistry extends CompoundTagSavedData {
 
     /**
      * pseudo-registry lookup map of ID->texture.
@@ -55,7 +55,7 @@ public class CapeRegistry extends SavedData {
     }
 
     public static void registerToServer(ServerLevel level) {
-        level.getDataStorage().computeIfAbsent(CapeRegistry.INSTANCE::load, CapeRegistry.INSTANCE::init, "gtceu_capes");
+        level.getDataStorage().computeIfAbsent(com.gregtechceu.gtceu.api.sync_system.CompoundTagSavedData.type(CapeRegistry.INSTANCE::load, CapeRegistry.INSTANCE::init, "gtceu_capes"));
     }
 
     private CapeRegistry init() {
@@ -73,7 +73,7 @@ public class CapeRegistry extends SavedData {
         ListTag unlockedCapesTag = new ListTag();
         for (Map.Entry<UUID, Set<Identifier>> entry : UNLOCKED_CAPES.entrySet()) {
             CompoundTag entryTag = new CompoundTag();
-            entryTag.putUUID("owner", entry.getKey());
+            entryTag.store("owner", net.minecraft.core.UUIDUtil.CODEC, entry.getKey());
 
             ListTag capesTag = new ListTag();
             for (Identifier cape : entry.getValue()) {
@@ -94,7 +94,7 @@ public class CapeRegistry extends SavedData {
             CompoundTag entryTag = new CompoundTag();
 
             entryTag.putString("cape", capeLocation);
-            entryTag.putUUID("owner", entry.getKey());
+            entryTag.store("owner", net.minecraft.core.UUIDUtil.CODEC, entry.getKey());
 
             currentCapesTag.add(entryTag);
         }
@@ -109,7 +109,7 @@ public class CapeRegistry extends SavedData {
         ListTag unlockedCapesTag = com.gregtechceu.gtceu.utils.data.TypedTagList.read(tag, "unlocked_capes", Tag.TAG_COMPOUND);
         for (int i = 0; i < unlockedCapesTag.size(); i++) {
             CompoundTag entryTag = unlockedCapesTag.getCompoundOrEmpty(i);
-            UUID uuid = entryTag.getUUID("owner");
+            UUID uuid = entryTag.read("owner", net.minecraft.core.UUIDUtil.CODEC).orElseThrow();
 
             Set<Identifier> capes = UNLOCKED_CAPES.computeIfAbsent(uuid, CapeRegistry::makeSet);
 
@@ -129,7 +129,7 @@ public class CapeRegistry extends SavedData {
             String capeId = entryTag.getStringOr("cape", "");
             if (capeId.isEmpty())
                 continue;
-            UUID uuid = entryTag.getUUID("owner");
+            UUID uuid = entryTag.read("owner", net.minecraft.core.UUIDUtil.CODEC).orElseThrow();
             CURRENT_CAPES.put(uuid, Identifier.parse(capeId));
         }
 

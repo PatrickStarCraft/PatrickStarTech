@@ -128,7 +128,7 @@ public class QuadCornerKicker implements QuadTransform {
                 float z = quad.posByIndex(i, 2);
                 if (Mth.equal(x, corner.pX(this.bounds)) && Mth.equal(y, corner.pY(this.bounds)) &&
                         Mth.equal(z, corner.pZ(this.bounds))) {
-                    Vec3i normal = hoz.getNormal();
+                    Vec3i normal = hoz.getUnitVec3i();
                     x -= normal.getX() * this.thickness;
                     y -= normal.getY() * this.thickness;
                     z -= normal.getZ() * this.thickness;

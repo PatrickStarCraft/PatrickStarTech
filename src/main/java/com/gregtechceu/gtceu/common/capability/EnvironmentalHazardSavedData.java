@@ -22,7 +22,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraft.world.level.saveddata.SavedData;
+import com.gregtechceu.gtceu.api.sync_system.CompoundTagSavedData;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -40,7 +40,7 @@ import java.util.stream.Stream;
 /**
  * Full-chunk environmental hazards. e.g. pollution.
  */
-public class EnvironmentalHazardSavedData extends SavedData {
+public class EnvironmentalHazardSavedData extends CompoundTagSavedData {
 
     public static final float MIN_STRENGTH_FOR_SPREAD = 1000;
 
@@ -53,8 +53,8 @@ public class EnvironmentalHazardSavedData extends SavedData {
     private final Map<ChunkPos, HazardZone> hazardZones = new HashMap<>();
 
     public static EnvironmentalHazardSavedData getOrCreate(ServerLevel serverLevel) {
-        return serverLevel.getDataStorage().computeIfAbsent(tag -> new EnvironmentalHazardSavedData(serverLevel, tag),
-                () -> new EnvironmentalHazardSavedData(serverLevel), "gtceu_environmental_hazard_tracker");
+        return serverLevel.getDataStorage().computeIfAbsent(com.gregtechceu.gtceu.api.sync_system.CompoundTagSavedData.type(tag -> new EnvironmentalHazardSavedData(serverLevel, tag),
+                () -> new EnvironmentalHazardSavedData(serverLevel), "gtceu_environmental_hazard_tracker"));
     }
 
     public EnvironmentalHazardSavedData(ServerLevel serverLevel) {
@@ -247,7 +247,7 @@ public class EnvironmentalHazardSavedData extends SavedData {
         for (var entry : hazardZones.entrySet()) {
             CompoundTag zoneTag = new CompoundTag();
 
-            zoneTag.putLong("pos", entry.getKey().toLong());
+            zoneTag.putLong("pos", entry.getKey().pack());
             entry.getValue().serializeNBT(zoneTag);
 
             hazardZonesTag.add(zoneTag);

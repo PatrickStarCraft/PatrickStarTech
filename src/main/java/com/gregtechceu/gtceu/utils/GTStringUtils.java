@@ -124,7 +124,7 @@ public class GTStringUtils {
         if (lines.isEmpty()) return;
         for (Component line : lines) {
             GTUtil.getLast(components).append(line);
-            components.add(MutableComponent.create(ComponentContents.EMPTY));
+            components.add(MutableComponent.create(net.minecraft.network.chat.contents.PlainTextContents.EMPTY));
         }
         components.remove(components.size() - 1);
     }

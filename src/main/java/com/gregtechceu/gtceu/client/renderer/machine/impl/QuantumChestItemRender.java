@@ -11,7 +11,7 @@ import com.gregtechceu.gtceu.utils.FormattingUtil;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.Direction;
@@ -96,7 +96,7 @@ public class QuantumChestItemRender extends DynamicRender<QuantumChestMachine, Q
         poseStack.scale(0.6f, 0.6f, 0.6f);
 
         itemRenderer.renderStatic(itemStack, ItemDisplayContext.FIXED,
-                LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY,
+                LightCoordsUtil.FULL_BRIGHT, OverlayTexture.NO_OVERLAY,
                 poseStack, buffer, Minecraft.getInstance().level,
                 Item.getId(itemStack.getItem()) + itemStack.getDamageValue());
         poseStack.popPose();
@@ -148,7 +148,7 @@ public class QuantumChestItemRender extends DynamicRender<QuantumChestMachine, Q
         Font font = Minecraft.getInstance().font;
         font.drawInBatch(text, textX - font.getSplitter().stringWidth(text) / 2.0f, textY - font.lineHeight / 2.0f,
                 0xffffffff, false,
-                poseStack.last().pose(), buffer, Font.DisplayMode.NORMAL, 0, LightTexture.FULL_BRIGHT);
+                poseStack.last().pose(), buffer, Font.DisplayMode.NORMAL, 0, LightCoordsUtil.FULL_BRIGHT);
         poseStack.popPose();
         RenderSystem.enableDepthTest();
         poseStack.popPose();

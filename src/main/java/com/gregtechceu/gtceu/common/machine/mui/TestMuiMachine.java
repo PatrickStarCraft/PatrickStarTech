@@ -125,7 +125,7 @@ public class TestMuiMachine extends MetaMachine implements IMuiMachine {
         IntSyncValue cycleStateValue = new IntSyncValue(() -> this.cycleState, val -> this.cycleState = val);
         syncManager.getHyperVisor().syncValue("cycle_state", cycleStateValue);
         syncManager.syncValue("display_item", GenericSyncValue.forItem(() -> this.displayItem, null));
-        GenericListSyncHandler<Integer> numberListSyncHandler = GenericListSyncHandler.<Integer>builder()
+        GenericListSyncHandler<net.minecraft.network.FriendlyByteBuf, Integer> numberListSyncHandler = GenericListSyncHandler.<net.minecraft.network.FriendlyByteBuf, Integer>builder()
                 .getter(() -> this.serverInts)
                 .setter(v -> this.serverInts = v)
                 .serializer(FriendlyByteBuf::writeInt)
@@ -153,7 +153,7 @@ public class TestMuiMachine extends MetaMachine implements IMuiMachine {
                     return flow;
                 });
 
-        DynamicLinkedSyncHandler<GenericListSyncHandler<Integer>> dynamicLinkedSyncHandler = new DynamicLinkedSyncHandler<>(
+        DynamicLinkedSyncHandler<net.minecraft.network.FriendlyByteBuf, GenericListSyncHandler<net.minecraft.network.FriendlyByteBuf, Integer>> dynamicLinkedSyncHandler = new DynamicLinkedSyncHandler<>(
                 numberListSyncHandler)
                 .widgetProvider((syncManager1, value1) -> {
                     List<Integer> vals = value1.getValue();

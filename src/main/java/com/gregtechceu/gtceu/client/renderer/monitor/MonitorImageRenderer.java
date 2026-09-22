@@ -6,7 +6,7 @@ import com.gregtechceu.gtceu.common.machine.multiblock.electric.CentralMonitorMa
 import com.gregtechceu.gtceu.common.machine.multiblock.electric.monitor.MonitorGroup;
 import com.gregtechceu.gtceu.utils.GTUtil;
 
-import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
@@ -42,9 +42,9 @@ public class MonitorImageRenderer implements IMonitorRenderer {
         float minX = 0, maxX = size.getX();
         float minY = 0, maxY = size.getY();
 
-        consumer.addVertex(pose, minX, maxY, 0).setColor(0xFFFFFFFF).setUv(0, 1).setLight(LightTexture.FULL_BRIGHT);
-        consumer.addVertex(pose, maxX, maxY, 0).setColor(0xFFFFFFFF).setUv(1, 1).setLight(LightTexture.FULL_BRIGHT);
-        consumer.addVertex(pose, maxX, minY, 0).setColor(0xFFFFFFFF).setUv(1, 0).setLight(LightTexture.FULL_BRIGHT);
-        consumer.addVertex(pose, minX, minY, 0).setColor(0xFFFFFFFF).setUv(0, 0).setLight(LightTexture.FULL_BRIGHT);
+        consumer.addVertex(pose, minX, maxY, 0).setColor(0xFFFFFFFF).setUv(0, 1).setLight(LightCoordsUtil.FULL_BRIGHT);
+        consumer.addVertex(pose, maxX, maxY, 0).setColor(0xFFFFFFFF).setUv(1, 1).setLight(LightCoordsUtil.FULL_BRIGHT);
+        consumer.addVertex(pose, maxX, minY, 0).setColor(0xFFFFFFFF).setUv(1, 0).setLight(LightCoordsUtil.FULL_BRIGHT);
+        consumer.addVertex(pose, minX, minY, 0).setColor(0xFFFFFFFF).setUv(0, 0).setLight(LightCoordsUtil.FULL_BRIGHT);
     }
 }

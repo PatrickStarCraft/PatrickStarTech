@@ -74,7 +74,7 @@ public class GTCommands {
         dispatcher.register(
                 literal("gtceu")
                         .then(literal("dump_data")
-                                .requires(ctx -> ctx.hasPermission(LEVEL_OWNERS))
+                                .requires(ctx -> LEVEL_OWNERS.check(ctx.permissions()))
                                 .then(literal("bedrock_fluid_veins")
                                         .executes(context -> dumpDataRegistry(context,
                                                 GTRegistries.BEDROCK_FLUID_DEFINITIONS,
@@ -91,7 +91,7 @@ public class GTCommands {
                                                 GTOreDefinition.FULL_CODEC,
                                                 GTOreLoader.FOLDER))))
                         .then(literal("place_vein")
-                                .requires(ctx -> ctx.hasPermission(LEVEL_GAMEMASTERS))
+                                .requires(ctx -> LEVEL_GAMEMASTERS.check(ctx.permissions()))
                                 .then(argument("vein", GTRegistryArgument.registry(GTRegistries.ORE_VEINS, Identifier.class))
                                         .executes(context -> {
                                             return GTCommands.placeVein(context, BlockPos.containing(context.getSource().getPosition()));
@@ -102,7 +102,7 @@ public class GTCommands {
                                                 }))))
                         .then(literal("cape")
                                 .then(literal("give")
-                                        .requires(ctx -> ctx.hasPermission(LEVEL_GAMEMASTERS))
+                                        .requires(ctx -> LEVEL_GAMEMASTERS.check(ctx.permissions()))
                                         .then(argument("targets", EntityArgument.players())
                                                 .then(argument("cape", ResourceLocationArgument.id())
                                                         .suggests(NOT_OWNED_CAPES)
@@ -117,7 +117,7 @@ public class GTCommands {
                                                             return giveCapes(ctx.getSource(), players, CapeRegistry.ALL_CAPES.keySet());
                                                         }))))
                                 .then(literal("take")
-                                        .requires(ctx -> ctx.hasPermission(LEVEL_GAMEMASTERS))
+                                        .requires(ctx -> LEVEL_GAMEMASTERS.check(ctx.permissions()))
                                         .then(argument("targets", EntityArgument.players())
                                                 .then(argument("cape", ResourceLocationArgument.id())
                                                         .suggests(OWNED_CAPES)
@@ -133,7 +133,7 @@ public class GTCommands {
                                                         }))))
                                 .then(literal("use")
                                         .then(argument("target", EntityArgument.player())
-                                                .requires(ctx -> ctx.hasPermission(LEVEL_ADMINS))
+                                                .requires(ctx -> LEVEL_ADMINS.check(ctx.permissions()))
                                                 .then(argument("cape", ResourceLocationArgument.id())
                                                         .suggests(OWNED_CAPES)
                                                         .executes(ctx -> {

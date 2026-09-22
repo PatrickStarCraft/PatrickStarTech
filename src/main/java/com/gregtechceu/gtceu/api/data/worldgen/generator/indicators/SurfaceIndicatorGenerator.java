@@ -202,7 +202,7 @@ public class SurfaceIndicatorGenerator extends IndicatorGenerator {
                         pos -> access.getBlockState(pos).isAir() &&
                                 access.getBlockState(pos.below()).isFaceSturdy(level, pos.below(), Direction.UP),
                         pos -> pos.move(Direction.UP, 1),
-                        level.getMaxBuildHeight() - initialPos.getY()).orElse(initialPos),
+                        (level.getMaxY() + 1) - initialPos.getY()).orElse(initialPos),
                 block -> getBlockState(block, Direction.DOWN)),
 
         BELOW(
@@ -211,7 +211,7 @@ public class SurfaceIndicatorGenerator extends IndicatorGenerator {
                         pos -> access.getBlockState(pos).isAir() &&
                                 access.getBlockState(pos.above()).isFaceSturdy(level, pos.above(), Direction.DOWN),
                         pos -> pos.move(Direction.DOWN, 1),
-                        initialPos.getY() - level.getMinBuildHeight()).orElse(initialPos),
+                        initialPos.getY() - level.getMinY()).orElse(initialPos),
                 block -> getBlockState(block, Direction.UP));
 
         public static final Codec<IndicatorPlacement> CODEC = StringRepresentable.fromEnum(IndicatorPlacement::values);

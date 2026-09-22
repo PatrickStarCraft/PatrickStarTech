@@ -62,7 +62,7 @@ public class BloomRenderer {
                             float partialTicks, LevelRenderer levelRenderer, ProfilerFiller profilerFiller) {
         if (!BloomShaderManager.isBloomActive()) return;
 
-        Vec3 camPos = camera.getPosition();
+        Vec3 camPos = camera.position();
 
         profilerFiller.popPush("gtceu:bloom");
         setupBloomShaderUniforms();
@@ -223,7 +223,7 @@ public class BloomRenderer {
             // re-setup in case someone touched-a my spaghetti
             GTRenderTypes.bloom().setupRenderState();
 
-            Vec3 camPos = camera.getPosition();
+            Vec3 camPos = camera.position();
             profilerFiller.push("safe_mode");
 
             ShaderInstance shader = setupBlockShaderUniforms(poseStack, projectionMatrix);

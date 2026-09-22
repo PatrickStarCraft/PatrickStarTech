@@ -86,7 +86,7 @@ public class TankValvePartMachine extends MultiblockPartMachine {
 
     @Nullable
     private IFluidHandler getTargetTank() {
-        return GTTransferUtils.getAdjacentFluidHandler(getLevel(), getBlockPos(), getFrontFacing()).resolve()
+        return GTTransferUtils.getAdjacentFluidHandler(getLevel(), getBlockPos(), getFrontFacing())
                 .orElse(null);
     }
 

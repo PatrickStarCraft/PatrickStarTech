@@ -51,7 +51,7 @@ public class FluidCache {
         for (var dimensions : fluidCache.rowMap().entrySet()) {
             for (var entry : dimensions.getValue().entrySet()) {
                 CompoundTag tag = entry.getValue().toNbt();
-                tag.putLong("pos", entry.getKey().toLong());
+                tag.putLong("pos", entry.getKey().pack());
                 tag.putString("dim", dimensions.getKey().identifier().toString());
                 fluidList.add(tag);
             }

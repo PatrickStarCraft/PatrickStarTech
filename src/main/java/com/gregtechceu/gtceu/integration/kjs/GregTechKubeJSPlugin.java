@@ -506,10 +506,10 @@ public class GregTechKubeJSPlugin extends KubeJSPlugin {
 
         PowerlessJetpack.FUELS.clear();
         // Must run recycling recipes very last
-        RecyclingRecipes.init(builtRecipe -> recipesByName.put(builtRecipe.getId(),
-                GTRecipeSerializer.fromJson(builtRecipe.getId(), builtRecipe.serializeRecipe())));
-        ItemMaterialData.resolveItemMaterialInfos(builtRecipe -> recipesByName.put(builtRecipe.getId(),
-                GTRecipeSerializer.fromJson(builtRecipe.getId(), builtRecipe.serializeRecipe())));
+        RecyclingRecipes.init(builtRecipe -> recipesByName.put(builtRecipe.id(),
+                GTRecipeSerializer.fromJson(builtRecipe.id(), builtRecipe.recipeJson())));
+        ItemMaterialData.resolveItemMaterialInfos(builtRecipe -> recipesByName.put(builtRecipe.id(),
+                GTRecipeSerializer.fromJson(builtRecipe.id(), builtRecipe.recipeJson())));
 
         // clone vanilla recipes for stuff like electric furnaces, etc
         for (RecipeType<?> recipeType : BuiltInRegistries.RECIPE_TYPE) {
@@ -619,8 +619,8 @@ public class GregTechKubeJSPlugin extends KubeJSPlugin {
             builder.removePreviousMaterialInfo();
         }
 
-        builder.save(builtRecipe -> recipesByName.put(builtRecipe.getId(),
-                GTRecipeSerializer.fromJson(builtRecipe.getId(), builtRecipe.serializeRecipe())));
+        builder.save(builtRecipe -> recipesByName.put(builtRecipe.id(),
+                GTRecipeSerializer.fromJson(builtRecipe.id(), builtRecipe.recipeJson())));
     }
 
     private static void handleGTShaped(GTShapedRecipeSchema.ShapedRecipeJS shaped) {

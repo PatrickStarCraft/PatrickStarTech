@@ -39,10 +39,10 @@ public class NanoSaberBehavior extends ToggleEnergyConsumerBehavior implements I
             double attackDamage = baseAttackDamage + (isItemActive(stack) ? additionalAttackDamage : 0.0D);
             modifiers.put(Attributes.ATTACK_SPEED,
                     new AttributeModifier(Item.BASE_ATTACK_SPEED_UUID, "Weapon modifier", -2.0,
-                            AttributeModifier.Operation.ADDITION));
+                            AttributeModifier.Operation.ADD_VALUE));
             modifiers.put(Attributes.ATTACK_DAMAGE,
                     new AttributeModifier(Item.BASE_ATTACK_DAMAGE_UUID, "Weapon Modifier", attackDamage,
-                            AttributeModifier.Operation.ADDITION));
+                            AttributeModifier.Operation.ADD_VALUE));
         }
         return modifiers;
     }

@@ -33,18 +33,10 @@ public abstract class ConsumedBehaviour {
     }
 
     public final int getUsesLeft(ItemStack stack) {
-        var tagCompound = stack.getTag();
-        if (tagCompound == null || !tagCompound.contains("GT.UsesLeft", Tag.TAG_INT))
-            return totalUses;
-        return tagCompound.getInt("GT.UsesLeft");
+        return com.gregtechceu.gtceu.api.item.data.ItemStackData.read(stack).getIntOr("GT.UsesLeft", totalUses);
     }
 
     public static void setUsesLeft(ItemStack itemStack, int usesLeft) {
-        var tagCompound = itemStack.getTag();
-        if (tagCompound == null) {
-            tagCompound = new CompoundTag();
-            itemStack.setTag(tagCompound);
-        }
-        tagCompound.putInt("GT.UsesLeft", usesLeft);
+        com.gregtechceu.gtceu.api.item.data.ItemStackData.update(itemStack, tag -> tag.putInt("GT.UsesLeft", usesLeft));
     }
 }

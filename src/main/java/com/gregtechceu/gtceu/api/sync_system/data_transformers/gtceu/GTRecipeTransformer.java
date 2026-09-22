@@ -53,11 +53,11 @@ public class GTRecipeTransformer implements ValueTransformer<GTRecipe> {
                 result.ocLevel = compoundTag.getIntOr("ocLevel", 0);
             }
         } else if (tag instanceof StringTag stringTag) { // Backwards Compatibility
-            var recipe = recipeManager.byKey(Identifier.parse(stringTag.getAsString())).orElse(null);
+            var recipe = recipeManager.byKey(Identifier.parse(stringTag.asString().orElseThrow())).orElse(null);
             if (recipe instanceof GTRecipe gtRecipe) {
                 result = gtRecipe;
             } else if (recipe instanceof SmeltingRecipe smeltingRecipe) {
-                result = GTRecipeTypes.FURNACE_RECIPES.toGTrecipe(Identifier.parse(stringTag.getAsString()),
+                result = GTRecipeTypes.FURNACE_RECIPES.toGTrecipe(Identifier.parse(stringTag.asString().orElseThrow()),
                         smeltingRecipe);
             }
         } else if (tag instanceof ByteArrayTag byteArray) { // Backwards Compatibility

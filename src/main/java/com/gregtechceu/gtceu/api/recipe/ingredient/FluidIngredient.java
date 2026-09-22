@@ -81,7 +81,7 @@ public class FluidIngredient implements Predicate<FluidStack> {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("amount", this.amount);
         if (this.nbt != null) {
-            jsonObject.addProperty("nbt", this.nbt.getAsString());
+            jsonObject.addProperty("nbt", this.nbt.toString());
         }
         if (this.values.length == 1) {
             jsonObject.add("value", this.values[0].serialize());

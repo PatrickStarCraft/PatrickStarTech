@@ -616,7 +616,7 @@ public class WoodMachineRecipes {
                 if (ConfigHolder.INSTANCE.recipes.hardWoodRecipes) {
                     VanillaRecipeHelper.addShapedRecipe(provider, recipeNameHanging, new ItemStack(entry.hangingSign),
                             "LLL", "C C", "RSR",
-                            'C', Items.CHAIN,
+                            'C', Items.IRON_CHAIN,
                             'R', new MaterialEntry(ring, Iron),
                             'S', new ItemStack(entry.sign),
                             'L', new ItemStack(entry.slab));
@@ -624,7 +624,7 @@ public class WoodMachineRecipes {
                     VanillaRecipeHelper.addShapedRecipe(provider, recipeNameHanging + "_steel",
                             new ItemStack(entry.hangingSign, 2),
                             "LLL", "C C", "RSR",
-                            'C', Items.CHAIN,
+                            'C', Items.IRON_CHAIN,
                             'R', new MaterialEntry(ring, Steel),
                             'S', new ItemStack(entry.sign),
                             'L', new ItemStack(entry.slab));
@@ -632,7 +632,7 @@ public class WoodMachineRecipes {
                     ASSEMBLER_RECIPES.recipeBuilder(name + "_hanging_sign")
                             .inputItems(entry.slab, 3)
                             .inputItems(entry.sign)
-                            .inputItems(Items.CHAIN, 2)
+                            .inputItems(Items.IRON_CHAIN, 2)
                             .outputItems(entry.hangingSign)
                             .circuitMeta(5)
                             .duration(150).EUt(4).save(provider);
@@ -641,13 +641,13 @@ public class WoodMachineRecipes {
                         VanillaRecipeHelper.addShapedRecipe(provider, recipeNameHanging,
                                 new ItemStack(entry.hangingSign, 6),
                                 "C C", "LLL", "LLL",
-                                'C', Items.CHAIN,
+                                'C', Items.IRON_CHAIN,
                                 'L', entry.strippedLog);
                     }
 
                     ASSEMBLER_RECIPES.recipeBuilder(name + "_hanging_sign")
                             .inputItems(entry.strippedLog, 6)
-                            .inputItems(new ItemStack(Items.CHAIN, 2))
+                            .inputItems(new ItemStack(Items.IRON_CHAIN, 2))
                             .outputItems(entry.hangingSign, 6)
                             .circuitMeta(5)
                             .duration(100).EUt(4).save(provider);

@@ -135,7 +135,7 @@ public class DataItemBehavior implements IInteractionItem, IAddInformation, IDat
                     if (addedFluids.add(outputFluids)) {
                         tooltipComponents.add(
                                 Component.translatable("behavior.data_item.data",
-                                        outputFluids.getDisplayName()));
+                                        outputFluids.getHoverName()));
                     }
                 }
             }

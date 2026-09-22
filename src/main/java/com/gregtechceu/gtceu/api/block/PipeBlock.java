@@ -341,7 +341,7 @@ public abstract class PipeBlock<PipeType extends Enum<PipeType> & IPipeType<Node
         }
 
         if (itemStack.getItem() instanceof PipeBlockItem itemPipe) {
-            BlockPos offsetPos = pos.offset(hit.getDirection().getNormal());
+            BlockPos offsetPos = pos.offset(hit.getDirection().getUnitVec3i());
             BlockState stateAtSide = level.getBlockState(offsetPos);
             if (stateAtSide.getBlock() instanceof MaterialBlock matBlock && matBlock.tagPrefix == TagPrefix.frameGt) {
                 if (itemPipe.getBlock().pipeType == pipeType) {

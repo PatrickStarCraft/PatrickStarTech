@@ -16,7 +16,7 @@ import com.gregtechceu.gtceu.common.mui.GTGuiTextures;
 
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.core.BlockPos;
@@ -56,12 +56,12 @@ public class BlockHighlightRenderer {
         if (level != null && player != null) {
             ItemStack held = player.getMainHandItem();
             BlockPos blockPos = target.getBlockPos();
-            Vector3fc blockCenter = blockPos.getCenter().toVector3f();
+            Vector3fc blockCenter = net.minecraft.world.phys.Vec3.atCenterOf(blockPos).toVector3f();
 
             Set<GTToolType> toolType = ToolHelper.getToolTypes(held);
             BlockEntity blockEntity = level.getBlockEntity(blockPos);
 
-            Vec3 cameraPos = camera.getPosition();
+            Vec3 cameraPos = camera.position();
             // draw tool grid highlight
             if ((!toolType.isEmpty()) || (held.isEmpty() && player.isShiftKeyDown())) {
                 IToolGridHighlight gridHighlight = null;
@@ -176,7 +176,7 @@ public class BlockHighlightRenderer {
         Vector3f shiftX = new Vector3f(0.25f, 0, 0);
         Vector3f shiftY = new Vector3f(0, 0.25f, 0);
 
-        Vector3f cubeCenter = blockPos.getCenter().toVector3f();
+        Vector3f cubeCenter = net.minecraft.world.phys.Vec3.atCenterOf(blockPos).toVector3f();
 
         topRight.sub(cubeCenter);
         bottomRight.sub(cubeCenter);
@@ -298,10 +298,10 @@ public class BlockHighlightRenderer {
         float u0 = texture.u0, v0 = texture.v0;
         float u1 = texture.u1, v1 = texture.v1;
         // spotless:off
-        consumer.addVertex(pose, x, y + h, 0).setColor(color).setUv(u0, v0 + v1).setLight(LightTexture.FULL_BRIGHT);
-        consumer.addVertex(pose, x + w, y + h, 0).setColor(color).setUv(u0 + u1, v0 + v1).setLight(LightTexture.FULL_BRIGHT);
-        consumer.addVertex(pose, x + w, y, 0).setColor(color).setUv(u0 + u1, v0).setLight(LightTexture.FULL_BRIGHT);
-        consumer.addVertex(pose, x, y, 0).setColor(color).setUv(u0, v0).setLight(LightTexture.FULL_BRIGHT);
+        consumer.addVertex(pose, x, y + h, 0).setColor(color).setUv(u0, v0 + v1).setLight(LightCoordsUtil.FULL_BRIGHT);
+        consumer.addVertex(pose, x + w, y + h, 0).setColor(color).setUv(u0 + u1, v0 + v1).setLight(LightCoordsUtil.FULL_BRIGHT);
+        consumer.addVertex(pose, x + w, y, 0).setColor(color).setUv(u0 + u1, v0).setLight(LightCoordsUtil.FULL_BRIGHT);
+        consumer.addVertex(pose, x, y, 0).setColor(color).setUv(u0, v0).setLight(LightCoordsUtil.FULL_BRIGHT);
         // spotless:on
     }
 

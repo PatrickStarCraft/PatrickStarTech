@@ -87,7 +87,7 @@ public class DuctPipeBlock extends PipeBlock<DuctPipeType, DuctPipeProperties, L
     public boolean canPipeConnectToBlock(IPipeNode<DuctPipeType, DuctPipeProperties> selfTile, Direction side,
                                          @Nullable BlockEntity tile) {
         return tile != null &&
-                (tile.getCapability(GTCapability.CAPABILITY_HAZARD_CONTAINER, side.getOpposite()).isPresent() ||
+                ((com.gregtechceu.gtceu.api.capability.GTCapabilityHelper.getBlockEntityCapability(tile, GTCapability.CAPABILITY_HAZARD_CONTAINER, side.getOpposite()) != null) ||
                         tile instanceof MetaMachine metaMachine &&
                                 (metaMachine.getTrait(EnvironmentalHazardCleanerTrait.class) != null ||
                                         metaMachine.getTrait(EnvironmentalHazardEmitterTrait.class) !=

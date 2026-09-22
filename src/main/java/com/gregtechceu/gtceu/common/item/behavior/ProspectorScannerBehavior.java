@@ -56,16 +56,13 @@ public class ProspectorScannerBehavior implements IItemUIHolder, IInteractionIte
         if (stack.isEmpty()) {
             return this.modes[0];
         }
-        CompoundTag tag = stack.getTag();
-        if (tag == null) {
-            return this.modes[0];
-        }
-        return this.modes[tag.getIntOr("Mode", 0) % this.modes.length];
+        CompoundTag tag = com.gregtechceu.gtceu.api.item.data.ItemStackData.read(stack);
+        return this.modes[Math.floorMod(tag.getIntOr("Mode", 0), this.modes.length)];
     }
 
     public void setNextMode(ItemStack stack) {
-        CompoundTag tag = stack.getOrCreateTag();
-        tag.putInt("Mode", (tag.getIntOr("Mode", 0) + 1) % this.modes.length);
+        com.gregtechceu.gtceu.api.item.data.ItemStackData.update(stack,
+                tag -> tag.putInt("Mode", Math.floorMod(tag.getIntOr("Mode", 0) + 1, this.modes.length)));
     }
 
     public boolean drainEnergy(@NotNull ItemStack stack, boolean simulate) {

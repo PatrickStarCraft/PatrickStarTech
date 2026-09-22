@@ -80,7 +80,7 @@ public class FluidVeinIcon implements MapIcon {
 
     @Override
     public Vec3 getPos(float v) {
-        return getMiddleBlock().getCenter();
+        return net.minecraft.world.phys.Vec3.atCenterOf(getMiddleBlock());
     }
 
     public BlockPos getMiddleBlock() {

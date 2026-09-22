@@ -1237,10 +1237,10 @@ public class GTBlocks {
                                             "/" + type.id))));
                 }
                 if (type == StoneBlockType.STONE) {
-                    entry.tag(Tags.Blocks.STONE);
+                    entry.tag(Tags.Blocks.STONES);
                 }
                 if (type == StoneBlockType.COBBLE) {
-                    entry.tag(Tags.Blocks.COBBLESTONE);
+                    entry.tag(Tags.Blocks.COBBLESTONES);
                 }
                 builder.put(type, strata, entry.register());
             }
@@ -1366,7 +1366,7 @@ public class GTBlocks {
         ImmutableMap.Builder<DyeColor, BlockEntry<Block>> studsBuilder = new ImmutableMap.Builder<>();
         for (DyeColor dyeColor : colors) {
             studsBuilder.put(dyeColor, REGISTRATE.block("%s_studs".formatted(dyeColor.getName()), Block::new)
-                    .initialProperties(() -> Blocks.WHITE_WOOL)
+                    .initialProperties(() -> Blocks.WOOL.white())
                     .properties(p -> p.strength(1.5F, 2.5F).mapColor(dyeColor))
                     .tag(BlockTags.MINEABLE_WITH_PICKAXE, CustomTags.NEEDS_WOOD_TOOL)
                     .blockstate((ctx, prov) -> prov.simpleBlock(ctx.get(),

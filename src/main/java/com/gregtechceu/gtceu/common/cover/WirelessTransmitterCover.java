@@ -34,18 +34,20 @@ public class WirelessTransmitterCover extends CoverBehavior
     public WirelessTransmitterCover(CoverDefinition definition, ICoverable coverHolder, Direction attachedSide) {
         super(definition, coverHolder, attachedSide);
         for (int i = 0; i < 100; i++) {
-            createDisplayTargetBuffer.add(MutableComponent.create(ComponentContents.EMPTY));
-            computerCraftTextBuffer.add(MutableComponent.create(ComponentContents.EMPTY));
+            createDisplayTargetBuffer.add(MutableComponent.create(net.minecraft.network.chat.contents.PlainTextContents.EMPTY));
+            computerCraftTextBuffer.add(MutableComponent.create(net.minecraft.network.chat.contents.PlainTextContents.EMPTY));
         }
     }
 
     @Override
     public InteractionResult onDataStickUse(Player player, ItemStack dataStick) {
-        dataStick.getOrCreateTag().putInt("targetX", coverHolder.getBlockPos().getX());
-        dataStick.getOrCreateTag().putInt("targetY", coverHolder.getBlockPos().getY());
-        dataStick.getOrCreateTag().putInt("targetZ", coverHolder.getBlockPos().getZ());
-        dataStick.getOrCreateTag().putString("face", attachedSide.getName());
-        dataStick.getOrCreateTag().putString("dim", coverHolder.getLevel().dimension().identifier().toString());
+        com.gregtechceu.gtceu.api.item.data.ItemStackData.update(dataStick, tag -> {
+            tag.putInt("targetX", coverHolder.getBlockPos().getX());
+            tag.putInt("targetY", coverHolder.getBlockPos().getY());
+            tag.putInt("targetZ", coverHolder.getBlockPos().getZ());
+            tag.putString("face", attachedSide.getName());
+            tag.putString("dim", coverHolder.getLevel().dimension().identifier().toString());
+        });
         return InteractionResult.SUCCESS;
     }
 

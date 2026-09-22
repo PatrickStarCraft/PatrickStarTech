@@ -64,7 +64,7 @@ public class OreGenerator {
                                                         ChunkPos chunkPos) {
         return metadata.stream()
                 .map(data -> new VeinConfiguration(data,
-                        new XoroshiroRandomSource(level.getSeed() ^ chunkPos.toLong())))
+                        new XoroshiroRandomSource(level.getSeed() ^ chunkPos.pack())))
                 .map(config -> generateIndicators(config, level, chunkPos))
                 .toList();
     }
@@ -97,7 +97,7 @@ public class OreGenerator {
         return metadata.stream()
                 .map(data -> new VeinConfiguration(
                         data,
-                        new XoroshiroRandomSource(level.getSeed() ^ chunkPos.toLong())))
+                        new XoroshiroRandomSource(level.getSeed() ^ chunkPos.pack())))
                 .flatMap(config -> generateOres(config, level, chunkPos).stream())
                 .toList();
     }
@@ -116,7 +116,7 @@ public class OreGenerator {
     }
 
     private List<VeinConfiguration> createConfigs(WorldGenLevel level, ChunkGenerator generator, ChunkPos chunkPos) {
-        var random = new XoroshiroRandomSource(level.getSeed() ^ chunkPos.toLong());
+        var random = new XoroshiroRandomSource(level.getSeed() ^ chunkPos.pack());
 
         return OreVeinUtil.getVeinCenter(chunkPos, random).stream()
                 .flatMap(veinCenter -> getEntries(level, veinCenter, random).map(entry -> {

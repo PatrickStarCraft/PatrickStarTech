@@ -9,7 +9,6 @@ import com.gregtechceu.gtceu.common.blockentity.DuctPipeBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.neoforge.common.util.LazyOptional;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -82,10 +81,10 @@ public class DuctNetWalker extends PipeNetWalker<DuctPipeBlockEntity, DuctPipePr
             return;
         }
         if (neighbourTile != null) {
-            LazyOptional<IHazardParticleContainer> handler = neighbourTile.getCapability(
-                    GTCapability.CAPABILITY_HAZARD_CONTAINER,
+            IHazardParticleContainer handler = com.gregtechceu.gtceu.api.capability.GTCapabilityHelper.getBlockEntityCapability(
+                    neighbourTile, GTCapability.CAPABILITY_HAZARD_CONTAINER,
                     faceToNeighbour.getOpposite());
-            if (handler.isPresent()) {
+            if (handler != null) {
                 inventories.add(new DuctRoutePath(pipeTile, faceToNeighbour, getWalkedBlocks(), minProperties));
             }
         } else if (pipeTile.isConnected(faceToNeighbour)) {

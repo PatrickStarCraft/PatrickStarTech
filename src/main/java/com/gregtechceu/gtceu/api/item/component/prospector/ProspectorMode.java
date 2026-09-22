@@ -68,7 +68,7 @@ public abstract class ProspectorMode<T> {
             var oreTag = TagUtil.createBlockTag("ores");
             for (int x = 0; x < 16; x++) {
                 for (int z = 0; z < 16; z++) {
-                    for (int y = chunk.getMaxBuildHeight() - 1; y >= chunk.getMinBuildHeight(); y--) {
+                    for (int y = (chunk.getMaxY() + 1) - 1; y >= chunk.getMinY(); y--) {
                         pos.set(x, y, z);
                         BlockState state = chunk.getBlockState(pos);
                         if (!state.is(oreTag)) continue;
@@ -255,7 +255,7 @@ public abstract class ProspectorMode<T> {
 
         @Override
         public Component getDescription(FluidInfo item) {
-            return item.asStack().getDisplayName();
+            return item.asStack().getHoverName();
         }
 
         @Override

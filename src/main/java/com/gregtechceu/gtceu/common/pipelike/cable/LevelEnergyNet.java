@@ -9,8 +9,8 @@ import net.minecraft.server.level.ServerLevel;
 public class LevelEnergyNet extends LevelPipeNet<WireProperties, EnergyNet> {
 
     public static LevelEnergyNet getOrCreate(ServerLevel serverLevel) {
-        return serverLevel.getDataStorage().computeIfAbsent(tag -> new LevelEnergyNet(serverLevel, tag),
-                () -> new LevelEnergyNet(serverLevel), "gtcue_energy_net");
+        return serverLevel.getDataStorage().computeIfAbsent(com.gregtechceu.gtceu.api.sync_system.CompoundTagSavedData.type(tag -> new LevelEnergyNet(serverLevel, tag),
+                () -> new LevelEnergyNet(serverLevel), "gtcue_energy_net"));
     }
 
     public LevelEnergyNet(ServerLevel serverLevel) {

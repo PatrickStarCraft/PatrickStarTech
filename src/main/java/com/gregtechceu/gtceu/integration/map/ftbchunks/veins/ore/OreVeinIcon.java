@@ -67,7 +67,7 @@ public class OreVeinIcon implements MapIcon {
 
     @Override
     public Vec3 getPos(float v) {
-        return veinMetadata.center().getCenter();
+        return net.minecraft.world.phys.Vec3.atCenterOf(veinMetadata.center());
     }
 
     @Override

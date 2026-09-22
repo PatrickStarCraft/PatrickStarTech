@@ -7,7 +7,7 @@ import com.gregtechceu.gtceu.config.ConfigHolder;
 import com.gregtechceu.gtceu.utils.TriState;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.client.resources.model.geometry.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.sprite.Material;
@@ -84,10 +84,10 @@ public class TextureMetadataHelper {
 
         for (int i = 0; i < 4; i++) {
             int quadLight = quadPackedLights[i];
-            int qBlock = LightTexture.block(quadLight), qSky = LightTexture.sky(quadLight);
+            int qBlock = LightCoordsUtil.block(quadLight), qSky = LightCoordsUtil.sky(quadLight);
 
             int ambientLight = ambientPackedLights[i];
-            int aBlock = LightTexture.block(ambientLight), aSky = LightTexture.sky(ambientLight);
+            int aBlock = LightCoordsUtil.block(ambientLight), aSky = LightCoordsUtil.sky(ambientLight);
 
             if (qBlock > aBlock || qSky > aSky) {
                 return true;

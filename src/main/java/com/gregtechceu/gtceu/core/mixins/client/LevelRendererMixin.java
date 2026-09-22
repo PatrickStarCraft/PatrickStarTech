@@ -94,7 +94,7 @@ public abstract class LevelRendererMixin {
         UseOnContext context = new UseOnContext(minecraft.player, InteractionHand.MAIN_HAND, hitResult);
         var positions = ToolHelper.getHarvestableBlocks(aoeDefinition, context);
 
-        Vec3 camPos = camera.getPosition();
+        Vec3 camPos = camera.position();
 
         poseStack.pushPose();
         poseStack.translate(-camPos.x(), -camPos.y(), -camPos.z());

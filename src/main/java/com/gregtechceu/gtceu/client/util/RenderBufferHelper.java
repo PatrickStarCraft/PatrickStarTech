@@ -115,7 +115,7 @@ public class RenderBufferHelper {
     public static void renderInWorldText(MultiBufferSource multiBuf, PoseStack stack, Camera camera, String text,
                                          float scale, int colorARGB, Vec3 pos) {
         Font fontRender = Minecraft.getInstance().font;
-        Vec3 c = pos.subtract(camera.getPosition());
+        Vec3 c = pos.subtract(camera.position());
         float stringMiddle = (float) fontRender.width(text) / 2.0F;
         stack.pushPose();
         stack.translate(c.x, c.y, c.z);
@@ -129,7 +129,7 @@ public class RenderBufferHelper {
 
     public static void renderLine(VertexConsumer buf, PoseStack stack, BlockPos from, BlockPos to, double thickness,
                                   int colorARGB) {
-        renderLine(buf, stack, from.getCenter(), to.getCenter(), thickness, colorARGB);
+        renderLine(buf, stack, net.minecraft.world.phys.Vec3.atCenterOf(from), net.minecraft.world.phys.Vec3.atCenterOf(to), thickness, colorARGB);
     }
 
     public static void renderLine(VertexConsumer buf, PoseStack stack, Vec3 from, Vec3 to, double thickness,
@@ -154,7 +154,7 @@ public class RenderBufferHelper {
     }
 
     public static void renderCube(VertexConsumer buf, PoseStack stack, BlockPos pos, float size, int colorARGB) {
-        renderCube(buf, stack, pos.getCenter(), size, colorARGB);
+        renderCube(buf, stack, net.minecraft.world.phys.Vec3.atCenterOf(pos), size, colorARGB);
     }
 
     public static void renderCube(VertexConsumer buf, PoseStack stack, Vec3 pos, float size, int colorARGB) {

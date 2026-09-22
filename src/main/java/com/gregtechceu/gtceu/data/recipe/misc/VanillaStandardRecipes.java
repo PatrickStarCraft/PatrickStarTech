@@ -529,8 +529,8 @@ public class VanillaStandardRecipes {
         for (DyeColor color : DyeColor.values()) {
             String dyeName = color.getName();
             MIXER_RECIPES.recipeBuilder(dyeName + "_concrete_powder").duration(200).EUt(VA[ULV])
-                    .inputItems(Tags.Items.SAND, 4)
-                    .inputItems(Tags.Items.GRAVEL, 4)
+                    .inputItems(Tags.Items.SANDS, 4)
+                    .inputItems(Tags.Items.GRAVELS, 4)
                     .inputFluids(DYE_MATERIALS.get(color).getFluid(L))
                     .outputItems(new ItemStack(
                             BuiltInRegistries.ITEM
@@ -603,7 +603,7 @@ public class VanillaStandardRecipes {
 
             if (color != DyeColor.WHITE) {
                 CHEMICAL_BATH_RECIPES.recipeBuilder("dye_wool_to_" + dyeName).duration(20).EUt(VA[ULV])
-                        .inputItems(new ItemStack(Blocks.WHITE_WOOL))
+                        .inputItems(new ItemStack(Blocks.WOOL.white()))
                         .inputFluids(DYE_MATERIALS.get(color).getFluid(L))
                         .outputItems(new ItemStack(
                                 BuiltInRegistries.ITEM.getValue(Identifier.withDefaultNamespace(dyeName + "_wool"))))
@@ -611,7 +611,7 @@ public class VanillaStandardRecipes {
                         .save(provider);
 
                 CHEMICAL_BATH_RECIPES.recipeBuilder("dye_bed_to_" + dyeName).duration(20).EUt(VA[ULV])
-                        .inputItems(new ItemStack(Blocks.WHITE_BED))
+                        .inputItems(new ItemStack(Blocks.BED.white()))
                         .inputFluids(DYE_MATERIALS.get(color).getFluid(L))
                         .outputItems(new ItemStack(
                                 BuiltInRegistries.ITEM.getValue(Identifier.withDefaultNamespace(dyeName + "_bed"))))
@@ -641,14 +641,14 @@ public class VanillaStandardRecipes {
         CHEMICAL_BATH_RECIPES.recipeBuilder("decolor_wool")
                 .inputItems(ItemTags.WOOL)
                 .inputFluids(Chlorine.getFluid(50))
-                .outputItems(new ItemStack(Blocks.WHITE_WOOL))
+                .outputItems(new ItemStack(Blocks.WOOL.white()))
                 .category(GTRecipeCategories.CHEM_DYES)
                 .duration(400).EUt(2).save(provider);
 
         CHEMICAL_BATH_RECIPES.recipeBuilder("decolor_carpet")
                 .inputItems(ItemTags.WOOL_CARPETS)
                 .inputFluids(Chlorine.getFluid(25))
-                .outputItems(new ItemStack(Blocks.WHITE_CARPET))
+                .outputItems(new ItemStack(Blocks.CARPET.white()))
                 .category(GTRecipeCategories.CHEM_DYES)
                 .duration(400).EUt(2).save(provider);
 
@@ -676,7 +676,7 @@ public class VanillaStandardRecipes {
         CHEMICAL_BATH_RECIPES.recipeBuilder("decolor_concrete")
                 .inputItems(CustomTags.CONCRETE_ITEM)
                 .inputFluids(Chlorine.getFluid(20))
-                .outputItems(Items.WHITE_CONCRETE)
+                .outputItems(Items.CONCRETE.white())
                 .category(GTRecipeCategories.CHEM_DYES)
                 .duration(400).EUt(2).save(provider);
 
@@ -696,7 +696,7 @@ public class VanillaStandardRecipes {
         CHEMICAL_BATH_RECIPES.recipeBuilder("decolor_bed")
                 .inputItems(ItemTags.BEDS)
                 .inputFluids(Chlorine.getFluid(20))
-                .outputItems(Items.WHITE_BED)
+                .outputItems(Items.BED.white())
                 .category(GTRecipeCategories.CHEM_DYES)
                 .duration(400).EUt(2).save(provider);
     }
@@ -834,22 +834,22 @@ public class VanillaStandardRecipes {
         VanillaRecipeHelper.addShapedRecipe(provider, true, "chainmail_helmet", new ItemStack(Items.CHAINMAIL_HELMET),
                 "PPP",
                 "PhP",
-                'P', Items.CHAIN);
+                'P', Items.IRON_CHAIN);
 
         VanillaRecipeHelper.addShapedRecipe(provider, true, "chainmail_chestplate",
                 new ItemStack(Items.CHAINMAIL_CHESTPLATE),
                 "PhP", "PPP", "PPP",
-                'P', Items.CHAIN);
+                'P', Items.IRON_CHAIN);
 
         VanillaRecipeHelper.addShapedRecipe(provider, true, "chainmail_leggings",
                 new ItemStack(Items.CHAINMAIL_LEGGINGS),
                 "PPP", "PhP", "P P",
-                'P', Items.CHAIN);
+                'P', Items.IRON_CHAIN);
 
         VanillaRecipeHelper.addShapedRecipe(provider, true, "chainmail_boots", new ItemStack(Items.CHAINMAIL_BOOTS),
                 "P P",
                 "PhP",
-                'P', Items.CHAIN);
+                'P', Items.IRON_CHAIN);
 
         ASSEMBLER_RECIPES.recipeBuilder("cauldron")
                 .inputItems(plate, Iron, 7)
@@ -993,7 +993,7 @@ public class VanillaStandardRecipes {
         ASSEMBLER_RECIPES.recipeBuilder("wool_from_string")
                 .inputItems(new ItemStack(Items.STRING, 4))
                 .circuitMeta(4)
-                .outputItems(new ItemStack(Blocks.WHITE_WOOL))
+                .outputItems(new ItemStack(Blocks.WOOL.white()))
                 .duration(100).EUt(4).save(provider);
 
         MIXER_RECIPES.recipeBuilder("mossy_cobblestone_from_vine")
@@ -1276,127 +1276,127 @@ public class VanillaStandardRecipes {
     private static void dyeRecipes(Consumer<GeneratedRecipe> provider) {
         EXTRACTOR_RECIPES.recipeBuilder("poppy_dye")
                 .inputItems(new ItemStack(Blocks.POPPY))
-                .outputItems(new ItemStack(Items.RED_DYE, 2))
+                .outputItems(new ItemStack(Items.DYE.red(), 2))
                 .save(provider);
 
         EXTRACTOR_RECIPES.recipeBuilder("blue_orchid_dye")
                 .inputItems(new ItemStack(Blocks.BLUE_ORCHID))
-                .outputItems(new ItemStack(Items.LIGHT_BLUE_DYE, 2))
+                .outputItems(new ItemStack(Items.DYE.lightBlue(), 2))
                 .save(provider);
 
         EXTRACTOR_RECIPES.recipeBuilder("allium_dye")
                 .inputItems(new ItemStack(Blocks.ALLIUM))
-                .outputItems(new ItemStack(Items.MAGENTA_DYE, 2))
+                .outputItems(new ItemStack(Items.DYE.magenta(), 2))
                 .save(provider);
 
         EXTRACTOR_RECIPES.recipeBuilder("azure_bluet_dye")
                 .inputItems(new ItemStack(Blocks.AZURE_BLUET))
-                .outputItems(new ItemStack(Items.LIGHT_GRAY_DYE))
+                .outputItems(new ItemStack(Items.DYE.lightGray()))
                 .save(provider);
 
         EXTRACTOR_RECIPES.recipeBuilder("red_tulip_dye")
                 .inputItems(new ItemStack(Blocks.RED_TULIP))
-                .outputItems(new ItemStack(Items.RED_DYE, 2))
+                .outputItems(new ItemStack(Items.DYE.red(), 2))
                 .save(provider);
 
         EXTRACTOR_RECIPES.recipeBuilder("orange_tulip_dye")
                 .inputItems(new ItemStack(Blocks.ORANGE_TULIP))
-                .outputItems(new ItemStack(Items.ORANGE_DYE, 2))
+                .outputItems(new ItemStack(Items.DYE.orange(), 2))
                 .save(provider);
 
         EXTRACTOR_RECIPES.recipeBuilder("white_tulip_dye")
                 .inputItems(new ItemStack(Blocks.WHITE_TULIP))
-                .outputItems(new ItemStack(Items.LIGHT_GRAY_DYE, 2))
+                .outputItems(new ItemStack(Items.DYE.lightGray(), 2))
                 .save(provider);
 
         EXTRACTOR_RECIPES.recipeBuilder("pink_tulip_dye")
                 .inputItems(new ItemStack(Blocks.PINK_TULIP))
-                .outputItems(new ItemStack(Items.PINK_DYE))
+                .outputItems(new ItemStack(Items.DYE.pink()))
                 .save(provider);
 
         EXTRACTOR_RECIPES.recipeBuilder("oxeye_daisy_dye")
                 .inputItems(new ItemStack(Blocks.OXEYE_DAISY))
-                .outputItems(new ItemStack(Items.LIGHT_GRAY_DYE, 2))
+                .outputItems(new ItemStack(Items.DYE.lightGray(), 2))
                 .save(provider);
 
         EXTRACTOR_RECIPES.recipeBuilder("dandelion_dye")
                 .inputItems(new ItemStack(Blocks.DANDELION))
-                .outputItems(new ItemStack(Items.YELLOW_DYE, 2))
+                .outputItems(new ItemStack(Items.DYE.yellow(), 2))
                 .save(provider);
 
         EXTRACTOR_RECIPES.recipeBuilder("cornflower_dye")
                 .inputItems(new ItemStack(Blocks.CORNFLOWER))
-                .outputItems(new ItemStack(Items.BLUE_DYE, 2))
+                .outputItems(new ItemStack(Items.DYE.blue(), 2))
                 .save(provider);
 
         EXTRACTOR_RECIPES.recipeBuilder("lily_of_the_valley_dye")
                 .inputItems(new ItemStack(Blocks.LILY_OF_THE_VALLEY))
-                .outputItems(new ItemStack(Items.WHITE_DYE, 2))
+                .outputItems(new ItemStack(Items.DYE.white(), 2))
                 .save(provider);
 
         EXTRACTOR_RECIPES.recipeBuilder("wither_rose_dye")
                 .inputItems(new ItemStack(Blocks.WITHER_ROSE))
-                .outputItems(new ItemStack(Items.BLACK_DYE, 2))
+                .outputItems(new ItemStack(Items.DYE.black(), 2))
                 .save(provider);
 
         EXTRACTOR_RECIPES.recipeBuilder("sunflower_dye")
                 .inputItems(new ItemStack(Blocks.SUNFLOWER))
-                .outputItems(new ItemStack(Items.YELLOW_DYE, 3))
+                .outputItems(new ItemStack(Items.DYE.yellow(), 3))
                 .save(provider);
 
         EXTRACTOR_RECIPES.recipeBuilder("lilac_dye")
                 .inputItems(new ItemStack(Blocks.LILAC))
-                .outputItems(new ItemStack(Items.MAGENTA_DYE, 3))
+                .outputItems(new ItemStack(Items.DYE.magenta(), 3))
                 .save(provider);
 
         EXTRACTOR_RECIPES.recipeBuilder("rose_bush_dye")
                 .inputItems(new ItemStack(Blocks.ROSE_BUSH))
-                .outputItems(new ItemStack(Items.RED_DYE, 3))
+                .outputItems(new ItemStack(Items.DYE.red(), 3))
                 .save(provider);
 
         EXTRACTOR_RECIPES.recipeBuilder("peony_dye")
                 .inputItems(new ItemStack(Blocks.PEONY))
-                .outputItems(new ItemStack(Items.PINK_DYE, 3))
+                .outputItems(new ItemStack(Items.DYE.pink(), 3))
                 .save(provider);
 
         EXTRACTOR_RECIPES.recipeBuilder("beetroot_dye")
                 .inputItems(new ItemStack(Items.BEETROOT))
-                .outputItems(new ItemStack(Items.RED_DYE, 2))
+                .outputItems(new ItemStack(Items.DYE.red(), 2))
                 .save(provider);
 
         EXTRACTOR_RECIPES.recipeBuilder("torchflower_dye")
                 .inputItems(new ItemStack(Items.TORCHFLOWER))
-                .outputItems(new ItemStack(Items.ORANGE_DYE, 2))
+                .outputItems(new ItemStack(Items.DYE.orange(), 2))
                 .save(provider);
 
         EXTRACTOR_RECIPES.recipeBuilder("pitcher_dye")
                 .inputItems(new ItemStack(Items.PITCHER_PLANT))
-                .outputItems(new ItemStack(Items.CYAN_DYE, 3))
+                .outputItems(new ItemStack(Items.DYE.cyan(), 3))
                 .save(provider);
 
         EXTRACTOR_RECIPES.recipeBuilder("pink_petals_dye")
                 .inputItems(new ItemStack(Items.PINK_PETALS))
-                .outputItems(new ItemStack(Items.PINK_DYE, 2))
+                .outputItems(new ItemStack(Items.DYE.pink(), 2))
                 .save(provider);
 
         EXTRACTOR_RECIPES.recipeBuilder("sea_pickle_dye")
                 .inputItems(new ItemStack(Items.SEA_PICKLE))
-                .outputItems(new ItemStack(Items.LIME_DYE, 2))
+                .outputItems(new ItemStack(Items.DYE.lime(), 2))
                 .save(provider);
 
         EXTRACTOR_RECIPES.recipeBuilder("white_dye")
                 .inputItems(new ItemStack(Items.BONE_MEAL))
-                .outputItems(new ItemStack(Items.WHITE_DYE, 1))
+                .outputItems(new ItemStack(Items.DYE.white(), 1))
                 .save(provider);
 
         EXTRACTOR_RECIPES.recipeBuilder("blue_dye")
                 .inputItems(new ItemStack(Items.LAPIS_LAZULI))
-                .outputItems(new ItemStack(Items.BLUE_DYE))
+                .outputItems(new ItemStack(Items.DYE.blue()))
                 .save(provider);
 
         EXTRACTOR_RECIPES.recipeBuilder("black_dye")
                 .inputItems(new ItemStack(Items.INK_SAC))
-                .outputItems(new ItemStack(Items.BLACK_DYE))
+                .outputItems(new ItemStack(Items.DYE.black()))
                 .save(provider);
 
         CHEMICAL_BATH_RECIPES.recipeBuilder("dark_prismarine")

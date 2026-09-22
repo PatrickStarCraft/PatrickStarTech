@@ -19,7 +19,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.saveddata.SavedData;
+import com.gregtechceu.gtceu.api.sync_system.CompoundTagSavedData;
 
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
@@ -35,7 +35,7 @@ import java.util.stream.Stream;
  * localized, block-based environmental hazards. e.g. radiation.
  * do not use for large-scale effects, as this stores all blocks where an effect is, and thus will be too slow for that.
  */
-public class LocalizedHazardSavedData extends SavedData {
+public class LocalizedHazardSavedData extends CompoundTagSavedData {
 
     public static final int MIN_STRENGTH_FOR_SPREAD = 100;
 
@@ -48,8 +48,8 @@ public class LocalizedHazardSavedData extends SavedData {
     private final Map<BlockPos, HazardZone> hazardZones = new HashMap<>();
 
     public static LocalizedHazardSavedData getOrCreate(ServerLevel serverLevel) {
-        return serverLevel.getDataStorage().computeIfAbsent(tag -> new LocalizedHazardSavedData(serverLevel, tag),
-                () -> new LocalizedHazardSavedData(serverLevel), "gtceu_localized_hazard_tracker");
+        return serverLevel.getDataStorage().computeIfAbsent(com.gregtechceu.gtceu.api.sync_system.CompoundTagSavedData.type(tag -> new LocalizedHazardSavedData(serverLevel, tag),
+                () -> new LocalizedHazardSavedData(serverLevel), "gtceu_localized_hazard_tracker"));
     }
 
     public LocalizedHazardSavedData(ServerLevel serverLevel) {

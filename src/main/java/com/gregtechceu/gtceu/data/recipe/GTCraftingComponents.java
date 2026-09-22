@@ -355,10 +355,10 @@ public class GTCraftingComponents {
          * Laminated Glass: IV, LuV
          * Fusion: ZPM, UV, UHV
          */
-        GLASS = CraftingComponent.of("glass", Tags.Items.GLASS)
-                .add(ULV, Tags.Items.GLASS)
-                .add(LV, Tags.Items.GLASS)
-                .add(MV, Tags.Items.GLASS)
+        GLASS = CraftingComponent.of("glass", Tags.Items.GLASS_BLOCKS)
+                .add(ULV, Tags.Items.GLASS_BLOCKS)
+                .add(LV, Tags.Items.GLASS_BLOCKS)
+                .add(MV, Tags.Items.GLASS_BLOCKS)
                 .add(HV, GTBlocks.CASING_TEMPERED_GLASS.asStack())
                 .add(EV, GTBlocks.CASING_TEMPERED_GLASS.asStack())
                 .add(IV, GTBlocks.CASING_LAMINATED_GLASS.asStack())
@@ -654,10 +654,10 @@ public class GTCraftingComponents {
                 .add(UV, rod, Tritanium)
                 .add(UHV, rod, Tritanium);
 
-        PIPE_REACTOR = CraftingComponent.of("pipe_reactor", Tags.Items.GLASS)
-                .add(ULV, Tags.Items.GLASS)
-                .add(LV, Tags.Items.GLASS)
-                .add(MV, Tags.Items.GLASS)
+        PIPE_REACTOR = CraftingComponent.of("pipe_reactor", Tags.Items.GLASS_BLOCKS)
+                .add(ULV, Tags.Items.GLASS_BLOCKS)
+                .add(LV, Tags.Items.GLASS_BLOCKS)
+                .add(MV, Tags.Items.GLASS_BLOCKS)
                 .add(HV, pipeNormalFluid, Polyethylene)
                 .add(EV, pipeLargeFluid, Polyethylene)
                 .add(IV, pipeHugeFluid, Polyethylene)
@@ -711,8 +711,8 @@ public class GTCraftingComponents {
                 .add(UV, GTMachines.SUPER_CHEST[1].asStack())
                 .add(UHV, GTMachines.SUPER_CHEST[2].asStack());
 
-        DRUM = CraftingComponent.of("drum", Tags.Items.GLASS)
-                .add(ULV, Tags.Items.GLASS)
+        DRUM = CraftingComponent.of("drum", Tags.Items.GLASS_BLOCKS)
+                .add(ULV, Tags.Items.GLASS_BLOCKS)
                 .add(LV, GTMachines.WOODEN_DRUM.asStack())
                 .add(MV, GTMachines.BRONZE_DRUM.asStack())
                 .add(HV, GTMachines.STEEL_DRUM.asStack())

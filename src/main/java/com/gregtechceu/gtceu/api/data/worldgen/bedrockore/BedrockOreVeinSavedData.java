@@ -15,7 +15,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.XoroshiroRandomSource;
-import net.minecraft.world.level.saveddata.SavedData;
+import com.gregtechceu.gtceu.api.sync_system.CompoundTagSavedData;
 
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
@@ -28,7 +28,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 @NullMarked
-public class BedrockOreVeinSavedData extends SavedData {
+public class BedrockOreVeinSavedData extends CompoundTagSavedData {
 
     public static final int VEIN_CHUNK_SIZE = 3; // veins are 3x3 chunk squares
     public static final int MAXIMUM_VEIN_OPERATIONS = 100_000;
@@ -40,8 +40,8 @@ public class BedrockOreVeinSavedData extends SavedData {
     private final ServerLevel serverLevel;
 
     public static BedrockOreVeinSavedData getOrCreate(ServerLevel serverLevel) {
-        return serverLevel.getDataStorage().computeIfAbsent(tag -> new BedrockOreVeinSavedData(serverLevel, tag),
-                () -> new BedrockOreVeinSavedData(serverLevel), "gtceu_bedrock_ore");
+        return serverLevel.getDataStorage().computeIfAbsent(com.gregtechceu.gtceu.api.sync_system.CompoundTagSavedData.type(tag -> new BedrockOreVeinSavedData(serverLevel, tag),
+                () -> new BedrockOreVeinSavedData(serverLevel), "gtceu_bedrock_ore"));
     }
 
     public BedrockOreVeinSavedData(ServerLevel serverLevel) {
@@ -64,7 +64,7 @@ public class BedrockOreVeinSavedData extends SavedData {
         var oreList = new ListTag();
         for (var entry : veinOres.entrySet()) {
             var tag = new CompoundTag();
-            tag.putLong("pos", entry.getKey().toLong());
+            tag.putLong("pos", entry.getKey().pack());
             tag.put("data", entry.getValue().writeToNBT());
             oreList.add(tag);
         }
@@ -95,7 +95,7 @@ public class BedrockOreVeinSavedData extends SavedData {
 
             BedrockOreDefinition definition = null;
             int query = new XoroshiroRandomSource(
-                    serverLevel.getSeed() ^ ChunkPos.asLong(getVeinCoord(chunkX), getVeinCoord(chunkZ)))
+                    serverLevel.getSeed() ^ ChunkPos.pack(getVeinCoord(chunkX), getVeinCoord(chunkZ)))
                     .nextInt();
             var biome = serverLevel.getBiome(new BlockPos(chunkX << 4, 64, chunkZ << 4));
             int totalWeight = getTotalWeight(biome);
@@ -137,7 +137,7 @@ public class BedrockOreVeinSavedData extends SavedData {
                     distanceFromOriginal = distanceFromOriginal == 0 ? 1 : distanceFromOriginal;
                     distanceFromOriginal = (float) Math.pow(distanceFromOriginal, 2);
 
-                    var random = new XoroshiroRandomSource(serverLevel.getSeed() ^ pos2.toLong());
+                    var random = new XoroshiroRandomSource(serverLevel.getSeed() ^ pos2.pack());
 
                     int maximumYield;
                     if ((definition.yield().maxInclusive() - definition.yield().minInclusive()) / distanceFromOriginal <=

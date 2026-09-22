@@ -118,7 +118,7 @@ public class LaserPipeBlock extends PipeBlock<LaserPipeType, LaserPipeProperties
     @Override
     public boolean canPipeConnectToBlock(IPipeNode<LaserPipeType, LaserPipeProperties> selfTile, Direction side,
                                          @Nullable BlockEntity tile) {
-        return tile != null && tile.getCapability(GTCapability.CAPABILITY_LASER, side.getOpposite()).isPresent();
+        return tile != null && (com.gregtechceu.gtceu.api.capability.GTCapabilityHelper.getBlockEntityCapability(tile, GTCapability.CAPABILITY_LASER, side.getOpposite()) != null);
     }
 
     @Override

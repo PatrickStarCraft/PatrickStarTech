@@ -1,6 +1,8 @@
 package com.gregtechceu.gtceu.api.transfer.fluid;
 
-import com.gregtechceu.gtceu.GTCEu;
+import com.gregtechceu.gtceu.api.sync_system.ValueIOPersistence;
+import net.minecraft.core.HolderLookup;
+import net.neoforged.neoforge.common.util.ValueIOSerializable;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -135,28 +137,44 @@ public class FluidHandlerList implements IFluidHandlerModifiable, NBTSerializabl
 
     @Override
     public CompoundTag serializeNBT() {
+        return serializeNBT(ValueIOPersistence.builtInRegistries());
+    }
+
+    @Override
+    public CompoundTag serializeNBT(HolderLookup.Provider registries) {
         var tag = new CompoundTag();
         var list = new ListTag();
         for (IFluidHandler handler : handlers) {
             if (handler instanceof NBTSerializable<?> serializable) {
-                list.add(serializable.serializeNBT());
+                list.add(serializable.serializeNBT(registries));
+            } else if (handler instanceof ValueIOSerializable serializable) {
+                list.add(ValueIOPersistence.write(serializable, registries));
             } else {
-                GTCEu.LOGGER.warn("[FluidHandlerList] internal tank doesn't support serialization");
+                throw new IllegalStateException("Fluid handler does not support persistence: " + handler.getClass());
             }
         }
         tag.put("tanks", list);
-        tag.putByte("type", list.getElementType());
         return tag;
     }
 
     @Override
     public void deserializeNBT(CompoundTag nbt) {
-        var list = nbt.getList("tanks", nbt.getByte("type"));
+        deserializeNBT(nbt, ValueIOPersistence.builtInRegistries());
+    }
+
+    @Override
+    public void deserializeNBT(CompoundTag nbt, HolderLookup.Provider registries) {
+        var list = nbt.getListOrEmpty("tanks");
+        if (list.size() > handlers.length) {
+            throw new IllegalArgumentException("Saved fluid handler count exceeds destination capacity");
+        }
         for (int i = 0; i < list.size(); i++) {
             if (handlers[i] instanceof NBTSerializable serializable) {
-                serializable.deserializeNBT(list.get(i));
+                serializable.deserializeNBT(list.get(i), registries);
+            } else if (handlers[i] instanceof ValueIOSerializable serializable && list.get(i) instanceof CompoundTag tank) {
+                ValueIOPersistence.read(serializable, tank, registries);
             } else {
-                GTCEu.LOGGER.warn("[FluidHandlerList] internal tank doesn't support serialization");
+                throw new IllegalArgumentException("Unsupported saved fluid handler at index " + i);
             }
         }
     }

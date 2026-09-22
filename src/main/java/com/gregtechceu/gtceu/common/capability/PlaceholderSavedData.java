@@ -5,21 +5,21 @@ import com.gregtechceu.gtceu.api.placeholder.Placeholder;
 import org.jspecify.annotations.NullMarked;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.saveddata.SavedData;
+import com.gregtechceu.gtceu.api.sync_system.CompoundTagSavedData;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @NullMarked
 @ParametersAreNonnullByDefault
-public class PlaceholderSavedData extends SavedData {
+public class PlaceholderSavedData extends CompoundTagSavedData {
 
     private final ServerLevel level;
     private final CompoundTag tag;
 
     public static PlaceholderSavedData getOrCreate(ServerLevel level) {
-        return level.getDataStorage().computeIfAbsent(
+        return level.getDataStorage().computeIfAbsent(com.gregtechceu.gtceu.api.sync_system.CompoundTagSavedData.type(
                 tag -> new PlaceholderSavedData(level, tag),
-                () -> new PlaceholderSavedData(level), "gtceu_placeholder_data");
+                () -> new PlaceholderSavedData(level), "gtceu_placeholder_data"));
     }
 
     public PlaceholderSavedData(ServerLevel level) {

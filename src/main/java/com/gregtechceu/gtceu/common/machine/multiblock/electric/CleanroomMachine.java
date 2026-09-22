@@ -452,7 +452,7 @@ public class CleanroomMachine extends WorkableElectricMultiblockMachine
         IntSyncValue cleanAmount = new IntSyncValue(() -> this.cleanAmount);
         syncManager.syncValue("cleanAmount", cleanAmount);
 
-        GenericSyncValue<Component> distComponent = GenericSyncValue.builder(Component.class)
+        GenericSyncValue<net.minecraft.network.RegistryFriendlyByteBuf, Component> distComponent = GenericSyncValue.<net.minecraft.network.RegistryFriendlyByteBuf, Component>builder(Component.class)
                 .adapter(COMPONENT)
                 .getter(() -> Component.translatable("gtceu.multiblock.dimensions.1", bounds.get(3) + bounds.get(4) + 1,
                         bounds.get(1) + 1,

@@ -50,7 +50,7 @@ import java.lang.Math;
 import java.util.*;
 import java.util.function.BiFunction;
 
-import static net.minecraft.util.FastColor.ARGB32.*;
+import static net.minecraft.util.ARGB.*;
 
 @OnlyIn(Dist.CLIENT)
 public class RenderUtil {

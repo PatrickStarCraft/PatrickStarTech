@@ -90,8 +90,8 @@ public class ComputerMonitorCover extends CoverBehavior
         renderer = new CoverTextRenderer(this::getText);
         placeholderUUID = UUID.randomUUID();
         for (int i = 0; i < 100; i++) {
-            createDisplayTargetBuffer.add(MutableComponent.create(ComponentContents.EMPTY));
-            computerCraftTextBuffer.add(MutableComponent.create(ComponentContents.EMPTY));
+            createDisplayTargetBuffer.add(MutableComponent.create(net.minecraft.network.chat.contents.PlainTextContents.EMPTY));
+            computerCraftTextBuffer.add(MutableComponent.create(net.minecraft.network.chat.contents.PlainTextContents.EMPTY));
         }
     }
 

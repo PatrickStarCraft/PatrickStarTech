@@ -51,7 +51,7 @@ public class CodeEditorWidget<T> extends TextEditorWidget<CodeEditorWidget<T>> {
 
     public CodeEditorWidget(@Nullable LanguageDefinition<T> language) {
         this.language = language;
-        GenericListSyncHandler<Component> formattedTextSync = new GenericListSyncHandler<>(
+        GenericListSyncHandler<net.minecraft.network.RegistryFriendlyByteBuf, Component> formattedTextSync = new GenericListSyncHandler<>(
                 this::getTextAsComponents, this::formattedText, GTByteBufAdapters.COMPONENT,
                 GTByteBufAdapters.COMPONENT, GTByteBufAdapters.COMPONENT, Component::copy);
         setSyncOrValue(formattedTextSync);
@@ -163,7 +163,7 @@ public class CodeEditorWidget<T> extends TextEditorWidget<CodeEditorWidget<T>> {
                         return Optional.empty();
                     }, Style.EMPTY);
             return output.stream()
-                    .map(c -> (Component) c.withStyle(style -> style.withFont(GTGuiTextures.MONOCRAFT_FONT))).toList();
+                    .map(c -> (Component) c.withStyle(style -> style.withFont(new net.minecraft.network.chat.FontDescription.Resource(GTGuiTextures.MONOCRAFT_FONT)))).toList();
         }
     }
 

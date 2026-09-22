@@ -49,7 +49,7 @@ public record ContentOverlay(Content content, boolean perTick)
             // 5 == max num of characters that fit in a slot at 0.5x render size
             if (s.length() > 5) {
                 s = "X-Y";
-                color = ChatFormatting.GOLD.getColor(); // Orange?
+                color = net.minecraft.network.chat.TextColor.GOLD.getValue(); // Orange?
             }
             graphics.drawString(fontRenderer, s, (int) ((x + (width / 3f)) * 2 - fontRenderer.width(s) + 21),
                     (int) ((y + (height / 3f) + 6) * 2), color, true);
@@ -67,7 +67,7 @@ public record ContentOverlay(Content content, boolean perTick)
             String s;
             if (content.content() instanceof IRangedIngredient) {
                 // with only 5 characters worth of space, that's not enough for a fluid range
-                color = ChatFormatting.GOLD.getColor();
+                color = net.minecraft.network.chat.TextColor.GOLD.getValue();
                 s = "X-Y";
             } else {
                 int amount = ingredient.getAmount();

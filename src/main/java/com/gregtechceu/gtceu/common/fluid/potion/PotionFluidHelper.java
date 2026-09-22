@@ -10,7 +10,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.util.Tuple;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffectUtil;
@@ -108,7 +108,7 @@ public class PotionFluidHelper {
     @OnlyIn(Dist.CLIENT)
     public static void addPotionTooltip(FluidStack fs, Consumer<Component> tooltip) {
         List<MobEffectInstance> list = PotionUtils.getAllEffects(fs.getOrCreateTag());
-        List<Tuple<String, AttributeModifier>> modifiers = Lists.newArrayList();
+        List<Pair<String, AttributeModifier>> modifiers = Lists.newArrayList();
         if (list.isEmpty()) {
             tooltip.accept(Component.translatable("effect.none").withStyle(ChatFormatting.GRAY));
         } else {
@@ -122,7 +122,7 @@ public class PotionFluidHelper {
                         AttributeModifier mutated = new AttributeModifier(modifier.getName(),
                                 effect.getAttributeModifierValue(effectInstance.getAmplifier(), modifier),
                                 modifier.getOperation());
-                        modifiers.add(new Tuple<>(
+                        modifiers.add(Pair.of(
                                 entry.getKey().getDescriptionId(),
                                 mutated));
                     }
@@ -148,12 +148,12 @@ public class PotionFluidHelper {
             tooltip.accept(Component.empty());
             tooltip.accept(Component.translatable("potion.whenDrank").withStyle(ChatFormatting.DARK_PURPLE));
 
-            for (Tuple<String, AttributeModifier> tuple : modifiers) {
-                AttributeModifier modifier2 = tuple.getB();
+            for (Pair<String, AttributeModifier> tuple : modifiers) {
+                AttributeModifier modifier2 = tuple.getSecond();
                 double d0 = modifier2.getAmount();
                 double d1;
-                if (modifier2.getOperation() != AttributeModifier.Operation.MULTIPLY_BASE &&
-                        modifier2.getOperation() != AttributeModifier.Operation.MULTIPLY_TOTAL) {
+                if (modifier2.getOperation() != AttributeModifier.Operation.ADD_MULTIPLIED_BASE &&
+                        modifier2.getOperation() != AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL) {
                     d1 = modifier2.getAmount();
                 } else {
                     d1 = modifier2.getAmount() * 100.0D;
@@ -164,7 +164,7 @@ public class PotionFluidHelper {
                             "attribute.modifier.plus." + modifier2.getOperation()
                                     .toValue(),
                             ItemStack.ATTRIBUTE_MODIFIER_FORMAT.format(d1),
-                            Component.translatable(tuple.getA()))
+                            Component.translatable(tuple.getFirst()))
                             .withStyle(ChatFormatting.BLUE));
                 } else if (d0 < 0.0D) {
                     d1 = d1 * -1.0D;
@@ -172,7 +172,7 @@ public class PotionFluidHelper {
                             "attribute.modifier.take." + modifier2.getOperation()
                                     .toValue(),
                             ItemStack.ATTRIBUTE_MODIFIER_FORMAT.format(d1),
-                            Component.translatable(tuple.getA()))
+                            Component.translatable(tuple.getFirst()))
                             .withStyle(ChatFormatting.RED));
                 }
             }

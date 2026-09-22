@@ -20,7 +20,7 @@ public class NBTToJsonConverter {
         } else if (tag instanceof NumericTag numericTag) {
             jsonRoot = new JsonPrimitive(numericTag.getAsNumber());
         } else if (tag instanceof StringTag) {
-            jsonRoot = new JsonPrimitive(tag.getAsString());
+            jsonRoot = new JsonPrimitive(tag.asString().orElseThrow());
         } else {
             JsonArray array;
             if (tag instanceof ListTag tagList) {

@@ -125,7 +125,7 @@ public class PatternPreviewRenderer {
         poseStack.pushPose();
         poseStack.translate(controllerPos.getX(), controllerPos.getY(), controllerPos.getZ());
 
-        Vec3 cameraPos = camera.getPosition();
+        Vec3 cameraPos = camera.position();
         if (renderType != null) {
             // render the appropriate chunk layer if renderType is a chunk render layer
             renderBlocks(renderType, poseStack, cameraPos);

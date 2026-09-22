@@ -4,13 +4,13 @@ import com.gregtechceu.gtceu.GTCEu;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.saveddata.SavedData;
+import com.gregtechceu.gtceu.api.sync_system.CompoundTagSavedData;
 
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public class VirtualEnderRegistry extends SavedData {
+public class VirtualEnderRegistry extends CompoundTagSavedData {
 
     private static final String DATA_ID = GTCEu.MOD_ID + ".virtual_entry_data";
     private static final String PUBLIC_KEY = "Public";
@@ -27,7 +27,7 @@ public class VirtualEnderRegistry extends SavedData {
 
     public static VirtualEnderRegistry get(ServerLevel sLvl) {
         return sLvl.getServer().overworld().getDataStorage()
-                .computeIfAbsent(VirtualEnderRegistry::new, VirtualEnderRegistry::new, DATA_ID);
+                .computeIfAbsent(com.gregtechceu.gtceu.api.sync_system.CompoundTagSavedData.type(VirtualEnderRegistry::new, VirtualEnderRegistry::new, DATA_ID));
     }
 
     public <T extends VirtualEntry> @Nullable T getEntry(@Nullable UUID owner, EntryTypes<T> type, String name) {

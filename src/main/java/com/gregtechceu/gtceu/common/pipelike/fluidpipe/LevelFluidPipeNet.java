@@ -9,8 +9,8 @@ import net.minecraft.server.level.ServerLevel;
 public class LevelFluidPipeNet extends LevelPipeNet<FluidPipeProperties, FluidPipeNet> {
 
     public static LevelFluidPipeNet getOrCreate(ServerLevel serverLevel) {
-        return serverLevel.getDataStorage().computeIfAbsent(tag -> new LevelFluidPipeNet(serverLevel, tag),
-                () -> new LevelFluidPipeNet(serverLevel), "gtcue_fluid_pipe_net");
+        return serverLevel.getDataStorage().computeIfAbsent(com.gregtechceu.gtceu.api.sync_system.CompoundTagSavedData.type(tag -> new LevelFluidPipeNet(serverLevel, tag),
+                () -> new LevelFluidPipeNet(serverLevel), "gtcue_fluid_pipe_net"));
     }
 
     public LevelFluidPipeNet(ServerLevel serverLevel) {

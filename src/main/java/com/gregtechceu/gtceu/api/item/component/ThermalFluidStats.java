@@ -76,7 +76,7 @@ public class ThermalFluidStats implements IItemComponent, IComponentCapability, 
         if (stack.hasTag()) {
             FluidUtil.getFluidContained(stack).ifPresent(tank -> {
                 tooltipComponents
-                        .add(Component.translatable("gtceu.universal.tooltip.fluid_stored", tank.getDisplayName(),
+                        .add(Component.translatable("gtceu.universal.tooltip.fluid_stored", tank.getHoverName(),
                                 tank.getAmount()));
                 TooltipsHandler.appendFluidTooltips(tank, tooltipComponents::add, null);
             });

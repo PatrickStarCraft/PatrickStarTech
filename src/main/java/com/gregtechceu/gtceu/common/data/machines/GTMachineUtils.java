@@ -780,7 +780,7 @@ public class GTMachineUtils {
             FluidStack stored = FluidStack.loadFluidStackFromNBT(stack.getOrCreateTagElement(key));
             long storedAmount = stack.getOrCreateTag().getLong("storedAmount");
             if (storedAmount == 0 && !stored.isEmpty()) storedAmount = stored.getAmount();
-            list.add(1, Component.translatable("gtceu.universal.tooltip.fluid_stored", stored.getDisplayName(),
+            list.add(1, Component.translatable("gtceu.universal.tooltip.fluid_stored", stored.getHoverName(),
                     FormattingUtil.formatNumbers(storedAmount)));
         }
     };

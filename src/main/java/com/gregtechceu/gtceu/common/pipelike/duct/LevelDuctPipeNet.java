@@ -10,8 +10,8 @@ public class LevelDuctPipeNet extends LevelPipeNet<DuctPipeProperties, DuctPipeN
     private static final String DATA_ID = "gtceu_duct_pipe_net";
 
     public static LevelDuctPipeNet getOrCreate(ServerLevel serverLevel) {
-        return serverLevel.getDataStorage().computeIfAbsent(tag -> new LevelDuctPipeNet(serverLevel, tag),
-                () -> new LevelDuctPipeNet(serverLevel), DATA_ID);
+        return serverLevel.getDataStorage().computeIfAbsent(com.gregtechceu.gtceu.api.sync_system.CompoundTagSavedData.type(tag -> new LevelDuctPipeNet(serverLevel, tag),
+                () -> new LevelDuctPipeNet(serverLevel), DATA_ID));
     }
 
     public LevelDuctPipeNet(ServerLevel serverLevel) {

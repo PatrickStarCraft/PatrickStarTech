@@ -422,7 +422,7 @@ public class MachineRecipeLoader {
                 .inputItems(dust, RawRubber, 3).outputItems(ingot, Rubber).save(provider);
 
         ALLOY_SMELTER_RECIPES.recipeBuilder("coke_oven_brick").duration(150).EUt(VA[ULV])
-                .inputItems(Tags.Items.SAND)
+                .inputItems(Tags.Items.SANDS)
                 .inputItems(new ItemStack(Items.CLAY_BALL))
                 .outputItems(COKE_OVEN_BRICK, 2)
                 .save(provider);

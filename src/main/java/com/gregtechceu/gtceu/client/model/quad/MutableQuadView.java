@@ -18,7 +18,7 @@ package com.gregtechceu.gtceu.client.model.quad;
 import com.gregtechceu.gtceu.client.util.TextureHelper;
 import com.gregtechceu.gtceu.client.util.quad.GeometryHelper;
 
-import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.client.resources.model.geometry.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
@@ -268,7 +268,7 @@ public abstract class MutableQuadView extends QuadView {
      * Input values will override lightmap values computed from world state if input values are higher.
      */
     public MutableQuadView lightmap(int vertexIndex, int block, int sky) {
-        data[baseIndex + vertexIndex * VERTEX_STRIDE + VERTEX_LIGHTMAP] = LightTexture.pack(block, sky);
+        data[baseIndex + vertexIndex * VERTEX_STRIDE + VERTEX_LIGHTMAP] = LightCoordsUtil.pack(block, sky);
         return this;
     }
 

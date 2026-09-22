@@ -75,17 +75,16 @@ public class LighterBehavior implements IDurabilityBar, IInteractionItem, IAddIn
     @Override
     public InteractionResult use(Item item, Level level, Player player, InteractionHand usedHand) {
         ItemStack itemStack = player.getItemInHand(usedHand);
-        CompoundTag tag = itemStack.getOrCreateTag();
         if (canOpen && player.isCrouching()) {
-            tag.putBoolean(LIGHTER_OPEN, !tag.getBooleanOr(LIGHTER_OPEN, false));
-            itemStack.setTag(tag);
+            com.gregtechceu.gtceu.api.item.data.ItemStackData.update(itemStack,
+                    tag -> tag.putBoolean(LIGHTER_OPEN, !tag.getBooleanOr(LIGHTER_OPEN, false)));
         }
         return IInteractionItem.super.use(item, level, player, usedHand);
     }
 
     @Override
     public InteractionResult onItemUseFirst(ItemStack itemStack, UseOnContext context) {
-        CompoundTag tag = itemStack.getOrCreateTag();
+        CompoundTag tag = com.gregtechceu.gtceu.api.item.data.ItemStackData.read(itemStack);
         Level level = context.getLevel();
         Player player = context.getPlayer();
         BlockPos pos = context.getClickedPos();
@@ -136,7 +135,7 @@ public class LighterBehavior implements IDurabilityBar, IInteractionItem, IAddIn
     @Override
     public InteractionResult interactLivingEntity(ItemStack stack, Player player,
                                                   LivingEntity interactionTarget, InteractionHand usedHand) {
-        CompoundTag tag = stack.getOrCreateTag();
+        CompoundTag tag = com.gregtechceu.gtceu.api.item.data.ItemStackData.read(stack);
         Level level = player.level();
 
         if ((!canOpen || tag.getBooleanOr(LIGHTER_OPEN, false)) && !player.isShiftKeyDown()) {
@@ -174,13 +173,7 @@ public class LighterBehavior implements IDurabilityBar, IInteractionItem, IAddIn
             FluidStack fluid = handler.get().drain(Integer.MAX_VALUE, IFluidHandler.FluidAction.SIMULATE);
             return fluid.getAmount();
         } else if (hasMultipleUses) {
-            CompoundTag compound = stack.getOrCreateTag();
-            if (compound.contains(USES_LEFT)) {
-                return compound.getIntOr(USES_LEFT, 0);
-            }
-            compound.putInt(USES_LEFT, maxUses);
-            // no need to get the value from the tag here when we set it just above
-            return maxUses;
+            return com.gregtechceu.gtceu.api.item.data.ItemStackData.read(stack).getIntOr(USES_LEFT, maxUses);
         } else {
             return stack.getCount();
         }
@@ -202,7 +195,7 @@ public class LighterBehavior implements IDurabilityBar, IInteractionItem, IAddIn
                     player.drop(brokenStack, true);
                 }
             } else {
-                stack.getOrCreateTag().putInt(USES_LEFT, usesLeft);
+                com.gregtechceu.gtceu.api.item.data.ItemStackData.update(stack, tag -> tag.putInt(USES_LEFT, usesLeft));
             }
         } else {
             stack.setCount(usesLeft);

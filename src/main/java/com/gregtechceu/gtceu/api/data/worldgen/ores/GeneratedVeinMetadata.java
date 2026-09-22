@@ -22,7 +22,7 @@ import java.util.Optional;
 @Accessors(fluent = true)
 public final class GeneratedVeinMetadata {
 
-    public static final Codec<ChunkPos> CHUNK_POS_CODEC = Codec.LONG.xmap(ChunkPos::new, ChunkPos::toLong);
+    public static final Codec<ChunkPos> CHUNK_POS_CODEC = Codec.LONG.xmap(ChunkPos::unpack, ChunkPos::pack);
     public static final Codec<GTOreDefinition> CLIENT_DEFINITION_CODEC = Identifier.CODEC
             .flatXmap(
                     rl -> Optional.ofNullable(ClientProxy.CLIENT_ORE_VEINS.get(rl)).map(DataResult::success)
@@ -94,7 +94,7 @@ public final class GeneratedVeinMetadata {
 
     public void writeToPacket(FriendlyByteBuf buf) {
         buf.writeIdentifier(this.id);
-        buf.writeVarLong(this.originChunk.toLong());
+        buf.writeVarLong(this.originChunk.pack());
         buf.writeVarLong(this.center.asLong());
         buf.writeIdentifier(GTRegistries.ORE_VEINS.getKey(this.definition));
     }

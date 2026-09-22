@@ -419,7 +419,7 @@ public class MiscRecipeLoader {
 
         builder.copy("colorless_lens").inputFluids(DyeWhite.getFluid(dyeAmount)).outputItems(lens, Glass)
                 .save(provider);
-        VanillaRecipeHelper.addShapelessRecipe(provider, "brown_dye_from_metal_mixture", new ItemStack(Items.BROWN_DYE),
+        VanillaRecipeHelper.addShapelessRecipe(provider, "brown_dye_from_metal_mixture", new ItemStack(Items.DYE.brown()),
                 new MaterialEntry(dust, MetalMixture));
 
         // NAN Certificate
@@ -627,9 +627,9 @@ public class MiscRecipeLoader {
                 .duration(100).EUt(2).save(provider);
 
         // Lazurite and Sodalite to dye
-        VanillaRecipeHelper.addShapelessRecipe(provider, "lazurite_to_dye", new ItemStack(Items.BLUE_DYE),
+        VanillaRecipeHelper.addShapelessRecipe(provider, "lazurite_to_dye", new ItemStack(Items.DYE.blue()),
                 new MaterialEntry(gem, Lazurite));
-        VanillaRecipeHelper.addShapelessRecipe(provider, "sodalite_to_dye", new ItemStack(Items.BLUE_DYE),
+        VanillaRecipeHelper.addShapelessRecipe(provider, "sodalite_to_dye", new ItemStack(Items.DYE.blue()),
                 new MaterialEntry(gem, Sodalite));
 
         POLARIZER_RECIPES.recipeBuilder("magnetize_golden_carrot")

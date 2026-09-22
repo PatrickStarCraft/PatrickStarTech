@@ -138,7 +138,7 @@ public class GTMaterials {
 
         block.setIgnored(Iron, Blocks.IRON_BLOCK);
         block.setIgnored(Gold, Blocks.GOLD_BLOCK);
-        block.setIgnored(Copper, Blocks.COPPER_BLOCK);
+        block.setIgnored(Copper, Blocks.COPPER_BLOCK.weathering().unaffected());
         block.setIgnored(Netherite, Items.NETHERITE_BLOCK);
         block.setIgnored(Lapis, Blocks.LAPIS_BLOCK);
         block.setIgnored(Emerald, Blocks.EMERALD_BLOCK);
@@ -157,11 +157,11 @@ public class GTMaterials {
         block.setIgnored(Bone, Blocks.BONE_BLOCK);
         block.setIgnored(NetherQuartz, Blocks.QUARTZ_BLOCK);
         block.setIgnored(Ice, Blocks.ICE);
-        block.setIgnored(Concrete, Blocks.WHITE_CONCRETE, Blocks.ORANGE_CONCRETE, Blocks.MAGENTA_CONCRETE,
-                Blocks.LIGHT_BLUE_CONCRETE, Blocks.YELLOW_CONCRETE, Blocks.LIME_CONCRETE,
-                Blocks.PINK_CONCRETE, Blocks.GRAY_CONCRETE, Blocks.LIGHT_GRAY_CONCRETE, Blocks.CYAN_CONCRETE,
-                Blocks.PURPLE_CONCRETE, Blocks.BLUE_CONCRETE,
-                Blocks.BROWN_CONCRETE, Blocks.GREEN_CONCRETE, Blocks.RED_CONCRETE, Blocks.BLACK_CONCRETE);
+        block.setIgnored(Concrete, Blocks.CONCRETE.white(), Blocks.CONCRETE.orange(), Blocks.CONCRETE.magenta(),
+                Blocks.CONCRETE.lightBlue(), Blocks.CONCRETE.yellow(), Blocks.CONCRETE.lime(),
+                Blocks.CONCRETE.pink(), Blocks.CONCRETE.gray(), Blocks.CONCRETE.lightGray(), Blocks.CONCRETE.cyan(),
+                Blocks.CONCRETE.purple(), Blocks.CONCRETE.blue(),
+                Blocks.CONCRETE.brown(), Blocks.CONCRETE.green(), Blocks.CONCRETE.red(), Blocks.CONCRETE.black());
         block.setIgnored(Blaze);
         block.setIgnored(Lapotron);
         block.setIgnored(Wax, Blocks.HONEYCOMB_BLOCK);
@@ -229,22 +229,22 @@ public class GTMaterials {
         plate.setIgnored(BorosilicateGlass);
         foil.setIgnored(BorosilicateGlass);
 
-        dye.setIgnored(DyeBlack, Items.BLACK_DYE);
-        dye.setIgnored(DyeRed, Items.RED_DYE);
-        dye.setIgnored(DyeGreen, Items.GREEN_DYE);
-        dye.setIgnored(DyeBrown, Items.BROWN_DYE);
-        dye.setIgnored(DyeBlue, Items.BLUE_DYE);
-        dye.setIgnored(DyePurple, Items.PURPLE_DYE);
-        dye.setIgnored(DyeCyan, Items.CYAN_DYE);
-        dye.setIgnored(DyeLightGray, Items.LIGHT_GRAY_DYE);
-        dye.setIgnored(DyeGray, Items.GRAY_DYE);
-        dye.setIgnored(DyePink, Items.PINK_DYE);
-        dye.setIgnored(DyeLime, Items.LIME_DYE);
-        dye.setIgnored(DyeYellow, Items.YELLOW_DYE);
-        dye.setIgnored(DyeLightBlue, Items.LIGHT_BLUE_DYE);
-        dye.setIgnored(DyeMagenta, Items.MAGENTA_DYE);
-        dye.setIgnored(DyeOrange, Items.ORANGE_DYE);
-        dye.setIgnored(DyeWhite, Items.WHITE_DYE);
+        dye.setIgnored(DyeBlack, Items.DYE.black());
+        dye.setIgnored(DyeRed, Items.DYE.red());
+        dye.setIgnored(DyeGreen, Items.DYE.green());
+        dye.setIgnored(DyeBrown, Items.DYE.brown());
+        dye.setIgnored(DyeBlue, Items.DYE.blue());
+        dye.setIgnored(DyePurple, Items.DYE.purple());
+        dye.setIgnored(DyeCyan, Items.DYE.cyan());
+        dye.setIgnored(DyeLightGray, Items.DYE.lightGray());
+        dye.setIgnored(DyeGray, Items.DYE.gray());
+        dye.setIgnored(DyePink, Items.DYE.pink());
+        dye.setIgnored(DyeLime, Items.DYE.lime());
+        dye.setIgnored(DyeYellow, Items.DYE.yellow());
+        dye.setIgnored(DyeLightBlue, Items.DYE.lightBlue());
+        dye.setIgnored(DyeMagenta, Items.DYE.magenta());
+        dye.setIgnored(DyeOrange, Items.DYE.orange());
+        dye.setIgnored(DyeWhite, Items.DYE.white());
 
         // register vanilla materials
 

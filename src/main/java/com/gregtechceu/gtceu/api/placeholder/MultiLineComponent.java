@@ -109,7 +109,7 @@ public class MultiLineComponent extends ArrayList<MutableComponent> {
         if (lines.isEmpty()) return this;
         for (Component line : lines) {
             GTUtil.getLast(this).append(line);
-            this.add(MutableComponent.create(ComponentContents.EMPTY));
+            this.add(MutableComponent.create(net.minecraft.network.chat.contents.PlainTextContents.EMPTY));
         }
         this.remove(this.size() - 1);
         return this;
@@ -122,7 +122,7 @@ public class MultiLineComponent extends ArrayList<MutableComponent> {
     }
 
     public void appendNewline() {
-        this.add(MutableComponent.create(ComponentContents.EMPTY));
+        this.add(MutableComponent.create(net.minecraft.network.chat.contents.PlainTextContents.EMPTY));
     }
 
     public MultiLineComponent withStyle(Style style) {
@@ -182,11 +182,11 @@ public class MultiLineComponent extends ArrayList<MutableComponent> {
         if (tag == null) return out;
         if (tag instanceof ListTag listTag) {
             for (Tag i : listTag) {
-                out.add(Component.Serializer.fromJson(i.getAsString()));
+                out.add(Component.Serializer.fromJson(i.asString().orElseThrow()));
             }
         } else if (tag instanceof CompoundTag compoundTag) {
             ListTag textTag = com.gregtechceu.gtceu.utils.data.TypedTagList.read(compoundTag, "text", Tag.TAG_STRING);
-            for (Tag i : textTag) out.add(Component.Serializer.fromJson(i.getAsString()));
+            for (Tag i : textTag) out.add(Component.Serializer.fromJson(i.asString().orElseThrow()));
             ListTag graphicsTag = com.gregtechceu.gtceu.utils.data.TypedTagList.read(compoundTag, "graphics", Tag.TAG_COMPOUND);
             for (Tag i : graphicsTag) out.addGraphics(GraphicsComponent.fromTag(i));
         }

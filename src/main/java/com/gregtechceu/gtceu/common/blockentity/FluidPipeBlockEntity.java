@@ -542,7 +542,7 @@ public class FluidPipeBlockEntity extends PipeBlockEntity<FluidPipeType, FluidPi
                                         .withStyle(ChatFormatting.GREEN),
                                 Component.translatable(FormattingUtil.formatNumbers(getCapacityPerTank()))
                                         .withStyle(ChatFormatting.YELLOW),
-                                fluids[i].getDisplayName().copy()
+                                fluids[i].getHoverName().copy()
                                         .withStyle(ChatFormatting.GOLD)));
                     }
                 }

@@ -9,11 +9,11 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.saveddata.SavedData;
+import com.gregtechceu.gtceu.api.sync_system.CompoundTagSavedData;
 
 import java.util.*;
 
-public abstract class LevelPipeNet<NodeDataType, T extends PipeNet<NodeDataType>> extends SavedData {
+public abstract class LevelPipeNet<NodeDataType, T extends PipeNet<NodeDataType>> extends CompoundTagSavedData {
 
     private final ServerLevel serverLevel;
     protected List<T> pipeNets = new ArrayList<>();

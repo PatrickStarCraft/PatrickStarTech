@@ -250,7 +250,7 @@ public class HPCAMachine extends WorkableElectricMultiblockMachine
                         isFlipped());
             }
         }
-        GenericSyncValue<Component> text = GenericSyncValue.builder(Component.class)
+        GenericSyncValue<net.minecraft.network.RegistryFriendlyByteBuf, Component> text = GenericSyncValue.<net.minecraft.network.RegistryFriendlyByteBuf, Component>builder(Component.class)
                 .adapter(GTByteBufAdapters.COMPONENT)
                 .getter(() -> {
                     List<Component> list = new ArrayList<>();

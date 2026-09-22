@@ -294,7 +294,7 @@ public class GTMuiWidgets {
                     }
                     return true;
                 })
-                .onMouseScrolled((context, delta) -> {
+                .onMouseScrolled((context, scrollX, delta) -> {
                     int newValue = nextCircuitValue(circuitTrait.storage.getStackInSlot(0),
                             circuitSyncValue.getIntValue(), delta);
                     circuitSyncValue.setValue(newValue);
@@ -481,7 +481,7 @@ public class GTMuiWidgets {
         var textField = new TextFieldWidget() {
 
             @Override
-            public boolean onMouseScrolled(double delta) {
+            public boolean onMouseScrolled(double scrollX, double delta) {
                 int inc = (int) delta * getIncrementValue(MouseData.create(-1), 1);
                 int val = Mth.clamp(syncValue.getIntValue() + inc, minValue.getAsInt(),
                         maxValue.getAsInt());
@@ -532,7 +532,7 @@ public class GTMuiWidgets {
         var textField = new TextFieldWidget() {
 
             @Override
-            public boolean onMouseScrolled(double delta) {
+            public boolean onMouseScrolled(double scrollX, double delta) {
                 long inc = (long) delta * getIncrementValue(MouseData.create(-1), 1);
                 long value = syncValue.getLongValue() + inc;
                 syncValue.setLongValue(GTMath.clamp(value, minValue.getAsLong(), maxValue.getAsLong()),
@@ -582,7 +582,7 @@ public class GTMuiWidgets {
         var textField = new TextFieldWidget() {
 
             @Override
-            public boolean onMouseScrolled(double delta) {
+            public boolean onMouseScrolled(double scrollX, double delta) {
                 int inc = (int) delta * (getIncrementValue(MouseData.create(-1), 1) *
                         bucketModeSyncValue.getValue().multiplier);
                 int val = Mth.clamp(intSyncValue.getIntValue() + inc, 0, maxMB.getAsInt());

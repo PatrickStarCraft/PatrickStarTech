@@ -67,10 +67,10 @@ public abstract class ArmorLogicSuite implements IArmorLogic, IItemHUDProvider {
         if (item == null) return ImmutableMultimap.of();
         if (item.getCharge() >= energyPerUse) {
             return ImmutableMultimap.of(Attributes.ARMOR, new AttributeModifier(uuid, "Armor modifier",
-                    20.0F * this.getAbsorption() * this.getDamageAbsorption(), AttributeModifier.Operation.ADDITION));
+                    20.0F * this.getAbsorption() * this.getDamageAbsorption(), AttributeModifier.Operation.ADD_VALUE));
         } else {
             return ImmutableMultimap.of(Attributes.ARMOR, new AttributeModifier(uuid, "Armor modifier",
-                    4.0F * this.getAbsorption() * this.getDamageAbsorption(), AttributeModifier.Operation.ADDITION));
+                    4.0F * this.getAbsorption() * this.getDamageAbsorption(), AttributeModifier.Operation.ADD_VALUE));
         }
     }
 

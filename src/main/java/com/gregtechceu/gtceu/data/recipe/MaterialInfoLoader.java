@@ -139,17 +139,17 @@ public class MaterialInfoLoader {
         ItemMaterialData.registerMaterialInfo(Items.STONE_SWORD, new ItemMaterialInfo(
                 new MaterialStack(GTMaterials.Stone, M * 2), new MaterialStack(GTMaterials.Wood, M / 4)));
 
-        ItemMaterialData.registerMaterialInfo(Items.WEATHERED_COPPER,
+        ItemMaterialData.registerMaterialInfo(Items.COPPER_BLOCK.weathering().weathered(),
                 new ItemMaterialInfo(new MaterialStack(GTMaterials.Copper, M * 9)));
-        ItemMaterialData.registerMaterialInfo(Items.EXPOSED_COPPER,
+        ItemMaterialData.registerMaterialInfo(Items.COPPER_BLOCK.weathering().exposed(),
                 new ItemMaterialInfo(new MaterialStack(GTMaterials.Copper, M * 9)));
-        ItemMaterialData.registerMaterialInfo(Items.OXIDIZED_COPPER,
+        ItemMaterialData.registerMaterialInfo(Items.COPPER_BLOCK.weathering().oxidized(),
                 new ItemMaterialInfo(new MaterialStack(GTMaterials.Copper, M * 9)));
-        ItemMaterialData.registerMaterialInfo(Items.WAXED_WEATHERED_COPPER,
+        ItemMaterialData.registerMaterialInfo(Items.COPPER_BLOCK.waxed().weathered(),
                 new ItemMaterialInfo(new MaterialStack(GTMaterials.Copper, M * 9)));
-        ItemMaterialData.registerMaterialInfo(Items.WAXED_EXPOSED_COPPER,
+        ItemMaterialData.registerMaterialInfo(Items.COPPER_BLOCK.waxed().exposed(),
                 new ItemMaterialInfo(new MaterialStack(GTMaterials.Copper, M * 9)));
-        ItemMaterialData.registerMaterialInfo(Items.WAXED_OXIDIZED_COPPER,
+        ItemMaterialData.registerMaterialInfo(Items.COPPER_BLOCK.waxed().oxidized(),
                 new ItemMaterialInfo(new MaterialStack(GTMaterials.Copper, M * 9)));
     }
 }

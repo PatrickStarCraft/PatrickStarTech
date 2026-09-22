@@ -47,7 +47,7 @@ public final class EffectRenderContext {
 
     public EffectRenderContext update(Camera camera, Frustum frustum, float partialTicks) {
         this.renderViewEntity = camera.getEntity();
-        this.camPos = camera.getPosition();
+        this.camPos = camera.position();
         this.partialTicks = partialTicks;
 
         float i = Minecraft.getInstance().options.getCameraType().isFirstPerson() ? 1 : -1;

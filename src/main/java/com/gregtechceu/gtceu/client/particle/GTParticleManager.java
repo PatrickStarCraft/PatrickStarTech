@@ -126,7 +126,7 @@ public final class GTParticleManager {
 
         PoseStack poseStack = event.getPoseStack();
         poseStack.pushPose();
-        poseStack.translate(-camera.getPosition().x, -camera.getPosition().y, -camera.getPosition().z);
+        poseStack.translate(-camera.position().x, -camera.position().y, -camera.position().z);
 
         EffectRenderContext instance = EffectRenderContext.getInstance()
                 .update(camera, event.getFrustum(), event.getPartialTick());

@@ -108,10 +108,10 @@ public class MixinHelpers {
                         tagMap.computeIfAbsent(ItemTags.TRIMMABLE_ARMOR.location(), $ -> new ArrayList<>())
                                 .add(entry);
                         tagMap.computeIfAbsent(switch (type) {
-                            case HELMET -> Tags.Items.ARMORS_HELMETS.location();
-                            case CHESTPLATE -> Tags.Items.ARMORS_CHESTPLATES.location();
-                            case LEGGINGS -> Tags.Items.ARMORS_LEGGINGS.location();
-                            case BOOTS -> Tags.Items.ARMORS_BOOTS.location();
+                            case HELMET -> net.minecraft.tags.ItemTags.HEAD_ARMOR.location();
+                            case CHESTPLATE -> net.minecraft.tags.ItemTags.CHEST_ARMOR.location();
+                            case LEGGINGS -> net.minecraft.tags.ItemTags.LEG_ARMOR.location();
+                            case BOOTS -> net.minecraft.tags.ItemTags.FOOT_ARMOR.location();
                         }, $ -> new ArrayList<>()).add(entry);
                     }
                 });

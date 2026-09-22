@@ -64,24 +64,24 @@ public class AssemblyLineRender extends DynamicRender<AssemblyLineMachine, Assem
         Direction right = RelativeDirection.RIGHT.getRelativeFacing(machine.getFrontFacing(),
                 machine.getUpwardsFacing(), machine.isFlipped());
 
-        BlockPos.MutableBlockPos pos = BlockPos.ZERO.offset(down.getNormal()).mutable();
+        BlockPos.MutableBlockPos pos = BlockPos.ZERO.offset(down.getUnitVec3i()).mutable();
         for (int i = 0; i < (int) progress; i++) {
             renderLineInternal(buffer, stack, pos, down, asslineColor | 0xff000000);
-            pos.move(back.getNormal().multiply(2));
+            pos.move(back.getUnitVec3i().multiply(2));
 
             renderLineInternal(buffer, stack, pos, down, asslineColor | 0xff000000);
-            pos.move(back.getOpposite().getNormal().multiply(2)).move(right.getNormal());
+            pos.move(back.getOpposite().getUnitVec3i().multiply(2)).move(right.getUnitVec3i());
         }
         renderLineInternal(buffer, stack, pos, down,
                 (asslineColor | (int) ((progress - (int) (progress)) * 255.f) << 24));
 
-        pos.move(back.getNormal().multiply(2));
+        pos.move(back.getUnitVec3i().multiply(2));
         renderLineInternal(buffer, stack, pos, down,
                 (asslineColor | (int) ((progress - (int) (progress)) * 255.f) << 24));
     }
 
     public void renderLineInternal(VertexConsumer buffer, PoseStack stack, BlockPos pos, Direction down, int color) {
-        var top = Vec3.atBottomCenterOf(pos.offset(down.getOpposite().getNormal()));
+        var top = Vec3.atBottomCenterOf(pos.offset(down.getOpposite().getUnitVec3i()));
         var bottom = Vec3.atBottomCenterOf(pos);
         RenderBufferHelper.renderLine(buffer, stack, bottom, top, 0.03, color);
     }
@@ -99,10 +99,10 @@ public class AssemblyLineRender extends DynamicRender<AssemblyLineMachine, Assem
                 machine.isFlipped());
         Direction right = RelativeDirection.RIGHT.getRelativeFacing(machine.getFrontFacing(),
                 machine.getUpwardsFacing(), machine.isFlipped());
-        AABB aabb = new AABB(machine.getBlockPos()).expandTowards(Vec3.atLowerCornerOf(down.getNormal().multiply(2)))
-                .expandTowards(Vec3.atLowerCornerOf(down.getOpposite().getNormal()))
-                .expandTowards(Vec3.atLowerCornerOf(back.getNormal().multiply(2)))
-                .expandTowards(Vec3.atLowerCornerOf(right.getNormal().multiply(17)));
+        AABB aabb = new AABB(machine.getBlockPos()).expandTowards(Vec3.atLowerCornerOf(down.getUnitVec3i().multiply(2)))
+                .expandTowards(Vec3.atLowerCornerOf(down.getOpposite().getUnitVec3i()))
+                .expandTowards(Vec3.atLowerCornerOf(back.getUnitVec3i().multiply(2)))
+                .expandTowards(Vec3.atLowerCornerOf(right.getUnitVec3i().multiply(17)));
         return aabb;
     }
 }
