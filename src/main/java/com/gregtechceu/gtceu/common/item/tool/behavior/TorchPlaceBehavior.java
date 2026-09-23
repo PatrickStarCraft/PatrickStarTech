@@ -49,24 +49,35 @@ public class TorchPlaceBehavior implements IToolBehavior {
 
         int cachedTorchSlot;
         ItemStack slotStack;
+        int cachedInventorySlot = -1;
+        boolean cachedOffhandTried = false;
         if (behaviourTag.getInt(ToolHelper.TORCH_PLACING_CACHE_SLOT_KEY).isPresent()) {
             cachedTorchSlot = behaviourTag.getIntOr(ToolHelper.TORCH_PLACING_CACHE_SLOT_KEY, 0);
-            if (cachedTorchSlot < 0) {
+            if (cachedTorchSlot == -1) {
                 slotStack = player.getOffhandItem();
-            } else if (cachedTorchSlot < player.getInventory().getNonEquipmentItems().size()) {
+                cachedOffhandTried = true;
+                if (checkAndPlaceTorch(context, slotStack)) {
+                    return InteractionResult.SUCCESS;
+                }
+            } else if (cachedTorchSlot >= 0 &&
+                    cachedTorchSlot < player.getInventory().getNonEquipmentItems().size()) {
+                cachedInventorySlot = cachedTorchSlot;
                 slotStack = player.getInventory().getNonEquipmentItems().get(cachedTorchSlot);
                 if (checkAndPlaceTorch(context, slotStack)) {
                     return InteractionResult.SUCCESS;
                 }
             }
         }
-        slotStack = player.getOffhandItem();
-        if (checkAndPlaceTorch(context, slotStack)) {
-            ToolHelper.updateBehaviorsTag(stack,
-                    tag -> tag.putInt(ToolHelper.TORCH_PLACING_CACHE_SLOT_KEY, -1));
-            return InteractionResult.SUCCESS;
+        if (!cachedOffhandTried) {
+            slotStack = player.getOffhandItem();
+            if (checkAndPlaceTorch(context, slotStack)) {
+                ToolHelper.updateBehaviorsTag(stack,
+                        tag -> tag.putInt(ToolHelper.TORCH_PLACING_CACHE_SLOT_KEY, -1));
+                return InteractionResult.SUCCESS;
+            }
         }
         for (int i = 0; i < player.getInventory().getNonEquipmentItems().size(); i++) {
+            if (i == cachedInventorySlot) continue;
             slotStack = player.getInventory().getNonEquipmentItems().get(i);
             if (checkAndPlaceTorch(context, slotStack)) {
                 int cachedSlot = i;

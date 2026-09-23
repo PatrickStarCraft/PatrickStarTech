@@ -975,9 +975,8 @@ public interface IGTTool extends IUIHolder<PlayerInventoryGuiData<?>>, ItemLike,
                 return switch (index) {
                     case 0, -101 -> {
                         if (item.getToolClasses(itemStack).contains(GTToolType.CROWBAR)) {
-                            if (ItemStackData.readNullable(itemStack) != null &&
-                                    getToolTag(itemStack).contains(TINT_COLOR_KEY, Tag.TAG_INT)) {
-                                yield getToolTag(itemStack).getInt(TINT_COLOR_KEY);
+                            if (ItemStackData.readNullable(itemStack) != null) {
+                                yield getToolTag(itemStack).getInt(TINT_COLOR_KEY).orElse(-1);
                             }
                         }
                         yield -1;

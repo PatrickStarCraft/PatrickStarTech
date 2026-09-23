@@ -20,6 +20,7 @@ import com.gregtechceu.gtceu.api.item.armor.ArmorComponentItem;
 import com.gregtechceu.gtceu.api.item.component.*;
 import com.gregtechceu.gtceu.api.item.component.prospector.ProspectorMode;
 import com.gregtechceu.gtceu.api.item.tool.MaterialToolTier;
+import com.gregtechceu.gtceu.api.registry.registrate.provider.GTBlockstateProvider;
 import com.gregtechceu.gtceu.common.cover.ConveyorCover;
 import com.gregtechceu.gtceu.common.cover.PumpCover;
 import com.gregtechceu.gtceu.common.data.materials.GTFoods;
@@ -34,14 +35,14 @@ import com.gregtechceu.gtceu.common.item.modules.ImageModuleBehaviour;
 import com.gregtechceu.gtceu.common.item.modules.TextModuleBehaviour;
 import com.gregtechceu.gtceu.config.ConfigHolder;
 import com.gregtechceu.gtceu.data.lang.LangHandler;
+import com.gregtechceu.gtceu.data.model.builder.ModelFile;
 import com.gregtechceu.gtceu.data.recipe.CustomTags;
 import com.gregtechceu.gtceu.utils.FormattingUtil;
 import com.gregtechceu.gtceu.utils.GTUtil;
 import com.gregtechceu.gtceu.utils.memoization.GTMemoizer;
 
 import net.minecraft.client.color.item.ItemColor;
-import net.minecraft.client.renderer.item.ItemProperties;
-import net.minecraft.client.renderer.item.ItemPropertyFunction;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.cauldron.CauldronInteraction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -59,10 +60,10 @@ import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.material.Fluids;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.minecraftforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.common.Tags;
 import net.minecraftforge.common.TierSortingRegistry;
 import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.SimpleFluidContent;
 import net.neoforged.neoforge.fluids.FluidType;
 import net.neoforged.neoforge.fluids.FluidUtil;
 
@@ -359,7 +360,7 @@ public class GTItems {
             public Component getItemName(ItemStack stack) {
                 Component prefix = FluidUtil.getFluidContained(stack).map(FluidStack::getHoverName)
                         .orElse(Component.translatable("gtceu.fluid.empty"));
-                return Component.translatable(stack.getDescriptionId(), prefix);
+                return Component.translatable(stack.getItem().getDescriptionId(), prefix);
             }
         };
     }
@@ -433,29 +434,27 @@ public class GTItems {
             .onRegister(attach(new LighterBehavior(false, true, false, () -> new ItemStack(Items.PAPER, 1), 16)))
             .tag(CustomTags.TOOLS_IGNITER)
             .register();
+    public static final FilteredFluidContainer INVAR_LIGHTER_FLUID =
+            new FilteredFluidContainer(100, true, x -> x.getFluid().is(CustomTags.LIGHTER_FLUIDS));
+    public static final FilteredFluidContainer PLATINUM_LIGHTER_FLUID =
+            new FilteredFluidContainer(1000, true, x -> x.getFluid().is(CustomTags.LIGHTER_FLUIDS));
+
     public static ItemEntry<ComponentItem> TOOL_LIGHTER_INVAR = REGISTRATE.item("invar_lighter", ComponentItem::create)
             .lang("Invar Lighter")
-            .properties(p -> p.stacksTo(1))
+            .properties(p -> p.stacksTo(1).component(GTDataComponents.FLUID_CONTENT.get(), SimpleFluidContent.EMPTY))
             .setData(ProviderType.ITEM_MODEL, NonNullBiConsumer.noop())
             .onRegister(attach(new LighterBehavior(true, true, true)))
-            .onRegister(attach(new FilteredFluidContainer(100, true, x -> x.getFluid().is(CustomTags.LIGHTER_FLUIDS)),
-                    new ItemFluidContainer()))
-            .onRegister(modelPredicate(GTCEu.id("lighter_open"),
-                    (itemStack) -> com.gregtechceu.gtceu.api.item.data.ItemStackData.read(itemStack)
-                            .getBoolean(LighterBehavior.LIGHTER_OPEN) ? 1.0f : 0.0f))
+            .onRegister(attach(INVAR_LIGHTER_FLUID, new ItemFluidContainer()))
             .tag(CustomTags.TOOLS_IGNITER)
             .register();
     public static ItemEntry<ComponentItem> TOOL_LIGHTER_PLATINUM = REGISTRATE
             .item("platinum_lighter", ComponentItem::create)
             .lang("Platinum Lighter")
-            .properties(p -> p.stacksTo(1).rarity(Rarity.UNCOMMON))
+            .properties(p -> p.stacksTo(1).rarity(Rarity.UNCOMMON)
+                    .component(GTDataComponents.FLUID_CONTENT.get(), SimpleFluidContent.EMPTY))
             .setData(ProviderType.ITEM_MODEL, NonNullBiConsumer.noop())
             .onRegister(attach(new LighterBehavior(true, true, true)))
-            .onRegister(attach(new FilteredFluidContainer(1000, true, x -> x.getFluid().is(CustomTags.LIGHTER_FLUIDS)),
-                    new ItemFluidContainer()))
-            .onRegister(modelPredicate(GTCEu.id("lighter_open"),
-                    (itemStack) -> com.gregtechceu.gtceu.api.item.data.ItemStackData.read(itemStack)
-                            .getBoolean(LighterBehavior.LIGHTER_OPEN) ? 1.0f : 0.0f))
+            .onRegister(attach(PLATINUM_LIGHTER_FLUID, new ItemFluidContainer()))
             .tag(CustomTags.TOOLS_IGNITER)
             .register();
 
@@ -524,156 +523,134 @@ public class GTItems {
     public static ItemEntry<ComponentItem> BATTERY_LV_SODIUM = REGISTRATE
             .item("lv_sodium_battery", ComponentItem::create)
             .lang("Small Sodium Battery")
-            .model(overrideModel(GTCEu.id("battery"), 8))
-            .onRegister(modelPredicate(GTCEu.id("battery"), ElectricStats::getStoredPredicate))
+            .setData(GTBlockstateProvider.ITEM_MODEL, overrideModel(GTCEu.id("battery"), 8))
             .onRegister(attach(ElectricStats.createRechargeableBattery(80000, GTValues.LV)))
             .tag(CustomTags.LV_BATTERIES).register();
     public static ItemEntry<ComponentItem> BATTERY_MV_SODIUM = REGISTRATE
             .item("mv_sodium_battery", ComponentItem::create)
             .lang("Medium Sodium Battery")
-            .model(overrideModel(GTCEu.id("battery"), 8))
-            .onRegister(modelPredicate(GTCEu.id("battery"), ElectricStats::getStoredPredicate))
+            .setData(GTBlockstateProvider.ITEM_MODEL, overrideModel(GTCEu.id("battery"), 8))
             .onRegister(attach(ElectricStats.createRechargeableBattery(360000, GTValues.MV)))
             .tag(CustomTags.MV_BATTERIES).register();
     public static ItemEntry<ComponentItem> BATTERY_HV_SODIUM = REGISTRATE
             .item("hv_sodium_battery", ComponentItem::create)
             .lang("Large Sodium Battery")
-            .model(overrideModel(GTCEu.id("battery"), 8))
-            .onRegister(modelPredicate(GTCEu.id("battery"), ElectricStats::getStoredPredicate))
+            .setData(GTBlockstateProvider.ITEM_MODEL, overrideModel(GTCEu.id("battery"), 8))
             .onRegister(attach(ElectricStats.createRechargeableBattery(1200000, GTValues.HV)))
             .tag(CustomTags.HV_BATTERIES).register();
 
     public static ItemEntry<ComponentItem> BATTERY_LV_LITHIUM = REGISTRATE
             .item("lv_lithium_battery", ComponentItem::create)
             .lang("Small Lithium Battery")
-            .model(overrideModel(GTCEu.id("battery"), 8))
-            .onRegister(modelPredicate(GTCEu.id("battery"), ElectricStats::getStoredPredicate))
+            .setData(GTBlockstateProvider.ITEM_MODEL, overrideModel(GTCEu.id("battery"), 8))
             .onRegister(attach(ElectricStats.createRechargeableBattery(120000, GTValues.LV)))
             .tag(CustomTags.LV_BATTERIES).register();
     public static ItemEntry<ComponentItem> BATTERY_MV_LITHIUM = REGISTRATE
             .item("mv_lithium_battery", ComponentItem::create)
             .lang("Medium Lithium Battery")
-            .model(overrideModel(GTCEu.id("battery"), 8))
-            .onRegister(modelPredicate(GTCEu.id("battery"), ElectricStats::getStoredPredicate))
+            .setData(GTBlockstateProvider.ITEM_MODEL, overrideModel(GTCEu.id("battery"), 8))
             .onRegister(attach(ElectricStats.createRechargeableBattery(420000, GTValues.MV)))
             .tag(CustomTags.MV_BATTERIES).register();
     public static ItemEntry<ComponentItem> BATTERY_HV_LITHIUM = REGISTRATE
             .item("hv_lithium_battery", ComponentItem::create)
             .lang("Large Lithium Battery")
-            .model(overrideModel(GTCEu.id("battery"), 8))
-            .onRegister(modelPredicate(GTCEu.id("battery"), ElectricStats::getStoredPredicate))
+            .setData(GTBlockstateProvider.ITEM_MODEL, overrideModel(GTCEu.id("battery"), 8))
             .onRegister(attach(ElectricStats.createRechargeableBattery(1800000, GTValues.HV)))
             .tag(CustomTags.HV_BATTERIES).register();
 
     public static ItemEntry<ComponentItem> BATTERY_LV_CADMIUM = REGISTRATE
             .item("lv_cadmium_battery", ComponentItem::create)
             .lang("Small Cadmium Battery")
-            .model(overrideModel(GTCEu.id("battery"), 8))
-            .onRegister(modelPredicate(GTCEu.id("battery"), ElectricStats::getStoredPredicate))
+            .setData(GTBlockstateProvider.ITEM_MODEL, overrideModel(GTCEu.id("battery"), 8))
             .onRegister(attach(ElectricStats.createRechargeableBattery(100000, GTValues.LV)))
             .tag(CustomTags.LV_BATTERIES).register();
     public static ItemEntry<ComponentItem> BATTERY_MV_CADMIUM = REGISTRATE
             .item("mv_cadmium_battery", ComponentItem::create)
             .lang("Medium Cadmium Battery")
-            .model(overrideModel(GTCEu.id("battery"), 8))
-            .onRegister(modelPredicate(GTCEu.id("battery"), ElectricStats::getStoredPredicate))
+            .setData(GTBlockstateProvider.ITEM_MODEL, overrideModel(GTCEu.id("battery"), 8))
             .onRegister(attach(ElectricStats.createRechargeableBattery(400000, GTValues.MV)))
             .tag(CustomTags.MV_BATTERIES).register();
     public static ItemEntry<ComponentItem> BATTERY_HV_CADMIUM = REGISTRATE
             .item("hv_cadmium_battery", ComponentItem::create)
             .lang("Large Cadmium Battery")
-            .model(overrideModel(GTCEu.id("battery"), 8))
-            .onRegister(modelPredicate(GTCEu.id("battery"), ElectricStats::getStoredPredicate))
+            .setData(GTBlockstateProvider.ITEM_MODEL, overrideModel(GTCEu.id("battery"), 8))
             .onRegister(attach(ElectricStats.createRechargeableBattery(1600000, GTValues.HV)))
             .tag(CustomTags.HV_BATTERIES).register();
 
     public static ItemEntry<ComponentItem> ENERGIUM_CRYSTAL = REGISTRATE.item("energy_crystal", ComponentItem::create)
             .lang("Energium Crystal")
-            .model(overrideModel(GTCEu.id("battery"), 8))
-            .onRegister(modelPredicate(GTCEu.id("battery"), ElectricStats::getStoredPredicate))
+            .setData(GTBlockstateProvider.ITEM_MODEL, overrideModel(GTCEu.id("battery"), 8))
             .onRegister(attach(ElectricStats.createRechargeableBattery(6_400_000L, GTValues.HV)))
             .tag(CustomTags.HV_BATTERIES).register();
     public static ItemEntry<ComponentItem> LAPOTRON_CRYSTAL = REGISTRATE.item("lapotron_crystal", ComponentItem::create)
-            .model(overrideModel(GTCEu.id("battery"), 8))
-            .onRegister(modelPredicate(GTCEu.id("battery"), ElectricStats::getStoredPredicate))
+            .setData(GTBlockstateProvider.ITEM_MODEL, overrideModel(GTCEu.id("battery"), 8))
             .onRegister(attach(ElectricStats.createRechargeableBattery(25_000_000L, GTValues.EV)))
             .tag(CustomTags.EV_BATTERIES).register();
 
     public static ItemEntry<ComponentItem> BATTERY_EV_VANADIUM = REGISTRATE
             .item("ev_vanadium_battery", ComponentItem::create)
             .lang("Small Vanadium Battery")
-            .model(overrideModel(GTCEu.id("battery"), 8))
-            .onRegister(modelPredicate(GTCEu.id("battery"), ElectricStats::getStoredPredicate))
+            .setData(GTBlockstateProvider.ITEM_MODEL, overrideModel(GTCEu.id("battery"), 8))
             .onRegister(attach(ElectricStats.createRechargeableBattery(10_240_000L, GTValues.EV)))
             .tag(CustomTags.EV_BATTERIES).register();
     public static ItemEntry<ComponentItem> BATTERY_IV_VANADIUM = REGISTRATE
             .item("iv_vanadium_battery", ComponentItem::create)
             .lang("Medium Vanadium Battery")
-            .model(overrideModel(GTCEu.id("battery"), 8))
-            .onRegister(modelPredicate(GTCEu.id("battery"), ElectricStats::getStoredPredicate))
+            .setData(GTBlockstateProvider.ITEM_MODEL, overrideModel(GTCEu.id("battery"), 8))
             .onRegister(attach(ElectricStats.createRechargeableBattery(40_960_000L, GTValues.IV)))
             .tag(CustomTags.IV_BATTERIES).register();
     public static ItemEntry<ComponentItem> BATTERY_LuV_VANADIUM = REGISTRATE
             .item("luv_vanadium_battery", ComponentItem::create)
             .lang("Large Vanadium Battery")
-            .model(overrideModel(GTCEu.id("battery"), 8))
-            .onRegister(modelPredicate(GTCEu.id("battery"), ElectricStats::getStoredPredicate))
+            .setData(GTBlockstateProvider.ITEM_MODEL, overrideModel(GTCEu.id("battery"), 8))
             .onRegister(attach(ElectricStats.createRechargeableBattery(163_840_000L, GTValues.LuV)))
             .tag(CustomTags.LuV_BATTERIES).register();
 
     public static ItemEntry<ComponentItem> BATTERY_ZPM_NAQUADRIA = REGISTRATE
             .item("zpm_naquadria_battery", ComponentItem::create)
             .lang("Medium Naquadria Battery")
-            .model(overrideModel(GTCEu.id("battery"), 8))
-            .onRegister(modelPredicate(GTCEu.id("battery"), ElectricStats::getStoredPredicate))
+            .setData(GTBlockstateProvider.ITEM_MODEL, overrideModel(GTCEu.id("battery"), 8))
             .onRegister(attach(ElectricStats.createRechargeableBattery(655_360_000L, GTValues.ZPM)))
             .tag(CustomTags.ZPM_BATTERIES).register();
     public static ItemEntry<ComponentItem> BATTERY_UV_NAQUADRIA = REGISTRATE
             .item("uv_naquadria_battery", ComponentItem::create)
             .lang("Large Naquadria Battery")
-            .model(overrideModel(GTCEu.id("battery"), 8))
-            .onRegister(modelPredicate(GTCEu.id("battery"), ElectricStats::getStoredPredicate))
+            .setData(GTBlockstateProvider.ITEM_MODEL, overrideModel(GTCEu.id("battery"), 8))
             .onRegister(attach(ElectricStats.createRechargeableBattery(2_621_440_000L, GTValues.UV)))
             .tag(CustomTags.UV_BATTERIES).register();
 
     public static ItemEntry<ComponentItem> ENERGY_LAPOTRONIC_ORB = REGISTRATE
             .item("lapotronic_energy_orb", ComponentItem::create)
             .lang("Lapotronic Energy Orb")
-            .model(overrideModel(GTCEu.id("battery"), 8))
-            .onRegister(modelPredicate(GTCEu.id("battery"), ElectricStats::getStoredPredicate))
+            .setData(GTBlockstateProvider.ITEM_MODEL, overrideModel(GTCEu.id("battery"), 8))
             .onRegister(attach(ElectricStats.createRechargeableBattery(250_000_000L, GTValues.IV)))
             .tag(CustomTags.IV_BATTERIES).register();
     public static ItemEntry<ComponentItem> ENERGY_LAPOTRONIC_ORB_CLUSTER = REGISTRATE
             .item("lapotronic_energy_orb_cluster", ComponentItem::create)
             .lang("Lapotronic Energy Orb Cluster")
-            .model(overrideModel(GTCEu.id("battery"), 8))
-            .onRegister(modelPredicate(GTCEu.id("battery"), ElectricStats::getStoredPredicate))
+            .setData(GTBlockstateProvider.ITEM_MODEL, overrideModel(GTCEu.id("battery"), 8))
             .onRegister(attach(ElectricStats.createRechargeableBattery(1_000_000_000L, GTValues.LuV)))
             .tag(CustomTags.LuV_BATTERIES).register();
 
     public static ItemEntry<ComponentItem> ENERGY_MODULE = REGISTRATE.item("energy_module", ComponentItem::create)
             .lang("Energy Module")
-            .model(overrideModel(GTCEu.id("battery"), 8))
-            .onRegister(modelPredicate(GTCEu.id("battery"), ElectricStats::getStoredPredicate))
+            .setData(GTBlockstateProvider.ITEM_MODEL, overrideModel(GTCEu.id("battery"), 8))
             .onRegister(attach(ElectricStats.createRechargeableBattery(4_000_000_000L, GTValues.ZPM)))
             .tag(CustomTags.ZPM_BATTERIES).register();
     public static ItemEntry<ComponentItem> ENERGY_CLUSTER = REGISTRATE.item("energy_cluster", ComponentItem::create)
             .lang("Energy Cluster")
-            .model(overrideModel(GTCEu.id("battery"), 8))
-            .onRegister(modelPredicate(GTCEu.id("battery"), ElectricStats::getStoredPredicate))
+            .setData(GTBlockstateProvider.ITEM_MODEL, overrideModel(GTCEu.id("battery"), 8))
             .onRegister(attach(ElectricStats.createRechargeableBattery(20_000_000_000L, GTValues.UV)))
             .tag(CustomTags.UV_BATTERIES).register();
 
     public static ItemEntry<ComponentItem> ZERO_POINT_MODULE = REGISTRATE
             .item("zero_point_module", ComponentItem::create)
             .lang("Zero Point Module")
-            .model(overrideModel(GTCEu.id("battery"), 8))
-            .onRegister(modelPredicate(GTCEu.id("battery"), ElectricStats::getStoredPredicate))
+            .setData(GTBlockstateProvider.ITEM_MODEL, overrideModel(GTCEu.id("battery"), 8))
             .onRegister(attach(ElectricStats.createBattery(2000000000000L, GTValues.ZPM, true))).register();
     public static ItemEntry<ComponentItem> ULTIMATE_BATTERY = REGISTRATE.item("max_battery", ComponentItem::create)
             .lang("Ultimate Battery")
-            .model(overrideModel(GTCEu.id("battery"), 8))
-            .onRegister(modelPredicate(GTCEu.id("battery"), ElectricStats::getStoredPredicate))
+            .setData(GTBlockstateProvider.ITEM_MODEL, overrideModel(GTCEu.id("battery"), 8))
             .onRegister(attach(ElectricStats.createRechargeableBattery(Long.MAX_VALUE, GTValues.UHV)))
             .tag(CustomTags.UHV_BATTERIES).register();
 
@@ -1788,7 +1765,7 @@ public class GTItems {
             .lang("Item Tag Filter")
             .onRegister(attach(
                     new FilterBehaviour<>(ItemStack.class,
-                            stack -> new TagFilter<>(stack, ItemStack::getItem, stack -> stack.typeHolder().tags())),
+                            stack -> new TagFilter<>(stack, ItemStack::getItem, itemStack -> itemStack.typeHolder().tags())),
                     new CoverPlaceBehavior(GTCovers.ITEM_FILTER)))
             .onRegister(materialInfo(new ItemMaterialInfo(new MaterialStack(GTMaterials.Zinc, GTValues.M * 2))))
             .register();
@@ -1951,7 +1928,7 @@ public class GTItems {
     public static ItemEntry<ComponentItem> COVER_FACADE = REGISTRATE.item("facade_cover", ComponentItem::create)
             .lang("%s Cover Facade")
             .onRegister(attach(new FacadeItemBehaviour(), new CoverPlaceBehavior(GTCovers.FACADE)))
-            .model(NonNullBiConsumer.noop())
+            .setData(GTBlockstateProvider.ITEM_MODEL, NonNullBiConsumer.noop())
             .register();
 
     // Solar Panels: ID 331-346
@@ -2042,9 +2019,7 @@ public class GTItems {
     public static ItemEntry<ComponentItem> PROGRAMMED_CIRCUIT = REGISTRATE
             .item("programmed_circuit", ComponentItem::create)
             .lang("Programmed Circuit")
-            .model(overrideModel(GTCEu.id("circuit"), 33))
-            .onRegister(modelPredicate(GTCEu.id("circuit"),
-                    (itemStack) -> IntCircuitBehaviour.getCircuitConfiguration(itemStack) / 100f))
+            .setData(GTBlockstateProvider.ITEM_MODEL, overrideModel(GTCEu.id("circuit"), 33))
             .onRegister(attach(new IntCircuitBehaviour()))
             .tag(CustomTags.SKIP_ITEM_DETECTOR)
             .register();
@@ -2079,31 +2054,31 @@ public class GTItems {
     public static ItemEntry<ComponentItem> POWER_UNIT_LV = REGISTRATE.item("lv_power_unit", ComponentItem::create)
             .lang("LV Power Unit")
             .properties(p -> p.stacksTo(8))
-            .model((ctx, prov) -> prov.generated(ctx, prov.modLoc("item/tools/power_unit_lv")))
+            .setData(GTBlockstateProvider.ITEM_MODEL, (ctx, prov) -> prov.generated(ctx.getId(), prov.modLoc("item/tools/power_unit_lv")))
             .onRegister(attach(ElectricStats.createElectricItem(100000L, GTValues.LV)))
             .register();
     public static ItemEntry<ComponentItem> POWER_UNIT_MV = REGISTRATE.item("mv_power_unit", ComponentItem::create)
             .lang("MV Power Unit")
             .properties(p -> p.stacksTo(8))
-            .model((ctx, prov) -> prov.generated(ctx, prov.modLoc("item/tools/power_unit_mv")))
+            .setData(GTBlockstateProvider.ITEM_MODEL, (ctx, prov) -> prov.generated(ctx.getId(), prov.modLoc("item/tools/power_unit_mv")))
             .onRegister(attach(ElectricStats.createElectricItem(400000L, GTValues.MV)))
             .register();
     public static ItemEntry<ComponentItem> POWER_UNIT_HV = REGISTRATE.item("hv_power_unit", ComponentItem::create)
             .lang("HV Power Unit")
             .properties(p -> p.stacksTo(8))
-            .model((ctx, prov) -> prov.generated(ctx, prov.modLoc("item/tools/power_unit_hv")))
+            .setData(GTBlockstateProvider.ITEM_MODEL, (ctx, prov) -> prov.generated(ctx.getId(), prov.modLoc("item/tools/power_unit_hv")))
             .onRegister(attach(ElectricStats.createElectricItem(1600000L, GTValues.HV)))
             .register();
     public static ItemEntry<ComponentItem> POWER_UNIT_EV = REGISTRATE.item("ev_power_unit", ComponentItem::create)
             .lang("EV Power Unit")
             .properties(p -> p.stacksTo(8))
-            .model((ctx, prov) -> prov.generated(ctx, prov.modLoc("item/tools/power_unit_ev")))
+            .setData(GTBlockstateProvider.ITEM_MODEL, (ctx, prov) -> prov.generated(ctx.getId(), prov.modLoc("item/tools/power_unit_ev")))
             .onRegister(attach(ElectricStats.createElectricItem(6400000L, GTValues.EV)))
             .register();
     public static ItemEntry<ComponentItem> POWER_UNIT_IV = REGISTRATE.item("iv_power_unit", ComponentItem::create)
             .lang("IV Power Unit")
             .properties(p -> p.stacksTo(8))
-            .model((ctx, prov) -> prov.generated(ctx, prov.modLoc("item/tools/power_unit_iv")))
+            .setData(GTBlockstateProvider.ITEM_MODEL, (ctx, prov) -> prov.generated(ctx.getId(), prov.modLoc("item/tools/power_unit_iv")))
             .onRegister(attach(ElectricStats.createElectricItem(25600000L, GTValues.IV)))
             .register();
 
@@ -2131,10 +2106,10 @@ public class GTItems {
 
     public static ItemEntry<ComponentItem> NANO_SABER = REGISTRATE.item("nano_saber", ComponentItem::create)
             .lang("Nano Saber")
-            .properties(p -> p.stacksTo(1))
+            .properties(p -> p.stacksTo(1).enchantable(33))
             .onRegister(attach(new NanoSaberBehavior(), ElectricStats.createElectricItem(4_000_000L, GTValues.HV)))
-            .model((ctx, prov) -> {
-                var rootModel = prov.generated(ctx::getEntry, prov.modLoc("item/nano_saber/normal"));
+            .setData(GTBlockstateProvider.ITEM_MODEL, (ctx, prov) -> {
+                var rootModel = prov.generated(ctx.getId(), prov.modLoc("item/nano_saber/normal"));
                 prov.getBuilder("item/nano_saber/active")
                         .parent(new ModelFile.UncheckedModelFile("item/handheld"))
                         .texture("layer0", prov.modLoc("item/nano_saber/active"));
@@ -2143,8 +2118,6 @@ public class GTItems {
                         .model(new ModelFile.UncheckedModelFile(prov.modLoc("item/nano_saber/active")))
                         .end();
             })
-            .onRegister(modelPredicate(NanoSaberBehavior.OVERRIDE_KEY_LOCATION,
-                    () -> () -> (stack, level, entity, layer) -> NanoSaberBehavior.isItemActive(stack) ? 1.0f : 0.0f))
             .register();
     public static ItemEntry<ComponentItem> PROSPECTOR_LV = REGISTRATE.item("prospector.lv", ComponentItem::create)
             .lang("Ore Prospector (LV)")
@@ -2198,7 +2171,8 @@ public class GTItems {
     static {
         for (DyeColor color : DyeColor.values()) {
             CHEMICAL_DYES.put(color, REGISTRATE
-                    .item("chemical_%s_dye".formatted(color.getName()), (props) -> new DyeItem(color, props))
+                    .item("chemical_%s_dye".formatted(color.getName()), DyeItem::new)
+                    .properties(props -> props.component(DataComponents.DYE, color))
                     .lang("Chemical %s Dye".formatted(toEnglishName(color.getName())))
                     .tag(Tags.Items.DYES)
                     .tag(color.getTag())
@@ -2220,7 +2194,7 @@ public class GTItems {
     public static ItemEntry<ComponentItem> TURBINE_ROTOR = REGISTRATE.item("turbine_rotor", ComponentItem::create)
             .lang("%s Turbine Rotor")
             .properties(p -> p.stacksTo(1))
-            .model((ctx, prov) -> createTextureModel(ctx, prov, GTCEu.id("item/tools/turbine")))
+            .setData(GTBlockstateProvider.ITEM_MODEL, (ctx, prov) -> createTextureModel(ctx, prov, GTCEu.id("item/tools/turbine")))
             .color(() -> IMaterialPartItem::getItemStackColor)
             .onRegister(attach(new TurbineRotorBehaviour())).register();
 
@@ -2470,8 +2444,7 @@ public class GTItems {
             .lang("Electric Jetpack")
             .properties(p -> p.rarity(Rarity.UNCOMMON))
             .tag(net.minecraft.tags.ItemTags.CHEST_ARMOR)
-            .model(overrideModel(GTCEu.id("electric_jetpack"), 8))
-            .onRegister(modelPredicate(GTCEu.id("electric_jetpack"), ElectricStats::getStoredPredicate))
+            .setData(GTBlockstateProvider.ITEM_MODEL, overrideModel(GTCEu.id("electric_jetpack"), 8))
             .register();
 
     public static ItemEntry<ArmorComponentItem> ELECTRIC_JETPACK_ADVANCED = REGISTRATE
@@ -2680,25 +2653,6 @@ public class GTItems {
         return item -> item.attachComponents(components);
     }
 
-    public static <T extends Item> NonNullConsumer<T> modelPredicate(Identifier predicate,
-                                                                     StackProperty property) {
-        return item -> {
-            if (GTCEu.isClientSide()) {
-                ItemProperties.register(item, predicate, (itemStack, c, l, i) -> property.apply(itemStack));
-            }
-        };
-    }
-
-    @SuppressWarnings("deprecation")
-    public static <T extends Item> NonNullConsumer<T> modelPredicate(Identifier predicate,
-                                                                     Supplier<Supplier<ItemPropertyFunction>> property) {
-        return item -> {
-            if (GTCEu.isClientSide()) {
-                ItemProperties.register(item, predicate, property.get().get());
-            }
-        };
-    }
-
     @SuppressWarnings("RedundantCast")
     public static void registerToolTier(MaterialToolTier tier, Identifier id, Collection<Identifier> before,
                                         Collection<Identifier> after) {
@@ -2733,9 +2687,4 @@ public class GTItems {
         };
     }
 
-    @FunctionalInterface
-    public interface StackProperty {
-
-        float apply(ItemStack stack);
-    }
 }

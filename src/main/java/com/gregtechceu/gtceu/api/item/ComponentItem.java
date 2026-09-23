@@ -9,6 +9,7 @@ import com.gregtechceu.gtceu.api.mui.IItemUIHolder;
 
 import org.jspecify.annotations.NullMarked;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
@@ -17,8 +18,6 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.CreativeModeTab;
@@ -26,6 +25,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.ItemUseAnimation;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -36,7 +36,6 @@ import brachy.modularui.factory.PlayerInventoryGuiData;
 import brachy.modularui.screen.ModularPanel;
 import brachy.modularui.screen.UISettings;
 import brachy.modularui.value.sync.PanelSyncManager;
-import com.google.common.collect.Multimap;
 import lombok.Getter;
 import org.jetbrains.annotations.Nullable;
 
@@ -142,46 +141,26 @@ public class ComponentItem extends Item implements IComponentItem, IItemUIHolder
     }
 
     @Override
-    public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slot, ItemStack stack) {
+    public ItemAttributeModifiers getDefaultAttributeModifiers(ItemStack stack) {
         for (IItemComponent component : components) {
             if (component instanceof IItemAttributes itemAttributes) {
-                var result = itemAttributes.getAttributeModifiers(slot, stack);
-                if (result != null && !result.isEmpty()) {
+                var result = itemAttributes.getAttributeModifiers(stack);
+                if (result != null && !result.modifiers().isEmpty()) {
                     return result;
                 }
             }
         }
-        return super.getAttributeModifiers(slot, stack);
+        return super.getDefaultAttributeModifiers(stack);
     }
 
     @Override
-    public boolean isEnchantable(ItemStack stack) {
+    public boolean isPrimaryItemFor(ItemStack stack, Holder<Enchantment> enchantment) {
         for (IItemComponent component : components) {
             if (component instanceof IEnchantableItem enchantableItem) {
-                return enchantableItem.isEnchantable(stack);
+                return enchantableItem.isPrimaryItemFor(stack, enchantment);
             }
         }
-        return super.isEnchantable(stack);
-    }
-
-    @Override
-    public int getEnchantmentValue(ItemStack stack) {
-        for (IItemComponent component : components) {
-            if (component instanceof IEnchantableItem enchantableItem) {
-                return enchantableItem.getEnchantmentValue(stack);
-            }
-        }
-        return super.getEnchantmentValue(stack);
-    }
-
-    @Override
-    public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
-        for (IItemComponent component : components) {
-            if (component instanceof IEnchantableItem enchantableItem) {
-                return enchantableItem.canApplyAtEnchantingTable(stack, enchantment);
-            }
-        }
-        return super.canApplyAtEnchantingTable(stack, enchantment);
+        return super.isPrimaryItemFor(stack, enchantment);
     }
 
     @Override

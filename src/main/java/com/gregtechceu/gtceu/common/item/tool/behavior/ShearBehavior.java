@@ -8,6 +8,7 @@ import com.gregtechceu.gtceu.core.mixins.BeehiveBlockAccessor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -20,20 +21,18 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
-import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BeehiveBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
-import net.minecraftforge.common.IForgeShearable;
+import net.neoforged.neoforge.common.IShearable;
 import net.neoforged.neoforge.common.ItemAbility;
 import net.neoforged.neoforge.common.ItemAbilities;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Iterator;
 import java.util.List;
 
 public class ShearBehavior implements IToolBehavior {
@@ -74,39 +73,45 @@ public class ShearBehavior implements IToolBehavior {
 
             // Clicked pos already handled by the use method of BeehiveBlock, PumpkinBlock and GrowingPlantHeadBlock so
             // skip it.
-            if (blockPos.equals(pos) && !(block instanceof IForgeShearable)) {
+            if (blockPos.equals(pos) && !(block instanceof IShearable)) {
+                continue;
+            }
+
+            if (player == null || !level.mayInteract(player, blockPos)) {
                 continue;
             }
 
             // Can handle MC special cases like Beehive/nest, Pumpkin, vines which can be sheared to prevent growing.
             // Best would be to patch Pumpkin, Beehive/nest and GrowingPlantHead blocks to implement
-            // IForgeShearable and call onSheared when right-clicked with a shears like item, instead of implementing
+            // IShearable and call onSheared when right-clicked with a shears-like item, instead of implementing
             // the specific behavior in the block use method.
-            if (block instanceof IForgeShearable shearable && shearable.isShearable(stack, level, blockPos) &&
-                    player instanceof ServerPlayer serverPlayer) {
+            if (block instanceof IShearable && player instanceof ServerPlayer serverPlayer) {
                 if (ToolHelper.shearBlock(serverPlayer, stack, blockPos) != -1) {
                     sheared = true;
                 }
             } else if (block instanceof BeehiveBlock beehive &&
-                    state.getValue(BeehiveBlock.HONEY_LEVEL) >= 5) {
-                        BeehiveBlock.dropHoneycomb(level, blockPos);
-                        if (!CampfireBlock.isSmokeyPos(level, blockPos)) {
-                            BeehiveBlockAccessor accessor = (BeehiveBlockAccessor) beehive;
-                            if (accessor.gtceu$hiveContainsBees(level, blockPos)) {
-                                accessor.gtceu$angerNearbyBees(level, blockPos);
-                            }
-                            beehive.releaseBeesAndResetHoneyLevel(level, state, blockPos, player,
-                                    BeehiveBlockEntity.BeeReleaseStatus.EMERGENCY);
-                        } else {
-                            beehive.resetHoneyLevel(level, state, blockPos);
+                    state.getValue(BeehiveBlock.HONEY_LEVEL) >= 5 && player != null) {
+                if (level instanceof ServerLevel serverLevel) {
+                    BeehiveBlock.dropHoneycomb(serverLevel, stack, state, level.getBlockEntity(blockPos), player,
+                            blockPos);
+                    if (!CampfireBlock.isSmokeyPos(level, blockPos)) {
+                        BeehiveBlockAccessor accessor = (BeehiveBlockAccessor) beehive;
+                        if (accessor.gtceu$hiveContainsBees(level, blockPos)) {
+                            accessor.gtceu$angerNearbyBees(level, blockPos);
                         }
-                        sheared = true;
-                        ToolHelper.damageItem(stack, player);
-                    } else
-                if (block instanceof PumpkinBlock) {
-                    Direction clickedFace = context.getClickedFace();
-                    Direction direction = clickedFace.getAxis() == Direction.Axis.Y ? player != null ?
-                            player.getDirection().getOpposite() : Direction.UP : clickedFace;
+                        beehive.releaseBeesAndResetHoneyLevel(level, state, blockPos, player,
+                                BeehiveBlockEntity.BeeReleaseStatus.EMERGENCY);
+                    } else {
+                        beehive.resetHoneyLevel(level, state, blockPos);
+                    }
+                    ToolHelper.damageItem(stack, player);
+                }
+                sheared = true;
+            } else if (block instanceof PumpkinBlock) {
+                Direction clickedFace = context.getClickedFace();
+                Direction direction = clickedFace.getAxis() == Direction.Axis.Y ? player.getDirection().getOpposite() :
+                        clickedFace;
+                if (level instanceof ServerLevel) {
                     level.setBlock(blockPos, Blocks.CARVED_PUMPKIN.defaultBlockState()
                             .setValue(CarvedPumpkinBlock.FACING, direction), 11);
                     double x0 = 0.5F + direction.getStepX() * 0.65;
@@ -117,18 +122,21 @@ public class ShearBehavior implements IToolBehavior {
                     double vz = 0.05 * direction.getStepZ() + level.getRandom().nextDouble() * 0.02;
                     itementity.setDeltaMovement(vx, 0.05, vz);
                     level.addFreshEntity(itementity);
-                    sheared = true;
                     ToolHelper.damageItem(stack, player);
-                } else if (block instanceof GrowingPlantHeadBlock growingplantheadblock) {
-                    if (!growingplantheadblock.isMaxAge(state)) {
+                }
+                sheared = true;
+            } else if (block instanceof GrowingPlantHeadBlock growingplantheadblock) {
+                if (!growingplantheadblock.isMaxAge(state)) {
+                    if (level instanceof ServerLevel) {
                         BlockState maxAgeState = growingplantheadblock.getMaxAgeState(state);
                         level.setBlockAndUpdate(blockPos, maxAgeState);
                         level.gameEvent(GameEvent.BLOCK_CHANGE, blockPos,
                                 GameEvent.Context.of(context.getPlayer(), maxAgeState));
-                        sheared = true;
                         ToolHelper.damageItem(stack, player);
                     }
+                    sheared = true;
                 }
+            }
             if (stack.isEmpty()) break;
         }
 
@@ -145,33 +153,23 @@ public class ShearBehavior implements IToolBehavior {
                                                     InteractionHand hand) {
         Level level = player.level();
         BlockPos pos = BlockPos.containing(interactionTarget.position());
-        if (interactionTarget instanceof IForgeShearable shearableEntity &&
-                shearableEntity.isShearable(stack, level, pos)) {
-            List<ItemStack> drops = shearableEntity.onSheared(player, stack, level, pos,
-                    stack.getEnchantmentLevel(Enchantments.BLOCK_FORTUNE));
-            // If nothing comes from shearing return pass and don't use durability
+        if (interactionTarget instanceof IShearable shearableEntity &&
+                shearableEntity.isShearable(player, stack, level, pos)) {
+            List<ItemStack> drops = shearableEntity.onSheared(player, stack, level, pos);
             if (drops.isEmpty()) {
                 return InteractionResult.PASS;
             }
             boolean relocateMinedBlocks = ToolHelper.hasBehaviorsTag(stack) &&
                     ToolHelper.getBehaviorsTag(stack).getBooleanOr(ToolHelper.RELOCATE_MINED_BLOCKS_KEY, false);
-            Iterator<ItemStack> iter = drops.iterator();
-            while (iter.hasNext()) {
-                ItemStack drop = iter.next();
-                if (relocateMinedBlocks && player.addItem(drop)) {
-                    iter.remove();
-                } else {
-                    float f = 0.7F;
-                    double xo = level.getRandom().nextFloat() * f + 0.15D;
-                    double yo = level.getRandom().nextFloat() * f + 0.15D;
-                    double zo = level.getRandom().nextFloat() * f + 0.15D;
-                    ItemEntity entityItem = new ItemEntity(level, pos.getX() + xo, pos.getY() + yo,
-                            pos.getZ() + zo, drop);
-                    entityItem.setDefaultPickUpDelay();
-                    level.addFreshEntity(entityItem);
+            if (level instanceof ServerLevel serverLevel) {
+                for (ItemStack drop : drops) {
+                    if (!relocateMinedBlocks || !player.addItem(drop)) {
+                        shearableEntity.spawnShearedDrop(serverLevel, pos, drop);
+                    }
                 }
+                ToolHelper.damageItem(stack, player, 1);
             }
-            ToolHelper.damageItem(stack, player, 1);
+            interactionTarget.gameEvent(GameEvent.SHEAR, player);
             return InteractionResult.SUCCESS;
         }
         return InteractionResult.PASS;
@@ -183,7 +181,7 @@ public class ShearBehavior implements IToolBehavior {
 
     protected static boolean isBlockShearable(UseOnContext context) {
         Block block = context.getLevel().getBlockState(context.getClickedPos()).getBlock();
-        return block instanceof IForgeShearable || block instanceof BeehiveBlock || block instanceof PumpkinBlock ||
+        return block instanceof IShearable || block instanceof BeehiveBlock || block instanceof PumpkinBlock ||
                 block instanceof GrowingPlantHeadBlock;
     }
 

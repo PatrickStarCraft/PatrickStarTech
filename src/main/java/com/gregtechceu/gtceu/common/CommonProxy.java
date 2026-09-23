@@ -21,6 +21,7 @@ import com.gregtechceu.gtceu.api.events.RegisterSpoilablesEvent;
 import com.gregtechceu.gtceu.api.mui.factory.CoverUIFactory;
 import com.gregtechceu.gtceu.api.mui.factory.MachineUIFactory;
 import com.gregtechceu.gtceu.api.multiblock.error.GTPatternErrors;
+import com.gregtechceu.gtceu.api.item.component.ThermalFluidStats;
 import com.gregtechceu.gtceu.api.recipe.chance.logic.ChanceLogic;
 import com.gregtechceu.gtceu.api.recipe.ingredient.*;
 import com.gregtechceu.gtceu.api.recipe.lookup.ingredient.*;
@@ -109,6 +110,7 @@ public class CommonProxy {
         }
 
         GTValueProviderTypes.init(eventBus);
+        GTDataComponents.init(eventBus);
         GTIngredientTypes.init(eventBus);
         GTPlacementModifiers.init(eventBus);
         GTGlobalLootModifiers.init(eventBus);
@@ -330,7 +332,19 @@ public class CommonProxy {
                 event.registerItem(Capabilities.Fluid.ITEM,
                         (stack, access) -> new BucketResourceHandler(access), item);
             }
+            ThermalFluidStats thermalStats = ThermalFluidStats.find(item);
+            if (thermalStats != null) {
+                event.registerItem(Capabilities.Fluid.ITEM,
+                        (stack, access) -> thermalStats.createHandler(access.oneByOne()), item);
+            }
         }
+
+        event.registerItem(Capabilities.Fluid.ITEM,
+                (stack, access) -> GTItems.INVAR_LIGHTER_FLUID.createHandler(access.oneByOne()),
+                GTItems.TOOL_LIGHTER_INVAR.get());
+        event.registerItem(Capabilities.Fluid.ITEM,
+                (stack, access) -> GTItems.PLATINUM_LIGHTER_FLUID.createHandler(access.oneByOne()),
+                GTItems.TOOL_LIGHTER_PLATINUM.get());
     }
 
     @SubscribeEvent

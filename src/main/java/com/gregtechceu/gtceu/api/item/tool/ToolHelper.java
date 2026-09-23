@@ -60,7 +60,7 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.common.IForgeShearable;
+import net.neoforged.neoforge.common.IShearable;
 import net.minecraftforge.common.TierSortingRegistry;
 import net.minecraftforge.event.ForgeEventFactory;
 
@@ -209,7 +209,9 @@ public class ToolHelper {
 
     public static void damageItem(@NotNull ItemStack stack, @Nullable LivingEntity user, int damage) {
         if (!(stack.getItem() instanceof IGTTool tool)) {
-            if (user != null) stack.hurtAndBreak(damage, user, p -> {});
+            if (user != null && user.level() instanceof ServerLevel serverLevel) {
+                stack.hurtAndBreak(damage, serverLevel, user, item -> {});
+            }
         } else {
             if (com.gregtechceu.gtceu.api.item.data.ItemStackData.read(stack)
                     .getBooleanOr(UNBREAKABLE_KEY, false)) {
@@ -726,32 +728,20 @@ public class ToolHelper {
      * @return -1 if not shearable or if shearing gave nothing, otherwise return 0 or 1, 0 if tool is now broken.
      */
     public static int shearBlock(ServerPlayer player, ItemStack tool, BlockPos pos) {
-        if (!player.isCreative()) {
+        if (!player.isCreative() && player.mayInteract(player.serverLevel(), pos)) {
             Level world = player.serverLevel();
             BlockState state = world.getBlockState(pos);
-            if (state.getBlock() instanceof IForgeShearable shearable) {
-                if (shearable.isShearable(tool, world, pos)) {
-                    List<ItemStack> shearedDrops = shearable.onSheared(player, tool, world, pos,
-                            tool.getEnchantmentLevel(Enchantments.BLOCK_FORTUNE));
+            if (state.getBlock() instanceof IShearable shearable) {
+                if (shearable.isShearable(player, tool, world, pos)) {
+                    List<ItemStack> shearedDrops = shearable.onSheared(player, tool, world, pos);
                     if (shearedDrops.isEmpty()) {
                         return -1;
                     }
                     boolean relocateMinedBlocks = hasBehaviorsTag(tool) &&
                             getBehaviorsTag(tool).getBooleanOr(RELOCATE_MINED_BLOCKS_KEY, false);
-                    Iterator<ItemStack> iter = shearedDrops.iterator();
-                    while (iter.hasNext()) {
-                        ItemStack stack = iter.next();
-                        if (relocateMinedBlocks && player.addItem(stack)) {
-                            iter.remove();
-                        } else {
-                            float f = 0.7F;
-                            double xo = world.getRandom().nextFloat() * f + 0.15D;
-                            double yo = world.getRandom().nextFloat() * f + 0.15D;
-                            double zo = world.getRandom().nextFloat() * f + 0.15D;
-                            ItemEntity entityItem = new ItemEntity(world, pos.getX() + xo, pos.getY() + yo,
-                                    pos.getZ() + zo, stack);
-                            entityItem.setDefaultPickUpDelay();
-                            world.addFreshEntity(entityItem);
+                    for (ItemStack drop : shearedDrops) {
+                        if (!relocateMinedBlocks || !player.addItem(drop)) {
+                            shearable.spawnShearedDrop(player.serverLevel(), pos, drop);
                         }
                     }
                     ToolHelper.damageItem(tool, player, 1);

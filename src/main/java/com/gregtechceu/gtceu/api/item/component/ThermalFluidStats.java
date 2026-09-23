@@ -1,20 +1,20 @@
 package com.gregtechceu.gtceu.api.item.component;
 
 import com.gregtechceu.gtceu.api.data.chemical.material.properties.FluidPipeProperties;
-import com.gregtechceu.gtceu.api.item.component.forge.IComponentCapability;
-import com.gregtechceu.gtceu.api.misc.forge.SimpleThermalFluidHandlerItemStack;
-import com.gregtechceu.gtceu.api.misc.forge.ThermalFluidHandlerItemStack;
+import com.gregtechceu.gtceu.api.item.IComponentItem;
+import com.gregtechceu.gtceu.api.misc.ThermalFluidResourceHandler;
 import com.gregtechceu.gtceu.client.TooltipsHandler;
 import com.gregtechceu.gtceu.utils.FormattingUtil;
 import com.gregtechceu.gtceu.utils.GTUtil;
 
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.neoforged.neoforge.common.util.LazyOptional;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.access.ItemAccess;
+import net.neoforged.neoforge.transfer.fluid.FluidResource;
 import net.neoforged.neoforge.fluids.FluidUtil;
 
 import org.jetbrains.annotations.NotNull;
@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class ThermalFluidStats implements IItemComponent, IComponentCapability, IAddInformation {
+public class ThermalFluidStats implements IItemComponent, IAddInformation {
 
     public final int capacity;
     public final int maxFluidTemperature;
@@ -55,31 +55,33 @@ public class ThermalFluidStats implements IItemComponent, IComponentCapability, 
                 properties.isAcidProof(), properties.isCryoProof(), properties.isPlasmaProof(), allowPartialFill);
     }
 
-    @Override
-    public @NotNull <T> LazyOptional<T> getCapability(ItemStack itemStack, @NotNull Capability<T> cap) {
-        if (cap == ForgeCapabilities.FLUID_HANDLER_ITEM) {
-            return ForgeCapabilities.FLUID_HANDLER_ITEM.orEmpty(cap, LazyOptional.of(() -> {
-                if (allowPartialFill) {
-                    return new ThermalFluidHandlerItemStack(itemStack, capacity, maxFluidTemperature, gasProof,
-                            acidProof, cryoProof, plasmaProof);
+    public ResourceHandler<FluidResource> createHandler(ItemAccess access) {
+        return new ThermalFluidResourceHandler(access, capacity, maxFluidTemperature, gasProof, acidProof, cryoProof,
+                plasmaProof, allowPartialFill);
+    }
+
+    @Nullable
+    public static ThermalFluidStats find(Item item) {
+        if (item instanceof IComponentItem componentItem) {
+            for (IItemComponent component : componentItem.getComponents()) {
+                if (component instanceof ThermalFluidStats stats) {
+                    return stats;
                 }
-                return new SimpleThermalFluidHandlerItemStack(itemStack, capacity, maxFluidTemperature, gasProof,
-                        acidProof, cryoProof, plasmaProof);
-            }));
+            }
         }
-        return LazyOptional.empty();
+        return null;
     }
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltipComponents,
                                 TooltipFlag isAdvanced) {
-        if (stack.hasTag()) {
-            FluidUtil.getFluidContained(stack).ifPresent(tank -> {
-                tooltipComponents
-                        .add(Component.translatable("gtceu.universal.tooltip.fluid_stored", tank.getHoverName(),
-                                tank.getAmount()));
-                TooltipsHandler.appendFluidTooltips(tank, tooltipComponents::add, null);
-            });
+        var containedFluid = FluidUtil.getFluidContained(stack);
+        if (containedFluid.isPresent()) {
+            var tank = containedFluid.get();
+            tooltipComponents
+                    .add(Component.translatable("gtceu.universal.tooltip.fluid_stored", tank.getHoverName(),
+                            tank.getAmount()));
+            TooltipsHandler.appendFluidTooltips(tank, tooltipComponents::add, null);
         } else {
             tooltipComponents.add(Component.translatable("gtceu.universal.tooltip.fluid_storage_capacity",
                     FormattingUtil.formatNumbers(capacity)));

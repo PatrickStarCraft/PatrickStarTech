@@ -44,7 +44,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 
@@ -213,10 +212,9 @@ public class PortableScannerBehavior implements IInteractionItem, IAddInformatio
                 }
 
                 // Fluid tanks
-                Optional<IFluidHandler> fluidCap = blockEntity.getCapability(ForgeCapabilities.FLUID_HANDLER).resolve();
-                if (fluidCap.isPresent()) {
+                IFluidHandler fluidHandler = GTCapabilityHelper.getFluidHandler(level, pos, null);
+                if (fluidHandler != null) {
                     list.add(Component.translatable("behavior.portable_scanner.divider"));
-                    IFluidHandler fluidHandler = fluidCap.get();
                     boolean allTanksEmpty = true;
 
                     for (int i = 0; i < fluidHandler.getTanks(); i++) {
@@ -233,8 +231,7 @@ public class PortableScannerBehavior implements IInteractionItem, IAddInformatio
                                         .withStyle(ChatFormatting.GREEN),
                                 Component.translatable(FormattingUtil.formatNumbers(fluidHandler.getTankCapacity(i)))
                                         .withStyle(ChatFormatting.YELLOW),
-                                Component.translatable(fluidStack.getTranslationKey())
-                                        .withStyle(ChatFormatting.GOLD)));
+                                fluidStack.getHoverName().copy().withStyle(ChatFormatting.GOLD)));
                     }
 
                     if (allTanksEmpty) {
@@ -396,8 +393,7 @@ public class PortableScannerBehavior implements IInteractionItem, IAddInformatio
 
                     if (player.isCreative()) {
                         list.add(Component.translatable("behavior.portable_scanner.bedrock_fluid.amount",
-                                Component.translatable(stack.getTranslationKey())
-                                        .withStyle(ChatFormatting.GOLD),
+                                stack.getHoverName().copy().withStyle(ChatFormatting.GOLD),
                                 Component.translatable(String.valueOf(
                                         veinData.getFluidYield(chunkX, chunkZ)))
                                         .withStyle(ChatFormatting.GOLD),

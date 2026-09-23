@@ -30,9 +30,11 @@ import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.material.FluidState;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.access.ItemAccess;
+import net.neoforged.neoforge.transfer.fluid.FluidResource;
+import net.neoforged.neoforge.transfer.transaction.Transaction;
 
 import it.unimi.dsi.fastutil.ints.IntIntPair;
 import it.unimi.dsi.fastutil.objects.Reference2BooleanMap;
@@ -95,7 +97,7 @@ public class LighterBehavior implements IDurabilityBar, IInteractionItem, IAddIn
         if ((!canOpen || tag.getBooleanOr(LIGHTER_OPEN, false)) && (player == null || !player.isShiftKeyDown())) {
             // check if it's "tnt-like" in that it implements the same method for igniting it
             if (classImplementsOnCaughtFire(block.getClass())) {
-                if (!consumeFuel(player, itemStack)) return InteractionResult.PASS;
+                if (!consumeFuel(player, itemStack, context.getHand())) return InteractionResult.PASS;
 
                 state.onCaughtFire(level, pos, clickedFace, player);
                 FluidState fluidState = level.getFluidState(pos);
@@ -103,7 +105,7 @@ public class LighterBehavior implements IDurabilityBar, IInteractionItem, IAddIn
                 return (level.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.CONSUME);
             }
             if ((CampfireBlock.canLight(state) || CandleBlock.canLight(state) || CandleCakeBlock.canLight(state))) {
-                if (!consumeFuel(player, itemStack)) return InteractionResult.PASS;
+                if (!consumeFuel(player, itemStack, context.getHand())) return InteractionResult.PASS;
 
                 level.setBlock(pos, state.setValue(LIT, true), Block.UPDATE_ALL_IMMEDIATE);
                 level.playSound(player, pos, SoundEvents.FLINTANDSTEEL_USE, SoundSource.BLOCKS,
@@ -114,7 +116,7 @@ public class LighterBehavior implements IDurabilityBar, IInteractionItem, IAddIn
 
             BlockPos offset = pos.relative(clickedFace);
             if (BaseFireBlock.canBePlacedAt(level, offset, context.getHorizontalDirection())) {
-                if (!consumeFuel(player, itemStack)) return InteractionResult.PASS;
+                if (!consumeFuel(player, itemStack, context.getHand())) return InteractionResult.PASS;
 
                 level.playSound(player, offset, SoundEvents.FLINTANDSTEEL_USE, SoundSource.BLOCKS,
                         1.0F, level.getRandom().nextFloat() * 0.4F + 0.8F);
@@ -124,7 +126,7 @@ public class LighterBehavior implements IDurabilityBar, IInteractionItem, IAddIn
 
                 if (player instanceof ServerPlayer serverPlayer) {
                     CriteriaTriggers.PLACED_BLOCK.trigger(serverPlayer, offset, itemStack);
-                    itemStack.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(context.getHand()));
+                    itemStack.hurtAndBreak(1, serverPlayer, context.getHand());
                 }
                 return (level.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.CONSUME);
             }
@@ -140,7 +142,7 @@ public class LighterBehavior implements IDurabilityBar, IInteractionItem, IAddIn
 
         if ((!canOpen || tag.getBooleanOr(LIGHTER_OPEN, false)) && !player.isShiftKeyDown()) {
             if (interactionTarget instanceof Creeper creeper) {
-                if (!consumeFuel(player, stack)) return InteractionResult.PASS;
+                if (!consumeFuel(player, stack, usedHand)) return InteractionResult.PASS;
                 level.playSound(player, creeper, SoundEvents.FLINTANDSTEEL_USE, SoundSource.BLOCKS,
                         1.0F, level.getRandom().nextFloat() * 0.4F + 0.8F);
                 if (!level.isClientSide()) {
@@ -153,8 +155,30 @@ public class LighterBehavior implements IDurabilityBar, IInteractionItem, IAddIn
     }
 
     public boolean consumeFuel(@Nullable Player player, ItemStack stack) {
+        return consumeFuel(player, stack, null);
+    }
+
+    private boolean consumeFuel(@Nullable Player player, ItemStack stack, @Nullable InteractionHand hand) {
         if (player != null && player.isCreative())
             return true;
+
+        if (usesFluid) {
+            ItemAccess access = player != null && hand != null ?
+                    ItemAccess.forPlayerInteraction(player, hand).oneByOne() : ItemAccess.forStack(stack).oneByOne();
+            ResourceHandler<FluidResource> handler = access.getCapability(Capabilities.Fluid.ITEM);
+            if (handler == null || handler.size() == 0) return false;
+
+            FluidResource fluid = handler.getResource(0);
+            int amount = handler.getAmountAsInt(0);
+            if (fluid.isEmpty() || amount <= 0) return false;
+
+            try (Transaction transaction = Transaction.openRoot()) {
+                int extracted = handler.extract(0, fluid, 1, transaction);
+                if (extracted != 1) return false;
+                if (player == null || !player.level().isClientSide()) transaction.commit();
+            }
+            return true;
+        }
 
         int usesLeft = getUsesLeft(stack) - 1;
 
@@ -167,11 +191,10 @@ public class LighterBehavior implements IDurabilityBar, IInteractionItem, IAddIn
 
     private int getUsesLeft(ItemStack stack) {
         if (usesFluid) {
-            var handler = stack.getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM, null).resolve();
-            if (handler.isEmpty()) return 0;
-
-            FluidStack fluid = handler.get().drain(Integer.MAX_VALUE, IFluidHandler.FluidAction.SIMULATE);
-            return fluid.getAmount();
+            if (stack.isEmpty()) return 0;
+            ResourceHandler<FluidResource> handler = ItemAccess.forStack(stack).oneByOne()
+                    .getCapability(Capabilities.Fluid.ITEM);
+            return handler == null || handler.size() == 0 ? 0 : handler.getAmountAsInt(0);
         } else if (hasMultipleUses) {
             return com.gregtechceu.gtceu.api.item.data.ItemStackData.read(stack).getIntOr(USES_LEFT, maxUses);
         } else {
@@ -180,14 +203,7 @@ public class LighterBehavior implements IDurabilityBar, IInteractionItem, IAddIn
     }
 
     private void setUsesLeft(Player player, @NotNull ItemStack stack, final int usesLeft) {
-        if (usesFluid) {
-            stack.getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM).ifPresent(handler -> {
-                FluidStack fluid = handler.drain(Integer.MAX_VALUE, IFluidHandler.FluidAction.SIMULATE);
-                if (!fluid.isEmpty()) {
-                    handler.drain(fluid.getAmount() - usesLeft, IFluidHandler.FluidAction.EXECUTE);
-                }
-            });
-        } else if (hasMultipleUses) {
+        if (hasMultipleUses) {
             if (usesLeft <= 0) {
                 stack.shrink(1);
                 ItemStack brokenStack = this.destroyItem.get();
@@ -205,11 +221,14 @@ public class LighterBehavior implements IDurabilityBar, IInteractionItem, IAddIn
     @Override
     public float getDurabilityForDisplay(ItemStack stack) {
         if (usesFluid) {
-            var handler = stack.getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM, null).resolve();
-            if (handler.isEmpty()) return 0.0f;
+            if (stack.isEmpty()) return 0.0f;
+            ResourceHandler<FluidResource> handler = ItemAccess.forStack(stack).oneByOne()
+                    .getCapability(Capabilities.Fluid.ITEM);
+            if (handler == null || handler.size() == 0) return 0.0f;
 
-            FluidStack fluid = handler.get().getFluidInTank(0);
-            return (float) fluid.getAmount() / (float) handler.get().getTankCapacity(0);
+            int capacity = handler.getCapacityAsInt(0, FluidResource.EMPTY);
+            return capacity == 0 ? 0.0f :
+                    (float) handler.getAmountAsInt(0) / (float) capacity;
         } else if (hasMultipleUses) {
             return (float) getUsesLeft(stack) / (float) maxUses;
         } else {
