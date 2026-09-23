@@ -12,14 +12,13 @@ import com.gregtechceu.gtceu.integration.kjs.events.GTFluidVeinEventJS;
 
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.FileToIdConverter;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
-import net.minecraft.util.GsonHelper;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.profiling.ProfilerFiller;
-import net.minecraft.world.level.storage.loot.Deserializers;
 import net.neoforged.fml.ModLoader;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
@@ -30,14 +29,13 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.Map;
 
-public class BedrockFluidLoader extends SimpleJsonResourceReloadListener {
+public class BedrockFluidLoader extends SimpleJsonResourceReloadListener<JsonElement> {
 
-    public static final Gson GSON_INSTANCE = Deserializers.createFunctionSerializer().create();
     public static final String FOLDER = "gtceu/fluid_veins";
     protected static final Logger LOGGER = LogManager.getLogger();
 
     public BedrockFluidLoader() {
-        super(GSON_INSTANCE, FOLDER);
+        super(ExtraCodecs.JSON, FileToIdConverter.json(FOLDER));
     }
 
     @Override
@@ -60,8 +58,7 @@ public class BedrockFluidLoader extends SimpleJsonResourceReloadListener {
             Identifier location = entry.getKey();
 
             try {
-                BedrockFluidDefinition fluid = fromJson(location,
-                        GsonHelper.convertToJsonObject(entry.getValue(), "top element"), ops);
+                BedrockFluidDefinition fluid = fromJson(location, entry.getValue().getAsJsonObject(), ops);
                 if (fluid == null) {
                     LOGGER.info("Skipping loading fluid vein {} as it's serializer returned null", location);
                 }

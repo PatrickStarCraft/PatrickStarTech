@@ -660,7 +660,7 @@ public class VanillaStandardRecipes {
                 .duration(400).EUt(2).save(provider);
 
         CHEMICAL_BATH_RECIPES.recipeBuilder("decolor_stained_glass")
-                .inputItems(Tags.Items.STAINED_GLASS)
+                .inputItems(Tags.Items.GLASS_BLOCKS_TINTED)
                 .inputFluids(Chlorine.getFluid(50))
                 .outputItems(Items.GLASS)
                 .category(GTRecipeCategories.CHEM_DYES)

@@ -36,6 +36,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
@@ -520,7 +521,7 @@ public class HPCAMachine extends WorkableElectricMultiblockMachine
                 int remainingCoolant = maxCoolantDrain;
                 for (var fluid : BuiltInRegistries.FLUID.getTagOrEmpty(HPCA_COOLANTS)) {
                     FluidStack drained = GTTransferUtils.drainFluidAccountNotifiableList(coolantTank,
-                            new FluidStack(fluid.get(), remainingCoolant), IFluidHandler.FluidAction.EXECUTE);
+                            new FluidStack(fluid.value(), remainingCoolant), IFluidHandler.FluidAction.EXECUTE);
                     remainingCoolant -= drained.getAmount();
                     if (remainingCoolant <= 0) break;
                 }
@@ -540,7 +541,7 @@ public class HPCAMachine extends WorkableElectricMultiblockMachine
                 int remainingCoolant = coolantToDrain;
                 for (var fluid : BuiltInRegistries.FLUID.getTagOrEmpty(HPCA_COOLANTS)) {
                     FluidStack drained = GTTransferUtils.drainFluidAccountNotifiableList(coolantTank,
-                            new FluidStack(fluid.get(), remainingCoolant), IFluidHandler.FluidAction.EXECUTE);
+                            new FluidStack(fluid.value(), remainingCoolant), IFluidHandler.FluidAction.EXECUTE);
                     remainingCoolant -= drained.getAmount();
                     if (remainingCoolant <= 0) break;
                 }
@@ -759,7 +760,7 @@ public class HPCAMachine extends WorkableElectricMultiblockMachine
             if (components.get(index).getMachine() instanceof HPCAComponentPartMachine componentPartMachine) {
                 ItemStack stack = componentPartMachine.getDefinition().asStack();
                 RichTooltip tooltip = new RichTooltip();
-                stack.getTooltipLines(null, TooltipFlag.NORMAL).forEach(tooltip::addLine);
+                stack.getTooltipLines(Item.TooltipContext.EMPTY, null, TooltipFlag.NORMAL).forEach(tooltip::addLine);
                 return tooltip;
             }
             return new RichTooltip();

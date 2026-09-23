@@ -490,7 +490,7 @@ public class MiscRecipeLoader {
                 .duration(100).EUt(VA[LV]).save(provider);
 
         if (!ConfigHolder.INSTANCE.recipes.hardMiscRecipes) {
-            VanillaRecipeHelper.addShapedRecipe(provider, "flour_to_dough", new ItemStack(DOUGH, 8),
+            VanillaRecipeHelper.addShapedRecipe(provider, "flour_to_dough", DOUGH.asStack(8),
                     "FFF", "FWF", "FFF",
                     'F', CustomTags.WHEAT_GRAINS,
                     'W', Water.getBucket());
@@ -525,7 +525,7 @@ public class MiscRecipeLoader {
                     'M', new FluidContainerIngredient(Milk.getFluidTag(), 1000).toVanilla(),
                     'D', CustomTags.DOUGHS);
         } else {
-            VanillaRecipeHelper.addShapedRecipe(provider, "flour_to_dough", new ItemStack(DOUGH, 4),
+            VanillaRecipeHelper.addShapedRecipe(provider, "flour_to_dough", DOUGH.asStack(4),
                     "FFF", "FWF", "FFF",
                     'F', CustomTags.WHEAT_GRAINS,
                     'W', Water.getBucket());

@@ -23,7 +23,7 @@ import org.jspecify.annotations.NullMarked;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -192,12 +192,12 @@ public class FisherMachine extends TieredEnergyMachine
 
         drainEnergy(false);
         if (progress >= maxProgress) {
-            LootTable lootTable = getLevel().getServer().getLootData().getLootTable(BuiltInLootTables.FISHING);
+            LootTable lootTable = getLevel().getServer().reloadableRegistries().getLootTable(BuiltInLootTables.FISHING);
             if (!this.junkEnabled) {
-                lootTable = getLevel().getServer().getLootData().getLootTable(BuiltInLootTables.FISHING_FISH);
+                lootTable = getLevel().getServer().reloadableRegistries().getLootTable(BuiltInLootTables.FISHING_FISH);
             }
 
-            FishingHook simulatedHook = new FishingHook(EntityType.FISHING_BOBBER, getLevel()) {
+            FishingHook simulatedHook = new FishingHook(EntityTypes.FISHING_BOBBER, getLevel()) {
 
                 public boolean isOpenWaterFishing() {
                     return true;

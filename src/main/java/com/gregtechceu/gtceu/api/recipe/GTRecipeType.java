@@ -17,9 +17,9 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.SmeltingRecipe;
+import net.minecraft.world.item.crafting.SingleRecipeInput;
+import net.minecraft.world.item.crafting.RecipeType;
 
 import it.unimi.dsi.fastutil.objects.*;
 import lombok.Getter;
@@ -267,16 +267,12 @@ public class GTRecipeType implements RecipeType<GTRecipe> {
         return false;
     }
 
-    public GTRecipe toGTrecipe(Identifier id, Recipe<?> recipe) {
+    public GTRecipe toGTrecipe(Identifier id, SmeltingRecipe recipe) {
         var builder = recipeBuilder(id);
-        for (var ingredient : recipe.getIngredients()) {
-            builder.inputItems(ingredient);
-        }
-        builder.outputItems(recipe.getResultItem(RegistryAccess.fromRegistryOfRegistries(BuiltInRegistries.REGISTRY)));
-        if (recipe instanceof SmeltingRecipe smeltingRecipe) {
-            builder.duration(smeltingRecipe.getCookingTime());
-        }
-        return GTRecipeSerializer.fromJson(id, builder.build().serializeRecipe());
+        builder.inputItems(recipe.input());
+        builder.outputItems(recipe.assemble(new SingleRecipeInput(ItemStack.EMPTY)));
+        builder.duration(recipe.cookingTime());
+        return builder.buildRawRecipe();
     }
 
     public void buildRepresentativeRecipes() {

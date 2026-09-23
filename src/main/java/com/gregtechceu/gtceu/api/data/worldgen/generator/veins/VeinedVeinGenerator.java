@@ -16,7 +16,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.core.SectionPos;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.server.level.WorldGenRegion;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
@@ -28,7 +27,6 @@ import net.minecraft.world.level.chunk.LevelChunkSection;
 import net.minecraft.world.level.levelgen.DensityFunction;
 import net.minecraft.world.level.levelgen.RandomState;
 import net.minecraft.world.level.levelgen.XoroshiroRandomSource;
-import net.minecraft.world.level.levelgen.blending.Blender;
 import net.minecraft.world.level.levelgen.feature.configurations.OreConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.OreConfiguration.TargetBlockState;
 import net.minecraft.world.level.levelgen.structure.templatesystem.AlwaysTrueTest;
@@ -120,14 +118,6 @@ public class VeinedVeinGenerator extends VeinGenerator {
                 .lookupOrThrow(Registries.DENSITY_FUNCTION);
 
         RandomState randomState = level.getLevel().getChunkSource().randomState();
-        Blender blender;
-        if (level instanceof WorldGenRegion region) {
-            blender = Blender.of(region);
-        } else {
-            blender = Blender.empty();
-        }
-
-        final Blender finalizedBlender = blender;
         DensityFunction veinToggle = mapToNoise(densityFunctions.getValue(GTDensityFunctions.NEW_ORE_VEIN_TOGGLE),
                 randomState);
         DensityFunction veinRidged = mapToNoise(densityFunctions.getValue(GTDensityFunctions.NEW_ORE_VEIN_RIDGED),
@@ -166,10 +156,6 @@ public class VeinedVeinGenerator extends VeinGenerator {
                     return z + randOffsetZ;
                 }
 
-                @Override
-                public Blender getBlender() {
-                    return finalizedBlender;
-                }
             };
 
             double toggleNoise = veinToggle.compute(functionContext);

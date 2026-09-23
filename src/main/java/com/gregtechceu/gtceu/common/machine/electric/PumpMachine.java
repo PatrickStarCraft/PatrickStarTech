@@ -196,7 +196,7 @@ public class PumpMachine extends TieredEnergyMachine implements IMuiMachine {
                 // Remember all the sources we find
                 boolean isSource = fluidState.isSource();
                 if (isSource) {
-                    var fluidHandler = new BucketPickupHandlerWrapper(liquidBlock, level, check);
+                    var fluidHandler = new BucketPickupHandlerWrapper(null, liquidBlock, level, check);
                     FluidStack drainStack = fluidHandler.drain(Integer.MAX_VALUE, FluidAction.SIMULATE);
                     if (!drainStack.isEmpty()) {
                         return new SearchResult(check, true);
@@ -424,7 +424,7 @@ public class PumpMachine extends TieredEnergyMachine implements IMuiMachine {
                 }
                 BlockState state = level.getBlockState(pos);
                 if (state.getBlock() instanceof LiquidBlock liquidBlock &&
-                        (liquidBlock.getFluidState(state)).getFluidType() == pumpQueue.fluidType()) {
+                        state.getFluidState().getFluidType() == pumpQueue.fluidType()) {
                     states.add(new SourceState(state, pos));
                 } else {
                     break;
@@ -439,7 +439,7 @@ public class PumpMachine extends TieredEnergyMachine implements IMuiMachine {
                     states.removeLast();
                     FluidState fluidState = sourceState.state().getFluidState();
                     if (sourceState.state().getBlock() instanceof LiquidBlock liquidBlock && fluidState.isSource()) {
-                        var fluidHandler = new BucketPickupHandlerWrapper(liquidBlock, getLevel(), pos);
+                        var fluidHandler = new BucketPickupHandlerWrapper(null, liquidBlock, getLevel(), pos);
                         FluidStack drainStack = fluidHandler.drain(Integer.MAX_VALUE, FluidAction.SIMULATE);
                         if (!drainStack.isEmpty() &&
                                 cache.fillInternal(drainStack, FluidAction.SIMULATE) == drainStack.getAmount()) {

@@ -5,6 +5,7 @@ import com.gregtechceu.gtceu.api.recipe.GTRecipeType;
 
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.SmeltingRecipe;
 import net.minecraft.world.item.crafting.RecipeType;
 
 import org.jetbrains.annotations.ApiStatus;
@@ -39,7 +40,10 @@ public final class RecipeManagerHandler {
                 // do not add recipes of incompatible type
                 return;
             }
-            GTRecipe gtRecipe = gtRecipeType.toGTrecipe(id, recipe);
+            if (!(recipe instanceof SmeltingRecipe smeltingRecipe)) {
+                throw new IllegalStateException("Unsupported proxy recipe " + id + ": " + recipe.getClass());
+            }
+            GTRecipe gtRecipe = gtRecipeType.toGTrecipe(id, smeltingRecipe);
             proxyRecipes.add(gtRecipe);
             lookup.addStaging(gtRecipe);
         });

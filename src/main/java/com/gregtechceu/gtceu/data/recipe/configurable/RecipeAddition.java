@@ -1145,7 +1145,7 @@ public class RecipeAddition {
                     .outputItems(new ItemStack(Blocks.BEEHIVE))
                     .duration(100).EUt(4).save(provider);
 
-            VanillaRecipeHelper.addShapedRecipe(provider, "lightning_rod", new ItemStack(Blocks.LIGHTNING_ROD), " B ",
+            VanillaRecipeHelper.addShapedRecipe(provider, "lightning_rod", new ItemStack(Blocks.LIGHTNING_ROD.weathering().unaffected()), " B ",
                     "fRh", " R ",
                     'R', new MaterialEntry(rod, Copper),
                     'B', new MaterialEntry(plateDouble, Copper));
@@ -1153,7 +1153,7 @@ public class RecipeAddition {
             ASSEMBLER_RECIPES.recipeBuilder("lightning_rod")
                     .inputItems(rod, Copper, 2)
                     .inputItems(plateDouble, Copper)
-                    .outputItems(new ItemStack(Blocks.LIGHTNING_ROD))
+                    .outputItems(new ItemStack(Blocks.LIGHTNING_ROD.weathering().unaffected()))
                     .duration(100).EUt(4).save(provider);
 
             ASSEMBLER_RECIPES.recipeBuilder("chiseled_bookshelf")

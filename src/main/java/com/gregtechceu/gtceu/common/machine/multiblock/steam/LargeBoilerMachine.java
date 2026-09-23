@@ -291,8 +291,8 @@ public class LargeBoilerMachine extends WorkableMultiblockMachine implements IMu
         var textField = new TextFieldWidget() {
 
             @Override
-            public boolean onMouseScrolled(double delta) {
-                int inc = (int) delta * (MouseData.create(-1).shift() ? 5 : 1);
+            public boolean onMouseScrolled(double scrollX, double scrollY) {
+                int inc = (int) scrollY * (MouseData.create(-1).shift() ? 5 : 1);
                 int val = Mth.clamp(syncValue.getIntValue() + inc, 25, 100);
                 syncValue.setIntValue(val, true, true);
                 return true;

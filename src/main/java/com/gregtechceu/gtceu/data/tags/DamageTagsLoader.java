@@ -8,7 +8,6 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.world.damagesource.DamageType;
-import net.minecraftforge.common.data.ExistingFileHelper;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -16,9 +15,8 @@ import java.util.concurrent.CompletableFuture;
 
 public class DamageTagsLoader extends TagsProvider<DamageType> {
 
-    public DamageTagsLoader(PackOutput arg, CompletableFuture<HolderLookup.Provider> completableFuture,
-                            @Nullable ExistingFileHelper existingFileHelper) {
-        super(arg, Registries.DAMAGE_TYPE, completableFuture, GTCEu.MOD_ID, existingFileHelper);
+    public DamageTagsLoader(PackOutput arg, CompletableFuture<HolderLookup.Provider> completableFuture) {
+        super(arg, Registries.DAMAGE_TYPE, completableFuture, GTCEu.MOD_ID);
     }
 
     @Override
