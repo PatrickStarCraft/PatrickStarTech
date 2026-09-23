@@ -29,7 +29,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
 
 import brachy.modularui.api.drawable.Text;
 import brachy.modularui.api.widget.IWidget;
@@ -328,7 +327,7 @@ public class QuantumChestMachine extends TieredMachine implements IControllable,
         public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
             long free = isVoiding ? Long.MAX_VALUE : maxAmount - storedAmount;
             long canStore = 0;
-            if ((stored.isEmpty() || ItemHandlerHelper.canItemStacksStack(stored, stack)) && filter.test(stack)) {
+            if ((stored.isEmpty() || ItemStack.isSameItemSameComponents(stored, stack)) && filter.test(stack)) {
                 canStore = Math.min(stack.getCount(), free);
             }
             if (!simulate && canStore > 0) {

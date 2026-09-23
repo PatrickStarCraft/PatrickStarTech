@@ -13,6 +13,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
@@ -25,7 +26,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 public class NoopIndicatorGenerator extends IndicatorGenerator {
 
     public static final NoopIndicatorGenerator INSTANCE = new NoopIndicatorGenerator();
-    public static final Codec<NoopIndicatorGenerator> CODEC = Codec.unit(() -> INSTANCE);
+    public static final Codec<NoopIndicatorGenerator> CODEC = MapCodec.unit(() -> INSTANCE).codec();
 
     @Override
     public Map<ChunkPos, OreIndicatorPlacer> generate(WorldGenLevel level, RandomSource random,

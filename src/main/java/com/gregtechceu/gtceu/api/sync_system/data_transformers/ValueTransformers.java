@@ -21,8 +21,8 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.*;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.resources.Identifier;
-import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
@@ -126,7 +126,8 @@ public final class ValueTransformers {
 
     public static <T> void registerRegistryTransformer(Class<T> type, Registry<T> registry) {
         registerCodecTransformer(type, registry.byNameCodec(),
-                (buf, value) -> buf.writeId(registry, value), buf -> buf.readById(registry));
+                (buf, value) -> buf.writeVarInt(registry.getId(value)),
+                buf -> buf.readById(registry::byId));
     }
 
     /**
@@ -160,24 +161,32 @@ public final class ValueTransformers {
 
         // Primtive arrays
         registerCodecTransformer(int[].class, Codec.INT_STREAM.xmap(IntStream::toArray, IntStream::of), FriendlyByteBuf::writeVarIntArray, FriendlyByteBuf::readVarIntArray);
-        registerCodecTransformer(long[].class, Codec.LONG_STREAM.xmap(LongStream::toArray, LongStream::of), FriendlyByteBuf::writeLongArray, FriendlyByteBuf::readLongArray);
-        registerCodecTransformer(byte[].class, Codec.BYTE_BUFFER.xmap(ByteBuffer::array, ByteBuffer::wrap), FriendlyByteBuf::writeByteArray, FriendlyByteBuf::readByteArray);
+        registerCodecTransformer(long[].class, Codec.LONG_STREAM.xmap(LongStream::toArray, LongStream::of),
+                (buf, value) -> buf.writeLongArray(value), buf -> buf.readLongArray());
+        registerCodecTransformer(byte[].class, Codec.BYTE_BUFFER.xmap(ByteBuffer::array, ByteBuffer::wrap),
+                (buf, value) -> buf.writeByteArray(value), buf -> buf.readByteArray());
 
         //// Java classes and standard minecraft/forge classes
 
         registerCodecTransformer(String.class, Codec.STRING, FriendlyByteBuf::writeUtf, FriendlyByteBuf::readUtf);
-        registerCodecTransformer(UUID.class, UUIDUtil.CODEC, FriendlyByteBuf::writeUUID, FriendlyByteBuf::readUUID);
-        registerCodecTransformer(CompoundTag.class, CompoundTag.CODEC, FriendlyByteBuf::writeNbt, FriendlyByteBuf::readNbt);
-        registerCodecTransformer(Identifier.class, Identifier.CODEC, FriendlyByteBuf::writeResourceLocation, FriendlyByteBuf::readResourceLocation);
+        registerCodecTransformer(UUID.class, UUIDUtil.CODEC,
+                (buf, value) -> buf.writeUUID(value), buf -> buf.readUUID());
+        registerCodecTransformer(CompoundTag.class, CompoundTag.CODEC,
+                (buf, value) -> buf.writeNbt(value), buf -> buf.readNbt());
+        registerCodecTransformer(Identifier.class, Identifier.CODEC,
+                (buf, value) -> Identifier.STREAM_CODEC.encode(buf, value),
+                buf -> Identifier.STREAM_CODEC.decode(buf));
 
         registerRegistryTransformer(Item.class, BuiltInRegistries.ITEM);
-        registerCodecTransformer(ItemStack.class, ItemStack.CODEC, FriendlyByteBuf::writeItem, FriendlyByteBuf::readItem);
+        registerCodecTransformer(ItemStack.class, ItemStack.CODEC);
         registerRegistryTransformer(Fluid.class, BuiltInRegistries.FLUID);
-        registerCodecTransformer(FluidStack.class, FluidStack.CODEC, (buf, v) -> v.writeToPacket(buf), FluidStack::readFromPacket);
-        registerCodecTransformer(Component.class, ExtraCodecs.COMPONENT, FriendlyByteBuf::writeComponent, FriendlyByteBuf::readComponent);
+        registerCodecTransformer(FluidStack.class, FluidStack.CODEC);
+        registerCodecTransformer(Component.class, ComponentSerialization.CODEC);
 
         registerTransformer(BlockPos.class, new BlockPosTransformer());
-        registerCodecTransformer(BlockState.class, BlockState.CODEC, (b, v) -> b.writeId(Block.BLOCK_STATE_REGISTRY, v), b -> b.readById(Block.BLOCK_STATE_REGISTRY));
+        registerCodecTransformer(BlockState.class, BlockState.CODEC,
+                (buf, value) -> buf.writeVarInt(Block.BLOCK_STATE_REGISTRY.getId(value)),
+                buf -> buf.readById(Block.BLOCK_STATE_REGISTRY::byId));
 
         registerTransformer(NBTSerializable.class, new NBTSerializableTransformer());
         registerTransformer(ISyncManaged.class, new SyncDataHolder.SyncManagedTransformer());

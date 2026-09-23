@@ -13,7 +13,7 @@ import com.gregtechceu.gtceu.utils.GTUtil;
 
 import net.minecraft.ChatFormatting;
 import org.jspecify.annotations.NullMarked;
-import net.minecraft.ResourceLocationException;
+import net.minecraft.IdentifierException;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.*;
 import net.minecraft.network.chat.MutableComponent;
@@ -103,7 +103,7 @@ public class PlaceholderHandler {
     public static @Nullable Identifier toId(String placeholder) {
         try {
             return GTCEu.id(placeholder);
-        } catch (ResourceLocationException e) {
+        } catch (IdentifierException e) {
             return null;
         }
     }
@@ -112,7 +112,7 @@ public class PlaceholderHandler {
                                                         @Nullable PlaceholderContext context) throws PlaceholderException {
         if (!GTRegistries.PLACEHOLDERS.containsKey(toId(placeholder.get(0).toString())))
             throw new UnknownPlaceholderException(placeholder.get(0).toString());
-        if (context != null && context.level().isClientSide &&
+        if (context != null && context.level().isClientSide() &&
                 !GTRegistries.PLACEHOLDERS.get(toId(placeholder.get(0).toString())).isView())
             GTCEu.LOGGER.warn("Placeholder processing is running on client instead of server!");
         return GTRegistries.PLACEHOLDERS.get(toId(placeholder.get(0).toString())).apply(context,

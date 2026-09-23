@@ -251,7 +251,7 @@ public class CharcoalPileIgniterMachine extends WorkableMultiblockMachine implem
                     }
                 }
             } else if (stack.isDamageableItem()) {
-                stack.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(hand));
+                stack.hurtAndBreak(1, player, hand);
                 shouldActivate = true;
             } else {
                 stack.shrink(1);

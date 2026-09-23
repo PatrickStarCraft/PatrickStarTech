@@ -9,6 +9,7 @@ import net.minecraft.world.level.block.Block;
 
 import brachy.modularui.api.drawable.Text;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import lombok.Getter;
 
@@ -17,7 +18,7 @@ import java.util.List;
 
 public class BlockMatchingError extends PatternError {
 
-    public static final Codec<BlockMatchingError> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+    public static final MapCodec<BlockMatchingError> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             BlockPos.CODEC.fieldOf("pos").forGetter(PatternError::getPos),
             BuiltInRegistries.BLOCK.byNameCodec().listOf().fieldOf("blocks")
                     .forGetter(BlockMatchingError::getBlocks))

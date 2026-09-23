@@ -6,6 +6,7 @@ import net.minecraft.network.chat.Component;
 import brachy.modularui.api.drawable.Text;
 import com.mojang.datafixers.util.Function3;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import lombok.Getter;
 
@@ -47,9 +48,9 @@ public abstract class MismatchError<T> extends PatternError {
         return parent -> parent.child(Text.of(lang()).asWidget());
     }
 
-    protected static <T, R extends MismatchError<T>> Codec<R> makeCodec(Codec<T> typeCodec,
-                                                                        Function3<BlockPos, T, T, R> constructor) {
-        return RecordCodecBuilder.create(instance -> instance.group(
+    protected static <T, R extends MismatchError<T>> MapCodec<R> makeCodec(Codec<T> typeCodec,
+                                                                           Function3<BlockPos, T, T, R> constructor) {
+        return RecordCodecBuilder.mapCodec(instance -> instance.group(
                 BlockPos.CODEC.fieldOf("pos").forGetter(MismatchError::getPos),
                 typeCodec.fieldOf("expected").forGetter(MismatchError::getExpected),
                 typeCodec.fieldOf("actual").forGetter(MismatchError::getActual)).apply(instance, constructor));

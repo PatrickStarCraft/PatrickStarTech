@@ -20,6 +20,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.valueproviders.ConstantInt;
 import net.minecraft.util.valueproviders.IntProvider;
+import net.minecraft.util.valueproviders.IntProviders;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
@@ -70,11 +71,11 @@ public class GeodeVeinGenerator extends VeinGenerator {
                     .forGetter((config) -> config.useAlternateLayer0Chance),
             Codec.BOOL.fieldOf("placements_require_layer0_alternate").orElse(true)
                     .forGetter((config) -> config.placementsRequireLayer0Alternate),
-            IntProvider.codec(1, 20).fieldOf("outer_wall_distance").orElse(UniformInt.of(4, 5))
+            IntProviders.codec(1, 20).fieldOf("outer_wall_distance").orElse(UniformInt.of(4, 5))
                     .forGetter((config) -> config.outerWallDistance),
-            IntProvider.codec(1, 20).fieldOf("distribution_points").orElse(UniformInt.of(3, 4))
+            IntProviders.codec(1, 20).fieldOf("distribution_points").orElse(UniformInt.of(3, 4))
                     .forGetter((config) -> config.distributionPoints),
-            IntProvider.codec(0, 10).fieldOf("point_offset").orElse(UniformInt.of(1, 2))
+            IntProviders.codec(0, 10).fieldOf("point_offset").orElse(UniformInt.of(1, 2))
                     .forGetter((config) -> config.pointOffset),
             Codec.INT.fieldOf("min_gen_offset").orElse(-16).forGetter((config) -> config.minGenOffset),
             Codec.INT.fieldOf("max_gen_offset").orElse(16).forGetter((config) -> config.maxGenOffset),

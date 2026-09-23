@@ -12,6 +12,7 @@ import brachy.modularui.drawable.ItemDrawable;
 import brachy.modularui.widget.ParentWidget;
 import brachy.modularui.widgets.menu.ContextMenuButton;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import lombok.Getter;
 
@@ -19,7 +20,7 @@ import java.util.List;
 
 public class SinglePredicateError extends PatternError {
 
-    public static final Codec<SinglePredicateError> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+    public static final MapCodec<SinglePredicateError> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             ErrorType.CODEC.fieldOf("error_type").forGetter(e -> e.type),
             Codec.INT.fieldOf("actual_count").forGetter(e -> e.actualCount),
             Codec.INT.fieldOf("pred_min_count").forGetter(e -> e.predMinCount),

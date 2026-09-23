@@ -12,7 +12,6 @@ import com.gregtechceu.gtceu.data.recipe.CustomTags;
 import com.gregtechceu.gtceu.data.recipe.VanillaRecipeHelper;
 import com.gregtechceu.gtceu.data.recipe.GeneratedRecipe;
 
-import net.minecraft.data.recipes.SpecialRecipeBuilder;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -315,7 +314,7 @@ public class CraftingRecipeLoader {
         ///////////////////////////////////////////////////
         // Special //
         ///////////////////////////////////////////////////
-        SpecialRecipeBuilder.special(FacadeCoverRecipe.SERIALIZER).save(provider, "gtceu:crafting/facade_cover");
+        provider.accept(GeneratedRecipe.create(FacadeCoverRecipe.ID, FacadeCoverRecipe.SERIALIZER, json -> {}));
     }
 
     private static void addDuctRecipes(@NotNull Consumer<GeneratedRecipe> provider, @NotNull Material material,

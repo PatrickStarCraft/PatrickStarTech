@@ -4,7 +4,6 @@ import com.gregtechceu.gtceu.GTCEu;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 
@@ -20,7 +19,8 @@ public class BlockPosTransformer implements ValueTransformer<BlockPos> {
     @Override
     public @Nullable BlockPos deserializeNBT(Tag tag, TransformerContext<BlockPos> context) {
         if (tag instanceof CompoundTag compoundTag) {
-            return NbtUtils.readBlockPos(compoundTag);
+            return new BlockPos(compoundTag.getIntOr("X", 0), compoundTag.getIntOr("Y", 0),
+                    compoundTag.getIntOr("Z", 0));
         }
         return BlockPos.CODEC.parse(context.nbtOps(), tag).getOrThrow(message -> { GTCEu.LOGGER.error(message); return new RuntimeException(message); });
     }

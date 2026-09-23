@@ -4,10 +4,11 @@ import com.gregtechceu.gtceu.GTCEu;
 
 import brachy.modularui.api.drawable.Text;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 
 public class PlaceholderError extends PatternError {
 
-    public static final Codec<PlaceholderError> CODEC = Codec.unit(PlaceholderError::instance);
+    public static final MapCodec<PlaceholderError> CODEC = MapCodec.unit(PlaceholderError::instance);
 
     public static final PatternErrorType TYPE = new PatternErrorType(GTCEu.id("placeholder_error"), CODEC);
 

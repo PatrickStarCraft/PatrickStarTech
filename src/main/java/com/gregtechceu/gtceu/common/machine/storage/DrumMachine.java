@@ -18,7 +18,7 @@ import net.minecraft.world.InteractionResult;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidUtil;
 
-import com.mojang.blaze3d.MethodsReturnNonnullByDefault;
+import org.jspecify.annotations.NullMarked;
 import lombok.Getter;
 import org.jetbrains.annotations.Nullable;
 

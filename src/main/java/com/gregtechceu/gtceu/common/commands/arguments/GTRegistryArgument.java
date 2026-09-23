@@ -3,7 +3,6 @@ package com.gregtechceu.gtceu.common.commands.arguments;
 import com.gregtechceu.gtceu.api.registry.GTRegistry;
 
 import org.jspecify.annotations.NullMarked;
-import net.minecraft.ResourceLocationException;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.synchronization.ArgumentTypeInfo;
 import net.minecraft.network.FriendlyByteBuf;
@@ -29,9 +28,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class GTRegistryArgument<K, V> implements ArgumentType<V> {
-
-    private static final SimpleCommandExceptionType ERROR_INVALID = new SimpleCommandExceptionType(
-            Component.translatable("argument.id.invalid"));
 
     private static final Collection<String> EXAMPLES = Arrays.asList("gtceu:iron_vein", "gtceu:pitchblende_vein_end",
             "gtceu:lava_deposit");
@@ -72,20 +68,7 @@ public class GTRegistryArgument<K, V> implements ArgumentType<V> {
     }
 
     public static String readId(StringReader reader) throws CommandSyntaxException {
-        int cursor = reader.getCursor();
-
-        while (reader.canRead() && Identifier.isAllowedInResourceLocation(reader.peek())) {
-            reader.skip();
-        }
-
-        String s = reader.getString().substring(cursor, reader.getCursor());
-
-        try {
-            return s;
-        } catch (ResourceLocationException var4) {
-            reader.setCursor(cursor);
-            throw ERROR_INVALID.createWithContext(reader);
-        }
+        return Identifier.read(reader).toString();
     }
 
     @Override

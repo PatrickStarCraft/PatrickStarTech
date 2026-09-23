@@ -5,11 +5,11 @@ import com.gregtechceu.gtceu.api.block.ICoilType;
 
 import net.minecraft.core.BlockPos;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 
 public class CoilMatchingError extends MismatchError<ICoilType> {
 
-    public static final Codec<CoilMatchingError> CODEC = makeCodec(ICoilType.CODEC, CoilMatchingError::new);
+    public static final MapCodec<CoilMatchingError> CODEC = makeCodec(ICoilType.CODEC, CoilMatchingError::new);
 
     public static final PatternErrorType TYPE = new PatternErrorType(GTCEu.id("coil_matching_error"), CODEC);
 

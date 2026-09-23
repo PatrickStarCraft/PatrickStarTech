@@ -2,6 +2,7 @@ package com.gregtechceu.gtceu.common.machine.multiblock.electric.research;
 
 import com.gregtechceu.gtceu.api.blockentity.BlockEntityCreationInfo;
 import com.gregtechceu.gtceu.api.capability.GTCapability;
+import com.gregtechceu.gtceu.api.capability.GTCapabilityHelper;
 import com.gregtechceu.gtceu.api.capability.IOpticalComputationProvider;
 import com.gregtechceu.gtceu.api.capability.IOpticalComputationReceiver;
 import com.gregtechceu.gtceu.api.capability.recipe.CWURecipeCapability;
@@ -70,9 +71,9 @@ public class ResearchStationMachine extends WorkableElectricMultiblockMachine
                 this.objectHolder = holder;
             }
 
-            part
-                    .getCapability(GTCapability.CAPABILITY_COMPUTATION_PROVIDER)
-                    .ifPresent(provider -> this.computationProvider = provider);
+            var provider = GTCapabilityHelper.getBlockEntityCapability(GTCapability.CAPABILITY_COMPUTATION_PROVIDER,
+                    part.getLevel(), part.getBlockPos(), null);
+            if (provider != null) this.computationProvider = provider;
         }
 
         // should never happen, but would rather do this than have an obscure NPE

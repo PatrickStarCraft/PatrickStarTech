@@ -24,6 +24,7 @@ import com.gregtechceu.gtceu.utils.ISubscription;
 
 import org.jspecify.annotations.NullMarked;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
@@ -174,6 +175,7 @@ public class ItemCollectorMachine extends TieredEnergyMachine
     }
 
     public void moveItemsInRange() {
+        ServerLevel serverLevel = (ServerLevel) getLevel();
         Filter<ItemStack> filter = null;
         if (!filterInventory.getStackInSlot(0).isEmpty())
             filter = Filters.loadItemFilter(filterInventory.getStackInSlot(0));
@@ -199,7 +201,7 @@ public class ItemCollectorMachine extends TieredEnergyMachine
 
                 ItemStack remainder = fillOutput(stack);
                 if (remainder.isEmpty())
-                    itemEntity.kill();
+                    itemEntity.kill(serverLevel);
                 else if (stack.getCount() > remainder.getCount())
                     itemEntity.setItem(remainder);
             }

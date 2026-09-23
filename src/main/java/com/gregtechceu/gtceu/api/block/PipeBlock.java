@@ -35,6 +35,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.InsideBlockEffectApplier;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
@@ -371,7 +372,8 @@ public abstract class PipeBlock<PipeType extends Enum<PipeType> & IPipeType<Node
     }
 
     @Override
-    public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
+    public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity,
+                             InsideBlockEffectApplier effectApplier, boolean isPrecise) {
         var pipeNode = getPipeTile(level, pos);
         if (pipeNode == null) {
             GTCEu.LOGGER.error("Pipe was null");
@@ -381,9 +383,9 @@ public abstract class PipeBlock<PipeType extends Enum<PipeType> & IPipeType<Node
             BlockState frameState = Objects.requireNonNull(GTMaterialBlocks.MATERIAL_BLOCKS
                     .get(TagPrefix.frameGt, pipeNode.getFrameMaterial()))
                     .getDefaultState();
-            frameState.getBlock().entityInside(frameState, level, pos, entity);
+            frameState.entityInside(level, pos, entity, effectApplier, isPrecise);
         }
-        super.entityInside(state, level, pos, entity);
+        super.entityInside(state, level, pos, entity, effectApplier, isPrecise);
     }
 
     @Override
@@ -454,8 +456,8 @@ public abstract class PipeBlock<PipeType extends Enum<PipeType> & IPipeType<Node
 
     @Override
     public List<ItemStack> getDrops(BlockState state, LootParams.Builder builder) {
-        var context = builder.withParameter(LootContextParams.BLOCK_STATE, state).create(LootContextParamSets.BLOCK);
-        BlockEntity blockEntity = context.getParamOrNull(LootContextParams.BLOCK_ENTITY);
+        BlockEntity blockEntity = builder.getOptionalParameter(LootContextParams.BLOCK_ENTITY);
+        builder.withParameter(LootContextParams.BLOCK_STATE, state).create(LootContextParamSets.BLOCK);
         List<ItemStack> drops = new ArrayList<>(super.getDrops(state, builder));
         if (blockEntity instanceof IPipeNode<?, ?> pipeTile) {
             if (pipeTile.getFrameMaterial() != null) {

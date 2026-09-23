@@ -125,7 +125,9 @@ public class PrimitivePumpMachine extends MultiblockControllerMachine implements
     }
 
     private Precipitation getBiomePrecipitation() {
-        return getLevel().getBiome(getBlockPos()).value().getPrecipitationAt(getBlockPos());
+        var level = getLevel();
+        var pos = getBlockPos();
+        return level.getBiome(pos).value().getPrecipitationAt(pos, level.getSeaLevel());
     }
 
     public int getFluidProduction() {

@@ -87,7 +87,7 @@ public class MultiblockControllerMachine extends MetaMachine {
         super.onLoad();
         if (!isRemote()) {
             // run a structure check on the first tick
-            ((ServerLevel) getLevel()).getServer().tell(new TickTask(2, this::checkAndFormStructure));
+            ((ServerLevel) getLevel()).getServer().schedule(new TickTask(2, this::checkAndFormStructure));
         }
     }
 

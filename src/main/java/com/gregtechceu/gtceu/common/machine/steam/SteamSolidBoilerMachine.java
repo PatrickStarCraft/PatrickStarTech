@@ -7,6 +7,7 @@ import com.gregtechceu.gtceu.api.capability.recipe.ItemRecipeCapability;
 import com.gregtechceu.gtceu.api.data.chemical.ChemicalHelper;
 import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
 import com.gregtechceu.gtceu.api.machine.steam.SteamBoilerMachine;
+import com.gregtechceu.gtceu.api.recipe.GTRecipe;
 import com.gregtechceu.gtceu.api.machine.trait.notifiable.NotifiableItemStackHandler;
 import com.gregtechceu.gtceu.api.sync_system.annotations.SaveField;
 import com.gregtechceu.gtceu.common.data.GTMaterials;
@@ -32,7 +33,6 @@ import brachy.modularui.widgets.slot.ModularSlot;
 import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
 import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 
-import java.util.Arrays;
 import java.util.Collections;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -55,11 +55,13 @@ public class SteamSolidBoilerMachine extends SteamBoilerMachine {
             }
             return FUEL_CACHE.computeIfAbsent(itemStack.getItem(), item -> {
                 if (isRemote()) return true;
-                return recipeLogic.getRecipeManager().getAllRecipesFor(getRecipeType()).stream().anyMatch(recipe -> {
+                return recipeLogic.getRecipeManager().getRecipes().stream().map(holder -> holder.value())
+                        .filter(recipe -> recipe.getType().equals(getRecipeType()))
+                        .filter(GTRecipe.class::isInstance).map(GTRecipe.class::cast).anyMatch(recipe -> {
                     var list = recipe.inputs.getOrDefault(ItemRecipeCapability.CAP, Collections.emptyList());
                     if (!list.isEmpty()) {
-                        return Arrays.stream(ItemRecipeCapability.CAP.of(list.get(0).content()).getItems())
-                                .map(ItemStack::getItem).anyMatch(i -> i == item);
+                        return ItemRecipeCapability.CAP.of(list.get(0).content()).items()
+                                .anyMatch(holder -> holder.value() == item);
                     }
                     return false;
                 });

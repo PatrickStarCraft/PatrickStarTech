@@ -8,6 +8,7 @@ import com.gregtechceu.gtceu.api.sync_system.data_transformers.ValueTransformer;
 
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NumericTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -53,15 +54,17 @@ public class CoverBehaviorTransformer implements ValueTransformer<CoverBehavior>
 
         /// Ldlib backwards compat
         if (tag.contains("payload") && tag.contains("uid")) {
-            tag.putInt("side", tag.getCompound("uid").getInt("side"));
-            tag.putString("coverType", tag.getCompound("uid").getString("id"));
-            tag.put("data", tag.getCompound("payload").getCompound("d"));
+            var uid = tag.getCompound("uid").orElseGet(CompoundTag::new);
+            var payload = tag.getCompound("payload").orElseGet(CompoundTag::new);
+            tag.putInt("side", uid.getIntOr("side", 0));
+            tag.putString("coverType", uid.getStringOr("id", ""));
+            tag.put("data", payload.getCompoundOrEmpty("d"));
         }
 
         Direction side;
         if ((tag.get("side") instanceof StringTag)) {
             side = Direction.CODEC.byName(tag.getStringOr("side", ""));
-        } else if (tag.contains("side", Tag.TAG_ANY_NUMERIC)) {
+        } else if (tag.get("side") instanceof NumericTag) {
             // backwards compat
             side = Direction.values()[tag.getIntOr("side", 0)];
         } else {

@@ -2,9 +2,10 @@
 
 ## Checkout
 
-- Branch: `codex/friend-entities-maps`
+- Branch: `1.20.1`
 - Base: `b1daee2f206dd776a1a6fc181d2f6bebd271a16d` (latest locally available `1.20.1` integration commit at task start)
-- Worktree: `C:\Users\georg\.codex\worktrees\friend-entities-maps\PatrickStarTech`
+- Checkout: `C:\Users\georg\IdeaProjects\PatrickStarTech`
+- The implementation was carried over from `codex/friend-entities-maps`; its working tree remains available as a reference copy.
 - The previous `codex/friend-particles` worktree and its uncommitted changes remain separate and untouched.
 
 ## Tasks
@@ -25,13 +26,32 @@
 - The remaining map errors are provider UI/render callback breaks, not just renamed Minecraft types. For example, the cached Xaero World Map `MapElementRenderer` contract is still based on `GuiGraphics` and `MultiBufferSource.BufferSource`, while 26.2 moved to the render-state pipeline; FTB map icons now require a different draw callback and its fluid widget receives `GuiGraphicsExtractor`; JourneyMap listeners and texture identifiers also differ. The repo does not configure verified 26.2-compatible artifacts for these optional mods, so adapting against the old binaries would be speculative and changing shared dependency versions is outside this ownership slice.
 - Optional integration enablement and waypoint handlers were reviewed. FTB Chunks and JourneyMap waypoint handler source uses `ResourceKey<Level>` and `BlockPos`; provider renderers, screen widgets, and JourneyMap event API are the incompatible pieces requiring current provider artifacts and broader client rendering/API coordination.
 
+### Task 3 — Additional 26.2 API migrations
+
+- Migrated `BreweryLogic` from removed private/global potion-mix access to the level-scoped brewing API. Preserved water-cell handling, representative registered potion recipes, concrete brewing recipes, and duplicate avoidance; removed the obsolete `PotionBrewingAccessor` mixin.
+- Migrated `ValueTransformers` packet encoding to current registry, block-state, identifier, item-stack, fluid-stack, and component codecs while retaining their serialized values. Updated `FacadeCoverRecipe` to `CraftingInput`, current recipe metadata and placement APIs, and emitted its stateless special recipe through the runtime data-pack recipe generator.
+- Ported foam sand-use handling to `useItemOn`, retained bright-sky petrification behavior, and updated the daytime recipe condition. Ported placeholder identifier/client-side APIs and preserved absent placeholder data as an empty compound.
+- Updated conditional tick scheduling to the event loop's `schedule` API; retained the no-op stacked-content helper without an obsolete override annotation. Updated fluid-handler optional access, Robot Arm NBT defaults, biome precipitation with sea level, and fluid-sprout chunk post-processing.
+- Updated block-position sync deserialization to read the legacy `X`/`Y`/`Z` compound form, and migrated `MonitorGroupTransformer` legacy fields into the current block-position codec while preserving its saved-data upgrade path.
+- Migrated bounded integer and float provider codecs to 26.2 `IntProviders`/`FloatProviders` without changing their configured ranges. Updated pipe notifications and loot-parameter access, the item collector's server-side entity removal, steam boiler recipe enumeration and ingredient holders, and Creative/Quantum Chest stack comparison. Also updated Canner fluid-handler optionals, machine-trait/virtual-entry NBT reads, and the exhaust-shape helper spelling.
+- The recipe database warning path now imports the target built-in registries. The facade special-recipe JSON is emitted through `GeneratedRecipe` with the same id and stateless serializer.
+- Migrated pattern error variants from `Codec` to dispatchable `MapCodec` forms and switched text serialization to `ComponentSerialization.CODEC`; updated the part-ability tooltip to use the target ItemStack name API. Corrected the Drum Machine nullability annotation import.
+- Ported 26.2 `InsideBlockEffectApplier` callbacks for framed material, pipe, cable, fluid-pipe, and explosive blocks, forwarding the original effect collector and precision flag when delegating to the frame state. Updated the forming press custom mold check to use `DataComponents.CUSTOM_NAME`.
+- Updated the multiblock first-tick structure check to schedule through the server scheduler API. Preserved `LocalizedHazardSavedData` block positions in their existing `X`/`Y`/`Z` compound form by reading and writing those coordinates directly after the old `NbtUtils` helpers were removed.
+- Updated `GTRegistryArgument` to parse command identifiers through the current `Identifier.read(StringReader)` API, matching the other command parsers in the project.
+- `GTRecipeTransformer` still needs a client-side legacy recipe lookup migration: 26.2 clients expose recipe display/property data rather than the former full `RecipeManager`. `AdjacentBlockCondition`/`AdjacentFluidCondition` also still need a tag-holder migration that retains tag binding across data reloads. These were left unchanged rather than replacing old behavior with a snapshot or empty tag.
+
 ## Verification
 
 - Baseline: `compileJava -PportDiagnostics --max-workers=1 --console=plain --offline`; `build/friend-entities-maps-baseline.log`; **2,794 errors**, including 18 in each boat entity and 57 under `integration/map`.
 - After boat batch: same command; `build/friend-entities-maps-boats.log`; **2,757 errors**, with zero diagnostics in either owned boat entity. Map package still has 57 diagnostics.
 - After cache batch: same command; `build/friend-entities-maps-cache.log`; **2,754 errors**. `ClientCacheManager`, `GTBoat`, and `GTChestBoat` have zero diagnostics; map package has 54 diagnostics. Three errors disappeared with the cache API migration.
-- Attempted final integrated compile after the waypoint equality correction, but this execution context can no longer read the cached JDK's `conf/security/java.security` or write the existing worktree's `build` directory. Earlier integrated compile after all cache edits succeeded as above; the final equality-only change is a Java standard-library call and was not recompiled in this constrained context.
-- `git diff --check` passed after the cache change; rerun against the final waypoint edit when a writable execution context is available.
+- Verification on the requested `1.20.1` checkout: `build/friend-entities-maps-1.20.1.log`; **2,678 errors**. `GTBoat`, `GTChestBoat`, `ClientCacheManager`, and `WaypointManager` each have zero diagnostics; all 54 map diagnostics remain in optional provider renderers/widgets/listeners using the pinned 1.20.1 APIs. `GTBoatRenderer` still has 8 errors and remains outside this rendering ownership slice.
+- Latest integrated offline compile on `1.20.1`: `build/friend-entities-maps-material-block.log`; **2,571 errors**. Ported members compile cleanly; `PipeBlock` still has unrelated appearance/shape/interaction API diagnostics. The map package still has 54 provider API diagnostics, and `GTBoatRenderer` still has 8 renderer API diagnostics.
+- Latest integrated offline compile after the scheduler and hazard saved-data updates: `build/friend-entities-maps-hazard-nbt.log`; **2,564 errors**. `MultiblockControllerMachine` and `LocalizedHazardSavedData` no longer have compiler diagnostics. The two adjacent recipe conditions still have one removed `getOrCreateTag` API error apiece; they remain unresolved pending a reload-safe named-tag holder migration.
+- Latest integrated offline compile after the registry command parser update: `build/friend-entities-maps-command-parser.log`; **2,561 errors**. The updated command parser also compiles cleanly.
+- The final offline integrated compile was run with access to the configured cached JDK and completed compilation, failing only because of existing port errors elsewhere. Tests/gameplay were not run.
+- `git diff --check` passes in the `1.20.1` checkout.
 - Tests/runtime checks are pending; do not claim gameplay behavior without running the game.
 
 ## Shared Ownership

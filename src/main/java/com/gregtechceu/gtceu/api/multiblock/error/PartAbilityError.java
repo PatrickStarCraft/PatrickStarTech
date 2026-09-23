@@ -4,6 +4,7 @@ import com.gregtechceu.gtceu.GTCEu;
 import com.gregtechceu.gtceu.api.machine.multiblock.PartAbility;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 
 import brachy.modularui.api.drawable.Text;
@@ -12,6 +13,7 @@ import brachy.modularui.drawable.ItemDrawable;
 import brachy.modularui.widgets.layout.Flow;
 import brachy.modularui.widgets.menu.ContextMenuButton;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import lombok.Getter;
 
@@ -19,7 +21,7 @@ import java.util.Collection;
 
 public class PartAbilityError extends PatternError {
 
-    public static final Codec<PartAbilityError> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+    public static final MapCodec<PartAbilityError> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             BlockPos.CODEC.fieldOf("pos").forGetter(PatternError::getPos),
             Codec.STRING.fieldOf("name").forGetter(PartAbilityError::getPartAbilityName))
             .apply(instance, PartAbilityError::new));
@@ -53,7 +55,7 @@ public class PartAbilityError extends PatternError {
                             .childSeparator(Icon.EMPTY_2PX)
                             .children(blocks, block -> {
                                 return new ItemDrawable(block.asItem()).asWidget()
-                                        .tooltip(r -> r.add(block.asItem().getDescription()));
+                                        .tooltip(r -> r.add(new ItemStack(block).getHoverName()));
                             })));
             parent.child(row);
         };
