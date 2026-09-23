@@ -7,9 +7,15 @@ import com.gregtechceu.gtceu.client.bloom.IRenderSetup;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.debug.DebugScreenDisplayer;
+import net.minecraft.client.gui.components.debug.DebugScreenEntryStatus;
+import net.minecraft.client.gui.components.debug.DebugScreenProfile;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
-import net.neoforged.neoforge.client.event.CustomizeGuiOverlayEvent;
+import net.neoforged.neoforge.client.event.RegisterDebugEntriesEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.event.level.LevelEvent;
@@ -204,16 +210,13 @@ public final class GTParticleManager {
         }
     }
 
-    @SubscribeEvent
-    public void debugOverlay(CustomizeGuiOverlayEvent.DebugText event) {
-        List<String> gameInfo = event.getLeft();
-        if (gameInfo.size() >= 5) {
-            String countStatsLine = gameInfo.get(4);
-            countStatsLine += ". " + ChatFormatting.GOLD +
-                    "P-BACK: " + count(this.depthEnabledParticles) +
-                    " P-FRONT: " + count(this.depthDisabledParticles);
-            gameInfo.set(4, countStatsLine);
-        }
+    public void registerDebugEntries(RegisterDebugEntriesEvent event) {
+        Identifier entryId = Identifier.fromNamespaceAndPath("gtceu", "particle_counts");
+        event.register(entryId, (DebugScreenDisplayer displayer, @Nullable Level level,
+                                 @Nullable LevelChunk clientChunk, @Nullable LevelChunk serverChunk) ->
+                displayer.addLine(ChatFormatting.GOLD + "P-BACK: " + count(this.depthEnabledParticles) +
+                        " P-FRONT: " + count(this.depthDisabledParticles)));
+        event.includeInProfile(entryId, DebugScreenProfile.DEFAULT, DebugScreenEntryStatus.ALWAYS_ON);
     }
 
     private static int count(Map<@Nullable IRenderSetup, Queue<GTParticle>> renderQueue) {
