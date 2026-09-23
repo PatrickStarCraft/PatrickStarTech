@@ -8,7 +8,7 @@ import com.gregtechceu.gtceu.api.cover.IMuiCover;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -71,13 +71,13 @@ public class CoverUIFactory extends AbstractUIFactory<SidedPosGuiData> {
     }
 
     @Override
-    public void writeGuiData(SidedPosGuiData guiData, FriendlyByteBuf buffer) {
+    public void writeGuiData(SidedPosGuiData guiData, RegistryFriendlyByteBuf buffer) {
         buffer.writeBlockPos(guiData.getBlockPos());
         buffer.writeByte(guiData.getSide().get3DDataValue());
     }
 
     @Override
-    public @NotNull SidedPosGuiData readGuiData(Player player, FriendlyByteBuf buffer) {
+    public @NotNull SidedPosGuiData readGuiData(Player player, RegistryFriendlyByteBuf buffer) {
         return new SidedPosGuiData(player, buffer.readBlockPos(), Direction.from3DDataValue(buffer.readByte()));
     }
 }

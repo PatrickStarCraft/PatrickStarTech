@@ -6,6 +6,8 @@ import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
 import com.gregtechceu.gtceu.utils.memoization.GTMemoizer;
 
 import net.minecraft.util.Util;
+import net.minecraft.core.HolderSet;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -68,7 +70,7 @@ public class ArmorProperty implements IMaterialProperty {
                 map.put(ArmorType.values()[i], protectionValues[i]);
             }
         });
-        this.sound = GTMemoizer.memoize(() -> SoundEvents.ARMOR_EQUIP_IRON);
+        this.sound = GTMemoizer.memoize(SoundEvents.ARMOR_EQUIP_IRON::value);
         this.toughness = 0;
         this.knockbackResistance = 0;
         this.armorMaterial = new ArmorMaterial();
@@ -85,7 +87,8 @@ public class ArmorProperty implements IMaterialProperty {
         }
         if (this.repairIngredient == null && !noRepair) {
             this.repairIngredient = GTMemoizer
-                    .memoize(() -> Ingredient.of(ChemicalHelper.getTagOrThrow(TagPrefix.plate, material)));
+                    .memoize(() -> Ingredient.of(HolderSet.emptyNamed(BuiltInRegistries.ITEM,
+                            ChemicalHelper.getTagOrThrow(TagPrefix.plate, material))));
         }
     }
 
@@ -248,7 +251,7 @@ public class ArmorProperty implements IMaterialProperty {
         public @NotNull Ingredient getRepairIngredient() {
             return ArmorProperty.this.repairIngredient != null ?
                     ArmorProperty.this.repairIngredient.get() :
-                    Ingredient.EMPTY;
+                    Ingredient.of(java.util.stream.Stream.empty());
         }
 
         public @NotNull String getName() {

@@ -7,7 +7,6 @@ import com.gregtechceu.gtceu.api.multiblock.PredicateContext;
 import com.gregtechceu.gtceu.api.multiblock.util.BlockInfo;
 
 import net.minecraft.client.Camera;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -39,8 +38,7 @@ class TestablePredicate extends BasePredicate {
      *                   either the
      *                   {@link com.gregtechceu.gtceu.common.item.behavior.TerminalBehavior#use(Item, Level, Player, InteractionHand)
      *                   Terminal Auto-Builder},
-     *                   {@link com.gregtechceu.gtceu.client.renderer.PatternPreviewRenderer#draw(PoseStack, MultiBufferSource.BufferSource, Camera, RenderLevelStageEvent.Stage, float)
-     *                   In-world Preview} or
+     *                   the in-world preview or
      *                   {@link com.gregtechceu.gtceu.integration.recipeviewer.widgets.MultiblockPreviewWidget#MultiblockPreviewWidget(MultiblockMachineDefinition definition, MultiblockSchemaInfo schemaInfo, int width,int height)
      *                   XEI Preview}
      */

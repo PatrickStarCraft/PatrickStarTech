@@ -6,7 +6,7 @@ import com.gregtechceu.gtceu.api.machine.feature.IMuiMachine;
 import com.gregtechceu.gtceu.api.mui.GTGuiScreen;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
@@ -69,12 +69,12 @@ public class MachineUIFactory extends AbstractUIFactory<PosGuiData> {
     }
 
     @Override
-    public void writeGuiData(PosGuiData guiData, FriendlyByteBuf buffer) {
+    public void writeGuiData(PosGuiData guiData, RegistryFriendlyByteBuf buffer) {
         buffer.writeBlockPos(guiData.getBlockPos());
     }
 
     @Override
-    public @NotNull PosGuiData readGuiData(Player player, FriendlyByteBuf buffer) {
+    public @NotNull PosGuiData readGuiData(Player player, RegistryFriendlyByteBuf buffer) {
         return new PosGuiData(player, buffer.readBlockPos());
     }
 

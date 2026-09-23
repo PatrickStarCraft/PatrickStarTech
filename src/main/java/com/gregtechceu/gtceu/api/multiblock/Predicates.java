@@ -23,14 +23,13 @@ import com.gregtechceu.gtceu.common.data.GTMaterialBlocks;
 import com.gregtechceu.gtceu.config.ConfigHolder;
 
 import net.minecraft.network.chat.Component;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.tags.ITagManager;
 
 import com.tterrag.registrate.util.entry.RegistryEntry;
 import dev.latvian.mods.rhino.util.HideFromJS;
@@ -125,8 +124,8 @@ public class Predicates {
     }
 
     private static String blockToString(Block block) {
-        return ForgeRegistries.BLOCKS.getDelegate(block)
-                .map(r -> r.key().location().toString())
+        return BuiltInRegistries.BLOCK.getResourceKey(block)
+                .map(key -> key.identifier().toString())
                 .orElse("unknown block");
     }
 
@@ -145,13 +144,16 @@ public class Predicates {
 
     public static MultiPredicate blockTag(TagKey<Block> tag) {
         Objects.requireNonNull(tag, "Block tag cannot be null");
-        ITagManager<Block> manager = Objects.requireNonNull(ForgeRegistries.BLOCKS.tags());
         return builder("BlockTag")
                 .blockTag(tag)
                 .contents(builder -> builder.append(tag.location()))
                 .predicate(ctx -> ctx.state().is(tag))
-                .errorFunction(ctx -> new BlockMatchingError(ctx.pos(), manager.getTag(tag)
-                        .stream().toList()))
+                .errorFunction(ctx -> {
+                    List<Block> candidates = new ArrayList<>();
+                    BuiltInRegistries.BLOCK.getTagOrEmpty(tag)
+                            .forEach(holder -> candidates.add(holder.value()));
+                    return new BlockMatchingError(ctx.pos(), candidates);
+                })
                 .toMultiPredicate();
     }
 
@@ -169,8 +171,8 @@ public class Predicates {
                 .contents(builder -> {
                     StringJoiner joiner = new StringJoiner(", ");
                     for (Fluid fluid : fluids) {
-                        joiner.add(ForgeRegistries.FLUIDS.getDelegate(fluid)
-                                .map(r -> r.key().location().toString())
+                        joiner.add(BuiltInRegistries.FLUID.getResourceKey(fluid)
+                                .map(key -> key.identifier().toString())
                                 .orElse("unknown"));
                     }
                     builder.append(joiner);
@@ -367,7 +369,7 @@ public class Predicates {
     public static MultiPredicate frames(Material... frameMaterials) {
         var frameBlocks = Arrays.stream(frameMaterials)
                 .map(m -> GTMaterialBlocks.MATERIAL_BLOCKS.get(TagPrefix.frameGt, m))
-                .filter(obj -> Objects.nonNull(obj) && obj.isPresent())
+                .filter(Objects::nonNull)
                 .map(RegistryEntry::get)
                 .toArray(Block[]::new);
         return blocks("Frames", frameBlocks)

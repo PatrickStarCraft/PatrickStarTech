@@ -15,6 +15,7 @@ import com.gregtechceu.gtceu.data.recipe.CustomTags;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.equipment.ArmorType;
@@ -128,9 +129,7 @@ public class HazardProperty implements IMaterialProperty {
                 return correctArmorItems.containsAll(equipmentTypes);
             }
             Set<String> correctCurios = new HashSet<>();
-            ICuriosItemHandler curiosInventory = CuriosApi.getCuriosInventory(livingEntity)
-                    .resolve()
-                    .orElse(null);
+            ICuriosItemHandler curiosInventory = CuriosApi.getCuriosInventory(livingEntity).orElse(null);
             if (curiosInventory == null) {
                 return correctArmorItems.containsAll(equipmentTypes);
             }
@@ -154,13 +153,11 @@ public class HazardProperty implements IMaterialProperty {
                     if (!armor.isEmpty() && ((armor.getItem() instanceof ArmorComponentItem armorItem &&
                             armorItem.getArmorLogic().isPPE()) ||
                             armor.typeHolder().tags().anyMatch(tag -> tag.equals(CustomTags.PPE_ARMOR)))) {
-                        armor.hurtAndBreak(amount, player, p -> p.broadcastBreakEvent(type.getSlot()));
+                        armor.hurtAndBreak(amount, player, type.getSlot());
                     }
                 }
                 if (GTCEu.Mods.isCuriosLoaded()) {
-                    ICuriosItemHandler curiosInventory = CuriosApi.getCuriosInventory(player)
-                            .resolve()
-                            .orElse(null);
+                    ICuriosItemHandler curiosInventory = CuriosApi.getCuriosInventory(player).orElse(null);
                     if (curiosInventory != null) {
                         for (String curioItem : this.getCurioSlots()) {
                             curiosInventory.getStacksHandler(curioItem).ifPresent(handler -> {
@@ -170,7 +167,7 @@ public class HazardProperty implements IMaterialProperty {
                                     if (!armor.isEmpty() && ((armor.getItem() instanceof ArmorComponentItem armorItem &&
                                             armorItem.getArmorLogic().isPPE()) ||
                                             armor.typeHolder().tags().anyMatch(tag -> tag.equals(CustomTags.PPE_ARMOR)))) {
-                                        armor.hurtAndBreak(amount, player, p -> {});
+                                        armor.hurtAndBreak(amount, player, EquipmentSlot.CHEST);
                                     }
                                 }
                             });
@@ -190,7 +187,7 @@ public class HazardProperty implements IMaterialProperty {
             prefix = prefixItem.tagPrefix;
         } else if (item.getItem() instanceof BucketItem bucket) {
             if (ConfigHolder.INSTANCE.gameplay.universalHazards || bucket instanceof GTBucketItem) {
-                material = ChemicalHelper.getMaterial(bucket.getFluid());
+                material = ChemicalHelper.getMaterial(bucket.getContent());
             }
         } else if (ConfigHolder.INSTANCE.gameplay.universalHazards) {
             var entry = ChemicalHelper.getMaterialEntry(item.getItem());

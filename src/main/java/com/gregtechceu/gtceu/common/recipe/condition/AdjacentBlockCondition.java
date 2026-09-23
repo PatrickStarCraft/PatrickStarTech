@@ -80,7 +80,7 @@ public class AdjacentBlockCondition extends RecipeCondition<AdjacentBlockConditi
 
     public static AdjacentBlockCondition fromTags(Collection<TagKey<Block>> tags) {
         return new AdjacentBlockCondition(tags.stream()
-                .<HolderSet<Block>>map(BuiltInRegistries.BLOCK::getOrCreateTag)
+                .<HolderSet<Block>>map(tag -> HolderSet.emptyNamed(BuiltInRegistries.BLOCK, tag))
                 .toList());
     }
 

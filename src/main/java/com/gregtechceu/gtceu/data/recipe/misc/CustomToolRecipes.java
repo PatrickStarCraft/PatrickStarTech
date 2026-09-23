@@ -10,6 +10,7 @@ import com.gregtechceu.gtceu.api.data.chemical.material.stack.MaterialEntry;
 import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
 import com.gregtechceu.gtceu.api.item.tool.GTToolType;
 import com.gregtechceu.gtceu.api.item.tool.ToolHelper;
+import com.gregtechceu.gtceu.api.item.data.ItemStackData;
 import com.gregtechceu.gtceu.api.recipe.ToolHeadReplaceRecipe;
 import com.gregtechceu.gtceu.common.data.GTItems;
 import com.gregtechceu.gtceu.common.data.GTMaterials;
@@ -116,7 +117,7 @@ public final class CustomToolRecipes {
                             BuiltInRegistries.ITEM.getKey(batteryItem.get()).getPath());
 
                     VanillaRecipeHelper.addShapedEnergyTransferRecipe(provider, true, false, true, recipeName,
-                            Ingredient.of(batteryStack), powerUnitStack,
+                            Ingredient.of(batteryStack.getItem()), powerUnitStack,
                             "S d", "GMG", "PBP",
                             'M', motorItems.get(tier).asStack(),
                             'S', new MaterialEntry(screw, baseMaterials.get(tier)),
@@ -221,11 +222,11 @@ public final class CustomToolRecipes {
 
             {
                 var magnetStack = GTItems.ITEM_MAGNET_LV.asStack();
-                var tag = magnetStack.getOrCreateTag();
                 var filter = (SimpleItemFilter) Filters
                         .loadItemFilter(ItemMagnetBehavior.FilterMode.SIMPLE.getFilter(magnetStack));
                 filter.setBlackList(true);
-                tag.put(ItemMagnetBehavior.FILTER_TAG, filter.writeFilterNBT());
+                ItemStackData.update(magnetStack,
+                        tag -> tag.put(ItemMagnetBehavior.FILTER_TAG, filter.writeFilterNBT()));
                 VanillaRecipeHelper.addShapedEnergyTransferRecipe(provider, true, false, true,
                         "lv_magnet_" + batteryItem.getId().getPath(),
                         Ingredient.of(batteryItem), magnetStack,
@@ -264,11 +265,11 @@ public final class CustomToolRecipes {
 
             {
                 var magnetStack = GTItems.ITEM_MAGNET_HV.asStack();
-                var tag = magnetStack.getOrCreateTag();
                 var filter = (SimpleItemFilter) Filters
                         .loadItemFilter(ItemMagnetBehavior.FilterMode.SIMPLE.getFilter(magnetStack));
                 filter.setBlackList(true);
-                tag.put(ItemMagnetBehavior.FILTER_TAG, filter.writeFilterNBT());
+                ItemStackData.update(magnetStack,
+                        tag -> tag.put(ItemMagnetBehavior.FILTER_TAG, filter.writeFilterNBT()));
                 VanillaRecipeHelper.addShapedEnergyTransferRecipe(provider, true, false, true,
                         "hv_magnet_" + batteryItem.getId().getPath(),
                         Ingredient.of(batteryItem), magnetStack,

@@ -17,10 +17,12 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.common.Tags;
 
 import java.util.function.Consumer;
+import java.util.Arrays;
 
 import static com.gregtechceu.gtceu.api.GTValues.*;
 import static com.gregtechceu.gtceu.api.data.tag.TagPrefix.*;
@@ -667,7 +669,9 @@ public class VanillaStandardRecipes {
                 .duration(400).EUt(2).save(provider);
 
         CHEMICAL_BATH_RECIPES.recipeBuilder("decolor_stained_glass_pane")
-                .inputItems(Tags.Items.STAINED_GLASS_PANES)
+                .inputItems(Ingredient.of(Arrays.stream(DyeColor.values())
+                        .map(color -> BuiltInRegistries.ITEM.getValue(Identifier.withDefaultNamespace(
+                                color.getName() + "_stained_glass_pane")))))
                 .inputFluids(Chlorine.getFluid(20))
                 .outputItems(Items.GLASS_PANE)
                 .category(GTRecipeCategories.CHEM_DYES)

@@ -84,7 +84,7 @@ public class AdjacentFluidCondition extends RecipeCondition<AdjacentFluidConditi
 
     public static AdjacentFluidCondition fromTags(Collection<TagKey<Fluid>> tags) {
         return new AdjacentFluidCondition(tags.stream()
-                .<HolderSet<Fluid>>map(BuiltInRegistries.FLUID::getOrCreateTag)
+                .<HolderSet<Fluid>>map(tag -> HolderSet.emptyNamed(BuiltInRegistries.FLUID, tag))
                 .toList());
     }
 

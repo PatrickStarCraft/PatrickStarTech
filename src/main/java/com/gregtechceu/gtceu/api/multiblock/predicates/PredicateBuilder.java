@@ -7,11 +7,11 @@ import com.gregtechceu.gtceu.api.multiblock.error.SimplePatternError;
 import com.gregtechceu.gtceu.api.multiblock.util.BlockInfo;
 
 import net.minecraft.tags.TagKey;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import dev.latvian.mods.rhino.util.HideFromJS;
 import dev.latvian.mods.rhino.util.RemapForJS;
@@ -149,15 +149,13 @@ public class PredicateBuilder {
 
     /// fills candidates with this block tag
     public PredicateBuilder blockTag(TagKey<Block> tag) {
-        Objects.requireNonNull(ForgeRegistries.BLOCKS.tags())
-                .getTag(tag).forEach(this::blocks);
+        BuiltInRegistries.BLOCK.getTagOrEmpty(tag).forEach(holder -> this.blocks(holder.value()));
         return this;
     }
 
     /// fills candidates with this fluid tag
     public PredicateBuilder fluidTag(TagKey<Fluid> tag) {
-        Objects.requireNonNull(ForgeRegistries.FLUIDS.tags())
-                .getTag(tag).forEach(this::fluids);
+        BuiltInRegistries.FLUID.getTagOrEmpty(tag).forEach(holder -> this.fluids(holder.value()));
         return this;
     }
 
