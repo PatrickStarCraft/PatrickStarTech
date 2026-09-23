@@ -7,8 +7,10 @@ import com.gregtechceu.gtceu.api.sync_system.annotations.SaveField;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.state.BlockState;
@@ -28,8 +30,6 @@ import java.util.List;
 public class LargeMinerLogic extends MinerLogic {
 
     private static final int CHUNK_LENGTH = 16;
-    private static final LootItemFunction DROP_MULTIPLIER = ApplyBonusCount.addOreBonusCount(Enchantments.BLOCK_FORTUNE)
-            .build();
 
     @Setter
     @Getter
@@ -127,15 +127,18 @@ public class LargeMinerLogic extends MinerLogic {
             super.dropPostProcessing(blockDrops, outputs, blockState, builder);
             return;
         }
+        var fortune = this.getMachine().getLevel().registryAccess().lookupOrThrow(Registries.ENCHANTMENT)
+                .getOrThrow(Enchantments.FORTUNE);
         ItemStack fortunePick = this.pickaxeTool.copy();
-        fortunePick.enchant(Enchantments.BLOCK_FORTUNE, getDropCountMultiplier());
+        fortunePick.enchant(fortune, getDropCountMultiplier());
+        LootItemFunction dropMultiplier = ApplyBonusCount.addOreBonusCount(fortune).build();
         LootParams params = builder.withParameter(LootContextParams.TOOL, fortunePick)
                 .create(LootContextParamSets.BLOCK);
         LootContext context = new LootContext.Builder(params).create(null);
 
         for (ItemStack outputStack : outputs) {
             if (ChemicalHelper.getPrefix(outputStack.getItem()) == TagPrefix.crushed) {
-                outputStack = DROP_MULTIPLIER.apply(outputStack, context);
+                outputStack = dropMultiplier.apply(outputStack, context);
             }
             blockDrops.add(outputStack);
         }

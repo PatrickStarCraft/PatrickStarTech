@@ -4,8 +4,11 @@ import com.gregtechceu.gtceu.client.TooltipsHandler;
 import com.gregtechceu.gtceu.utils.GTMath;
 
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
 
@@ -38,9 +41,12 @@ public class FluidEmiStackMixin {
             require = 0)
     private void gtceu$addFluidTooltip(CallbackInfoReturnable<List<ClientTooltipComponent>> cir,
                                        @Local(ordinal = 0) List<ClientTooltipComponent> list) {
+        var components = DataComponentPatch.builder()
+                .set(DataComponents.CUSTOM_DATA, CustomData.of(nbt))
+                .build();
         TooltipsHandler.appendFluidTooltips(new FluidStack(this.fluid,
                 Math.max(GTMath.saturatedCast(((EmiStack) (Object) this).getAmount()), 1),
-                nbt),
+                components),
                 text -> list.add(EmiTooltipComponents.of(text)),
                 TooltipFlag.NORMAL);
     }

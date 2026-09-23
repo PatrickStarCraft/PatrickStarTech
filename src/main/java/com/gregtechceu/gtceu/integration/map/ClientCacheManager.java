@@ -6,6 +6,7 @@ import com.gregtechceu.gtceu.integration.map.cache.client.IClientCache;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.nbt.NbtIo;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
@@ -18,7 +19,6 @@ import lombok.Getter;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -69,12 +69,13 @@ public class ClientCacheManager {
             for (String dimFilePrefix : cacheInfo.dimFilePrefixes) {
                 for (File dimFile : getDimFiles(cacheInfo.cacheFolder, dimFilePrefix)) {
                     ResourceKey<Level> dimId = ResourceKey.create(Registries.DIMENSION,
-                            Identifier.of(
+                            Identifier.bySeparator(
                                     dimFile.getName().substring(dimFilePrefix.length() + filePrefix.length(),
                                             dimFile.getName().length() - fileEnding.length()),
                                     resourceLocationSeparator));
                     try {
-                        cache.readDimFile(dimFilePrefix, dimId, NbtIo.readCompressed(new FileInputStream(dimFile)));
+                        cache.readDimFile(dimFilePrefix, dimId,
+                                NbtIo.readCompressed(dimFile.toPath(), NbtAccounter.unlimitedHeap()));
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
@@ -84,7 +85,8 @@ public class ClientCacheManager {
                 File singleFile = new File(cacheInfo.cacheFolder, singleFileName + fileEnding);
                 if (!singleFile.exists()) continue;
                 try {
-                    cache.readSingleFile(singleFileName, NbtIo.readCompressed(new FileInputStream(singleFile)));
+                    cache.readSingleFile(singleFileName,
+                            NbtIo.readCompressed(singleFile.toPath(), NbtAccounter.unlimitedHeap()));
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }

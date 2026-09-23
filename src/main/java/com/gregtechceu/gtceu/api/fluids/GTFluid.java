@@ -21,8 +21,8 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraftforge.common.extensions.IForgeFluid;
 import net.neoforged.neoforge.fluids.FluidType;
+import net.minecraft.server.level.ServerLevel;
 
 import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
 import lombok.Getter;
@@ -35,7 +35,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @NullMarked
 @ParametersAreNonnullByDefault
-public abstract class GTFluid extends FlowingFluid implements IAttributedFluid, IForgeFluid {
+public abstract class GTFluid extends FlowingFluid implements IAttributedFluid {
 
     @Getter
     private final Collection<FluidAttribute> attributes = new ObjectLinkedOpenHashSet<>();
@@ -116,7 +116,7 @@ public abstract class GTFluid extends FlowingFluid implements IAttributedFluid, 
     }
 
     @Override
-    protected boolean canConvertToSource(Level world) {
+    protected boolean canConvertToSource(ServerLevel world) {
         return false;
     }
 
@@ -133,6 +133,7 @@ public abstract class GTFluid extends FlowingFluid implements IAttributedFluid, 
         return still || flowing;
     }
 
+    @Override
     public FluidType getFluidType() {
         return fluidType.get();
     }

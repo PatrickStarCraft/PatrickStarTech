@@ -70,9 +70,10 @@ public class GCYMMachines {
                     .modelProperty(GTMachineModelProperties.RECIPE_LOGIC_STATUS, RecipeLogic.Status.IDLE)
                     .model(createWorkableTieredHullMachineModel(
                             GTCEu.id("block/machines/parallel_hatch_mk" + (tier - 4)))
-                            .andThen((ctx, prov, model) -> {
-                                model.addReplaceableTextures("bottom", "top", "side");
-                            }))
+                            .andThen((com.gregtechceu.gtceu.api.registry.registrate.MachineBuilder.ModelInitializer)
+                                    (ctx, prov, model) -> {
+                                        model.addReplaceableTextures("bottom", "top", "side");
+                                    }))
                     .tooltips(Component.translatable("gtceu.machine.parallel_hatch_mk" + tier + ".tooltip"),
                             Component.translatable("gtceu.part_sharing.disabled"))
                     .register(),

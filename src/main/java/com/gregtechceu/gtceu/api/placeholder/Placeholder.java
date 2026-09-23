@@ -38,7 +38,7 @@ public abstract class Placeholder {
                 .getPlaceholderData(this);
         if (!placeholderData.contains(ctx.uuid().toString()))
             placeholderData.put(ctx.uuid().toString(), new CompoundTag());
-        return placeholderData.getCompound(ctx.uuid().toString());
+        return placeholderData.getCompoundOrEmpty(ctx.uuid().toString());
     }
 
     public boolean isView() {

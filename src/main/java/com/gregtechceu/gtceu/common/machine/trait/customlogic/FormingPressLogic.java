@@ -12,6 +12,7 @@ import com.gregtechceu.gtceu.common.data.GTRecipeTypes;
 import com.gregtechceu.gtceu.utils.GTStringUtils;
 
 import net.minecraft.network.chat.Component;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
@@ -72,9 +73,9 @@ public enum FormingPressLogic implements GTRecipeType.ICustomRecipeLogic {
             data.item = ItemStack.EMPTY;
             for (var stack : stacks) {
                 boolean isMold = GTItems.SHAPE_MOLD_NAME.isIn(stack);
-                if (data.mold.isEmpty() && isMold && stack.hasCustomHoverName()) {
+                if (data.mold.isEmpty() && isMold && stack.has(DataComponents.CUSTOM_NAME)) {
                     data.mold = stack;
-                } else if (data.item.isEmpty() && !(isMold && stack.hasCustomHoverName())) {
+                } else if (data.item.isEmpty() && !(isMold && stack.has(DataComponents.CUSTOM_NAME))) {
                     data.item = stack;
                 }
 
@@ -85,7 +86,7 @@ public enum FormingPressLogic implements GTRecipeType.ICustomRecipeLogic {
         var stacks = collect(indistinct);
         if (stacks.isEmpty()) return null;
         for (var stack : stacks) {
-            if (data.mold.isEmpty() && GTItems.SHAPE_MOLD_NAME.isIn(stack) && stack.hasCustomHoverName()) {
+            if (data.mold.isEmpty() && GTItems.SHAPE_MOLD_NAME.isIn(stack) && stack.has(DataComponents.CUSTOM_NAME)) {
                 data.mold = stack;
             } else if (data.item.isEmpty()) {
                 data.item = stack;

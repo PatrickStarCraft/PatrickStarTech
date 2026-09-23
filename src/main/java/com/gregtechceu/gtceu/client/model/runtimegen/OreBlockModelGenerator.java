@@ -6,6 +6,7 @@ import com.gregtechceu.gtceu.api.data.chemical.material.Material;
 import com.gregtechceu.gtceu.api.data.chemical.material.info.MaterialIconSet;
 import com.gregtechceu.gtceu.api.data.chemical.material.info.MaterialIconType;
 import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
+import com.gregtechceu.gtceu.client.color.MaterialLayerTintSource;
 import com.gregtechceu.gtceu.api.registry.GTRegistries;
 import com.gregtechceu.gtceu.data.model.builder.RuntimeModelResources;
 import com.gregtechceu.gtceu.data.pack.GTDynamicResourcePack;
@@ -77,6 +78,7 @@ public class OreBlockModelGenerator {
             RuntimeModelResources.emitBlockState(blockId, RuntimeModelResources.simpleBlockState(modelId),
                     GTDynamicResourcePack::addResource);
             RuntimeModelResources.emitItem(BuiltInRegistries.ITEM.getKey(model.block.asItem()), modelId,
+                    RuntimeModelResources.dynamicLayerTints(MaterialLayerTintSource.ID, 10),
                     GTDynamicResourcePack::addResource);
         }
 
@@ -126,7 +128,7 @@ public class OreBlockModelGenerator {
         }
         // read & cache the base ore model JSON
         try (BufferedReader reader = modelResource.get().openAsReader()) {
-            return GsonHelper.parse(reader, true);
+            return GsonHelper.parse(reader);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

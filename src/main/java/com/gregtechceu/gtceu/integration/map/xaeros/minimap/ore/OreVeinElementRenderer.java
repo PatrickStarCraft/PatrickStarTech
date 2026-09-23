@@ -10,10 +10,10 @@ import com.gregtechceu.gtceu.integration.map.layer.builtin.OreRenderLayer;
 import com.gregtechceu.gtceu.integration.map.xaeros.common.ore.OreVeinElement;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.inventory.InventoryMenu;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import xaero.common.graphics.renderer.multitexture.MultiTextureRenderTypeRendererProvider;
@@ -52,7 +52,7 @@ public class OreVeinElementRenderer extends MinimapElementRenderer<OreVeinElemen
                 .getItemTexturePath(material.getMaterialIconSet(), true);
         if (oreTexture != null) {
             var oreSprite = Minecraft.getInstance()
-                    .getTextureAtlas(InventoryMenu.BLOCK_ATLAS)
+                    .getTextureAtlas(TextureAtlas.LOCATION_BLOCKS)
                     .apply(oreTexture);
             graphics.blit(-iconSize / 2, -iconSize / 2, 0, iconSize, iconSize,
                     oreSprite, colors[0], colors[1], colors[2], 1);
@@ -64,7 +64,7 @@ public class OreVeinElementRenderer extends MinimapElementRenderer<OreVeinElemen
         // int materialSecondaryARGB = firstMaterial.getMaterialSecondaryARGB();
         // colors = DrawUtil.floats(materialSecondaryARGB);
         // var oreSprite = Minecraft.getInstance()
-        // .getTextureAtlas(InventoryMenu.BLOCK_ATLAS)
+        // .getTextureAtlas(TextureAtlas.LOCATION_BLOCKS)
         // .apply(oreTexture);
         // graphics.blit(-iconSize / 2, -iconSize / 2, 0, iconSize, iconSize,
         // oreSprite, colors[0], colors[1], colors[2], 1);

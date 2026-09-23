@@ -1,24 +1,17 @@
 package com.gregtechceu.gtceu.api.item;
 
 import net.minecraft.nbt.Tag;
-import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.capabilities.CapabilityDispatcher;
 import com.gregtechceu.gtceu.api.sync_system.NBTSerializable;
 
 /**
- * An interface for capability providers to implement if they need to store NBT data
- * and have custom comparison logic in {@link ItemStack#areCapsCompatible(CapabilityDispatcher)}.
+ * An interface for stack-owned state that needs custom merge preparation before item stacks are compared.
  */
 public interface IMergeableNBTSerializable extends NBTSerializable<Tag> {
 
     /**
-     * Called right before this capability provider is compared to a different one in
-     * {@link ItemStack#areCapsCompatible(CapabilityDispatcher)}.
-     * The other capability provider is guaranteed to have the same id as this one, but may be {@code null} if the other
-     * item does not have this
-     * capability.
+     * Called immediately before the serialized state is compared with another stack's state.
      * 
-     * @param other the other capability provider
+     * @param other the other stack's serializable state, or {@code null} when it is absent
      */
     void prepareForComparisonWith(NBTSerializable<Tag> other);
 }

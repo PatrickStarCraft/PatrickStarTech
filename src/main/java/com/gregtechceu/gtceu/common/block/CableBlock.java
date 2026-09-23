@@ -9,6 +9,7 @@ import com.gregtechceu.gtceu.api.data.chemical.material.Material;
 import com.gregtechceu.gtceu.api.data.chemical.material.properties.PropertyKey;
 import com.gregtechceu.gtceu.api.data.chemical.material.properties.WireProperties;
 import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
+import com.gregtechceu.gtceu.api.item.IBlockItemTooltip;
 import com.gregtechceu.gtceu.api.item.tool.GTToolType;
 import com.gregtechceu.gtceu.api.pipenet.IPipeNode;
 import com.gregtechceu.gtceu.api.registry.registrate.provider.GTBlockstateProvider;
@@ -29,11 +30,10 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.InsideBlockEffectApplier;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -41,14 +41,15 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 @NullMarked
-public class CableBlock extends MaterialPipeBlock<Insulation, WireProperties, LevelEnergyNet> {
+public class CableBlock extends MaterialPipeBlock<Insulation, WireProperties, LevelEnergyNet>
+        implements IBlockItemTooltip {
 
     public CableBlock(Properties properties, Insulation insulation, Material material) {
         super(properties, insulation, material);
@@ -102,23 +103,22 @@ public class CableBlock extends MaterialPipeBlock<Insulation, WireProperties, Le
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable BlockGetter level, List<Component> tooltip,
-                                TooltipFlag flag) {
-        super.appendHoverText(stack, level, tooltip, flag);
+    public void appendBlockItemTooltip(ItemStack stack, Consumer<Component> tooltip) {
         WireProperties wireProperties = createProperties(defaultBlockState(), stack);
         int tier = GTUtil.getTierByVoltage(wireProperties.getVoltage());
         if (wireProperties.isSuperconductor())
-            tooltip.add(Component.translatable("gtceu.cable.superconductor", GTValues.VN[tier]));
-        tooltip.add(Component.translatable("gtceu.cable.voltage",
+            tooltip.accept(Component.translatable("gtceu.cable.superconductor", GTValues.VN[tier]));
+        tooltip.accept(Component.translatable("gtceu.cable.voltage",
                 FormattingUtil.formatNumbers(wireProperties.getVoltage()), GTValues.VNF[tier]));
-        tooltip.add(Component.translatable("gtceu.cable.amperage",
+        tooltip.accept(Component.translatable("gtceu.cable.amperage",
                 FormattingUtil.formatNumbers(wireProperties.getAmperage())));
-        tooltip.add(Component.translatable("gtceu.cable.loss_per_block",
+        tooltip.accept(Component.translatable("gtceu.cable.loss_per_block",
                 FormattingUtil.formatNumbers(wireProperties.getLossPerBlock())));
     }
 
     @Override
-    public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
+    protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity,
+                                InsideBlockEffectApplier effectApplier, boolean isPrecise) {
         // dont apply damage if there is a frame box
         var pipeNode = getPipeTile(level, pos);
         if (pipeNode == null) {
@@ -130,7 +130,7 @@ public class CableBlock extends MaterialPipeBlock<Insulation, WireProperties, Le
                     .requireNonNull(
                             GTMaterialBlocks.MATERIAL_BLOCKS.get(TagPrefix.frameGt, pipeNode.getFrameMaterial()))
                     .getDefaultState();
-            frameState.getBlock().entityInside(frameState, level, pos, entity);
+            frameState.entityInside(level, pos, entity, effectApplier, isPrecise);
             return;
         }
         if (level.isClientSide()) return;

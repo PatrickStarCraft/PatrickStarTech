@@ -5,7 +5,7 @@ import com.gregtechceu.gtceu.integration.ae2.utils.AEUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
@@ -29,7 +29,7 @@ public final class AEGuiHelper {
         if (stillTexture == null) return;
         int color = renderProps.getTintColor(fluid);
         TextureAtlasSprite sprite = Minecraft.getInstance()
-                .getTextureAtlas(InventoryMenu.BLOCK_ATLAS)
+                .getTextureAtlas(TextureAtlas.LOCATION_BLOCKS)
                 .apply(stillTexture);
         float r = ((color >> 16) & 0xFF) / 255f;
         float g = ((color >> 8) & 0xFF) / 255f;

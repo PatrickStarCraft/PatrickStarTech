@@ -14,6 +14,7 @@ import com.gregtechceu.gtceu.api.data.medicalcondition.Symptom.ConfiguredSymptom
 import com.gregtechceu.gtceu.api.registry.GTRegistries;
 
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
@@ -60,7 +61,8 @@ public class MedicalConditionTracker implements ICapabilitySerializable<Compound
         if (player.isCreative()) return;
 
         for (var entry : activeMobEffects.reference2IntEntrySet()) {
-            player.addEffect(new MobEffectInstance(entry.getKey(), 100, entry.getIntValue()));
+            player.addEffect(new MobEffectInstance(BuiltInRegistries.MOB_EFFECT.wrapAsHolder(entry.getKey()),
+                    100, entry.getIntValue()));
         }
 
         for (MedicalCondition condition : medicalConditions.keySet()) {

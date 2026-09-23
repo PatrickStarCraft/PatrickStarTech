@@ -3,7 +3,6 @@ package com.gregtechceu.gtceu.common.commands.arguments;
 import com.gregtechceu.gtceu.api.registry.GTRegistry;
 
 import org.jspecify.annotations.NullMarked;
-import net.minecraft.ResourceLocationException;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.synchronization.ArgumentTypeInfo;
 import net.minecraft.network.FriendlyByteBuf;
@@ -74,18 +73,13 @@ public class GTRegistryArgument<K, V> implements ArgumentType<V> {
     public static String readId(StringReader reader) throws CommandSyntaxException {
         int cursor = reader.getCursor();
 
-        while (reader.canRead() && Identifier.isAllowedInResourceLocation(reader.peek())) {
+        while (reader.canRead() && Identifier.isAllowedInIdentifier(reader.peek())) {
             reader.skip();
         }
 
         String s = reader.getString().substring(cursor, reader.getCursor());
 
-        try {
-            return s;
-        } catch (ResourceLocationException var4) {
-            reader.setCursor(cursor);
-            throw ERROR_INVALID.createWithContext(reader);
-        }
+        return s;
     }
 
     @Override

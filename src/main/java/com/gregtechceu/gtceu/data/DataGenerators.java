@@ -14,7 +14,6 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider;
-import net.minecraftforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
@@ -29,14 +28,13 @@ public class DataGenerators {
     public static void gatherData(GatherDataEvent event) {
         DataGenerator generator = event.getGenerator();
         PackOutput packOutput = generator.getPackOutput();
-        ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
         var registries = event.getLookupProvider();
-        if (event.includeClient()) {
+        if (event instanceof GatherDataEvent.Client) {
             generator.addProvider(true, new SoundEntryBuilder.SoundEntryProvider(packOutput, GTCEu.MOD_ID));
         }
-        if (event.includeServer()) {
+        if (event instanceof GatherDataEvent.Server) {
             var set = Set.of(GTCEu.MOD_ID);
-            generator.addProvider(true, new BiomeTagsLoader(packOutput, registries, existingFileHelper));
+            generator.addProvider(true, new BiomeTagsLoader(packOutput, registries));
             DatapackBuiltinEntriesProvider provider = generator.addProvider(true, new DatapackBuiltinEntriesProvider(
                     packOutput, registries, new RegistrySetBuilder()
                             .add(Registries.DAMAGE_TYPE, GTDamageTypes::bootstrap)
@@ -46,7 +44,7 @@ public class DataGenerators {
                             .add(NeoForgeRegistries.Keys.BIOME_MODIFIERS, GTBiomeModifiers::bootstrap),
                     set));
             generator.addProvider(true,
-                    new DamageTagsLoader(packOutput, provider.getRegistryProvider(), existingFileHelper));
+                    new DamageTagsLoader(packOutput, provider.getRegistryProvider()));
         generator.addProvider(true, new GTLootTables(packOutput, registries));
         generator.addProvider(true, new GTLootModifications(packOutput, registries));
         }

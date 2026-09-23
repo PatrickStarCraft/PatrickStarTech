@@ -1,5 +1,7 @@
 package com.gregtechceu.gtceu.api.misc.forge;
 
+import com.gregtechceu.gtceu.common.data.GTDataComponents;
+
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.templates.FluidHandlerItemStack;
@@ -27,7 +29,7 @@ public class VoidFluidHandlerItemStack extends FluidHandlerItemStack {
      * @param capacity  max amount to void in each operation
      */
     public VoidFluidHandlerItemStack(@NotNull ItemStack container, final int capacity) {
-        super(container, capacity);
+        super(GTDataComponents.FLUID_CONTENT, container, capacity);
     }
 
     @Override

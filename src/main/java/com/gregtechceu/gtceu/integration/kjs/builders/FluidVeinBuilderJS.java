@@ -59,27 +59,25 @@ public class FluidVeinBuilderJS {
     }
 
     public FluidVeinBuilderJS biomes(int weight, String biomes) {
-        Registry<Biome> registry = GTRegistries.builtinRegistry().registry(Registries.BIOME).get();
         this.biomes.add(
-                new BiomeWeightModifier(() -> biomes.startsWith("#") ?
-                        registry.getOrCreateTag(
-                                TagKey.create(Registries.BIOME, Identifier.parse(biomes.substring(1)))) :
-                        (HolderSet.direct(registry
-                                .getHolderOrThrow(
-                                        ResourceKey.create(Registries.BIOME, Identifier.parse(biomes))))),
-                        weight));
+                new BiomeWeightModifier(() -> {
+                    var registry = GTRegistries.builtinRegistry().lookupOrThrow(Registries.BIOME);
+                    return biomes.startsWith("#") ?
+                            registry.getOrThrow(TagKey.create(Registries.BIOME, Identifier.parse(biomes.substring(1)))) :
+                            HolderSet.direct(registry::getOrThrow,
+                                    ResourceKey.create(Registries.BIOME, Identifier.parse(biomes)));
+                }, weight));
         return this;
     }
 
     public FluidVeinBuilderJS biomes(int weight, String... biomes) {
-        Registry<Biome> registry = GTRegistries.builtinRegistry().registry(Registries.BIOME).get();
+        var registry = GTRegistries.builtinRegistry().lookupOrThrow(Registries.BIOME);
         List<HolderSet<Biome>> biomeKeys = new LinkedList<>();
         for (String biome : biomes) {
             biomeKeys.add(biome.startsWith("#") ?
-                    registry.getOrCreateTag(
-                            TagKey.create(Registries.BIOME, Identifier.parse(biome.substring(1)))) :
-                    HolderSet.direct(registry
-                            .getHolderOrThrow(ResourceKey.create(Registries.BIOME, Identifier.parse(biome)))));
+                    registry.getOrThrow(TagKey.create(Registries.BIOME, Identifier.parse(biome.substring(1)))) :
+                    HolderSet.direct(registry::getOrThrow,
+                            ResourceKey.create(Registries.BIOME, Identifier.parse(biome))));
         }
         this.biomes.add(new BiomeWeightModifier(
                 () -> HolderSet.direct(biomeKeys.stream().flatMap(HolderSet::stream).toList()), weight));

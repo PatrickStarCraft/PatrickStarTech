@@ -1,6 +1,7 @@
 package com.gregtechceu.gtceu.common.block;
 
 import com.gregtechceu.gtceu.api.GTValues;
+import com.gregtechceu.gtceu.api.item.IBlockItemTooltip;
 import com.gregtechceu.gtceu.api.machine.multiblock.IBatteryData;
 import com.gregtechceu.gtceu.utils.FormattingUtil;
 
@@ -8,20 +9,16 @@ import org.jspecify.annotations.NullMarked;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 
 import lombok.Getter;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
+import java.util.function.Consumer;
 import java.util.Locale;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
-public class BatteryBlock extends Block {
+public class BatteryBlock extends Block implements IBlockItemTooltip {
 
     @Getter
     private final IBatteryData data;
@@ -32,13 +29,11 @@ public class BatteryBlock extends Block {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable BlockGetter level, List<Component> tooltip,
-                                TooltipFlag flag) {
-        super.appendHoverText(stack, level, tooltip, flag);
+    public void appendBlockItemTooltip(ItemStack stack, Consumer<Component> tooltip) {
         if (this.data.getTier() == -1) {
-            tooltip.add(Component.translatable("block.gtceu.substation_capacitor.tooltip_empty"));
+            tooltip.accept(Component.translatable("block.gtceu.substation_capacitor.tooltip_empty"));
         } else {
-            tooltip.add(Component.translatable("block.gtceu.substation_capacitor.tooltip_filled",
+            tooltip.accept(Component.translatable("block.gtceu.substation_capacitor.tooltip_filled",
                     FormattingUtil.formatNumbers(this.data.getCapacity())));
         }
     }

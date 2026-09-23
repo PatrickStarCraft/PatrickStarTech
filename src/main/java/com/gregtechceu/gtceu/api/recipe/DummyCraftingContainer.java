@@ -1,7 +1,7 @@
 package com.gregtechceu.gtceu.api.recipe;
 
 import net.minecraft.core.NonNullList;
-import net.minecraft.world.entity.player.StackedContents;
+import net.minecraft.world.entity.player.StackedItemContents;
 import net.minecraft.world.inventory.TransientCraftingContainer;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
@@ -60,7 +60,7 @@ public class DummyCraftingContainer extends TransientCraftingContainer {
     }
 
     @Override
-    public void fillStackedContents(@NotNull StackedContents helper) {}
+    public void fillStackedContents(@NotNull StackedItemContents helper) {}
 
     private static NonNullList<ItemStack> createInventory(IItemHandlerModifiable itemHandler) {
         NonNullList<ItemStack> inv = NonNullList.create();

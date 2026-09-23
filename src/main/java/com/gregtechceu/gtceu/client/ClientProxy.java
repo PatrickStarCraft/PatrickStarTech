@@ -10,6 +10,7 @@ import com.gregtechceu.gtceu.api.item.IComponentItem;
 import com.gregtechceu.gtceu.api.item.IGTTool;
 import com.gregtechceu.gtceu.client.model.item.CustomItemRendererWrapperModel;
 import com.gregtechceu.gtceu.client.color.item.GTMaterialPartTintSource;
+import com.gregtechceu.gtceu.client.color.MaterialLayerTintSource;
 import com.gregtechceu.gtceu.client.model.item.FacadeUnbakedModel;
 import com.gregtechceu.gtceu.client.model.machine.MachineModelLoader;
 import com.gregtechceu.gtceu.client.model.pipe.PipeModel;
@@ -154,6 +155,7 @@ public class ClientProxy extends CommonProxy {
     @SubscribeEvent
     public void onRegisterItemTintSources(RegisterColorHandlersEvent.ItemTintSources event) {
         event.register(GTMaterialPartTintSource.ID, GTMaterialPartTintSource.MAP_CODEC);
+        event.register(MaterialLayerTintSource.ID, MaterialLayerTintSource.MAP_CODEC);
     }
 
     @SubscribeEvent

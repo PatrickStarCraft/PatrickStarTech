@@ -83,7 +83,6 @@ public class GTMaterialBlocks {
                 .color(() -> MaterialBlock::tintedColor)
                 .item((b, p) -> tagPrefix.blockItemConstructor().create(b, p, tagPrefix, material))
                 .model(NonNullBiConsumer.noop())
-                .color(() -> () -> MaterialBlockItem.tintColor(material))
                 .build()
                 .register());
     }
@@ -129,7 +128,6 @@ public class GTMaterialBlocks {
                     .color(() -> MaterialBlock::tintedColor)
                     .item((b, p) -> oreTag.blockItemConstructor().create(b, p, oreTag, material))
                     .model(NonNullBiConsumer.noop())
-                    .color(() -> () -> MaterialBlockItem.tintColor(material))
                     .build()
                     .register();
             MATERIAL_BLOCKS_BUILDER.put(oreTag, material, entry);
@@ -206,7 +204,6 @@ public class GTMaterialBlocks {
                 .color(() -> MaterialPipeBlock::tintedColor)
                 .item(MaterialPipeBlockItem::new)
                 .model(NonNullBiConsumer.noop())
-                .color(() -> MaterialPipeBlockItem::tintColor)
                 .build()
                 .register();
         CABLE_BLOCKS_BUILDER.put(insulation.tagPrefix, material, entry);
@@ -252,7 +249,6 @@ public class GTMaterialBlocks {
                 .color(() -> MaterialPipeBlock::tintedColor)
                 .item(MaterialPipeBlockItem::new)
                 .model(NonNullBiConsumer.noop())
-                .color(() -> MaterialPipeBlockItem::tintColor)
                 .build()
                 .register();
         FLUID_PIPE_BLOCKS_BUILDER.put(fluidPipeType.tagPrefix, material, entry);
@@ -297,7 +293,6 @@ public class GTMaterialBlocks {
                 .color(() -> MaterialPipeBlock::tintedColor)
                 .item(MaterialPipeBlockItem::new)
                 .model(NonNullBiConsumer.noop())
-                .color(() -> MaterialPipeBlockItem::tintColor)
                 .build()
                 .register();
         ITEM_PIPE_BLOCKS_BUILDER.put(itemPipeType.getTagPrefix(), material, entry);

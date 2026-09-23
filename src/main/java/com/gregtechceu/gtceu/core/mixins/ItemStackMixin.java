@@ -1,15 +1,18 @@
 package com.gregtechceu.gtceu.core.mixins;
 
 import com.gregtechceu.gtceu.api.GTValues;
-import com.gregtechceu.gtceu.api.capability.GTCapability;
 import com.gregtechceu.gtceu.api.capability.GTCapabilityHelper;
+import com.gregtechceu.gtceu.api.item.IMergeableNBTSerializable;
 import com.gregtechceu.gtceu.api.item.ISpoilableItemStackExtension;
 import com.gregtechceu.gtceu.api.item.component.*;
+import com.gregtechceu.gtceu.api.sync_system.NBTSerializable;
 import com.gregtechceu.gtceu.utils.FormattingUtil;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
+import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.ARGB;
 import net.minecraft.world.entity.Entity;
@@ -20,8 +23,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.registries.ForgeRegistries;
-
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
@@ -45,24 +46,17 @@ public abstract class ItemStackMixin implements ISpoilableItemStackExtension {
     @Mutable
     @Final
     @Nullable
-    private Item item;
+    private Holder<Item> item;
 
-    @Shadow(remap = false)
+    @Shadow
     @Mutable
     @Final
-    @Nullable
-    private Holder.Reference<Item> delegate;
-
-    @Shadow(remap = false)
-    protected abstract void forgeInit();
+    private PatchedDataComponentMap components;
 
     // ************* //
     // Unique fields //
     // ************* //
 
-    @Shadow
-    @Nullable
-    private CompoundTag tag;
     @Shadow
     private int count;
     /**
@@ -88,6 +82,25 @@ public abstract class ItemStackMixin implements ISpoilableItemStackExtension {
         return (ItemStack) (Object) this;
     }
 
+    @Unique
+    @SuppressWarnings("unchecked")
+    private static @Nullable NBTSerializable<Tag> gtceu$asSerializable(@Nullable Object value) {
+        return value instanceof NBTSerializable<?> serializable ? (NBTSerializable<Tag>) serializable : null;
+    }
+
+    @Unique
+    private static void gtceu$prepareSpoilageMerge(ItemStack first, ItemStack second) {
+        if (!ItemStack.isSameItem(first, second)) return;
+        var firstSpoilable = GTCapabilityHelper.getSpoilable(first);
+        var secondSpoilable = GTCapabilityHelper.getSpoilable(second);
+        if (firstSpoilable instanceof IMergeableNBTSerializable mergeable) {
+            mergeable.prepareForComparisonWith(gtceu$asSerializable(secondSpoilable));
+        }
+        if (secondSpoilable instanceof IMergeableNBTSerializable mergeable) {
+            mergeable.prepareForComparisonWith(gtceu$asSerializable(firstSpoilable));
+        }
+    }
+
     // ************************* //
     // Interface implementations //
     // ************************* //
@@ -95,19 +108,18 @@ public abstract class ItemStackMixin implements ISpoilableItemStackExtension {
     @Unique
     @Override
     public void gtceu$setStack(ItemStack newStack) {
-        item = newStack.getItem();
-        delegate = ForgeRegistries.ITEMS.getDelegateOrThrow(item);
+        ItemStackAccessor source = (ItemStackAccessor) (Object) newStack;
+        item = source.gtceu$getItemHolder();
         count = newStack.getCount();
-        tag = newStack.getTag();
-        forgeInit();
+        components = source.gtceu$getComponents().copy();
     }
 
     @Unique
     public void gtceu$updateFreshness(@NotNull SpoilContext spoilContext, boolean createTag) {
         if (!gtceu$isUpdating) {
             gtceu$isUpdating = true;
-            gtceu$self().getCapability(GTCapability.CAPABILITY_SPOILABLE_ITEM)
-                    .ifPresent(spoilable -> spoilable.updateFreshness(spoilContext, createTag));
+            ISpoilableItem spoilable = GTCapabilityHelper.getSpoilable(gtceu$self());
+            if (spoilable != null) spoilable.updateFreshness(spoilContext, createTag);
             gtceu$isUpdating = false;
         }
     }
@@ -116,11 +128,15 @@ public abstract class ItemStackMixin implements ISpoilableItemStackExtension {
     // Injectors //
     // ********* //
 
+    @Inject(at = @At("HEAD"), method = "isSameItemSameComponents")
+    private static void gtceu$mergeSpoilageBeforeComponentComparison(ItemStack first, ItemStack second,
+                                                                     CallbackInfoReturnable<Boolean> cir) {
+        gtceu$prepareSpoilageMerge(first, second);
+    }
+
     @Inject(at = @At("HEAD"), method = { "getItem", "getCount" })
     private void gtceu$injectedFreshnessUpdate(CallbackInfoReturnable<Item> cir) {
-        if (gtceu$self().getEntityRepresentation() != null)
-            gtceu$updateFreshness(new SpoilContext(gtceu$self().getEntityRepresentation()), true);
-        else gtceu$updateFreshness(new SpoilContext(), false);
+        gtceu$updateFreshness(new SpoilContext(), false);
     }
 
     @Inject(at = @At("HEAD"), method = "inventoryTick")

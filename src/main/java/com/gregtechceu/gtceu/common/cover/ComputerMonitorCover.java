@@ -5,6 +5,7 @@ import com.gregtechceu.gtceu.api.capability.ICoverable;
 import com.gregtechceu.gtceu.api.cover.CoverBehavior;
 import com.gregtechceu.gtceu.api.cover.CoverDefinition;
 import com.gregtechceu.gtceu.api.cover.IMuiCover;
+import com.gregtechceu.gtceu.api.item.data.ItemStackData;
 import com.gregtechceu.gtceu.api.machine.TickableSubscription;
 import com.gregtechceu.gtceu.api.machine.feature.IDataStickInteractable;
 import com.gregtechceu.gtceu.api.placeholder.IPlaceholderInfoProviderCover;
@@ -183,7 +184,8 @@ public class ComputerMonitorCover extends CoverBehavior
 
     @Override
     public InteractionResult onDataStickUse(Player player, ItemStack dataStick) {
-        CompoundTag tag = dataStick.getTagElement("computer_monitor_cover_config");
+        @Nullable CompoundTag tag = ItemStackData.read(dataStick)
+                .getCompound("computer_monitor_cover_config").orElse(null);
         if (tag == null) return InteractionResult.FAIL;
         List<String> stringLines = new ArrayList<>();
         ListTag stringLinesTag = com.gregtechceu.gtceu.utils.data.TypedTagList.read(tag, "lines", Tag.TAG_STRING);
@@ -201,14 +203,15 @@ public class ComputerMonitorCover extends CoverBehavior
 
     @Override
     public InteractionResult onDataStickShiftUse(Player player, ItemStack dataStick) {
-        CompoundTag tag = dataStick.getOrCreateTagElement("computer_monitor_cover_config");
-        ListTag stringLinesTag = new ListTag();
-        formatStringLines.forEach(line -> stringLinesTag.add(StringTag.valueOf(line)));
-        tag.put("lines", stringLinesTag);
-        ListTag stringArgsTag = new ListTag();
-        formatStringArgs.forEach(line -> stringArgsTag.add(StringTag.valueOf(line)));
-        tag.put("args", stringArgsTag);
-        tag.putInt("updateInterval", updateInterval);
+        ItemStackData.updateCompound(dataStick, "computer_monitor_cover_config", tag -> {
+            ListTag stringLinesTag = new ListTag();
+            formatStringLines.forEach(line -> stringLinesTag.add(StringTag.valueOf(line)));
+            tag.put("lines", stringLinesTag);
+            ListTag stringArgsTag = new ListTag();
+            formatStringArgs.forEach(line -> stringArgsTag.add(StringTag.valueOf(line)));
+            tag.put("args", stringArgsTag);
+            tag.putInt("updateInterval", updateInterval);
+        });
         return InteractionResult.SUCCESS;
     }
 

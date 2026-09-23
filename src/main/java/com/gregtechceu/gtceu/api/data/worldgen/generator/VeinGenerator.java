@@ -17,6 +17,7 @@ import net.minecraft.world.level.levelgen.feature.configurations.OreConfiguratio
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
+import com.mojang.serialization.MapCodec;
 import dev.latvian.mods.rhino.util.HideFromJS;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
@@ -37,7 +38,7 @@ public abstract class VeinGenerator {
                             .map(DataResult::success)
                             .orElseGet(() -> DataResult.error(() -> "VeinGenerator " + obj + " not registered")));
     public static final Codec<VeinGenerator> DIRECT_CODEC = REGISTRY_CODEC.dispatchStable(VeinGenerator::codec,
-            Function.identity());
+            MapCodec::assumeMapUnsafe);
 
     protected GTOreDefinition entry;
 

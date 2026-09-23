@@ -234,7 +234,7 @@ public final class MachineTraitHolder {
                     continue;
                 }
 
-                trait.getSyncDataHolder().deserializeNBT(context.lookup(), compoundTag.getCompound(key));
+                trait.getSyncDataHolder().deserializeNBT(context.lookup(), compoundTag.getCompoundOrEmpty(key));
             }
 
             return traitHolder;

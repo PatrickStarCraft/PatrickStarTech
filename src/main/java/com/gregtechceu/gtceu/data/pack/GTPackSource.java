@@ -3,12 +3,15 @@ package com.gregtechceu.gtceu.data.pack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.PackLocationInfo;
+import net.minecraft.server.packs.PackSelectionConfig;
 import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.server.packs.repository.RepositorySource;
 
 import lombok.RequiredArgsConstructor;
 
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -31,10 +34,22 @@ public class GTPackSource implements RepositorySource {
                 PackSource.BUILT_IN));
     }
 
-    public static Pack readMetaAndCreate(String id, Component title, boolean required, Pack.ResourcesSupplier resources,
+    public static Pack readMetaAndCreate(String id, Component title, boolean required,
+                                         Function<String, PackResources> resources,
                                          PackType packType, Pack.Position defaultPosition, PackSource packSource) {
-        Pack.Info info = Pack.readPackInfo(id, resources);
-        return info != null ? Pack.create(id, title, required, resources,
-                info, packType, defaultPosition, true, packSource) : null;
+        PackLocationInfo location = new PackLocationInfo(id, title, packSource, Optional.empty());
+        Pack.ResourcesSupplier supplier = new Pack.ResourcesSupplier() {
+            @Override
+            public PackResources openPrimary(PackLocationInfo packLocation) {
+                return resources.apply(packLocation.id());
+            }
+
+            @Override
+            public PackResources openFull(PackLocationInfo packLocation, Pack.Metadata metadata) {
+                return resources.apply(packLocation.id());
+            }
+        };
+        PackSelectionConfig selection = new PackSelectionConfig(required, defaultPosition, true);
+        return Pack.readMetaAndCreate(location, supplier, packType, selection);
     }
 }

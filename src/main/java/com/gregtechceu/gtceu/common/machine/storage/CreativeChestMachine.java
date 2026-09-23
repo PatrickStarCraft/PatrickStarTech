@@ -12,7 +12,6 @@ import com.gregtechceu.gtceu.utils.GTUtil;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
 
 import brachy.modularui.api.drawable.Text;
 import brachy.modularui.drawable.Rectangle;
@@ -91,7 +90,7 @@ public class CreativeChestMachine extends QuantumChestMachine {
             }
 
             // If held item can stack with stored item, delete held item
-            if (!heldItem.isEmpty() && ItemHandlerHelper.canItemStacksStack(stored, heldItem)) {
+            if (!heldItem.isEmpty() && ItemStack.isSameItemSameComponents(stored, heldItem)) {
                 player.setItemInHand(context.getHand(), ItemStack.EMPTY);
                 return InteractionResult.SUCCESS;
             } else if (!heldItem.isEmpty()) { // If held item is different than stored item, update stored item

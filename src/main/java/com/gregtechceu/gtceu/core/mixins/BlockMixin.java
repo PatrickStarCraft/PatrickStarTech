@@ -3,6 +3,7 @@ package com.gregtechceu.gtceu.core.mixins;
 import com.gregtechceu.gtceu.common.item.tool.ToolEventHandlers;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -34,8 +35,11 @@ public abstract class BlockMixin {
                                                      BlockPos pos, @Nullable BlockEntity blockEntity,
                                                      @Nullable Entity entity, ItemStack tool) {
         if (!tool.isEmpty() && entity instanceof Player player) {
-            boolean isSilktouch = EnchantmentHelper.hasSilkTouch(tool);
-            int fortuneLevel = tool.getEnchantmentLevel(Enchantments.BLOCK_FORTUNE);
+            var enchantments = level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
+            var silkTouch = enchantments.getOrThrow(Enchantments.SILK_TOUCH);
+            var fortune = enchantments.getOrThrow(Enchantments.FORTUNE);
+            boolean isSilktouch = tool.getEnchantmentLevel(silkTouch) > 0;
+            int fortuneLevel = tool.getEnchantmentLevel(fortune);
             return ToolEventHandlers.onHarvestDrops(player, tool, level, pos, state, isSilktouch,
                     fortuneLevel,
                     original, 1);

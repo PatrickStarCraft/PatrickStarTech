@@ -13,20 +13,25 @@ import net.minecraft.network.codec.StreamCodec;
 
 import org.jspecify.annotations.NullMarked;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.HolderSet;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.PlacementInfo;
 import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.display.RecipeDisplay;
+import net.minecraft.world.item.crafting.display.ShapelessCraftingRecipeDisplay;
+import net.minecraft.world.item.crafting.display.SlotDisplay;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-
-import com.google.gson.JsonObject;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -42,10 +47,10 @@ public class FacadeCoverRecipe implements CraftingRecipe {
     public static Identifier ID = GTCEu.id("crafting/facade_cover");
 
     @Override
-    public boolean matches(CraftingContainer container, Level level) {
+    public boolean matches(CraftingInput container, Level level) {
         int platesCount = 0;
         boolean foundBlockItem = false;
-        for (int i = 0; i < container.getContainerSize(); i++) {
+        for (int i = 0; i < container.size(); i++) {
             var item = container.getItem(i);
             if (item.isEmpty()) continue;
             if (FacadeItemBehaviour.isValidFacade(item)) {
@@ -66,11 +71,11 @@ public class FacadeCoverRecipe implements CraftingRecipe {
     }
 
     @Override
-    public ItemStack assemble(CraftingContainer container, RegistryAccess registryManager) {
+    public ItemStack assemble(CraftingInput container) {
         ItemStack itemStack = GTItems.COVER_FACADE.asStack();
         BlockState facadeState = null;
 
-        for (int i = 0; i < container.getContainerSize(); i++) {
+        for (int i = 0; i < container.size(); i++) {
             var item = container.getItem(i);
             if (item.isEmpty()) continue;
             if (FacadeItemBehaviour.isValidFacade(item)) {
@@ -86,37 +91,63 @@ public class FacadeCoverRecipe implements CraftingRecipe {
         return ItemStack.EMPTY;
     }
 
-    @Override
     public NonNullList<Ingredient> getIngredients() {
-        return NonNullList.of(Ingredient.EMPTY,
-                Ingredient.of(ChemicalHelper.getTagOrThrow(TagPrefix.plate, GTMaterials.Iron)),
-                Ingredient.of(Blocks.STONE));
+        NonNullList<Ingredient> ingredients = NonNullList.create();
+        ingredients.add(Ingredient.of(itemTag(ChemicalHelper.getTagOrThrow(TagPrefix.plate, GTMaterials.Iron))));
+        ingredients.add(Ingredient.of(Blocks.STONE));
+        return ingredients;
     }
 
-    @Override
     public boolean canCraftInDimensions(int width, int height) {
         return true;
     }
 
-    @Override
     public ItemStack getResultItem(RegistryAccess registryManager) {
+        return createPreviewStack();
+    }
+
+    private static ItemStack createPreviewStack() {
         ItemStack result = GTItems.COVER_FACADE.asStack(6);
         FacadeItemBehaviour.setFacadeState(result, Blocks.STONE.defaultBlockState());
         return result;
     }
 
     @Override
-    public Identifier getId() {
-        return ID;
-    }
-
-    @Override
-    public RecipeSerializer<?> getSerializer() {
+    public RecipeSerializer<? extends CraftingRecipe> getSerializer() {
         return SERIALIZER;
     }
 
     @Override
     public CraftingBookCategory category() {
         return CraftingBookCategory.MISC;
+    }
+
+    @Override
+    public boolean showNotification() {
+        return true;
+    }
+
+    @Override
+    public String group() {
+        return "";
+    }
+
+    @Override
+    public PlacementInfo placementInfo() {
+        return PlacementInfo.create(this.getIngredients());
+    }
+
+    @Override
+    public java.util.List<RecipeDisplay> display() {
+        return java.util.List.of(new ShapelessCraftingRecipeDisplay(
+                this.getIngredients().stream().map(Ingredient::display).toList(),
+                new SlotDisplay.ItemStackSlotDisplay(ItemStackTemplate.fromNonEmptyStack(createPreviewStack())),
+                new SlotDisplay.ItemSlotDisplay(Items.CRAFTING_TABLE)));
+    }
+
+    private static HolderSet<net.minecraft.world.item.Item> itemTag(net.minecraft.tags.TagKey<net.minecraft.world.item.Item> tag) {
+        return BuiltInRegistries.ITEM.get(tag)
+                .<HolderSet<net.minecraft.world.item.Item>>map(holders -> holders)
+                .orElseThrow(() -> new IllegalStateException("Missing item tag " + tag.location()));
     }
 }

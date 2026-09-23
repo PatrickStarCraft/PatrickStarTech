@@ -9,17 +9,13 @@ import net.minecraft.data.tags.BiomeTagsProvider;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.world.level.biome.Biomes;
 import net.neoforged.neoforge.common.Tags;
-import net.minecraftforge.common.data.ExistingFileHelper;
-
-import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.CompletableFuture;
 
 public class BiomeTagsLoader extends BiomeTagsProvider {
 
-    public BiomeTagsLoader(PackOutput arg, CompletableFuture<HolderLookup.Provider> completableFuture,
-                           @Nullable ExistingFileHelper existingFileHelper) {
-        super(arg, completableFuture, GTCEu.MOD_ID, existingFileHelper);
+    public BiomeTagsLoader(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
+        super(output, registries, GTCEu.MOD_ID);
     }
 
     @Override

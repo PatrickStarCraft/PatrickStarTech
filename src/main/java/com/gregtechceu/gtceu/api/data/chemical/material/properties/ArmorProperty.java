@@ -3,15 +3,19 @@ package com.gregtechceu.gtceu.api.data.chemical.material.properties;
 import com.gregtechceu.gtceu.api.data.chemical.ChemicalHelper;
 import com.gregtechceu.gtceu.api.data.chemical.material.Material;
 import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
+import com.gregtechceu.gtceu.api.recipe.ingredient.EmptyIngredient;
 import com.gregtechceu.gtceu.utils.memoization.GTMemoizer;
 
 import net.minecraft.util.Util;
+import net.minecraft.core.HolderSet;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.equipment.ArmorType;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 
@@ -68,7 +72,7 @@ public class ArmorProperty implements IMaterialProperty {
                 map.put(ArmorType.values()[i], protectionValues[i]);
             }
         });
-        this.sound = GTMemoizer.memoize(() -> SoundEvents.ARMOR_EQUIP_IRON);
+        this.sound = GTMemoizer.memoize(() -> SoundEvents.ARMOR_EQUIP_IRON.value());
         this.toughness = 0;
         this.knockbackResistance = 0;
         this.armorMaterial = new ArmorMaterial();
@@ -84,9 +88,15 @@ public class ArmorProperty implements IMaterialProperty {
             this.material = properties.getMaterial();
         }
         if (this.repairIngredient == null && !noRepair) {
-            this.repairIngredient = GTMemoizer
-                    .memoize(() -> Ingredient.of(ChemicalHelper.getTagOrThrow(TagPrefix.plate, material)));
+            this.repairIngredient = GTMemoizer.memoize(() -> Ingredient.of(itemTag(
+                    ChemicalHelper.getTagOrThrow(TagPrefix.plate, material))));
         }
+    }
+
+    private static HolderSet<Item> itemTag(net.minecraft.tags.TagKey<Item> tag) {
+        return BuiltInRegistries.ITEM.get(tag)
+                .<HolderSet<Item>>map(holders -> holders)
+                .orElseThrow(() -> new IllegalStateException("Missing item tag " + tag.location()));
     }
 
     @SuppressWarnings("unused") // API, need to treat all of these as used
@@ -248,7 +258,7 @@ public class ArmorProperty implements IMaterialProperty {
         public @NotNull Ingredient getRepairIngredient() {
             return ArmorProperty.this.repairIngredient != null ?
                     ArmorProperty.this.repairIngredient.get() :
-                    Ingredient.EMPTY;
+                    EmptyIngredient.VANILLA;
         }
 
         public @NotNull String getName() {

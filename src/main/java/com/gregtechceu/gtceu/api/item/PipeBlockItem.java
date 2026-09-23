@@ -45,6 +45,9 @@ public class PipeBlockItem extends BlockItem {
     public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay display,
                                 Consumer<Component> tooltip, TooltipFlag isAdvanced) {
         super.appendHoverText(stack, context, display, tooltip, isAdvanced);
+        if (getBlock() instanceof IBlockItemTooltip blockTooltip) {
+            blockTooltip.appendBlockItemTooltip(stack, tooltip);
+        }
         if (GTUtil.isShiftDown()) {
             var tool = getBlock().getPipeTuneTool();
             tooltip.accept(Component.translatable("gtceu.tool_action." + tool.name + ".connect"));

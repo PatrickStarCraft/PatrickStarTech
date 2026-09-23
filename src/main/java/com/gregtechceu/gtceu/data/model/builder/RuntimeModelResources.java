@@ -76,6 +76,17 @@ public final class RuntimeModelResources {
         return tints;
     }
 
+    public static JsonArray dynamicLayerTints(Identifier type, int layerCount) {
+        JsonArray tints = new JsonArray();
+        for (int layer = 0; layer < layerCount; layer++) {
+            JsonObject tint = new JsonObject();
+            tint.addProperty("type", type.toString());
+            tint.addProperty("layer", layer);
+            tints.add(tint);
+        }
+        return tints;
+    }
+
     public static void emitModel(Identifier modelId, JsonElement json,
                                  BiConsumer<Identifier, JsonElement> sink) {
         sink.accept(modelPath(modelId), json);

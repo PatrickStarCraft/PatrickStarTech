@@ -15,11 +15,12 @@ import com.gregtechceu.gtceu.integration.map.cache.server.ServerCache;
 
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.FileToIdConverter;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.profiling.ProfilerFiller;
-import net.minecraft.world.level.storage.loot.Deserializers;
 import net.neoforged.fml.ModLoader;
 
 import com.google.gson.Gson;
@@ -34,14 +35,14 @@ import org.apache.logging.log4j.Logger;
 import java.util.Iterator;
 import java.util.Map;
 
-public class GTOreLoader extends SimpleJsonResourceReloadListener {
+public class GTOreLoader extends SimpleJsonResourceReloadListener<JsonElement> {
 
-    public static final Gson GSON_INSTANCE = Deserializers.createFunctionSerializer().create();
+    public static final Gson GSON_INSTANCE = new Gson();
     public static final String FOLDER = "gtceu/ore_veins";
     protected static final Logger LOGGER = LogManager.getLogger();
 
     public GTOreLoader() {
-        super(GSON_INSTANCE, FOLDER);
+        super(ExtraCodecs.JSON, FileToIdConverter.json(FOLDER));
     }
 
     @Override

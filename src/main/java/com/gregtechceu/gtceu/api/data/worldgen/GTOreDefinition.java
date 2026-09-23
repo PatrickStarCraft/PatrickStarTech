@@ -17,6 +17,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.valueproviders.ConstantInt;
 import net.minecraft.util.valueproviders.IntProvider;
+import net.minecraft.util.valueproviders.IntProviders;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.VerticalAnchor;
@@ -61,7 +62,7 @@ public class GTOreDefinition {
                             .orElseGet(() -> DataResult.error(() -> "GTOreDefinition " + obj + " not registered")));
     public static final Codec<GTOreDefinition> FULL_CODEC = RecordCodecBuilder.create(
             instance -> instance.group(
-                    IntProvider.NON_NEGATIVE_CODEC.fieldOf("cluster_size").forGetter(ft -> ft.clusterSize),
+                    IntProviders.NON_NEGATIVE_CODEC.fieldOf("cluster_size").forGetter(ft -> ft.clusterSize),
                     Codec.floatRange(0.0F, 1.0F).fieldOf("density").forGetter(ft -> ft.density),
                     Codec.INT.fieldOf("weight").forGetter(ft -> ft.weight),
                     GTRegistries.WORLD_GEN_LAYERS.codec().fieldOf("layer").forGetter(ft -> ft.layer),

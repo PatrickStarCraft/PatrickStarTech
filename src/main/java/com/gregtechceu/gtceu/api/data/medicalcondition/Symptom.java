@@ -3,6 +3,9 @@ package com.gregtechceu.gtceu.api.data.medicalcondition;
 import com.gregtechceu.gtceu.common.capability.MedicalConditionTracker;
 import com.gregtechceu.gtceu.common.data.GTMobEffects;
 
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffects;
@@ -26,6 +29,10 @@ public class Symptom {
     public static final UUID SYMPTOM_MINING_FATIGUE_UUID = UUID.fromString("f2378ee6-3427-45b5-8440-4b797f7b664a");
     public static final UUID SYMPTOM_WEAKNESS_UUID = UUID.fromString("482e64e0-de77-49cd-b9bc-96b7e7eb16db");
     public static final UUID SYMPTOM_SLOWNESS_UUID = UUID.fromString("b3ac6b40-2d30-419f-9cac-5b2cf998ad72");
+    private static final Identifier SYMPTOM_HEALTH_DEBUFF_ID = modifierId(SYMPTOM_HEALTH_DEBUFF_UUID);
+    private static final Identifier SYMPTOM_MINING_FATIGUE_ID = modifierId(SYMPTOM_MINING_FATIGUE_UUID);
+    private static final Identifier SYMPTOM_WEAKNESS_ID = modifierId(SYMPTOM_WEAKNESS_UUID);
+    private static final Identifier SYMPTOM_SLOWNESS_ID = modifierId(SYMPTOM_SLOWNESS_UUID);
 
     public static final Symptom DEATH = new Symptom(defaultKey("death"), 1, 1.0f, 1.0f,
             (tracker, condition, configuredSymptom, baseSymptom, stage) -> {
@@ -53,10 +60,10 @@ public class Symptom {
                 if (instance == null) {
                     return;
                 }
-                instance.removeModifier(SYMPTOM_HEALTH_DEBUFF_UUID);
+                instance.removeModifier(SYMPTOM_HEALTH_DEBUFF_ID);
 
                 if (stage != 0) {
-                    instance.addPermanentModifier(new AttributeModifier(SYMPTOM_HEALTH_DEBUFF_UUID, symptom.name,
+                    instance.addPermanentModifier(new AttributeModifier(SYMPTOM_HEALTH_DEBUFF_ID,
                             -stage, AttributeModifier.Operation.ADD_VALUE));
                 }
                 // reset the health data value so the max health change is applied immediately
@@ -66,14 +73,14 @@ public class Symptom {
             });
     // default is 4, stage 10 result will be 1.6
     public static final Symptom MINING_FATIGUE = Symptom.ofAttributeModifier(defaultKey("mining_fatigue"), 10, 0.0f, 1.0f,
-            0.04f, Attributes.ATTACK_SPEED, SYMPTOM_MINING_FATIGUE_UUID);
+            0.04f, Attributes.ATTACK_SPEED, SYMPTOM_MINING_FATIGUE_ID);
     // default is 2, stage 10 result will be 0.5
     public static final Symptom WEAKNESS = Symptom.ofAttributeModifier(defaultKey("weakness"), 10, 0.0f, 1.0f,
-            0.025f, Attributes.ATTACK_DAMAGE, SYMPTOM_WEAKNESS_UUID);
+            0.025f, Attributes.ATTACK_DAMAGE, SYMPTOM_WEAKNESS_ID);
     // default is 0.1, stage 7 result will be 0.065
     // REMEMBER TO UPDATE TESTS IF YOU CHANGE THIS
     public static final Symptom SLOWNESS = Symptom.ofAttributeModifier(defaultKey("slowness"), 7, 0.0f, 1.0f,
-            0.05f, Attributes.MOVEMENT_SPEED, SYMPTOM_SLOWNESS_UUID);
+            0.05f, Attributes.MOVEMENT_SPEED, SYMPTOM_SLOWNESS_ID);
     // default is 300, stage 10 result will be 200
     public static final Symptom AIR_SUPPLY_DEBUFF = new Symptom(defaultKey("air_supply_debuff"), 10, 0.0f, 1.0f,
             (tracker, condition, configuredSymptom, baseSymptom, stage) -> {
@@ -88,7 +95,8 @@ public class Symptom {
     public static final Symptom DARKNESS = Symptom.ofEffect(defaultKey("darkness"), 10, 0.0f, 1.0f, MobEffects.DARKNESS);
     public static final Symptom NAUSEA = Symptom.ofEffect(defaultKey("nausea"), 1, 0.95f, 1.0f, MobEffects.NAUSEA);
     public static final Symptom WITHER = Symptom.ofEffect(defaultKey("wither"), 1, 1.0f, 1.0f, MobEffects.WITHER);
-    public static final Symptom WEAK_POISONING = Symptom.ofEffect(defaultKey("weak_poisoning"), 10, 0.0f, 1.0f, GTMobEffects.WEAK_POISON);
+    public static final Symptom WEAK_POISONING = Symptom.ofEffect(defaultKey("weak_poisoning"), 10, 0.0f, 1.0f,
+            (Holder<MobEffect>) GTMobEffects.WEAK_POISON);
     public static final Symptom POISONING = Symptom.ofEffect(defaultKey("poisoning"), 10, 0.0f, 1.0f, MobEffects.POISON);
     public static final Symptom HUNGER = Symptom.ofEffect(defaultKey("hunger"), 5, 0.0f, 1.0f, MobEffects.HUNGER);
     // spotless:on
@@ -149,7 +157,7 @@ public class Symptom {
      * @param uuid       AttributeModifier UUID
      */
     public static Symptom ofAttributeModifier(String name, int defaultStages, float minThreshold, float maxThreshold,
-                                              float multiplier, Attribute attribute, UUID uuid) {
+                                              float multiplier, Holder<Attribute> attribute, Identifier modifierId) {
         return new Symptom(name, defaultStages, minThreshold, maxThreshold,
                 (tracker, condition, symptom, baseSymptom, stage) -> {
                     Player player = tracker.getPlayer();
@@ -157,10 +165,10 @@ public class Symptom {
                     if (instance == null) {
                         return;
                     }
-                    instance.removeModifier(uuid);
+                    instance.removeModifier(modifierId);
 
                     if (stage != 0) {
-                        instance.addPermanentModifier(new AttributeModifier(uuid, name,
+                        instance.addPermanentModifier(new AttributeModifier(modifierId,
                                 -stage * multiplier, AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
                     }
                 });
@@ -171,15 +179,33 @@ public class Symptom {
      * @param amplifierMultiplier amplifier added to effect every progression tick
      */
     public static Symptom ofEffect(String name, int defaultStages, float minThreshold, float maxThreshold,
-                                   Supplier<MobEffect> mobEffect, int amplifierMultiplier) {
+                                   Holder<MobEffect> mobEffect, int amplifierMultiplier) {
+        return ofEffectWithHolder(name, defaultStages, minThreshold, maxThreshold, () -> mobEffect,
+                amplifierMultiplier);
+    }
+
+    private static Symptom ofEffectWithHolder(String name, int defaultStages, float minThreshold, float maxThreshold,
+                                              Supplier<Holder<MobEffect>> mobEffect, int amplifierMultiplier) {
         return new Symptom(name, defaultStages, minThreshold, maxThreshold,
                 (tracker, $1, $2, $3, stage) -> {
-                    MobEffect effect = mobEffect.get();
-                    tracker.setMobEffect(effect, amplifierMultiplier * stage);
+                    Holder<MobEffect> effect = mobEffect.get();
+                    tracker.setMobEffect(effect.value(), amplifierMultiplier * stage);
                     if (stage == 0) {
                         tracker.getPlayer().removeEffect(effect);
                     }
                 });
+    }
+
+    public static Symptom ofAttributeModifier(String name, int defaultStages, float minThreshold, float maxThreshold,
+                                              float multiplier, Attribute attribute, UUID uuid) {
+        return ofAttributeModifier(name, defaultStages, minThreshold, maxThreshold, multiplier,
+                BuiltInRegistries.ATTRIBUTE.wrapAsHolder(attribute), modifierId(uuid));
+    }
+
+    public static Symptom ofEffect(String name, int defaultStages, float minThreshold, float maxThreshold,
+                                   Supplier<MobEffect> mobEffect, int amplifierMultiplier) {
+        return ofEffectWithHolder(name, defaultStages, minThreshold, maxThreshold,
+                () -> BuiltInRegistries.MOB_EFFECT.wrapAsHolder(mobEffect.get()), amplifierMultiplier);
     }
 
     /**
@@ -189,7 +215,12 @@ public class Symptom {
     public static Symptom ofEffect(String name, int defaultStages, float minThreshold, float maxThreshold,
                                    MobEffect mobEffect, int amplifierMultiplier) {
         return ofEffect(name, defaultStages, minThreshold, maxThreshold,
-                () -> mobEffect, amplifierMultiplier);
+                BuiltInRegistries.MOB_EFFECT.wrapAsHolder(mobEffect), amplifierMultiplier);
+    }
+
+    public static Symptom ofEffect(String name, int defaultStages, float minThreshold, float maxThreshold,
+                                   Holder<MobEffect> mobEffect) {
+        return ofEffect(name, defaultStages, minThreshold, maxThreshold, mobEffect, 1);
     }
 
     /**
@@ -206,6 +237,10 @@ public class Symptom {
     public static Symptom ofEffect(String name, int defaultStages, float minThreshold, float maxThreshold,
                                    MobEffect mobEffect) {
         return ofEffect(name, defaultStages, minThreshold, maxThreshold, () -> mobEffect);
+    }
+
+    private static Identifier modifierId(UUID uuid) {
+        return Identifier.fromNamespaceAndPath("gtceu", uuid.toString());
     }
 
     public void applyProgression(MedicalConditionTracker subject, MedicalCondition condition,

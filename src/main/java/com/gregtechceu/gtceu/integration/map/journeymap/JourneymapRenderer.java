@@ -12,17 +12,19 @@ import com.gregtechceu.gtceu.integration.map.WaypointManager;
 import com.gregtechceu.gtceu.integration.map.layer.builtin.FluidRenderLayer;
 import com.gregtechceu.gtceu.integration.map.layer.builtin.OreRenderLayer;
 import com.gregtechceu.gtceu.utils.GradientUtil;
+import com.gregtechceu.gtceu.utils.GTUtil;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
+import net.neoforged.neoforge.fluids.FluidStack;
 
 import com.mojang.blaze3d.platform.NativeImage;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
@@ -182,7 +184,7 @@ public class JourneymapRenderer extends GenericMapRenderer {
         int materialABGR = GradientUtil.argbToAbgr(material.getMaterialARGB());
 
         Identifier layer1 = MaterialIconType.rawOre.getItemTexturePath(material.getMaterialIconSet(), true);
-        TextureAtlasSprite baseTexture = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS)
+        TextureAtlasSprite baseTexture = Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS)
                 .apply(layer1);
         if (baseTexture == null) {
             return null;
@@ -207,7 +209,7 @@ public class JourneymapRenderer extends GenericMapRenderer {
             if (layer2 == null) {
                 return result;
             }
-            TextureAtlasSprite image2 = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS)
+            TextureAtlasSprite image2 = Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS)
                     .apply(layer2);
 
             for (int x = 0; x < result.getWidth(); ++x) {
@@ -238,7 +240,7 @@ public class JourneymapRenderer extends GenericMapRenderer {
         final int color;
         Material material = ChemicalHelper.getMaterial(vein.fluid());
         if (material == null) {
-            color = IClientFluidTypeExtensions.of(vein.fluid()).getTintColor();
+            color = GTUtil.getFluidColor(new FluidStack(vein.fluid(), 1));
         } else {
             color = material.getMaterialARGB();
         }

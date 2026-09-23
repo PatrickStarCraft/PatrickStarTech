@@ -240,7 +240,7 @@ public interface ICoverable extends ITickSubscription, ISyncManaged, ICopyable {
 
     @Nullable
     static Direction rayTraceCoverableSide(ICoverable coverable, Player player) {
-        BlockHitResult rayTrace = (BlockHitResult) player.pick(player.getBlockReach(), 0, false);
+        BlockHitResult rayTrace = (BlockHitResult) player.pick(player.blockInteractionRange(), 0, false);
         if (rayTrace.getType() == HitResult.Type.MISS) {
             return null;
         }

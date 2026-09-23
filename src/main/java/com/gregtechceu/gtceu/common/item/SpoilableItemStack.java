@@ -1,16 +1,15 @@
 package com.gregtechceu.gtceu.common.item;
 
 import com.gregtechceu.gtceu.GTCEu;
-import com.gregtechceu.gtceu.api.capability.GTCapability;
 import com.gregtechceu.gtceu.api.capability.GTCapabilityHelper;
 import com.gregtechceu.gtceu.api.item.IMergeableNBTSerializable;
 import com.gregtechceu.gtceu.api.item.ISpoilableItemStackExtension;
 import com.gregtechceu.gtceu.api.item.component.*;
+import com.gregtechceu.gtceu.api.item.data.ItemStackData;
 import com.gregtechceu.gtceu.common.item.behavior.SpoilableBehavior;
 import com.gregtechceu.gtceu.utils.FormattingUtil;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.LongTag;
 import net.minecraft.nbt.Tag;
@@ -21,34 +20,29 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import com.gregtechceu.gtceu.api.sync_system.NBTSerializable;
-import net.neoforged.neoforge.common.util.LazyOptional;
-import net.minecraftforge.event.AttachCapabilitiesEvent;
 
 import it.unimi.dsi.fastutil.ints.IntIntPair;
 import lombok.Getter;
-import lombok.Setter;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
- * This class is a basic implementation of the {@link ISpoilableItem} capability,
- * to be attached to an item in an {@link AttachCapabilitiesEvent<ItemStack>} listener.
+ * This class is a basic implementation of the {@link ISpoilableItem} item capability.
  * It leaves some methods unimplemented, such as {@link ISpoilableItem#getSpoilTicks()} and
  * {@link ISpoilableItem#spoilResult(SpoilContext, boolean)}.
  *
- * @implNote this class uses a mixin in its {@link ISpoilableItem#updateFreshness} implementation
+ * Its per-stack state is stored in the item's custom-data component.
  *
  * @see SpoilableBehavior
  * @see SpoilableBehavior#attachTo(ItemLike)
  */
 public abstract class SpoilableItemStack implements ISpoilableItem, IAddInformation, IDurabilityBar,
-                                         IMergeableNBTSerializable, ICapabilityProvider {
+                                         IMergeableNBTSerializable {
 
+    private static final String PERSISTED_STATE_KEY = "gtceu_spoilable";
     public static final String SPOIL_CONTEXT_KEY = "spoilContext";
     public static final String FROZEN_TICKS_KEY = "frozenRemainingTicks";
     public static final String CREATION_TICK_KEY = "creationTick";
@@ -65,17 +59,34 @@ public abstract class SpoilableItemStack implements ISpoilableItem, IAddInformat
     @Getter
     private long creationTick = 0;
     @Getter
-    @Setter
     private SpoilContext spoilContext = new SpoilContext();
 
     public SpoilableItemStack(ItemStack stack) {
+        this(stack, stack.getItem());
+    }
+
+    protected SpoilableItemStack(ItemStack stack, Item originalItem) {
         this.stack = stack;
-        this.originalItem = stack.getItem();
+        this.originalItem = originalItem;
+        deserializeNBT(ItemStackData.read(stack).getCompoundOrEmpty(PERSISTED_STATE_KEY));
     }
 
     public void setCreationTick(long creationTick) {
         this.initialized = true;
         this.creationTick = creationTick;
+        persistState();
+    }
+
+    public void setSpoilContext(SpoilContext spoilContext) {
+        if (Objects.equals(this.spoilContext, spoilContext)) return;
+        this.spoilContext = spoilContext;
+        persistState();
+    }
+
+    private void persistState() {
+        if (!initialized) return;
+        CompoundTag state = (CompoundTag) serializeNBT();
+        ItemStackData.update(stack, root -> root.put(PERSISTED_STATE_KEY, state));
     }
 
     /**
@@ -151,10 +162,12 @@ public abstract class SpoilableItemStack implements ISpoilableItem, IAddInformat
             updateFreshness(new SpoilContext(), true);
             frozenTicks = getTicksUntilSpoiled();
             frozen = true;
+            persistState();
         } else {
             if (initialized && frozen) {
                 setTicksUntilSpoiled(frozenTicks);
                 frozen = false;
+                persistState();
             }
         }
     }
@@ -194,7 +207,7 @@ public abstract class SpoilableItemStack implements ISpoilableItem, IAddInformat
             SpoilContext ctx = getSpoilContext();
             if (ctx.level() != null && ctx.pos() != null)
                 tooltipComponents.add(Component.translatable("gtceu.tooltip.location",
-                        ctx.level().dimensionTypeId().location().toString(),
+                        ctx.level().dimension().identifier().toString(),
                         ctx.pos().getX(), ctx.pos().getY(), ctx.pos().getZ()));
             if (ctx.entity() != null) tooltipComponents.add(Component.translatable("gtceu.tooltip.location_entity",
                     ctx.entity().getType().getDescription()));
@@ -282,11 +295,6 @@ public abstract class SpoilableItemStack implements ISpoilableItem, IAddInformat
             }
             spoilable.setSpoilContext(this.spoilContext);
         }
-    }
-
-    @Override
-    public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-        return GTCapability.CAPABILITY_SPOILABLE_ITEM.orEmpty(cap, LazyOptional.of(() -> this));
     }
 
     /**

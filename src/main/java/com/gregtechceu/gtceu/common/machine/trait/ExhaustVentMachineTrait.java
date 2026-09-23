@@ -64,7 +64,7 @@ public class ExhaustVentMachineTrait extends MachineTrait implements IRecipeLogi
         BlockPos ventingBlockPos = getBlockPos().relative(getVentingDirection());
         BlockState state = getLevel().getBlockState(ventingBlockPos);
 
-        return state.canOcclude() || Shapes.blockOccudes(state.getCollisionShape(getLevel(), ventingBlockPos),
+        return state.canOcclude() || Shapes.blockOccludes(state.getCollisionShape(getLevel(), ventingBlockPos),
                 Shapes.block(), getVentingDirection().getOpposite());
     }
 

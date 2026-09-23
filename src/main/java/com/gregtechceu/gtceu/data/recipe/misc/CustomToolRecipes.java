@@ -8,6 +8,7 @@ import com.gregtechceu.gtceu.api.data.chemical.material.Material;
 import com.gregtechceu.gtceu.api.data.chemical.material.properties.PropertyKey;
 import com.gregtechceu.gtceu.api.data.chemical.material.stack.MaterialEntry;
 import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
+import com.gregtechceu.gtceu.api.item.data.ItemStackData;
 import com.gregtechceu.gtceu.api.item.tool.GTToolType;
 import com.gregtechceu.gtceu.api.item.tool.ToolHelper;
 import com.gregtechceu.gtceu.api.recipe.ToolHeadReplaceRecipe;
@@ -20,7 +21,6 @@ import com.gregtechceu.gtceu.utils.ToolItemHelper;
 import com.gregtechceu.gtceu.data.recipe.GeneratedRecipe;
 
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.data.recipes.SpecialRecipeBuilder;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -116,7 +116,7 @@ public final class CustomToolRecipes {
                             BuiltInRegistries.ITEM.getKey(batteryItem.get()).getPath());
 
                     VanillaRecipeHelper.addShapedEnergyTransferRecipe(provider, true, false, true, recipeName,
-                            Ingredient.of(batteryStack), powerUnitStack,
+                            Ingredient.of(batteryStack.getItem()), powerUnitStack,
                             "S d", "GMG", "PBP",
                             'M', motorItems.get(tier).asStack(),
                             'S', new MaterialEntry(screw, baseMaterials.get(tier)),
@@ -133,8 +133,7 @@ public final class CustomToolRecipes {
         registerSoftToolRecipes(provider);
         registerElectricRecipes(provider);
 
-        SpecialRecipeBuilder.special(ToolHeadReplaceRecipe.SERIALIZER).save(provider,
-                "gtceu:crafting/replace_tool_head");
+        provider.accept(GeneratedRecipe.create(ToolHeadReplaceRecipe.ID, ToolHeadReplaceRecipe.SERIALIZER, json -> {}));
     }
 
     private static void registerFlintToolRecipes(@NotNull Consumer<GeneratedRecipe> provider) {
@@ -221,11 +220,11 @@ public final class CustomToolRecipes {
 
             {
                 var magnetStack = GTItems.ITEM_MAGNET_LV.asStack();
-                var tag = magnetStack.getOrCreateTag();
                 var filter = (SimpleItemFilter) Filters
                         .loadItemFilter(ItemMagnetBehavior.FilterMode.SIMPLE.getFilter(magnetStack));
                 filter.setBlackList(true);
-                tag.put(ItemMagnetBehavior.FILTER_TAG, filter.writeFilterNBT());
+                ItemStackData.update(magnetStack,
+                        tag -> tag.put(ItemMagnetBehavior.FILTER_TAG, filter.writeFilterNBT()));
                 VanillaRecipeHelper.addShapedEnergyTransferRecipe(provider, true, false, true,
                         "lv_magnet_" + batteryItem.getId().getPath(),
                         Ingredient.of(batteryItem), magnetStack,
@@ -264,11 +263,11 @@ public final class CustomToolRecipes {
 
             {
                 var magnetStack = GTItems.ITEM_MAGNET_HV.asStack();
-                var tag = magnetStack.getOrCreateTag();
                 var filter = (SimpleItemFilter) Filters
                         .loadItemFilter(ItemMagnetBehavior.FilterMode.SIMPLE.getFilter(magnetStack));
                 filter.setBlackList(true);
-                tag.put(ItemMagnetBehavior.FILTER_TAG, filter.writeFilterNBT());
+                ItemStackData.update(magnetStack,
+                        tag -> tag.put(ItemMagnetBehavior.FILTER_TAG, filter.writeFilterNBT()));
                 VanillaRecipeHelper.addShapedEnergyTransferRecipe(provider, true, false, true,
                         "hv_magnet_" + batteryItem.getId().getPath(),
                         Ingredient.of(batteryItem), magnetStack,

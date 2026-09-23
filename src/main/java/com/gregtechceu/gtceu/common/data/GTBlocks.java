@@ -19,6 +19,7 @@ import com.gregtechceu.gtceu.client.model.item.CustomItemRendererWrapperModel;
 import com.gregtechceu.gtceu.common.block.*;
 import com.gregtechceu.gtceu.common.block.explosive.IndustrialTNTBlock;
 import com.gregtechceu.gtceu.common.block.explosive.PowderbarrelBlock;
+import com.gregtechceu.gtceu.common.item.GTBlockTooltipItem;
 import com.gregtechceu.gtceu.common.data.blocks.GTDevBlocks;
 import com.gregtechceu.gtceu.common.data.models.GTModels;
 import com.gregtechceu.gtceu.common.data.worldgen.GTConfiguredFeatures;
@@ -577,7 +578,7 @@ public class GTBlocks {
                 .addLayer(() -> RenderType::cutoutMipped)
                 .blockstate(GTModels.createCoilModel(coilType))
                 .tag(CustomTags.MINEABLE_WITH_CONFIG_VALID_PICKAXE_WRENCH)
-                .item(BlockItem::new)
+                .item(GTBlockTooltipItem::new)
                 .build()
                 .register();
         GTCEuAPI.HEATING_COILS.put(coilType, coilBlock);
@@ -591,7 +592,7 @@ public class GTBlocks {
                 .properties(p -> p.isValidSpawn((state, level, pos, entityType) -> false))
                 .blockstate(GTModels.createBatteryBlockModel(batteryData))
                 .tag(CustomTags.MINEABLE_WITH_CONFIG_VALID_PICKAXE_WRENCH)
-                .item(BlockItem::new)
+                .item(GTBlockTooltipItem::new)
                 .build()
                 .register();
 
@@ -666,7 +667,8 @@ public class GTBlocks {
             .properties(p -> p.destroyTime(0.5F).sound(SoundType.WOOD).mapColor(MapColor.STONE)
                     .pushReaction(PushReaction.BLOCK))
             .tag(BlockTags.MINEABLE_WITH_AXE)
-            .simpleItem()
+            .item(GTBlockTooltipItem::new)
+            .build()
             .register();
 
     public static final BlockEntry<IndustrialTNTBlock> INDUSTRIAL_TNT = REGISTRATE
@@ -678,7 +680,8 @@ public class GTBlocks {
                     GTCEu.id("block/misc/industrial_tnt_side"),
                     Identifier.withDefaultNamespace("block/tnt_bottom"),
                     Identifier.withDefaultNamespace("block/tnt_top"))))
-            .simpleItem()
+            .item(GTBlockTooltipItem::new)
+            .build()
             .register();
 
     public static final BlockEntry<SaplingBlock> RUBBER_SAPLING = REGISTRATE

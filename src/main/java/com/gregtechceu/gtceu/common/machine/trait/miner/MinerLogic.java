@@ -143,7 +143,8 @@ public class MinerLogic extends RecipeLogic implements IRecipeCapabilityHolder {
         this.currentRadius = maximumRadius;
         this.maximumRadius = maximumRadius;
         this.isDone = false;
-        this.pickaxeTool = GTMaterialItems.TOOL_ITEMS.get(GTMaterials.Neutronium, GTToolType.PICKAXE).get().get();
+        this.pickaxeTool = new ItemStack(
+                GTMaterialItems.TOOL_ITEMS.get(GTMaterials.Neutronium, GTToolType.PICKAXE).get());
         this.capabilitiesProxy = new EnumMap<>(IO.class);
         this.capabilitiesFlat = new EnumMap<>(IO.class);
     }
@@ -612,25 +613,11 @@ public class MinerLogic extends RecipeLogic implements IRecipeCapabilityHolder {
     }
 
     /**
-     * @param values to find the mean of
-     * @return the mean value
-     */
-    private static long mean(long[] values) {
-        if (values.length == 0L)
-            return 0L;
-
-        long sum = 0L;
-        for (long v : values)
-            sum += v;
-        return sum / values.length;
-    }
-
-    /**
      * @param world the {@link Level} to get the average tick time of
      * @return the mean tick time
      */
     private static double getMeanTickTime(Level world) {
-        return mean(Objects.requireNonNull(world.getServer()).tickTimes) * 1.0E-6D;
+        return Objects.requireNonNull(world.getServer()).getAverageTickTimeNanos() * 1.0E-6D;
     }
 
     /**

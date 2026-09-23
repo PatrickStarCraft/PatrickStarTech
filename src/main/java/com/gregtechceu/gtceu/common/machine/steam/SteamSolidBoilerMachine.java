@@ -8,6 +8,7 @@ import com.gregtechceu.gtceu.api.data.chemical.ChemicalHelper;
 import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
 import com.gregtechceu.gtceu.api.machine.steam.SteamBoilerMachine;
 import com.gregtechceu.gtceu.api.machine.trait.notifiable.NotifiableItemStackHandler;
+import com.gregtechceu.gtceu.api.recipe.GTRecipe;
 import com.gregtechceu.gtceu.api.sync_system.annotations.SaveField;
 import com.gregtechceu.gtceu.common.data.GTMaterials;
 import com.gregtechceu.gtceu.common.mui.GTGuiTextures;
@@ -55,10 +56,16 @@ public class SteamSolidBoilerMachine extends SteamBoilerMachine {
             }
             return FUEL_CACHE.computeIfAbsent(itemStack.getItem(), item -> {
                 if (isRemote()) return true;
-                return recipeLogic.getRecipeManager().getAllRecipesFor(getRecipeType()).stream().anyMatch(recipe -> {
+                return recipeLogic.getRecipeManager().getRecipes().stream()
+                        .map(holder -> holder.value())
+                        .filter(GTRecipe.class::isInstance)
+                        .map(GTRecipe.class::cast)
+                        .filter(recipe -> recipe.recipeType == getRecipeType())
+                        .anyMatch(recipe -> {
                     var list = recipe.inputs.getOrDefault(ItemRecipeCapability.CAP, Collections.emptyList());
                     if (!list.isEmpty()) {
-                        return Arrays.stream(ItemRecipeCapability.CAP.of(list.get(0).content()).getItems())
+                        return Arrays.stream(com.gregtechceu.gtceu.api.recipe.ingredient.IngredientStacks
+                                .getItems(ItemRecipeCapability.CAP.of(list.get(0).content())))
                                 .map(ItemStack::getItem).anyMatch(i -> i == item);
                     }
                     return false;

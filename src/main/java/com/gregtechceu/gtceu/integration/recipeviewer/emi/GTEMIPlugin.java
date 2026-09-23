@@ -16,7 +16,10 @@ import com.gregtechceu.gtceu.integration.recipeviewer.emi.orevein.GTOreVeinEmiCa
 import com.gregtechceu.gtceu.integration.recipeviewer.emi.recipe.GTRecipeEMICategory;
 
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.alchemy.Potion;
+import net.minecraft.world.item.alchemy.PotionContents;
 import net.neoforged.neoforge.fluids.FluidStack;
 
 import dev.emi.emi.api.EmiEntrypoint;
@@ -68,22 +71,24 @@ public class GTEMIPlugin implements EmiPlugin {
                 EmiStack.of(GTMultiMachines.LARGE_CHEMICAL_REACTOR.asStack()));
 
         // Comparators
-        registry.setDefaultComparison(GTItems.TURBINE_ROTOR.asItem(), Comparison.compareNbt());
+        registry.setDefaultComparison(GTItems.TURBINE_ROTOR.asItem(), Comparison.compareComponents());
 
-        registry.setDefaultComparison(GTItems.PROGRAMMED_CIRCUIT.asItem(), Comparison.compareNbt());
+        registry.setDefaultComparison(GTItems.PROGRAMMED_CIRCUIT.asItem(), Comparison.compareComponents());
         registry.removeEmiStacks(EmiStack.of(GTItems.PROGRAMMED_CIRCUIT.asStack()));
         registry.addEmiStack(EmiStack.of(IntCircuitBehaviour.stack(0)));
         registry.addWorkstation(ProgrammedCircuitEmiCategory.CATEGORY, EmiStack.of(IntCircuitBehaviour.stack(0)));
 
-        Comparison potionComparison = Comparison.compareData(PotionFluidHelper::getPotionFromItemStack);
+        Comparison potionComparison = Comparison.compareData(stack -> {
+            PotionContents contents = stack.get(DataComponents.POTION_CONTENTS);
+            return contents == null ? null : contents.potion().map(Holder::value).orElse(null);
+        });
         PotionFluid potionFluid = GTFluids.POTION.get();
         registry.setDefaultComparison(potionFluid.getSource(), potionComparison);
         registry.setDefaultComparison(potionFluid.getFlowing(), potionComparison);
 
         for (Potion potion : BuiltInRegistries.POTION) {
             FluidStack stack = PotionFluidHelper.getFluidFromPotion(potion, PotionFluidHelper.BOTTLE_AMOUNT);
-            registry.addEmiStack(EmiStack.of(stack.getFluid(),
-                    com.gregtechceu.gtceu.api.transfer.fluid.FluidStackData.readNullable(stack)));
+            registry.addEmiStack(EmiStack.of(stack.getFluid(), stack.getComponentsPatch()));
         }
     }
 }

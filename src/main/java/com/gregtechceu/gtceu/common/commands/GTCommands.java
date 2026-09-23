@@ -68,6 +68,8 @@ public class GTCommands {
             Component.translatable("command.gtceu.cape.take.failed"));
     private static final Dynamic2CommandExceptionType ERROR_USE_FAILED = new Dynamic2CommandExceptionType(
             (player, cape) -> Component.translatable("command.gtceu.cape.use.failed", player, cape));
+    private static final Dynamic2CommandExceptionType ERROR_PLACE_VEIN_FAILED = new Dynamic2CommandExceptionType(
+            (id, sourcePos) -> Component.translatable("command.gtceu.place_vein.failure", id, sourcePos));
 
     // spotless:off
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext buildContext) {
@@ -316,7 +318,8 @@ public class GTCommands {
         return result;
     }
 
-    private static int placeVein(CommandContext<CommandSourceStack> context, BlockPos sourcePos) {
+    private static int placeVein(CommandContext<CommandSourceStack> context, BlockPos sourcePos)
+            throws CommandSyntaxException {
         GTOreDefinition vein = context.getArgument("vein", GTOreDefinition.class);
         Identifier id = GTRegistries.ORE_VEINS.getKey(vein);
 
@@ -333,12 +336,11 @@ public class GTCommands {
             var generated = generator.generateOres(new OreGenerator.VeinConfiguration(metadata, random), level,
                     chunkPos);
             if (generated.isEmpty()) {
-                throw new CommandRuntimeException(Component.translatable("command.gtceu.place_vein.failure",
-                        id.toString(), sourcePos.toString()));
+                throw ERROR_PLACE_VEIN_FAILED.create(id.toString(), sourcePos.toString());
             }
             for (ChunkPos pos : generated.get().getGeneratedChunks()) {
                 placer.placeVein(pos, random, access, generated.get(), AlwaysTrueTest.INSTANCE);
-                level.getChunk(pos.x(), pos.z()).setUnsaved(true);
+                level.getChunk(pos.x(), pos.z()).markUnsaved();
             }
             context.getSource().sendSuccess(() -> Component.translatable("command.gtceu.place_vein.success",
                     id.toString(), sourcePos.toString()), true);

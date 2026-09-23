@@ -5,11 +5,11 @@ import com.gregtechceu.gtceu.api.machine.multiblock.CleanroomType;
 
 import net.minecraft.core.BlockPos;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 
 public class FilterMatchingError extends MismatchError<CleanroomType> {
 
-    public static final Codec<FilterMatchingError> CODEC = makeCodec(CleanroomType.CODEC, FilterMatchingError::new);
+    public static final MapCodec<FilterMatchingError> CODEC = makeCodec(CleanroomType.CODEC, FilterMatchingError::new);
 
     public static final PatternErrorType TYPE = new PatternErrorType(GTCEu.id("filter_matching_error"), CODEC);
 

@@ -1363,14 +1363,14 @@ public class MetaMachine extends ManagedSyncBlockEntity implements IGregtechBloc
                         MachineConfigCopyBehaviour.stringToDirection(tag.getStringOr(ITEM_OUTPUT_SIDE, "")));
             if (tag.contains(ITEM_AUTO_OUTPUT)) outputTrait.setAllowAutoOutputItems(tag.getBooleanOr(ITEM_AUTO_OUTPUT, false));
             if (tag.contains(ALLOW_ITEM_IN_FROM_OUT))
-                outputTrait.setAllowItemInputFromOutputSide(tag.getBoolean(ALLOW_ITEM_IN_FROM_OUT));
+                outputTrait.setAllowItemInputFromOutputSide(tag.getBooleanOr(ALLOW_ITEM_IN_FROM_OUT, false));
             if (tag.contains(FLUID_OUTPUT_SIDE))
                 outputTrait.setFluidOutputDirection(
                         MachineConfigCopyBehaviour.stringToDirection(tag.getStringOr(FLUID_OUTPUT_SIDE, "")));
             if (tag.contains(FLUID_AUTO_OUTPUT))
                 outputTrait.setAllowAutoOutputFluids(tag.getBooleanOr(FLUID_AUTO_OUTPUT, false));
             if (tag.contains(ALLOW_FLUID_IN_FROM_OUT))
-                outputTrait.setAllowFluidInputFromOutputSide(tag.getBoolean(ALLOW_FLUID_IN_FROM_OUT));
+                outputTrait.setAllowFluidInputFromOutputSide(tag.getBooleanOr(ALLOW_FLUID_IN_FROM_OUT, false));
         }
 
         Direction facingDir = Direction.byName(tag.getStringOr(FACING_DIR, ""));
@@ -1385,7 +1385,7 @@ public class MetaMachine extends ManagedSyncBlockEntity implements IGregtechBloc
                     .ifPresent(t -> t.setCurrentCircuit(tag.getIntOr(CIRCUIT, 0)));
         }
 
-        getCoverContainer().pasteConfig(player, tag.getCompound(COVER));
+        getCoverContainer().pasteConfig(player, tag.getCompoundOrEmpty(COVER));
     }
 
     @Override

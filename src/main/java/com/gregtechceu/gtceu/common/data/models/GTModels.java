@@ -11,8 +11,10 @@ import com.gregtechceu.gtceu.api.fluids.store.FluidStorageKey;
 import com.gregtechceu.gtceu.api.machine.multiblock.IBatteryData;
 import com.gregtechceu.gtceu.api.registry.GTRegistries;
 import com.gregtechceu.gtceu.api.registry.registrate.provider.GTBlockstateProvider;
+import com.gregtechceu.gtceu.client.color.MaterialLayerTintSource;
 import com.gregtechceu.gtceu.common.block.*;
 import com.gregtechceu.gtceu.common.data.GTItems;
+import com.gregtechceu.gtceu.common.data.GTMaterialBlocks;
 import com.gregtechceu.gtceu.core.MixinHelpers;
 import com.gregtechceu.gtceu.data.pack.GTDynamicResourcePack;
 import com.gregtechceu.gtceu.data.model.builder.ConfiguredModel;
@@ -157,6 +159,20 @@ public class GTModels {
         Identifier rotorId = BuiltInRegistries.ITEM.getKey(rotor);
         itemModels.generated(rotorId, GTCEu.id("item/tools/turbine"));
         itemModels.bindItemDefinition(rotorId, materialPartItemDefinition(rotorId.withPrefix("item/")));
+
+        registerMaterialPipeItemTints(itemModels, GTMaterialBlocks.CABLE_BLOCKS.values());
+        registerMaterialPipeItemTints(itemModels, GTMaterialBlocks.FLUID_PIPE_BLOCKS.values());
+        registerMaterialPipeItemTints(itemModels, GTMaterialBlocks.ITEM_PIPE_BLOCKS.values());
+    }
+
+    private static void registerMaterialPipeItemTints(ItemModelProvider itemModels,
+                                                       Iterable<? extends com.tterrag.registrate.util.entry.BlockEntry<?>> entries) {
+        for (var entry : entries) {
+            if (entry == null) continue;
+            Identifier itemId = BuiltInRegistries.ITEM.getKey(entry.get().asItem());
+            itemModels.bindItemDefinition(itemId, RuntimeModelResources.itemDefinition(
+                    itemId.withPrefix("item/"), RuntimeModelResources.dynamicLayerTints(MaterialLayerTintSource.ID, 10)));
+        }
     }
 
     public static void rubberTreeSaplingModel(DataGenContext<Item, BlockItem> context,

@@ -27,7 +27,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.neoforged.neoforge.items.IItemHandler;
-import net.minecraftforge.items.wrapper.EmptyHandler;
+import net.neoforged.neoforge.items.wrapper.EmptyItemHandler;
 
 import org.jetbrains.annotations.Nullable;
 import top.theillusivec4.curios.api.CuriosApi;
@@ -99,7 +99,7 @@ public class ElectricStats implements IInteractionItem, ISubItemHandler, IAddInf
             if (GTCEu.Mods.isCuriosLoaded()) {
                 IItemHandler curios = CuriosApi.getCuriosInventory(player)
                         .<IItemHandler>map(ICuriosItemHandler::getEquippedCurios)
-                        .orElse(EmptyHandler.INSTANCE);
+                        .orElse(EmptyItemHandler.INSTANCE);
                 for (int i = 0; i < curios.getSlots(); i++) {
                     var itemInSlot = curios.getStackInSlot(i);
                     long chargedAmount = chargeItemStack(transferLimit, electricItem, itemInSlot);

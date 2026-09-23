@@ -1,10 +1,10 @@
 package com.gregtechceu.gtceu.core.mixins;
 
 import com.gregtechceu.gtceu.api.item.IGTTool;
+import com.gregtechceu.gtceu.api.item.data.ItemStackData;
 import com.gregtechceu.gtceu.api.item.tool.ToolHelper;
 
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.SmithingTransformRecipe;
 
@@ -24,11 +24,7 @@ public class SmithingTransformRecipeMixin {
 
         // Copy stats from the upgraded tool
         ItemStack newStack = ToolHelper.get(gtTool.getToolType(), gtTool.getMaterial());
-        if (!newStack.hasTag()) {
-            return newTag;
-        }
-
-        Tag newStats = newStack.getTagElement("GT.Tool");
+        CompoundTag newStats = ItemStackData.read(newStack).getCompound("GT.Tool").orElse(null);
         if (newStats != null) {
             // newTag is already a copy of the original stack's tag, so we don't need to copy it again.
 

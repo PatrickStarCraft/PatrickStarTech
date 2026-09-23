@@ -34,7 +34,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
@@ -403,7 +402,7 @@ public final class MachineModel extends BaseBakedModel implements ICoverableRend
 
         // parse out valid overrides
         Map<String, String> remaps = new IdentityHashMap<>();
-        final TextureAtlasSprite missingno = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS)
+        final TextureAtlasSprite missingno = Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS)
                 .apply(MissingTextureAtlasSprite.getLocation());
         final Map<String, TextureAtlasSprite> finalOverrides = overrides;
         overrides = finalOverrides.keySet().stream()

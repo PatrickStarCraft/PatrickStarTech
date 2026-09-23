@@ -7,22 +7,25 @@ import com.gregtechceu.gtceu.common.data.GTRecipes;
 import com.gregtechceu.gtceu.config.ConfigHolder;
 import com.gregtechceu.gtceu.data.recipe.GeneratedRecipe;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.mojang.serialization.JsonOps;
+import com.google.common.collect.Sets;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import it.unimi.dsi.fastutil.objects.ObjectSet;
 import net.minecraft.SharedConstants;
 import net.minecraft.util.Util;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.FileToIdConverter;
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.packs.PackLocationInfo;
 import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.PackType;
-import net.minecraft.server.packs.metadata.MetadataSectionSerializer;
+import net.minecraft.server.packs.metadata.MetadataSectionType;
 import net.minecraft.server.packs.metadata.pack.PackMetadataSection;
+import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.server.packs.resources.IoSupplier;
 
-import com.google.common.collect.Sets;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import it.unimi.dsi.fastutil.objects.ObjectSet;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -160,11 +163,11 @@ public class GTDynamicDataPack implements PackResources {
 
     @Nullable
     @Override
-    public <T> T getMetadataSection(MetadataSectionSerializer<T> metaReader) {
-        if (metaReader == PackMetadataSection.TYPE) {
+    public <T> T getMetadataSection(MetadataSectionType<T> metaReader) throws IOException {
+        if (metaReader == PackMetadataSection.SERVER_TYPE) {
             return (T) new PackMetadataSection(Component.literal("GTCEu dynamic data"),
-                    SharedConstants.getCurrentVersion().getPackVersion(PackType.SERVER_DATA));
-        } else if (metaReader.getMetadataSectionName().equals("filter")) {
+                    SharedConstants.getCurrentVersion().packVersion(PackType.SERVER_DATA).minorRange());
+        } else if (metaReader.name().equals("filter")) {
             JsonObject filter = new JsonObject();
             JsonArray block = new JsonArray();
             GTRecipes.RECIPE_FILTERS.forEach((id) -> { // Collect removed recipes in here, in the pack filter section.
@@ -174,9 +177,14 @@ public class GTDynamicDataPack implements PackResources {
                 block.add(entry);
             });
             filter.add("block", block);
-            return metaReader.fromJson(filter);
+            return metaReader.codec().parse(JsonOps.INSTANCE, filter).result().orElse(null);
         }
         return null;
+    }
+
+    @Override
+    public PackLocationInfo location() {
+        return new PackLocationInfo(this.name, Component.literal(this.name), PackSource.BUILT_IN, Optional.empty());
     }
 
     @Override

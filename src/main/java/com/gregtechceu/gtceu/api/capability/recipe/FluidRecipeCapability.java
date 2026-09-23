@@ -20,6 +20,9 @@ import com.gregtechceu.gtceu.common.valueprovider.*;
 import com.gregtechceu.gtceu.utils.GTMath;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.item.component.CustomData;
 import net.neoforged.neoforge.fluids.FluidStack;
 
 import brachy.modularui.integration.recipeviewer.entry.fluid.FluidEntryList;
@@ -324,14 +327,18 @@ public class FluidRecipeCapability extends RecipeCapability<FluidIngredient> {
             amount = ingredient.getAmount();
         }
         CompoundTag tag = ingredient.getNbt();
+        DataComponentPatch components = tag == null ? DataComponentPatch.EMPTY : DataComponentPatch.builder()
+                .set(DataComponents.CUSTOM_DATA, CustomData.of(tag))
+                .build();
 
         FluidTagList tags = new FluidTagList();
         FluidStackList fluids = new FluidStackList();
         for (FluidIngredient.Value value : ingredient.values) {
             if (value instanceof FluidIngredient.TagValue tagValue) {
-                tags.add(tagValue.tag(), amount, ingredient.getNbt());
+                tags.add(tagValue.tag(), amount, components);
             } else {
-                fluids.addAll(value.getFluids().stream().map(fluid -> new FluidStack(fluid, amount, tag)).toList());
+                fluids.addAll(value.getFluids().stream()
+                        .map(fluid -> new FluidStack(fluid, amount, components)).toList());
             }
         }
         if (!tags.isEmpty()) {

@@ -82,8 +82,8 @@ public class ProspectorMapTexture<T> extends AbstractTexture implements IDrawabl
     }
 
     public void updateTexture(ProspectingUpdatePacket<T> packet) {
-        int ox = packet.chunkX - mapHandler.getPlayerChunkPos().x;
-        int oz = packet.chunkZ - mapHandler.getPlayerChunkPos().z;
+        int ox = packet.chunkX - mapHandler.getPlayerChunkPos().x();
+        int oz = packet.chunkZ - mapHandler.getPlayerChunkPos().z();
 
         int currentColumn = (mapHandler.getChunkRadius() - 1) + ox;
         int currentRow = (mapHandler.getChunkRadius() - 1) + oz;

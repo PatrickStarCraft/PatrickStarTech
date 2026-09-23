@@ -16,12 +16,12 @@ import net.minecraft.world.level.block.state.BlockState;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
+import com.mojang.serialization.MapCodec;
 import dev.latvian.mods.rhino.util.HideFromJS;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -38,7 +38,7 @@ public abstract class IndicatorGenerator {
                             .orElseGet(() -> DataResult.error(() -> "IndicatorGenerator " + obj + " not registered")));
 
     public static final Codec<IndicatorGenerator> DIRECT_CODEC = REGISTRY_CODEC
-            .dispatchStable(IndicatorGenerator::codec, Function.identity());
+            .dispatchStable(IndicatorGenerator::codec, MapCodec::assumeMapUnsafe);
 
     protected GTOreDefinition entry;
 

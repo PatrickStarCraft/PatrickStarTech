@@ -10,11 +10,12 @@ import com.gregtechceu.gtceu.common.network.packets.hazard.SPacketAddHazardZone;
 import com.gregtechceu.gtceu.common.network.packets.hazard.SPacketRemoveHazardZone;
 import com.gregtechceu.gtceu.common.network.packets.hazard.SPacketSyncHazardZoneStrength;
 import com.gregtechceu.gtceu.config.ConfigHolder;
+import com.gregtechceu.gtceu.utils.data.BlockPosNbt;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.NbtUtils;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.Identifier;
@@ -286,7 +287,7 @@ public class EnvironmentalHazardSavedData extends CompoundTagSavedData {
         }
 
         public CompoundTag serializeNBT(CompoundTag zoneTag) {
-            zoneTag.put("source", NbtUtils.writeBlockPos(source));
+            zoneTag.put("source", BlockPosNbt.writeLegacy(source));
             zoneTag.putFloat("strength", strength);
             zoneTag.putBoolean("can_spread", canSpread);
             zoneTag.putString("trigger", trigger.name());
@@ -296,7 +297,8 @@ public class EnvironmentalHazardSavedData extends CompoundTagSavedData {
         }
 
         public static @Nullable HazardZone deserializeNBT(CompoundTag zoneTag) {
-            BlockPos source = NbtUtils.readBlockPos(zoneTag.getCompound("source"));
+            Tag sourceTag = zoneTag.get("source");
+            BlockPos source = sourceTag == null ? BlockPos.ZERO : BlockPosNbt.read(sourceTag, NbtOps.INSTANCE);
             float strength = zoneTag.getFloatOr("strength", 0.0F);
             boolean canSpread = zoneTag.getBooleanOr("can_spread", false);
             HazardProperty.HazardTrigger trigger = HazardProperty.HazardTrigger.ALL_TRIGGERS

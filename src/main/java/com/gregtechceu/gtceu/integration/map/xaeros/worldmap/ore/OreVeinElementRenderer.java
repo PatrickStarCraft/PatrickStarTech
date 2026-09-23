@@ -14,8 +14,8 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.inventory.InventoryMenu;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import xaero.map.element.MapElementReader;
@@ -93,7 +93,7 @@ public class OreVeinElementRenderer extends
                 .getItemTexturePath(material.getMaterialIconSet(), true);
         if (oreTexture != null) {
             var oreSprite = Minecraft.getInstance()
-                    .getTextureAtlas(InventoryMenu.BLOCK_ATLAS)
+                    .getTextureAtlas(TextureAtlas.LOCATION_BLOCKS)
                     .apply(oreTexture);
             graphics.blit(-iconSize / 2, -iconSize / 2, 200, iconSize, iconSize,
                     oreSprite, colors[0], colors[1], colors[2], 1);
@@ -104,7 +104,7 @@ public class OreVeinElementRenderer extends
             int materialSecondaryARGB = material.getMaterialSecondaryARGB();
             colors = RenderUtil.floats(materialSecondaryARGB);
             var oreSprite = Minecraft.getInstance()
-                    .getTextureAtlas(InventoryMenu.BLOCK_ATLAS)
+                    .getTextureAtlas(TextureAtlas.LOCATION_BLOCKS)
                     .apply(oreTexture);
             graphics.blit(-iconSize / 2, -iconSize / 2, 200, iconSize, iconSize,
                     oreSprite, colors[0], colors[1], colors[2], 1);

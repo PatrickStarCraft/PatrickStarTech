@@ -1,5 +1,7 @@
 package com.gregtechceu.gtceu.common.fluid.potion;
 
+import com.gregtechceu.gtceu.common.data.GTDataComponents;
+
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -10,7 +12,8 @@ import org.jetbrains.annotations.NotNull;
 public class PotionItemFluidHandler extends FluidHandlerItemStackSimple.SwapEmpty {
 
     public PotionItemFluidHandler(ItemStack potion) {
-        super(potion, new ItemStack(Items.GLASS_BOTTLE), PotionFluidHelper.BOTTLE_AMOUNT);
+        super(GTDataComponents.FLUID_CONTENT, potion, new ItemStack(Items.GLASS_BOTTLE),
+                PotionFluidHelper.BOTTLE_AMOUNT);
     }
 
     @Override

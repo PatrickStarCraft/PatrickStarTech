@@ -11,6 +11,7 @@ import com.gregtechceu.gtceu.api.recipe.ingredient.FluidIngredient;
 import com.gregtechceu.gtceu.api.recipe.ingredient.IRangedIngredient;
 import com.gregtechceu.gtceu.api.recipe.ingredient.IntProviderFluidIngredient;
 import com.gregtechceu.gtceu.api.registry.GTRegistries;
+import com.gregtechceu.gtceu.api.transfer.fluid.FluidStackData;
 import com.gregtechceu.gtceu.common.data.GTRecipeCapabilities;
 import com.gregtechceu.gtceu.integration.kjs.recipe.KJSHelpers;
 
@@ -296,7 +297,7 @@ public class GTRecipeComponents {
 
         @Override
         public boolean isOutput(RecipeJS recipe, ExtendedOutputItem value, ReplacementMatch match) {
-            return match instanceof ItemMatch m && !value.isEmpty() && m.contains(value.ingredient);
+            return match instanceof ItemMatch m && !value.isEmpty() && m.contains(value.ingredient.getInner());
         }
 
         @Override
@@ -415,9 +416,7 @@ public class GTRecipeComponents {
         @Override
         public boolean matches(FluidLike other) {
             if (other instanceof FluidStackJS stackJS) {
-                FluidStack stack = new FluidStack(stackJS.getFluid(), (int) stackJS.getAmount(), stackJS.getNbt());
-                return ingredient.test(stack);
-            } else if (other instanceof FluidStack stack) {
+                FluidStack stack = FluidStackData.fromLegacyNbt(stackJS.getFluid(), (int) stackJS.getAmount(), stackJS.getNbt());
                 return ingredient.test(stack);
             }
             return other.matches(this);
@@ -457,7 +456,7 @@ public class GTRecipeComponents {
                 CompoundTag nbt = null;
                 if (split.length == 3) {
                     try {
-                        nbt = TagParser.parseTag(split[2]);
+                        nbt = TagParser.parseCompoundFully(split[2]);
                     } catch (CommandSyntaxException ignored) {}
                 }
 
@@ -473,7 +472,7 @@ public class GTRecipeComponents {
                 List<FluidStack> stacks = new ArrayList<>();
                 for (var object : list) {
                     FluidStackJS stackJS = FluidStackJS.of(object);
-                    stacks.add(new FluidStack(stackJS.getFluid(), (int) stackJS.getAmount(), stackJS.getNbt()));
+                    stacks.add(FluidStackData.fromLegacyNbt(stackJS.getFluid(), (int) stackJS.getAmount(), stackJS.getNbt()));
                 }
                 return new FluidIngredientJS(FluidIngredient.of(stacks));
             } else {

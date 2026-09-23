@@ -7,11 +7,11 @@ import com.gregtechceu.gtceu.client.util.ModelEventHelper;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.resources.model.geometry.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -34,7 +34,7 @@ public class SimpleCoverRenderer implements ICoverRenderer {
     }
 
     public SimpleCoverRenderer(Identifier texture, Identifier emissiveTexture) {
-        ModelEventHelper.registerAtlasStitchedEventListener(false, InventoryMenu.BLOCK_ATLAS, event -> {
+        ModelEventHelper.registerAtlasStitchedEventListener(false, TextureAtlas.LOCATION_BLOCKS, event -> {
             var atlas = event.getAtlas();
 
             sprite = atlas.getSprite(texture);

@@ -33,7 +33,7 @@ import brachy.modularui.value.sync.PanelSyncManager;
 import brachy.modularui.widget.ParentWidget;
 import brachy.modularui.widgets.ListWidget;
 import brachy.modularui.widgets.layout.Flow;
-import com.mojang.blaze3d.MethodsReturnNonnullByDefault;
+import org.jspecify.annotations.NullMarked;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

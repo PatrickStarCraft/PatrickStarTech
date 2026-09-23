@@ -232,7 +232,7 @@ public class AEConfigWidget extends Widget<AEConfigWidget>
                         (configSyncHandler != null ? configSyncHandler.getClientStock(i) : null);
                 if (tooltipStack != null) {
                     ItemStack wrapped = GenericStack.wrapInItemStack(tooltipStack);
-                    graphics.renderTooltip(Minecraft.getInstance().font, wrapped,
+                    graphics.setTooltipForNextFrame(Minecraft.getInstance().font, wrapped,
                             context.getAbsMouseX(), context.getAbsMouseY());
                 }
             }
@@ -276,7 +276,7 @@ public class AEConfigWidget extends Widget<AEConfigWidget>
     }
 
     @Override
-    public boolean onMouseScrolled(double delta) {
+    public boolean onMouseScrolled(double scrollX, double scrollY) {
         if (isStocking()) return false;
 
         double localX = getContext().getMouseX() - getArea().x;
@@ -287,12 +287,12 @@ public class AEConfigWidget extends Widget<AEConfigWidget>
         if (localY >= slotY(slotIndex) + CELL_SIZE) return false;
 
         GenericStack config = configSyncHandler != null ? configSyncHandler.getClientConfig(slotIndex) : null;
-        if (config == null || delta == 0) return false;
+        if (config == null || scrollY == 0) return false;
 
         long current = config.amount();
         long next = Interactable.hasControlDown() ?
-                (delta > 0 ? current * 2L : current / 2L) :
-                (delta > 0 ? current + 1L : current - 1L);
+                (scrollY > 0 ? current * 2L : current / 2L) :
+                (scrollY > 0 ? current + 1L : current - 1L);
 
         if (next > 0 && next < Integer.MAX_VALUE + 1L && syncManager != null) {
             syncManager.callSyncedAction("ae_config_amount", buf -> {

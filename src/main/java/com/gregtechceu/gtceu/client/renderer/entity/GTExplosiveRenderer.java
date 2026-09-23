@@ -9,7 +9,7 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.TntMinecartRenderer;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
-import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
@@ -55,6 +55,6 @@ public class GTExplosiveRenderer<T extends GTExplosiveEntity> extends EntityRend
     @NotNull
     @Override
     public Identifier getTextureLocation(@NotNull T entity) {
-        return InventoryMenu.BLOCK_ATLAS;
+        return TextureAtlas.LOCATION_BLOCKS;
     }
 }

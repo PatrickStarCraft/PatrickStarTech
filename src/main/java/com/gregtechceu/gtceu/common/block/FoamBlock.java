@@ -33,24 +33,27 @@ public class FoamBlock extends Block {
 
     @Override
     @SuppressWarnings("deprecation")
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand,
-                                 BlockHitResult hit) {
-        ItemStack stackInHand = player.getItemInHand(hand);
+    protected InteractionResult useItemOn(ItemStack stackInHand, BlockState state, Level level, BlockPos pos,
+                                          Player player, InteractionHand hand, BlockHitResult hit) {
         if (!stackInHand.isEmpty() && stackInHand.is(ItemTags.SAND)) {
-            level.setBlockAndUpdate(pos, getPetrifiedBlock(state));
+            if (!level.isClientSide()) {
+                level.setBlockAndUpdate(pos, getPetrifiedBlock(state));
+                if (!player.isCreative()) {
+                    stackInHand.shrink(1);
+                }
+            }
             level.playSound(player, pos, SoundEvents.SAND_PLACE, SoundSource.BLOCKS, 1.0F, 1.0F);
-            if (!player.isCreative())
-                stackInHand.shrink(1);
             return InteractionResult.SUCCESS;
         }
-        return super.use(state, level, pos, player, hand, hit);
+        return super.useItemOn(stackInHand, state, level, pos, player, hand, hit);
     }
 
     @Override
     @SuppressWarnings("deprecation")
     public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
         super.randomTick(state, level, pos, random);
-        int lightLevel = (level.canSeeSky(pos) && level.isDay()) ? 16 : level.getRawBrightness(pos, 0);
+        boolean isDay = level.getOverworldClockTime() % 24000L < 12000L;
+        int lightLevel = (level.canSeeSky(pos) && isDay) ? 16 : level.getRawBrightness(pos, 0);
         if (random.nextInt(20 - lightLevel) == 0) {
             level.setBlockAndUpdate(pos, getPetrifiedBlock(state));
         }

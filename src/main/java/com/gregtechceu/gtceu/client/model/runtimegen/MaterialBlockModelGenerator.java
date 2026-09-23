@@ -3,6 +3,7 @@ package com.gregtechceu.gtceu.client.model.runtimegen;
 import com.gregtechceu.gtceu.api.block.MaterialBlock;
 import com.gregtechceu.gtceu.api.data.chemical.material.info.MaterialIconSet;
 import com.gregtechceu.gtceu.api.data.chemical.material.info.MaterialIconType;
+import com.gregtechceu.gtceu.client.color.MaterialLayerTintSource;
 import com.gregtechceu.gtceu.data.model.builder.RuntimeModelResources;
 import com.gregtechceu.gtceu.data.pack.GTDynamicResourcePack;
 
@@ -28,7 +29,7 @@ public class MaterialBlockModelGenerator {
                     GTDynamicResourcePack::addResource);
             if (model.block instanceof MaterialBlock materialBlock) {
                 RuntimeModelResources.emitItem(BuiltInRegistries.ITEM.getKey(model.block.asItem()), modelId,
-                        materialTints(materialBlock), GTDynamicResourcePack::addResource);
+                        materialTints(), GTDynamicResourcePack::addResource);
             } else {
                 RuntimeModelResources.emitItem(BuiltInRegistries.ITEM.getKey(model.block.asItem()), modelId,
                         GTDynamicResourcePack::addResource);
@@ -36,12 +37,8 @@ public class MaterialBlockModelGenerator {
         }
     }
 
-    private static JsonArray materialTints(MaterialBlock block) {
-        int[] colors = new int[10];
-        for (int index = 0; index < colors.length; index++) {
-            colors[index] = block.material.getLayerARGB(index);
-        }
-        return RuntimeModelResources.constantTints(colors);
+    private static JsonArray materialTints() {
+        return RuntimeModelResources.dynamicLayerTints(MaterialLayerTintSource.ID, 10);
     }
 
     private final Block block;

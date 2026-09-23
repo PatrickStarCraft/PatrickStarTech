@@ -194,7 +194,7 @@ public class RobotArmCover extends ConveyorCover {
     @Override
     public void pasteConfig(ServerPlayer player, CompoundTag tag) {
         setTransferMode(TransferMode.values()[tag.getIntOr("transferMode", 0)]);
-        setGlobalTransferLimit(tag.getInt("transferLimit"));
+        setGlobalTransferLimit(tag.getIntOr("transferLimit", 0));
         super.pasteConfig(player, tag);
     }
 }

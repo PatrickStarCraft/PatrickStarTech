@@ -5,12 +5,8 @@ import com.gregtechceu.gtceu.api.data.chemical.material.Material;
 import com.gregtechceu.gtceu.api.data.chemical.material.properties.FluidPipeProperties;
 import com.gregtechceu.gtceu.api.data.chemical.material.properties.PropertyKey;
 import com.gregtechceu.gtceu.api.item.MetaMachineItem;
-import com.gregtechceu.gtceu.api.misc.forge.ThermalFluidHandlerItemStack;
+import com.gregtechceu.gtceu.api.item.component.ThermalFluidStats;
 import com.gregtechceu.gtceu.common.data.machines.GTMachineUtils;
-
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -29,15 +25,12 @@ public class DrumMachineItem extends MetaMachineItem {
         return new DrumMachineItem(block, properties, mat);
     }
 
-    @Override
-    public @Nullable ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
+    @Nullable
+    public ThermalFluidStats getThermalFluidStats() {
         final FluidPipeProperties property = mat.getProperty(PropertyKey.FLUID_PIPE);
         if (property == null) {
             return null;
         }
-        return new ThermalFluidHandlerItemStack(stack,
-                GTMachineUtils.DRUM_CAPACITY.getInt(getDefinition()),
-                property.getMaxFluidTemperature(), property.isGasProof(), property.isAcidProof(),
-                property.isCryoProof(), property.isPlasmaProof());
+        return ThermalFluidStats.create(GTMachineUtils.DRUM_CAPACITY.getInt(getDefinition()), property, false);
     }
 }

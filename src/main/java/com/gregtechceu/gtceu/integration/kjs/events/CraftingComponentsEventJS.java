@@ -141,8 +141,10 @@ public class CraftingComponentsEventJS extends StartupEventJS {
     @SuppressWarnings("unchecked")
     private static TagKey<Item> parseTag(Object o) {
         if (o instanceof TagKey<?> key && key.isFor(Registries.ITEM)) return (TagKey<Item>) key;
-        Identifier rl = UtilsJS.getMCID(null, o);
-        if (rl != null) return TagKey.create(Registries.ITEM, rl);
+        var resourceLocation = UtilsJS.getMCID(null, o);
+        if (resourceLocation != null) {
+            return TagKey.create(Registries.ITEM, Identifier.parse(resourceLocation.toString()));
+        }
         return null;
     }
 

@@ -20,6 +20,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.BlockAndLightGetter;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
@@ -353,11 +354,11 @@ public class MetaMachineBlock extends Block implements ManagedSyncEntityBlock {
     }
 
     @Override
-    public BlockState getAppearance(BlockState state, BlockAndTintGetter level, BlockPos pos, Direction side,
+    public BlockState getAppearance(BlockState state, BlockAndLightGetter level, BlockPos pos, Direction side,
                                     @Nullable BlockState sourceState, @Nullable BlockPos sourcePos) {
         var machine = MetaMachine.getMachine(level, pos);
-        if (machine != null) {
-            return machine.getBlockAppearance(state, level, pos, side, sourceState, sourcePos);
+        if (machine != null && level instanceof BlockAndTintGetter tintGetter) {
+            return machine.getBlockAppearance(state, tintGetter, pos, side, sourceState, sourcePos);
         }
         return super.getAppearance(state, level, pos, side, sourceState, sourcePos);
     }

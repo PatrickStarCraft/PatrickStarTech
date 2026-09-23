@@ -92,7 +92,6 @@ public class GTMaterialItems {
                 .transform(GTItems.unificationItem(tagPrefix, material))
                 .properties(p -> p.stacksTo(tagPrefix.maxStackSize()))
                 .model(NonNullBiConsumer.noop())
-                .color(() -> () -> TagPrefixItem.tintColor(material))
                 .onRegister(GTItems::cauldronInteraction)
                 .register());
     }

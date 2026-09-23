@@ -7,15 +7,12 @@ import com.gregtechceu.gtceu.api.data.chemical.material.properties.DustProperty;
 import com.gregtechceu.gtceu.api.data.chemical.material.properties.PropertyKey;
 import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
 
-import net.minecraft.client.color.item.ItemColor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.FuelValues;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -41,11 +38,6 @@ public class MaterialBlockItem extends BlockItem {
     @NotNull
     public MaterialBlock getBlock() {
         return (MaterialBlock) super.getBlock();
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    public static ItemColor tintColor(Material material) {
-        return (itemStack, index) -> material.getLayerARGB(index);
     }
 
     @Override

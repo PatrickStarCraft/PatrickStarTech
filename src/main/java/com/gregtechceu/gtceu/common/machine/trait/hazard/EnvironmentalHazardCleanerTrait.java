@@ -118,8 +118,8 @@ public class EnvironmentalHazardCleanerTrait extends MachineTrait implements IRe
                     removedLastSecond += toClean;
                     zone.removeStrength(toClean);
                     if (zone.strength() <= 0) {
-                        if (serverLevel.hasChunk(chunkPos.x, chunkPos.z)) {
-                            LevelChunk chunk = serverLevel.getChunk(chunkPos.x, chunkPos.z);
+                        if (serverLevel.hasChunk(chunkPos.x(), chunkPos.z())) {
+                            LevelChunk chunk = serverLevel.getChunk(chunkPos.x(), chunkPos.z());
                             GTNetwork.sendToAllPlayersTrackingChunk(chunk, new SPacketRemoveHazardZone(chunkPos));
                         }
                         return null;

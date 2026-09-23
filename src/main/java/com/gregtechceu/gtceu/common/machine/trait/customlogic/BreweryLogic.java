@@ -6,24 +6,28 @@ import com.gregtechceu.gtceu.api.capability.recipe.IRecipeCapabilityHolder;
 import com.gregtechceu.gtceu.api.capability.recipe.IRecipeHandler;
 import com.gregtechceu.gtceu.api.capability.recipe.ItemRecipeCapability;
 import com.gregtechceu.gtceu.api.data.tag.TagUtil;
+import com.gregtechceu.gtceu.api.machine.feature.IRecipeLogicMachine;
 import com.gregtechceu.gtceu.api.machine.trait.recipe.RecipeHandlerList;
 import com.gregtechceu.gtceu.api.recipe.GTRecipe;
 import com.gregtechceu.gtceu.api.recipe.GTRecipeType;
 import com.gregtechceu.gtceu.api.recipe.ingredient.FluidIngredient;
+import com.gregtechceu.gtceu.api.registry.GTRegistries;
 import com.gregtechceu.gtceu.common.data.GTRecipeTypes;
 import com.gregtechceu.gtceu.common.fluid.potion.PotionFluidHelper;
 import com.gregtechceu.gtceu.core.mixins.PotionBrewingAccessor;
+import com.gregtechceu.gtceu.core.mixins.PotionBrewingMixAccessor;
 
 import net.minecraft.util.Util;
+import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionBrewing;
-import net.minecraft.world.item.alchemy.Potions;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.common.brewing.BrewingRecipe;
-import net.neoforged.neoforge.common.brewing.BrewingRecipeRegistry;
 import net.neoforged.neoforge.common.brewing.IBrewingRecipe;
 import net.neoforged.neoforge.fluids.FluidStack;
 
@@ -47,13 +51,18 @@ public enum BreweryLogic implements GTRecipeType.ICustomRecipeLogic {
 
     private static final Function<Fluid, TagKey<Fluid>> FLUID_TAGS = Util
             .memoize(fluid -> TagUtil.createFluidTag(BuiltInRegistries.FLUID.getKey(fluid).getPath()));
-    private static final Function<PotionBrewing.Mix<Potion>, FluidStack> MIX_INPUTS = Util
-            .memoize(mix -> PotionFluidHelper.getFluidFromPotion(mix.from.get(), PotionFluidHelper.MB_PER_RECIPE));
+    private static final Function<VanillaPotionMix, FluidStack> MIX_INPUTS = Util
+            .memoize(mix -> PotionFluidHelper.getFluidFromPotion(mix.from().value(), PotionFluidHelper.MB_PER_RECIPE));
     private static final Function<BrewingRecipe, FluidIngredient> BREW_INGREDIENTS = Util.memoize(
             brew -> PotionFluidHelper.getPotionFluidIngredientFrom(brew.getInput(), PotionFluidHelper.MB_PER_RECIPE));
 
     @Override
     public @Nullable GTRecipe createCustomRecipe(IRecipeCapabilityHolder holder) {
+        PotionBrewing potionBrewing = getPotionBrewing(holder);
+        if (potionBrewing == null) return null;
+        List<VanillaPotionMix> vanillaMixes = getVanillaPotionMixes(potionBrewing);
+        List<IBrewingRecipe> brewingRecipes = potionBrewing.getRecipes();
+
         var handlerLists = holder.getCapabilitiesForIO(IO.IN);
         if (handlerLists.isEmpty()) return null;
         List<RecipeHandlerList> distinct = new ArrayList<>();
@@ -80,9 +89,9 @@ public enum BreweryLogic implements GTRecipeType.ICustomRecipeLogic {
             if (!collect(handlerList, itemStacks, fluidStacks)) continue;
 
             for (var itemStack : itemStacks) {
-                for (PotionBrewing.Mix<Potion> mix : PotionBrewingAccessor.getPotionMixes()) {
+                for (VanillaPotionMix mix : vanillaMixes) {
                     // test item ingredient first
-                    if (!mix.ingredient.test(itemStack)) {
+                    if (!mix.ingredient().test(itemStack)) {
                         continue;
                     }
                     FluidStack fromFluid = MIX_INPUTS.apply(mix);
@@ -94,7 +103,7 @@ public enum BreweryLogic implements GTRecipeType.ICustomRecipeLogic {
                     }
                 }
 
-                for (IBrewingRecipe recipe : BrewingRecipeRegistry.getRecipes()) {
+                for (IBrewingRecipe recipe : brewingRecipes) {
                     if (!(recipe instanceof BrewingRecipe brew) || !brew.isIngredient(itemStack)) {
                         continue;
                     }
@@ -116,14 +125,14 @@ public enum BreweryLogic implements GTRecipeType.ICustomRecipeLogic {
         collect(notDistinctItems, notDistinctFluids, itemStacks, fluidStacks);
         if (itemStacks.isEmpty() && fluidStacks.isEmpty()) return null;
 
-        ReferenceOpenHashSet<PotionBrewing.Mix<Potion>> mixesWithIngredient = new ReferenceOpenHashSet<>();
+        ReferenceOpenHashSet<VanillaPotionMix> mixesWithIngredient = new ReferenceOpenHashSet<>();
         ReferenceOpenHashSet<BrewingRecipe> brewsWithIngredient = new ReferenceOpenHashSet<>();
-        Reference2ObjectOpenHashMap<PotionBrewing.Mix<Potion>, FluidStack> mixesWithInput = new Reference2ObjectOpenHashMap<>();
+        Reference2ObjectOpenHashMap<VanillaPotionMix, FluidStack> mixesWithInput = new Reference2ObjectOpenHashMap<>();
         Reference2ObjectOpenHashMap<BrewingRecipe, FluidIngredient> brewsWithInput = new Reference2ObjectOpenHashMap<>();
 
-        for (PotionBrewing.Mix<Potion> mix : PotionBrewingAccessor.getPotionMixes()) {
+        for (VanillaPotionMix mix : vanillaMixes) {
             for (var itemStack : itemStacks) {
-                if (mix.ingredient.test(itemStack)) {
+                if (mix.ingredient().test(itemStack)) {
                     mixesWithIngredient.add(mix);
                     break;
                 }
@@ -142,7 +151,7 @@ public enum BreweryLogic implements GTRecipeType.ICustomRecipeLogic {
             }
         }
 
-        for (IBrewingRecipe recipe : BrewingRecipeRegistry.getRecipes()) {
+        for (IBrewingRecipe recipe : brewingRecipes) {
             if (!(recipe instanceof BrewingRecipe brew)) continue;
             for (var itemStack : itemStacks) {
                 if (brew.isIngredient(itemStack)) {
@@ -180,7 +189,7 @@ public enum BreweryLogic implements GTRecipeType.ICustomRecipeLogic {
                     for (var entry : mixesWithInput.reference2ObjectEntrySet()) {
                         var mix = entry.getKey();
                         var fluid = entry.getValue();
-                        if (mix.ingredient.test(itemStack)) return vanillaPotionRecipe(mix, fluid);
+                        if (mix.ingredient().test(itemStack)) return vanillaPotionRecipe(mix, fluid);
                     }
 
                     for (var entry : brewsWithInput.reference2ObjectEntrySet()) {
@@ -226,7 +235,7 @@ public enum BreweryLogic implements GTRecipeType.ICustomRecipeLogic {
         String name;
         Potion output = PotionFluidHelper.getPotionFromItemStack(brew.getOutput());
         if (output != null) {
-            name = output.getName("");
+            name = BuiltInRegistries.POTION.getKey(output).getPath();
         } else {
             name = toFluid.getFluid().builtInRegistryHolder().key().identifier().getPath();
         }
@@ -240,10 +249,10 @@ public enum BreweryLogic implements GTRecipeType.ICustomRecipeLogic {
                 .buildRawRecipe();
     }
 
-    private static @NotNull GTRecipe vanillaPotionRecipe(PotionBrewing.Mix<Potion> mix, FluidStack fromFluid) {
-        FluidStack toFluid = PotionFluidHelper.getFluidFromPotion(mix.to.get(), PotionFluidHelper.MB_PER_RECIPE);
-        return GTRecipeTypes.BREWING_RECIPES.recipeBuilder("potion_vanilla_" + mix.to.get().getName(""))
-                .inputItems(mix.ingredient)
+    private static @NotNull GTRecipe vanillaPotionRecipe(VanillaPotionMix mix, FluidStack fromFluid) {
+        FluidStack toFluid = PotionFluidHelper.getFluidFromPotion(mix.to().value(), PotionFluidHelper.MB_PER_RECIPE);
+        return GTRecipeTypes.BREWING_RECIPES.recipeBuilder("potion_vanilla_" + potionName(mix.to()))
+                .inputItems(mix.ingredient())
                 .inputFluids(fromFluid)
                 .outputFluids(toFluid)
                 .duration(400)
@@ -281,14 +290,16 @@ public enum BreweryLogic implements GTRecipeType.ICustomRecipeLogic {
     @Override
     public void buildRepresentativeRecipes() {
         int index = 0;
-        for (PotionBrewing.Mix<Potion> mix : PotionBrewingAccessor.getPotionMixes()) {
-            FluidStack fromFluid = PotionFluidHelper.getFluidFromPotion(mix.from.get(),
+        PotionBrewing potionBrewing = RepresentativePotionBrewing.INSTANCE;
+        List<VanillaPotionMix> vanillaMixes = getVanillaPotionMixes(potionBrewing);
+        for (VanillaPotionMix mix : vanillaMixes) {
+            FluidStack fromFluid = PotionFluidHelper.getFluidFromPotion(mix.from().value(),
                     PotionFluidHelper.MB_PER_RECIPE);
-            FluidStack toFluid = PotionFluidHelper.getFluidFromPotion(mix.to.get(), PotionFluidHelper.MB_PER_RECIPE);
+            FluidStack toFluid = PotionFluidHelper.getFluidFromPotion(mix.to().value(), PotionFluidHelper.MB_PER_RECIPE);
 
             GTRecipe recipe = GTRecipeTypes.BREWING_RECIPES
-                    .recipeBuilder("potion_vanilla_" + mix.to.get().getName("") + "_" + index++)
-                    .inputItems(mix.ingredient)
+                    .recipeBuilder("potion_vanilla_" + potionName(mix.to()) + "_" + index++)
+                    .inputItems(mix.ingredient())
                     .inputFluids(fromFluid)
                     .outputFluids(toFluid)
                     .duration(400)
@@ -300,7 +311,7 @@ public enum BreweryLogic implements GTRecipeType.ICustomRecipeLogic {
             GTRecipeTypes.BREWING_RECIPES.addToMainCategory(recipe);
         }
 
-        for (IBrewingRecipe brewingRecipe : BrewingRecipeRegistry.getRecipes()) {
+        for (IBrewingRecipe brewingRecipe : potionBrewing.getRecipes()) {
             if (!(brewingRecipe instanceof BrewingRecipe impl)) {
                 continue;
             }
@@ -313,7 +324,7 @@ public enum BreweryLogic implements GTRecipeType.ICustomRecipeLogic {
             String name = toFluid.getFluid().builtInRegistryHolder().key().identifier().getPath();
             Potion output = PotionFluidHelper.getPotionFromItemStack(impl.getOutput());
             if (output != null) {
-                name = output.getName("");
+                name = BuiltInRegistries.POTION.getKey(output).getPath();
             }
 
             GTRecipe recipe = GTRecipeTypes.BREWING_RECIPES.recipeBuilder("potion_forge_" + name + "_" + index++)
@@ -327,5 +338,42 @@ public enum BreweryLogic implements GTRecipeType.ICustomRecipeLogic {
             recipe.setId(recipe.getId().withPrefix("/"));
             GTRecipeTypes.BREWING_RECIPES.addToMainCategory(recipe);
         }
+    }
+
+    private static @Nullable PotionBrewing getPotionBrewing(IRecipeCapabilityHolder holder) {
+        if (holder instanceof IRecipeLogicMachine machine) {
+            Level level = machine.self().getLevel();
+            if (level != null) return level.potionBrewing();
+        }
+        return null;
+    }
+
+    private static List<VanillaPotionMix> getVanillaPotionMixes(PotionBrewing potionBrewing) {
+        List<?> mixes = ((PotionBrewingAccessor) (Object) potionBrewing).gtceu$getPotionMixes();
+        List<VanillaPotionMix> result = new ArrayList<>(mixes.size());
+        for (Object mix : mixes) {
+            PotionBrewingMixAccessor accessor = (PotionBrewingMixAccessor) mix;
+            result.add(new VanillaPotionMix(asPotionHolder(accessor.gtceu$getFrom()),
+                    accessor.gtceu$getIngredient(), asPotionHolder(accessor.gtceu$getTo())));
+        }
+        return result;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Holder<Potion> asPotionHolder(Holder<?> holder) {
+        return (Holder<Potion>) holder;
+    }
+
+    private static String potionName(Holder<Potion> potion) {
+        return BuiltInRegistries.POTION.getKey(potion.value()).getPath();
+    }
+
+    private record VanillaPotionMix(Holder<Potion> from,
+                                    net.minecraft.world.item.crafting.Ingredient ingredient,
+                                    Holder<Potion> to) {}
+
+    private static class RepresentativePotionBrewing {
+        private static final PotionBrewing INSTANCE = PotionBrewing.bootstrap(
+                FeatureFlags.DEFAULT_FLAGS, GTRegistries.builtinRegistry());
     }
 }

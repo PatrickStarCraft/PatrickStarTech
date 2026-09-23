@@ -7,6 +7,7 @@ import com.gregtechceu.gtceu.api.data.chemical.material.Material;
 import com.gregtechceu.gtceu.api.data.chemical.material.properties.FluidPipeProperties;
 import com.gregtechceu.gtceu.api.data.chemical.material.properties.PropertyKey;
 import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
+import com.gregtechceu.gtceu.api.item.IBlockItemTooltip;
 import com.gregtechceu.gtceu.api.pipenet.IPipeNode;
 import com.gregtechceu.gtceu.api.registry.registrate.provider.GTBlockstateProvider;
 import com.gregtechceu.gtceu.client.model.pipe.PipeModel;
@@ -25,10 +26,9 @@ import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.InsideBlockEffectApplier;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -37,13 +37,14 @@ import net.neoforged.neoforge.fluids.FluidStack;
 
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
+import java.util.function.Consumer;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 @NullMarked
-public class FluidPipeBlock extends MaterialPipeBlock<FluidPipeType, FluidPipeProperties, LevelFluidPipeNet> {
+public class FluidPipeBlock extends MaterialPipeBlock<FluidPipeType, FluidPipeProperties, LevelFluidPipeNet>
+        implements IBlockItemTooltip {
 
     public FluidPipeBlock(Properties properties, FluidPipeType fluidPipeType, Material material) {
         super(properties, fluidPipeType, material);
@@ -87,36 +88,35 @@ public class FluidPipeBlock extends MaterialPipeBlock<FluidPipeType, FluidPipePr
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable BlockGetter level, List<Component> tooltip,
-                                TooltipFlag flag) {
-        super.appendHoverText(stack, level, tooltip, flag);
+    public void appendBlockItemTooltip(ItemStack stack, Consumer<Component> tooltip) {
         FluidPipeProperties properties = createProperties(defaultBlockState(), stack);
 
-        tooltip.add(Component.translatable("gtceu.universal.tooltip.fluid_transfer_rate", properties.getThroughput()));
-        tooltip.add(Component.translatable("gtceu.fluid_pipe.max_temperature",
+        tooltip.accept(Component.translatable("gtceu.universal.tooltip.fluid_transfer_rate", properties.getThroughput()));
+        tooltip.accept(Component.translatable("gtceu.fluid_pipe.max_temperature",
                 FormattingUtil.formatTemperature(properties.getMaxFluidTemperature())));
 
         if (properties.getChannels() > 1) {
-            tooltip.add(Component.translatable("gtceu.fluid_pipe.channels", properties.getChannels()));
+            tooltip.accept(Component.translatable("gtceu.fluid_pipe.channels", properties.getChannels()));
         }
 
         if (!GTUtil.isShiftDown()) {
-            tooltip.add(Component.translatable("gtceu.tooltip.fluid_pipe_hold_shift"));
+            tooltip.accept(Component.translatable("gtceu.tooltip.fluid_pipe_hold_shift"));
             return;
         }
 
         if (properties.isGasProof())
-            tooltip.add(Component.translatable("gtceu.fluid_pipe.gas_proof"));
+            tooltip.accept(Component.translatable("gtceu.fluid_pipe.gas_proof"));
         else
-            tooltip.add(Component.translatable("gtceu.fluid_pipe.not_gas_proof"));
+            tooltip.accept(Component.translatable("gtceu.fluid_pipe.not_gas_proof"));
 
-        if (properties.isAcidProof()) tooltip.add(Component.translatable("gtceu.fluid_pipe.acid_proof"));
-        if (properties.isCryoProof()) tooltip.add(Component.translatable("gtceu.fluid_pipe.cryo_proof"));
-        if (properties.isPlasmaProof()) tooltip.add(Component.translatable("gtceu.fluid_pipe.plasma_proof"));
+        if (properties.isAcidProof()) tooltip.accept(Component.translatable("gtceu.fluid_pipe.acid_proof"));
+        if (properties.isCryoProof()) tooltip.accept(Component.translatable("gtceu.fluid_pipe.cryo_proof"));
+        if (properties.isPlasmaProof()) tooltip.accept(Component.translatable("gtceu.fluid_pipe.plasma_proof"));
     }
 
     @Override
-    public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
+    protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity,
+                                InsideBlockEffectApplier effectApplier, boolean isPrecise) {
         // dont apply damage if there is a frame box
         var pipeNode = getPipeTile(level, pos);
         if (pipeNode == null) {
@@ -126,7 +126,7 @@ public class FluidPipeBlock extends MaterialPipeBlock<FluidPipeType, FluidPipePr
         if (pipeNode.getFrameMaterial() != null) {
             BlockState frameState = GTMaterialBlocks.MATERIAL_BLOCKS.get(TagPrefix.frameGt, pipeNode.getFrameMaterial())
                     .getDefaultState();
-            frameState.getBlock().entityInside(frameState, level, pos, entity);
+            frameState.entityInside(level, pos, entity, effectApplier, isPrecise);
             return;
         }
         if (level.isClientSide()) return;
@@ -165,6 +165,6 @@ public class FluidPipeBlock extends MaterialPipeBlock<FluidPipeType, FluidPipePr
                 }
             }
         }
-        super.entityInside(state, level, pos, entity);
+        super.entityInside(state, level, pos, entity, effectApplier, isPrecise);
     }
 }

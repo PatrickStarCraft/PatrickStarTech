@@ -10,11 +10,11 @@ import com.gregtechceu.gtceu.integration.map.ftbchunks.FTBChunksOptions;
 import com.gregtechceu.gtceu.integration.map.layer.builtin.OreRenderLayer;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.phys.Vec3;
 
 import com.mojang.blaze3d.platform.InputConstants;
@@ -169,7 +169,7 @@ public class OreVeinIcon implements MapIcon {
         MaterialIconSet iconSet = material == null ? MaterialIconSet.METALLIC : material.getMaterialIconSet();
         Identifier oreTexture = MaterialIconType.rawOre.getItemTexturePath(iconSet, true);
         if (oreTexture != null) {
-            var oreSprite = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS)
+            var oreSprite = Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS)
                     .apply(oreTexture);
             graphics.blit(x, y, 0, w, h, oreSprite, colors[0], colors[1], colors[2], 1);
         }
@@ -179,7 +179,7 @@ public class OreVeinIcon implements MapIcon {
             var materialSecondaryARGB = material == null ? 0xFFFFFFFF : material.getMaterialSecondaryARGB();
             colors = RenderUtil.floats(materialSecondaryARGB);
             var oreSprite = Minecraft.getInstance()
-                    .getTextureAtlas(InventoryMenu.BLOCK_ATLAS)
+                    .getTextureAtlas(TextureAtlas.LOCATION_BLOCKS)
                     .apply(oreTexture);
             graphics.blit(x, y, 0, w, h, oreSprite, colors[0], colors[1], colors[2], 1);
         }

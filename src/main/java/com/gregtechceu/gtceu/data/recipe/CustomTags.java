@@ -19,6 +19,8 @@ public class CustomTags {
     public static final TagKey<Item> PISTONS = TagUtil.createItemTag("pistons");
     public static final TagKey<Item> CONCRETE_ITEM = TagUtil.createItemTag("concretes");
     public static final TagKey<Item> CONCRETE_POWDER_ITEM = TagUtil.createItemTag("concrete_powders");
+    public static final TagKey<Item> STAINED_GLASS = TagUtil.createModItemTag("stained_glass");
+    public static final TagKey<Item> STAINED_GLASS_PANES = TagUtil.createModItemTag("stained_glass_panes");
     // common/mod compat tags
     public static final TagKey<Item> DOUGHS = TagUtil.createItemTag("dough");
     public static final TagKey<Item> WHEAT_DOUGHS = TagUtil.createItemTag("dough/wheat");

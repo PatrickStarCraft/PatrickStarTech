@@ -24,6 +24,7 @@ import com.gregtechceu.gtceu.utils.ISubscription;
 
 import org.jspecify.annotations.NullMarked;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
@@ -198,9 +199,13 @@ public class ItemCollectorMachine extends TieredEnergyMachine
                 if (!canFillOutput(stack)) continue;
 
                 ItemStack remainder = fillOutput(stack);
-                if (remainder.isEmpty())
-                    itemEntity.kill();
-                else if (stack.getCount() > remainder.getCount())
+                if (remainder.isEmpty()) {
+                    if (getLevel() instanceof ServerLevel serverLevel) {
+                        itemEntity.kill(serverLevel);
+                    } else {
+                        itemEntity.discard();
+                    }
+                } else if (stack.getCount() > remainder.getCount())
                     itemEntity.setItem(remainder);
             }
         }

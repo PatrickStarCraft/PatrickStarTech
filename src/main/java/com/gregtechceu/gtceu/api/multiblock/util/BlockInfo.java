@@ -1,13 +1,12 @@
 package com.gregtechceu.gtceu.api.multiblock.util;
 
 import com.gregtechceu.gtceu.GTCEu;
-import com.gregtechceu.gtceu.client.util.FakeBlockTintGetter;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -25,8 +24,6 @@ public class BlockInfo {
 
     public static final Codec<BlockInfo> CODEC = BlockState.CODEC.xmap(BlockInfo::fromBlockState,
             BlockInfo::getBlockState);
-
-    public static final FakeBlockTintGetter FAKE_LEVEL = new FakeBlockTintGetter();
 
     public static final BlockInfo EMPTY = new BlockInfo(Blocks.AIR);
 
@@ -54,7 +51,6 @@ public class BlockInfo {
         this.itemStack = itemStack;
         this.blockEntity = blockEntity;
 
-        FAKE_LEVEL.setState(blockState);
     }
 
     public static BlockInfo fromFluid(Fluid fluid) {
@@ -89,18 +85,9 @@ public class BlockInfo {
         return itemStack == null ? new ItemStack(blockState.getBlock()) : itemStack;
     }
 
-    public ItemStack getItemStackForm(BlockAndTintGetter level, BlockPos pos) {
+    public ItemStack getItemStackForm(LevelReader level, BlockPos pos) {
         if (itemStack != null) return itemStack;
-
-        BlockAndTintGetter oldParent = FAKE_LEVEL.parent;
-        try {
-            FAKE_LEVEL.setParent(level);
-            FAKE_LEVEL.setState(this.blockState);
-            FAKE_LEVEL.setPos(pos);
-            return blockState.getBlock().getCloneItemStack(FAKE_LEVEL, pos, this.blockState);
-        } finally {
-            FAKE_LEVEL.setParent(oldParent);
-        }
+        return blockState.getCloneItemStack(level, pos, false);
     }
 
     public void apply(Level level, BlockPos pos) {

@@ -21,6 +21,7 @@ import com.gregtechceu.gtceu.api.recipe.content.Content;
 import com.gregtechceu.gtceu.api.recipe.ingredient.*;
 import com.gregtechceu.gtceu.api.recipe.ingredient.nbtpredicate.NBTPredicate;
 import com.gregtechceu.gtceu.api.registry.GTRegistries;
+import com.gregtechceu.gtceu.api.transfer.fluid.FluidStackData;
 import com.gregtechceu.gtceu.common.item.behavior.IntCircuitBehaviour;
 import com.gregtechceu.gtceu.common.recipe.condition.*;
 import com.gregtechceu.gtceu.config.ConfigHolder;
@@ -738,7 +739,7 @@ public interface GTRecipeSchema {
 
         public GTRecipeJS inputFluidsRanged(FluidStackJS input, IntProvider range) {
             validateFluids("ranged input", input);
-            FluidStack stack = new FluidStack(input.getFluid(), (int) input.getAmount(), input.getNbt());
+            FluidStack stack = FluidStackData.fromLegacyNbt(input.getFluid(), (int) input.getAmount(), input.getNbt());
             return input(FluidRecipeCapability.CAP,
                     IntProviderFluidIngredient.of(FluidIngredient.of(stack), range));
         }
@@ -754,7 +755,7 @@ public interface GTRecipeSchema {
 
         public GTRecipeJS outputFluidsRanged(FluidStackJS output, IntProvider range) {
             validateFluids("ranged output", output);
-            FluidStack stack = new FluidStack(output.getFluid(), (int) output.getAmount(), output.getNbt());
+            FluidStack stack = FluidStackData.fromLegacyNbt(output.getFluid(), (int) output.getAmount(), output.getNbt());
             return output(FluidRecipeCapability.CAP,
                     IntProviderFluidIngredient.of(FluidIngredient.of(stack), range));
         }

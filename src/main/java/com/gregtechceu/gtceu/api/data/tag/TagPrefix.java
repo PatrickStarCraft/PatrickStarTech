@@ -30,6 +30,7 @@ import com.gregtechceu.gtceu.utils.FormattingUtil;
 import com.gregtechceu.gtceu.utils.memoization.GTMemoizer;
 
 import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
@@ -767,7 +768,7 @@ public class TagPrefix {
             .unificationEnabled(true)
             .enableRecycling()
             .generateBlock(true)
-            .blockProperties(() -> RenderType::translucent, BlockBehaviour.Properties::noOcclusion)
+            .blockProperties(() -> RenderTypes::translucentMovingBlock, BlockBehaviour.Properties::noOcclusion)
             .generationCondition(material -> material.hasProperty(PropertyKey.DUST) &&
                     material.hasFlag(MaterialFlags.GENERATE_FRAME));
 
@@ -1018,7 +1019,7 @@ public class TagPrefix {
     @Setter
     private BlockItemConstructor blockItemConstructor = MaterialBlockItem::new;
     @Getter
-    private BlockProperties blockProperties = new BlockProperties(() -> RenderType::translucent,
+    private BlockProperties blockProperties = new BlockProperties(() -> RenderTypes::translucentMovingBlock,
             UnaryOperator.identity());
 
     @Getter

@@ -3,6 +3,7 @@ package com.gregtechceu.gtceu.api.sync_system.data_transformers.gtceu;
 import com.gregtechceu.gtceu.GTCEu;
 import com.gregtechceu.gtceu.api.sync_system.data_transformers.ValueTransformer;
 import com.gregtechceu.gtceu.common.machine.multiblock.electric.monitor.MonitorGroup;
+import com.gregtechceu.gtceu.utils.data.BlockPosNbt;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.*;
@@ -29,18 +30,16 @@ public class MonitorGroupTransformer implements ValueTransformer<MonitorGroup> {
 
         var positions = (compoundTag.get("positions") instanceof ListTag) ?
                 com.gregtechceu.gtceu.utils.data.TypedTagList.read(compoundTag, "positions", Tag.TAG_COMPOUND) : null;
-        var placeholderItems = (compoundTag.get("placeholderSlots") instanceof CompoundTag) ?
-                compoundTag.getCompound("placeholderSlots") : null;
-        var targetPos = (compoundTag.get("targetPos") instanceof CompoundTag) ? compoundTag.getCompound("targetPos") :
-                null;
-        var items = (compoundTag.get("items") instanceof CompoundTag) ? compoundTag.getCompound("items") : null;
+        var placeholderItems = compoundTag.getCompound("placeholderSlots").orElse(null);
+        var targetPos = compoundTag.getCompound("targetPos").orElse(null);
+        var items = compoundTag.getCompound("items").orElse(null);
 
         if (positions != null && !compoundTag.contains("monitorPositions")) {
             List<BlockPos> posList = new ArrayList<>();
 
             for (int i = 0; i < positions.size(); i++) {
-                CompoundTag posTag = positions.getCompound(i);
-                posList.add(NbtUtils.readBlockPos(posTag));
+                CompoundTag posTag = positions.getCompound(i).orElseThrow();
+                posList.add(BlockPosNbt.read(posTag, context.nbtOps()));
             }
 
             compoundTag.put("monitorPositions", BlockPos.CODEC.listOf().encodeStart(context.nbtOps(), posList)
@@ -53,7 +52,7 @@ public class MonitorGroupTransformer implements ValueTransformer<MonitorGroup> {
         }
 
         if (targetPos != null) {
-            BlockPos pos = NbtUtils.readBlockPos(targetPos);
+            BlockPos pos = BlockPosNbt.read(targetPos, context.nbtOps());
             compoundTag.put("targetPos",
                     BlockPos.CODEC.encodeStart(context.nbtOps(), pos).getOrThrow(message -> { GTCEu.LOGGER.error(message); return new RuntimeException(message); }));
         }

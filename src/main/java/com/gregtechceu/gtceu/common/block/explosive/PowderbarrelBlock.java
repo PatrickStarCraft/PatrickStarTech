@@ -7,14 +7,12 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
+import java.util.function.Consumer;
 
 public class PowderbarrelBlock extends GTExplosiveBlock {
 
@@ -30,9 +28,8 @@ public class PowderbarrelBlock extends GTExplosiveBlock {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable BlockGetter level, List<Component> tooltip,
-                                TooltipFlag flag) {
-        tooltip.add(Component.translatable("block.gtceu.powderbarrel.drops_tooltip"));
-        super.appendHoverText(stack, level, tooltip, flag);
+    public void appendBlockItemTooltip(ItemStack stack, Consumer<Component> tooltip) {
+        tooltip.accept(Component.translatable("block.gtceu.powderbarrel.drops_tooltip"));
+        super.appendBlockItemTooltip(stack, tooltip);
     }
 }

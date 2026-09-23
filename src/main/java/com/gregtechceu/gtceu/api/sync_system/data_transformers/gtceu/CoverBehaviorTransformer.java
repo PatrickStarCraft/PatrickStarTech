@@ -8,6 +8,7 @@ import com.gregtechceu.gtceu.api.sync_system.data_transformers.ValueTransformer;
 
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NumericTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -53,15 +54,18 @@ public class CoverBehaviorTransformer implements ValueTransformer<CoverBehavior>
 
         /// Ldlib backwards compat
         if (tag.contains("payload") && tag.contains("uid")) {
-            tag.putInt("side", tag.getCompound("uid").getInt("side"));
-            tag.putString("coverType", tag.getCompound("uid").getString("id"));
-            tag.put("data", tag.getCompound("payload").getCompound("d"));
+            CompoundTag uid = tag.getCompoundOrEmpty("uid");
+            CompoundTag payload = tag.getCompoundOrEmpty("payload");
+            tag.putInt("side", uid.getIntOr("side", 0));
+            tag.putString("coverType", uid.getStringOr("id", ""));
+            tag.put("data", payload.getCompoundOrEmpty("d"));
         }
 
+        String coverTypeString = tag.getStringOr("coverType", "");
         Direction side;
         if ((tag.get("side") instanceof StringTag)) {
             side = Direction.CODEC.byName(tag.getStringOr("side", ""));
-        } else if (tag.contains("side", Tag.TAG_ANY_NUMERIC)) {
+        } else if (tag.get("side") instanceof NumericTag) {
             // backwards compat
             side = Direction.values()[tag.getIntOr("side", 0)];
         } else {
@@ -69,16 +73,16 @@ public class CoverBehaviorTransformer implements ValueTransformer<CoverBehavior>
             return null;
         }
 
-        if (tag.isEmpty() || tag.getString("coverType").isEmpty()) {
+        if (tag.isEmpty() || coverTypeString.isEmpty()) {
             holder.setCoverAtSide(null, side);
             return null;
         }
-        Identifier coverType = Identifier.tryParse(tag.getStringOr("coverType", ""));
+        Identifier coverType = Identifier.tryParse(coverTypeString);
         if (cover == null || !cover.coverDefinition.getId().equals(coverType)) {
             var coverReg = GTRegistries.COVERS.get(coverType);
             if (coverReg == null) {
                 GTCEu.LOGGER.error("Error during NBT load: unknown cover type {} ({})", coverType,
-                        tag.getString("coverType"));
+                        coverTypeString);
                 return null;
             }
             holder.setCoverAtSide(coverReg.createCoverBehavior(holder, side), side);

@@ -403,13 +403,13 @@ public class LongDistanceNetwork {
                 data.networkList.add(ld);
                 ListTag posList = com.gregtechceu.gtceu.utils.data.TypedTagList.read(tag, "pipes", Tag.TAG_LONG);
                 for (Tag nbtPos : posList) {
-                    BlockPos pos = BlockPos.of(((LongTag) nbtPos).getAsLong());
+                    BlockPos pos = BlockPos.of(((LongTag) nbtPos).longValue());
                     data.putNetwork(pos, ld);
                     ld.longDistancePipeBlocks.add(pos);
                 }
                 ListTag endpoints = com.gregtechceu.gtceu.utils.data.TypedTagList.read(tag, "endpoints", Tag.TAG_LONG);
                 for (Tag nbtPos : endpoints) {
-                    BlockPos pos = BlockPos.of(((LongTag) nbtPos).getAsLong());
+                    BlockPos pos = BlockPos.of(((LongTag) nbtPos).longValue());
                     if (!ld.endpointPoss.contains(pos)) {
                         ld.endpointPoss.add(pos);
                     }

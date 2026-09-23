@@ -68,7 +68,7 @@ public abstract class VirtualEntry implements NBTSerializable<CompoundTag> {
 
     @Override
     public void deserializeNBT(CompoundTag nbt) {
-        setColor(nbt.getString(COLOR_KEY));
+        setColor(nbt.getStringOr(COLOR_KEY, ""));
 
         if (nbt.contains(DESC_KEY))
             this.description = nbt.getStringOr(DESC_KEY, "");

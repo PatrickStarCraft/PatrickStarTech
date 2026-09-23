@@ -12,6 +12,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.valueproviders.IntProvider;
+import net.minecraft.util.valueproviders.IntProviders;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
@@ -37,7 +38,7 @@ public class BedrockOreDefinition {
             instance -> instance.group(
                     Codec.INT.fieldOf("weight").forGetter(ft -> ft.weight),
                     Codec.INT.fieldOf("size").forGetter(ft -> ft.size),
-                    IntProvider.POSITIVE_CODEC.fieldOf("yield").forGetter(ft -> ft.yield),
+                    IntProviders.POSITIVE_CODEC.fieldOf("yield").forGetter(ft -> ft.yield),
                     Codec.INT.fieldOf("depletion_amount").forGetter(ft -> ft.depletionAmount),
                     ExtraCodecs.intRange(0, 100).fieldOf("depletion_chance").forGetter(ft -> ft.depletionChance),
                     Codec.INT.fieldOf("depleted_yield").forGetter(ft -> ft.depletedYield),

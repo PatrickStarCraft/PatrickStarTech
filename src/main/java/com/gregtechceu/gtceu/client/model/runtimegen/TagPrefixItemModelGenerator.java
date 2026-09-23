@@ -2,6 +2,7 @@ package com.gregtechceu.gtceu.client.model.runtimegen;
 
 import com.gregtechceu.gtceu.api.data.chemical.material.info.MaterialIconSet;
 import com.gregtechceu.gtceu.api.data.chemical.material.info.MaterialIconType;
+import com.gregtechceu.gtceu.client.color.MaterialLayerTintSource;
 import com.gregtechceu.gtceu.data.model.builder.RuntimeModelResources;
 import com.gregtechceu.gtceu.data.pack.GTDynamicResourcePack;
 
@@ -20,6 +21,7 @@ public class TagPrefixItemModelGenerator {
         for (TagPrefixItemModelGenerator model : MODELS) {
             Identifier itemId = BuiltInRegistries.ITEM.getKey(model.item);
             RuntimeModelResources.emitItem(itemId, model.type.getItemModelPath(model.iconSet, true),
+                    RuntimeModelResources.dynamicLayerTints(MaterialLayerTintSource.ID, 10),
                     GTDynamicResourcePack::addResource);
         }
     }

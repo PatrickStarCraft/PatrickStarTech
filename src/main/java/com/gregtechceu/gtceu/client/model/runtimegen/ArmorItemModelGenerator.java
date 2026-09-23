@@ -34,7 +34,7 @@ public class ArmorItemModelGenerator {
             Identifier modelLocation = GTCEu.id("models/item/armor/%s.json".formatted(model.armorType.getName()));
             JsonObject original;
             try (BufferedReader reader = Minecraft.getInstance().getResourceManager().openAsReader(modelLocation)) {
-                original = GsonHelper.parse(reader, true);
+                original = GsonHelper.parse(reader);
             } catch (IOException e) {
                 GTCEu.LOGGER.warn("Unable to load model: '{}': {}", modelLocation, e);
                 continue;

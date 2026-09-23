@@ -126,7 +126,7 @@ public class FluidSproutFeature extends Feature<FluidSproutConfiguration> {
         int sectionZ = SectionPos.sectionRelative(currentZ);
         levelchunksection.setBlockState(sectionX, sectionY, sectionZ,
                 config.fluid().defaultFluidState().createLegacyBlock(), false);
-        level.getChunk(mutablePos).markPosForPostprocessing(mutablePos);
+        level.getChunk(mutablePos).markPosForPostProcessing(mutablePos);
         placedAmount.add(1);
     }
 

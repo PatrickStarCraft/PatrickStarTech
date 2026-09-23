@@ -6,6 +6,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import lombok.Getter;
 
 public abstract class PatternError {
@@ -28,5 +29,5 @@ public abstract class PatternError {
 
     public abstract PatternErrorUI getPatternErrorUIModifier();
 
-    public record PatternErrorType(Identifier id, Codec<? extends PatternError> codec) {}
+    public record PatternErrorType(Identifier id, MapCodec<? extends PatternError> codec) {}
 }

@@ -11,7 +11,6 @@ import com.gregtechceu.gtceu.client.model.runtimegen.TagPrefixItemModelGenerator
 import com.gregtechceu.gtceu.common.data.GTDamageTypes;
 
 import org.jspecify.annotations.NullMarked;
-import net.minecraft.client.color.item.ItemColor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -24,8 +23,6 @@ import net.minecraft.world.item.Item.TooltipContext;
 import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.entity.FuelValues;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -55,11 +52,6 @@ public class TagPrefixItem extends Item {
     public int getBurnTime(ItemStack itemStack, @Nullable RecipeType<?> recipeType, FuelValues fuelValues) {
         int burnTime = getItemBurnTime();
         return burnTime >= 0 ? burnTime : fuelValues.burnDuration(itemStack);
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    public static ItemColor tintColor(Material material) {
-        return (itemStack, index) -> material.getLayerARGB(index);
     }
 
     @Override

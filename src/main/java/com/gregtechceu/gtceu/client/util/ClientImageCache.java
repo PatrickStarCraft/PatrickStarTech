@@ -96,7 +96,7 @@ public class ClientImageCache {
     private static void saveTexture(String url, byte[] imageBytes) throws IOException {
         ByteBuffer buffer = ByteBuffer.allocateDirect(imageBytes.length);
         buffer.put(imageBytes).flip();
-        DynamicTexture texture = new DynamicTexture(NativeImage.read(buffer));
+        DynamicTexture texture = new DynamicTexture(() -> "GTCEu image " + url, NativeImage.read(buffer));
 
         Minecraft.getInstance().getTextureManager().register(getUrlTextureId(url), texture);
 

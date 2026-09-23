@@ -70,9 +70,11 @@ public class ResearchStationMachine extends WorkableElectricMultiblockMachine
                 this.objectHolder = holder;
             }
 
-            part
-                    .getCapability(GTCapability.CAPABILITY_COMPUTATION_PROVIDER)
-                    .ifPresent(provider -> this.computationProvider = provider);
+            IOpticalComputationProvider provider = com.gregtechceu.gtceu.api.capability.GTCapabilityHelper
+                    .getBlockEntityCapability(part, GTCapability.CAPABILITY_COMPUTATION_PROVIDER, null);
+            if (provider != null) {
+                this.computationProvider = provider;
+            }
         }
 
         // should never happen, but would rather do this than have an obscure NPE

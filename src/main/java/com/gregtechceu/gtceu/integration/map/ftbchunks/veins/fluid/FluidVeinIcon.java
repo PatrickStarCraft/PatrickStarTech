@@ -4,13 +4,14 @@ import com.gregtechceu.gtceu.api.data.chemical.ChemicalHelper;
 import com.gregtechceu.gtceu.api.item.component.prospector.ProspectorMode;
 import com.gregtechceu.gtceu.integration.map.ftbchunks.FTBChunksOptions;
 import com.gregtechceu.gtceu.integration.map.layer.builtin.FluidRenderLayer;
+import com.gregtechceu.gtceu.utils.GTUtil;
 
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
+import net.neoforged.neoforge.fluids.FluidStack;
 
 import dev.ftb.mods.ftbchunks.FTBChunks;
 import dev.ftb.mods.ftbchunks.api.FTBChunksAPI;
@@ -55,7 +56,7 @@ public class FluidVeinIcon implements MapIcon {
     }
 
     public int getColor() {
-        var color = IClientFluidTypeExtensions.of(fluidInfo.fluid()).getTintColor();
+        var color = GTUtil.getFluidColor(new FluidStack(fluidInfo.fluid(), 1));
         var material = ChemicalHelper.getMaterial(fluidInfo.fluid());
         if (material != null) {
             color = material.getMaterialARGB();

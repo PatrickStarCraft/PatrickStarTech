@@ -22,6 +22,7 @@ import com.gregtechceu.gtceu.api.mui.factory.CoverUIFactory;
 import com.gregtechceu.gtceu.api.mui.factory.MachineUIFactory;
 import com.gregtechceu.gtceu.api.multiblock.error.GTPatternErrors;
 import com.gregtechceu.gtceu.api.item.component.ThermalFluidStats;
+import com.gregtechceu.gtceu.api.misc.QuantumFluidResourceHandler;
 import com.gregtechceu.gtceu.api.recipe.chance.logic.ChanceLogic;
 import com.gregtechceu.gtceu.api.recipe.ingredient.*;
 import com.gregtechceu.gtceu.api.recipe.lookup.ingredient.*;
@@ -35,6 +36,8 @@ import com.gregtechceu.gtceu.common.data.machines.GTMachineUtils;
 import com.gregtechceu.gtceu.common.data.materials.AlloyBlastPropertyAddition;
 import com.gregtechceu.gtceu.common.data.materials.GTFoods;
 import com.gregtechceu.gtceu.common.item.GTBucketItem;
+import com.gregtechceu.gtceu.common.item.DrumMachineItem;
+import com.gregtechceu.gtceu.common.item.QuantumTankMachineItem;
 import com.gregtechceu.gtceu.common.data.worldgen.*;
 import com.gregtechceu.gtceu.common.item.behavior.SpoilableBehavior;
 import com.gregtechceu.gtceu.common.item.tool.rotation.CustomBlockRotations;
@@ -60,7 +63,7 @@ import com.gregtechceu.gtceu.utils.input.SyncedKeyMappings;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.repository.Pack;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -77,7 +80,7 @@ import net.neoforged.neoforge.transfer.fluid.BucketResourceHandler;
 import net.neoforged.fml.ModLoader;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLConstructModEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.neoforged.fml.ModLoadingContext;
 
 import brachy.modularui.factory.GuiManager;
 import com.google.common.collect.Multimaps;
@@ -92,7 +95,7 @@ public class CommonProxy {
 
     public CommonProxy() {
         // used for forge events (ClientProxy + CommonProxy)
-        IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        IEventBus eventBus = ModLoadingContext.get().getActiveContainer().getEventBus();
         eventBus.register(this);
         eventBus.addListener(GTNetwork::registerPayloads);
         ConfigHolder.init();
@@ -126,6 +129,7 @@ public class CommonProxy {
 
     public static void init() {
         GTCEu.LOGGER.info("GTCEu common proxy init!");
+        IEventBus modBus = ModLoadingContext.get().getActiveContainer().getEventBus();
 
         // Initialize the model generator before any content is loaded so machine models can use the generated data
         GregTechDatagen.initPre();
@@ -139,7 +143,7 @@ public class CommonProxy {
         initMaterials();
         GTMedicalConditions.init();
         TagPrefix.init();
-        GTSoundEntries.init();
+        GTSoundEntries.init(modBus);
         GTDamageTypes.init();
         GTPlaceholders.init();
 
@@ -150,7 +154,6 @@ public class CommonProxy {
         GTCovers.init();
         GTCreativeModeTabs.init();
 
-        IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
         GTMenuTypes.init(modBus);
 
         GTBlocks.init();
@@ -266,7 +269,7 @@ public class CommonProxy {
             event.getBuilder()
                     .ticks(10)
                     .result(Items.DRAGON_EGG)
-                    .result(EntityType.PIG)
+                    .result(EntityTypes.PIG)
                     .multiplyResult(3)
                     .build()
                     .attachTo(GTItems.ENTITY_SPOILABLE);
@@ -324,6 +327,7 @@ public class CommonProxy {
 
     @SubscribeEvent
     public void registerCapabilities(RegisterCapabilitiesEvent event) {
+        SpoilableBehavior.registerCapabilities(event);
         ElectricItemCapabilityRegistration.register(event);
         BlockEnergyCapabilityRegistration.register(event);
 
@@ -332,7 +336,13 @@ public class CommonProxy {
                 event.registerItem(Capabilities.Fluid.ITEM,
                         (stack, access) -> new BucketResourceHandler(access), item);
             }
-            ThermalFluidStats thermalStats = ThermalFluidStats.find(item);
+            if (item instanceof QuantumTankMachineItem quantumTank) {
+                long capacity = quantumTank.getFluidCapacity();
+                event.registerItem(Capabilities.Fluid.ITEM,
+                        (stack, access) -> new QuantumFluidResourceHandler(access.oneByOne(), capacity), item);
+            }
+            ThermalFluidStats thermalStats = item instanceof DrumMachineItem drum ?
+                    drum.getThermalFluidStats() : ThermalFluidStats.find(item);
             if (thermalStats != null) {
                 event.registerItem(Capabilities.Fluid.ITEM,
                         (stack, access) -> thermalStats.createHandler(access.oneByOne()), item);

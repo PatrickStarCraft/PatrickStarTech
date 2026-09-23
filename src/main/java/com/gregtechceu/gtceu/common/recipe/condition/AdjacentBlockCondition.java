@@ -10,6 +10,7 @@ import com.gregtechceu.gtceu.utils.GTUtil;
 import com.gregtechceu.gtceu.utils.codec.GTCodecUtils;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.RegistryCodecs;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -78,9 +79,10 @@ public class AdjacentBlockCondition extends RecipeCondition<AdjacentBlockConditi
         return fromBlocks(Arrays.asList(blocks));
     }
 
+    @SuppressWarnings("deprecation")
     public static AdjacentBlockCondition fromTags(Collection<TagKey<Block>> tags) {
         return new AdjacentBlockCondition(tags.stream()
-                .<HolderSet<Block>>map(BuiltInRegistries.BLOCK::getOrCreateTag)
+                .<HolderSet<Block>>map(tag -> HolderSet.emptyNamed(BuiltInRegistries.BLOCK, tag))
                 .toList());
     }
 
@@ -108,7 +110,7 @@ public class AdjacentBlockCondition extends RecipeCondition<AdjacentBlockConditi
 
             List<ItemStack> stacksToDisplay = new ArrayList<>();
             for (HolderSet<Block> set : resolvedBlocks) {
-                for (var blockEntry : set) {
+                for (var blockEntry : getDisplayHolders(set)) {
                     stacksToDisplay.add(new ItemStack(blockEntry.value().asItem()));
                 }
             }
@@ -121,6 +123,16 @@ public class AdjacentBlockCondition extends RecipeCondition<AdjacentBlockConditi
 
             widget.textComponents.child(row);
         };
+    }
+
+    private static Iterable<Holder<Block>> getDisplayHolders(HolderSet<Block> blockSet) {
+        var tag = blockSet.unwrapKey();
+        if (tag.isEmpty()) {
+            return blockSet;
+        }
+        return BuiltInRegistries.BLOCK.get(tag.get())
+                .<Iterable<Holder<Block>>>map(namedSet -> namedSet)
+                .orElseGet(List::of);
     }
 
     @Override

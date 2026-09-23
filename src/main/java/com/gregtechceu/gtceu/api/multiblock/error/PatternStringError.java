@@ -3,17 +3,17 @@ package com.gregtechceu.gtceu.api.multiblock.error;
 import com.gregtechceu.gtceu.GTCEu;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.ExtraCodecs;
+import net.minecraft.network.chat.ComponentSerialization;
 
 import brachy.modularui.api.drawable.Text;
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import lombok.Getter;
 
 public class PatternStringError extends PatternError {
 
-    public static final Codec<PatternStringError> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            ExtraCodecs.COMPONENT.fieldOf("component").forGetter(PatternStringError::getComponent))
+    public static final MapCodec<PatternStringError> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+            ComponentSerialization.CODEC.fieldOf("component").forGetter(PatternStringError::getComponent))
             .apply(instance, PatternStringError::new));
 
     public static final PatternErrorType TYPE = new PatternErrorType(GTCEu.id("pattern_string_error"), CODEC);

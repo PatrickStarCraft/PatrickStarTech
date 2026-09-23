@@ -1,6 +1,7 @@
 package com.gregtechceu.gtceu.common.block.explosive;
 
 import com.gregtechceu.gtceu.common.entity.GTExplosiveEntity;
+import com.gregtechceu.gtceu.api.item.IBlockItemTooltip;
 import com.gregtechceu.gtceu.data.recipe.CustomTags;
 
 import org.jspecify.annotations.NullMarked;
@@ -15,15 +16,17 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.arrow.Arrow;
+import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
@@ -33,13 +36,14 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 @NullMarked
 @SuppressWarnings("deprecation")
-public abstract class GTExplosiveBlock extends Block {
+public abstract class GTExplosiveBlock extends Block implements IBlockItemTooltip {
 
     private final boolean canRedstoneActivate;
     private final boolean explodeOnMine;
@@ -92,7 +96,7 @@ public abstract class GTExplosiveBlock extends Block {
     }
 
     @Override
-    public void wasExploded(Level level, BlockPos pos, Explosion explosion) {
+    public void wasExploded(ServerLevel level, BlockPos pos, Explosion explosion) {
         if (!level.isClientSide()) {
             GTExplosiveEntity entity = createEntity(level, pos, explosion.getIndirectSourceEntity());
             entity.setFuse(level.getRandom().nextInt(fuseLength / 4) + fuseLength / 8);
@@ -101,36 +105,36 @@ public abstract class GTExplosiveBlock extends Block {
     }
 
     @Override
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand,
-                                 BlockHitResult hit) {
-        ItemStack stack = player.getItemInHand(hand);
+    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player,
+                                          InteractionHand hand, BlockHitResult hit) {
         if (!stack.isEmpty() && stack.is(CustomTags.TOOLS_IGNITER)) {
             this.explode(level, pos, player);
             level.removeBlock(pos, false);
             if (stack.isDamageableItem()) {
-                stack.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(hand));
+                stack.hurtAndBreak(1, player, hand.asEquipmentSlot());
             } else if (!player.isCreative()) {
                 stack.shrink(1);
             }
             return InteractionResult.SUCCESS;
         }
-        return super.use(state, level, pos, player, hand, hit);
+        return super.useItemOn(stack, state, level, pos, player, hand, hit);
     }
 
     @Override
-    public void playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
+    public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
         if (explodeOnMine && !player.isShiftKeyDown()) {
             this.explode(level, pos, player);
         }
-        super.playerWillDestroy(level, pos, state, player);
+        return super.playerWillDestroy(level, pos, state, player);
     }
 
     @Override
-    public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
-        super.entityInside(state, level, pos, entity);
-        if (!level.isClientSide() && entity instanceof Arrow arrow) {
-            if (arrow.isOnFire()) {
-                this.explode(level, pos, arrow.getOwner() instanceof LivingEntity living ? living : null);
+    protected void onProjectileHit(Level level, BlockState state, BlockHitResult hit, Projectile projectile) {
+        if (level instanceof ServerLevel serverLevel) {
+            BlockPos pos = hit.getBlockPos();
+            Entity owner = projectile.getOwner();
+            if (projectile instanceof Arrow arrow && arrow.isOnFire() && arrow.mayInteract(serverLevel, pos) &&
+                    this.onCaughtFire(state, level, pos, null, owner instanceof LivingEntity living ? living : null)) {
                 level.removeBlock(pos, false);
             }
         }
@@ -160,7 +164,7 @@ public abstract class GTExplosiveBlock extends Block {
     }
 
     @Override
-    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos neighborPos,
+    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, Orientation orientation,
                                 boolean movedByPiston) {
         if (canRedstoneActivate) {
             if (level.hasNeighborSignal(pos)) {
@@ -170,15 +174,12 @@ public abstract class GTExplosiveBlock extends Block {
         }
     }
 
-    @Override
-    public void appendHoverText(ItemStack stack, @Nullable BlockGetter level, List<Component> tooltip,
-                                TooltipFlag flag) {
-        super.appendHoverText(stack, level, tooltip, flag);
+    public void appendBlockItemTooltip(ItemStack stack, Consumer<Component> tooltip) {
         if (explodeOnMine) {
-            tooltip.add(Component.translatable("block.gtceu.explosive.breaking_tooltip"));
+            tooltip.accept(Component.translatable("block.gtceu.explosive.breaking_tooltip"));
         }
         if (!canRedstoneActivate) {
-            tooltip.add(Component.translatable("block.gtceu.explosive.lighting_tooltip"));
+            tooltip.accept(Component.translatable("block.gtceu.explosive.lighting_tooltip"));
         }
     }
 }

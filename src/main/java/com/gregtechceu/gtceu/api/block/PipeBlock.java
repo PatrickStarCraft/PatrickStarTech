@@ -26,6 +26,7 @@ import com.gregtechceu.gtceu.utils.GTMath;
 import com.gregtechceu.gtceu.utils.GTUtil;
 
 import org.jspecify.annotations.NullMarked;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -441,11 +442,11 @@ public abstract class PipeBlock<PipeType extends Enum<PipeType> & IPipeType<Node
     }
 
     @Override
-    public BlockState getAppearance(BlockState state, BlockAndTintGetter level, BlockPos pos, Direction side,
+    public BlockState getAppearance(BlockState state, BlockAndLightGetter level, BlockPos pos, Direction side,
                                     @Nullable BlockState sourceState, @Nullable BlockPos sourcePos) {
         var pipe = getPipeTile(level, pos);
-        if (pipe != null) {
-            var appearance = pipe.getCoverContainer().getBlockAppearance(state, level, pos, side, sourceState,
+        if (pipe != null && level instanceof BlockAndTintGetter tintGetter) {
+            var appearance = pipe.getCoverContainer().getBlockAppearance(state, tintGetter, pos, side, sourceState,
                     sourcePos);
             if (appearance != null) return appearance;
         }

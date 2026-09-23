@@ -14,7 +14,6 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -26,7 +25,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.event.AnvilUpdateEvent;
-import net.minecraftforge.event.ForgeEventFactory;
+import net.neoforged.neoforge.event.EventHooks;
+import net.neoforged.neoforge.event.entity.player.ItemEntityPickupEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerDestroyItemEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
@@ -95,7 +95,7 @@ public class ToolEventHandlers {
         }
         ItemStack brokenStack = toolItem.getToolStats().getBrokenStack();
         if (!brokenStack.isEmpty()) {
-            itemFrame.interact(player, hand);
+            itemFrame.interact(player, hand, event.getLocation());
 
             event.setCanceled(true);
             event.setCancellationResult(InteractionResult.SUCCESS);
@@ -111,7 +111,7 @@ public class ToolEventHandlers {
                                                  BlockPos pos, BlockState state, boolean isSilkTouch,
                                                  int fortuneLevel, List<ItemStack> drops,
                                                  float dropChance) {
-        if (!tool.hasTag() || !(tool.getItem() instanceof IGTTool toolItem)) {
+        if (!(tool.getItem() instanceof IGTTool toolItem)) {
             return drops;
         }
         if (!isSilkTouch) {
@@ -146,10 +146,10 @@ public class ToolEventHandlers {
             Iterator<ItemStack> dropItr = drops.iterator();
             while (dropItr.hasNext()) {
                 ItemStack dropStack = dropItr.next();
-                ItemEntity drop = new ItemEntity(EntityType.ITEM, level);
-                drop.setItem(dropStack);
+                ItemEntity drop = new ItemEntity(level, pos.getX() + 0.5, pos.getY() + 0.5,
+                        pos.getZ() + 0.5, dropStack);
 
-                if (ForgeEventFactory.onItemPickup(drop, player) == -1 || player.addItem(dropStack)) {
+                if (tryRelocateDrop(drop, player)) {
                     dropItr.remove();
                 }
             }
@@ -191,12 +191,16 @@ public class ToolEventHandlers {
 
             while (dropItr.hasNext()) {
                 ItemEntity drop = dropItr.next();
-                ItemStack dropStack = drop.getItem();
 
-                if (ForgeEventFactory.onItemPickup(drop, player) == -1 || player.addItem(dropStack)) {
+                if (tryRelocateDrop(drop, player)) {
                     dropItr.remove();
                 }
             }
         }
+    }
+
+    private static boolean tryRelocateDrop(ItemEntity drop, Player player) {
+        ItemEntityPickupEvent.Pre event = EventHooks.fireItemPickupPre(drop, player);
+        return !event.canPickup().isFalse() && player.addItem(drop.getItem());
     }
 }

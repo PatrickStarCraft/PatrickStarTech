@@ -1,6 +1,7 @@
 package com.gregtechceu.gtceu.api.item.component;
 
 import com.gregtechceu.gtceu.GTCEu;
+import com.gregtechceu.gtceu.api.capability.GTCapabilityHelper;
 import com.gregtechceu.gtceu.api.machine.MetaMachine;
 import com.gregtechceu.gtceu.api.transfer.item.CustomItemStackHandler;
 
@@ -17,7 +18,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
 
@@ -113,9 +113,12 @@ public record SpoilContext(@Nullable Level level,
     public static SpoilContext deserializeNBT(CompoundTag tag) {
         SpoilContext ctx = new SpoilContext();
         if (tag.contains("level")) {
-            ctx = ctx.withLevel(ServerLifecycleHooks.getCurrentServer().getLevel(ResourceKey.create(
-                    Registries.DIMENSION,
-                    Identifier.parse(tag.getStringOr("level", "minecraft:overworld")))));
+            MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
+            if (server != null) {
+                ctx = ctx.withLevel(server.getLevel(ResourceKey.create(
+                        Registries.DIMENSION,
+                        Identifier.parse(tag.getStringOr("level", "minecraft:overworld")))));
+            }
         }
         if (tag.contains("pos")) {
             ctx = ctx.withPos(BlockPos.of(tag.getLongOr("pos", 0L)));
@@ -155,15 +158,13 @@ public record SpoilContext(@Nullable Level level,
 
             @Override
             protected @Nullable IItemHandler getHandler(SpoilContext ctx) {
-                if (ctx.level() == null || ctx.pos() == null || ctx.itemHandlerData() == null) return null;
+                if (ctx.level() == null || ctx.pos() == null) return null;
                 CompoundTag tag = ctx.itemHandlerData();
                 BlockEntity blockEntity = ctx.level().getBlockEntity(ctx.pos());
                 if (blockEntity == null) return null;
-                if (!tag.contains("side"))
-                    return blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER, null).resolve().orElse(null);
-                return blockEntity
-                        .getCapability(ForgeCapabilities.ITEM_HANDLER, Direction.byName(tag.getStringOr("side", "")))
-                        .resolve().orElse(null);
+                Direction side = tag != null && tag.contains("side") ?
+                        Direction.byName(tag.getStringOr("side", "")) : null;
+                return GTCapabilityHelper.getItemHandler(ctx.level(), ctx.pos(), side);
             }
         };
 

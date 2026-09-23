@@ -56,7 +56,6 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fml.DistExecutor;
 import net.neoforged.fml.ModLoader;
 import net.neoforged.neoforge.items.IItemHandler;
 
@@ -76,7 +75,8 @@ public class GTPlaceholders {
         int cnt = 0;
         for (int i = 0; i < itemHandler.getSlots(); i++) {
             ItemStack itemStack = itemHandler.getStackInSlot(i);
-            String itemId = "%s:%s".formatted(itemStack.getItem().getCreatorModId(itemStack),
+            String itemId = "%s:%s".formatted(itemStack.getItem().getCreatorModId(GTRegistries.builtinRegistry(),
+                    itemStack),
                     itemStack.getItem().toString());
             if (itemId.equals(id)) cnt += itemStack.getCount();
         }
@@ -106,7 +106,9 @@ public class GTPlaceholders {
     }
 
     public static void init() {
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> GTPlaceholders::initRenderers);
+        if (GTCEu.isClientSide()) {
+            initRenderers();
+        }
         PlaceholderHandler.addPlaceholder(new Placeholder("energy") {
 
             @Override
@@ -245,7 +247,10 @@ public class GTPlaceholders {
             public MultiLineComponent apply(PlaceholderContext ctx,
                                             List<MultiLineComponent> args) throws PlaceholderException {
                 PlaceholderUtils.checkArgs(args, 2);
-                ChatFormatting color = ChatFormatting.getByName(GTStringUtils.componentsToString(args.get(0)));
+                String colorName = GTStringUtils.componentsToString(args.get(0));
+                ChatFormatting color = Arrays.stream(ChatFormatting.values())
+                        .filter(formatting -> formatting.name().toLowerCase(Locale.ROOT).equals(colorName))
+                        .findFirst().orElse(null);
                 if (color == null) throw new InvalidArgsException();
                 return new MultiLineComponent(args.get(1).stream().map(c -> c.withStyle(color)).toList());
             }
@@ -545,38 +550,41 @@ public class GTPlaceholders {
                             stack = component.getDataItems().getStackInSlot(ctx.monitorGroup().getDataSlot());
                         } else throw new NotSupportedException();
                     } else stack = ctx.itemStackHandler().getStackInSlot(slot - 1);
-                    int capacity = -1;
+                    int detectedCapacity = -1;
                     if (stack.getItem() instanceof ComponentItem componentItem) {
                         for (IItemComponent component : componentItem.getComponents()) {
                             if (component instanceof IDataItem dataComponent) {
-                                capacity = dataComponent.getCapacity();
+                                detectedCapacity = dataComponent.getCapacity();
                                 break;
                             }
                         }
                     }
-                    if (capacity == -1) throw new MissingItemException("any data item", slot);
-                    PlaceholderUtils.checkRange("index", 0, capacity - 1, PlaceholderUtils.toInt(args.get(2)));
+                    if (detectedCapacity == -1) throw new MissingItemException("any data item", slot);
+                    final int capacity = detectedCapacity;
+                    int index = PlaceholderUtils.toInt(args.get(2));
+                    PlaceholderUtils.checkRange("index", 0, capacity - 1, index);
                     CompoundTag itemData = com.gregtechceu.gtceu.api.item.data.ItemStackData.read(stack);
-                    ListTag data = itemData.getList("computer_monitor_cover_data", Tag.TAG_STRING);
-                    while (data.size() <= PlaceholderUtils.toInt(args.get(2))) data.add(StringTag.valueOf(""));
+                    ListTag data = com.gregtechceu.gtceu.utils.data.TypedTagList.read(
+                            itemData, "computer_monitor_cover_data", Tag.TAG_STRING);
+                    while (data.size() <= index) data.add(StringTag.valueOf(""));
                     int p = itemData.getIntOr("computer_monitor_cover_p", 0);
                     com.gregtechceu.gtceu.api.item.data.ItemStackData.update(stack,
                             tag -> tag.put("computer_monitor_cover_data", data));
                     if (GTStringUtils.equals(args.get(2), "")) args.set(2, MultiLineComponent.literal(p));
                     if (GTStringUtils.equals(args.get(0), "get"))
                         return MultiLineComponent
-                                .literal(data.getString(PlaceholderUtils.toInt(args.get(2)) % capacity))
+                                .literal(data.getStringOr(index % capacity, ""))
                                 .setIgnoreSpaces(true);
                     else if (args.get(0).equalsString("set")) {
-                        data.set(PlaceholderUtils.toInt(args.get(2)) % capacity,
+                        data.set(index % capacity,
                                 StringTag.valueOf(args.get(3).toString()));
                         com.gregtechceu.gtceu.api.item.data.ItemStackData.update(stack,
                                 tag -> tag.put("computer_monitor_cover_data", data));
                         return MultiLineComponent.empty();
                     } else if (args.get(0).equalsString("setp")) {
+                        int newPosition = PlaceholderUtils.toInt(args.get(3)) % capacity;
                         com.gregtechceu.gtceu.api.item.data.ItemStackData.update(stack,
-                                tag -> tag.putInt("computer_monitor_cover_p",
-                                        PlaceholderUtils.toInt(args.get(3)) % capacity));
+                                tag -> tag.putInt("computer_monitor_cover_p", newPosition));
                         return MultiLineComponent.empty();
                     } else if (args.get(0).equalsString("inc")) {
                         com.gregtechceu.gtceu.api.item.data.ItemStackData.update(stack,
@@ -746,7 +754,8 @@ public class GTPlaceholders {
                 }
                 if (capacity == -1) throw new MissingItemException("any data item", slot);
                 CompoundTag itemData = com.gregtechceu.gtceu.api.item.data.ItemStackData.read(stack);
-                ListTag tag = itemData.getList("computer_monitor_cover_data", Tag.TAG_STRING);
+                ListTag tag = com.gregtechceu.gtceu.utils.data.TypedTagList.read(
+                        itemData, "computer_monitor_cover_data", Tag.TAG_STRING);
                 int operationsLeft = 5000;
                 int p = 0, start = 0, cnt = 0;
                 String rawCode = args.get(1).toString().replaceAll("[^+\\-><\\[\\]]", "");
@@ -776,7 +785,7 @@ public class GTPlaceholders {
                 if (!getData(ctx).contains(String.valueOf(ctx.index()))) {
                     getData(ctx).put(String.valueOf(ctx.index()), new CompoundTag());
                 }
-                CompoundTag data = getData(ctx).getCompound(String.valueOf(ctx.index()));
+                CompoundTag data = getData(ctx).getCompoundOrEmpty(String.valueOf(ctx.index()));
                 int num = 0;
                 if (!data.getBooleanOr("completed", false)) {
                     p = data.getIntOr("pointer", 0);
@@ -1152,12 +1161,13 @@ public class GTPlaceholders {
                 if (ctx.pos() == null) throw new NoTargetException();
                 BlockEntity blockEntity = ctx.level().getBlockEntity(ctx.pos());
                 if (blockEntity == null) return MultiLineComponent.empty();
-                Tag tag = blockEntity.saveWithFullMetadata();
+                Tag tag = blockEntity.saveWithFullMetadata(ctx.level().registryAccess());
                 if (tag instanceof CompoundTag compoundTag && compoundTag.contains("cover")) {
                     CompoundTag coverTag = compoundTag.getCompoundOrEmpty("cover");
                     if (coverTag.contains(ctx.side().getName())) {
-                        CompoundTag cover = coverTag.getCompound(ctx.side().getName()).getCompound("payload")
-                                .getCompound("d");
+                        CompoundTag cover = coverTag.getCompoundOrEmpty(ctx.side().getName())
+                                .getCompoundOrEmpty("payload")
+                                .getCompoundOrEmpty("d");
                         cover.putString("text", "[REMOVED]");
                     }
                 }
