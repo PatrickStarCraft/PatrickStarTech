@@ -19,6 +19,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import lombok.Getter;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 public class WaypointManager {
@@ -97,7 +98,7 @@ public class WaypointManager {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             WaypointKey that = (WaypointKey) o;
-            return this.dim == that.dim && this.pos.equals(that.pos);
+            return Objects.equals(this.dim, that.dim) && this.pos.equals(that.pos);
         }
 
         @Override
