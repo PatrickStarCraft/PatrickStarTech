@@ -114,7 +114,7 @@ public interface IGTTool extends IUIHolder<PlayerInventoryGuiData<?>>, ItemLike,
 
     default ItemStack getRaw() {
         ItemStack stack = new ItemStack(asItem());
-        getBehaviorsTag(stack);
+        updateBehaviorsTag(stack, tag -> {});
         return stack;
     }
 
@@ -126,7 +126,6 @@ public interface IGTTool extends IUIHolder<PlayerInventoryGuiData<?>>, ItemLike,
             tag.putInt(HIDE_FLAGS, 2);
         });
 
-        CompoundTag toolTag = getToolTag(stack);
         IGTToolDefinition toolStats = getToolStats();
 
         // don't show the normal vanilla damage and attack speed tooltips,
@@ -153,28 +152,30 @@ public interface IGTTool extends IUIHolder<PlayerInventoryGuiData<?>>, ItemLike,
             durability += toolStats.getBaseDurability(stack) * toolStats.getDurabilityMultiplier(stack);
         }
 
-        toolTag.putInt(MAX_DURABILITY_KEY, durability - 1);
+        int finalDurability = durability - 1;
+        updateToolTag(stack, tag -> tag.putInt(MAX_DURABILITY_KEY, finalDurability));
         if (toolProperty.isUnbreakable()) {
             ItemStackData.update(stack, tag -> tag.putBoolean(UNBREAKABLE_KEY, true));
         }
 
         // Set behaviours
-        CompoundTag behaviourTag = getBehaviorsTag(stack);
-        getToolStats().getBehaviors().forEach(behavior -> behavior.addBehaviorNBT(stack, behaviourTag));
+        updateBehaviorsTag(stack, behaviourTag -> {
+            getToolStats().getBehaviors().forEach(behavior -> behavior.addBehaviorNBT(stack, behaviourTag));
 
-        if (!aoeDefinition.isZero()) {
-            behaviourTag.putInt(MAX_AOE_COLUMN_KEY, aoeDefinition.column);
-            behaviourTag.putInt(MAX_AOE_ROW_KEY, aoeDefinition.row);
-            behaviourTag.putInt(MAX_AOE_LAYER_KEY, aoeDefinition.layer);
-            behaviourTag.putInt(AOE_COLUMN_KEY, aoeDefinition.column);
-            behaviourTag.putInt(AOE_ROW_KEY, aoeDefinition.row);
-            behaviourTag.putInt(AOE_LAYER_KEY, aoeDefinition.layer);
-        }
+            if (!aoeDefinition.isZero()) {
+                behaviourTag.putInt(MAX_AOE_COLUMN_KEY, aoeDefinition.column);
+                behaviourTag.putInt(MAX_AOE_ROW_KEY, aoeDefinition.row);
+                behaviourTag.putInt(MAX_AOE_LAYER_KEY, aoeDefinition.layer);
+                behaviourTag.putInt(AOE_COLUMN_KEY, aoeDefinition.column);
+                behaviourTag.putInt(AOE_ROW_KEY, aoeDefinition.row);
+                behaviourTag.putInt(AOE_LAYER_KEY, aoeDefinition.layer);
+            }
 
-        if (toolProperty.isMagnetic()) {
-            behaviourTag.putBoolean(RELOCATE_MINED_BLOCKS_KEY, true);
-            behaviourTag.putBoolean(RELOCATE_MOB_DROPS_KEY, true);
-        }
+            if (toolProperty.isMagnetic()) {
+                behaviourTag.putBoolean(RELOCATE_MINED_BLOCKS_KEY, true);
+                behaviourTag.putBoolean(RELOCATE_MOB_DROPS_KEY, true);
+            }
+        });
 
         return stack;
     }
@@ -261,7 +262,7 @@ public interface IGTTool extends IUIHolder<PlayerInventoryGuiData<?>>, ItemLike,
         }
         float toolSpeed = getToolStats().getEfficiencyMultiplier(stack) * getMaterialToolSpeed() +
                 getToolStats().getBaseEfficiency(stack);
-        toolTag.putFloat(TOOL_SPEED_KEY, toolSpeed);
+        updateToolTag(stack, tag -> tag.putFloat(TOOL_SPEED_KEY, toolSpeed));
         return toolSpeed;
     }
 
@@ -276,7 +277,8 @@ public interface IGTTool extends IUIHolder<PlayerInventoryGuiData<?>>, ItemLike,
         if (baseDamage != Float.MIN_VALUE) {
             attackDamage = getMaterialAttackDamage() + baseDamage;
         }
-        toolTag.putFloat(ATTACK_DAMAGE_KEY, attackDamage);
+        float finalAttackDamage = attackDamage;
+        updateToolTag(stack, tag -> tag.putFloat(ATTACK_DAMAGE_KEY, finalAttackDamage));
         return attackDamage;
     }
 
@@ -286,7 +288,7 @@ public interface IGTTool extends IUIHolder<PlayerInventoryGuiData<?>>, ItemLike,
             return toolTag.getFloatOr(ATTACK_SPEED_KEY, 0.0F);
         }
         float attackSpeed = getMaterialAttackSpeed() + getToolStats().getAttackSpeed(stack);
-        toolTag.putFloat(ATTACK_SPEED_KEY, attackSpeed);
+        updateToolTag(stack, tag -> tag.putFloat(ATTACK_SPEED_KEY, attackSpeed));
         return attackSpeed;
     }
 
@@ -305,7 +307,8 @@ public interface IGTTool extends IUIHolder<PlayerInventoryGuiData<?>>, ItemLike,
         maxDurability = builderDurability == 0 ? (int) (maxDurability * toolStats.getDurabilityMultiplier(stack)) :
                 maxDurability + builderDurability;
 
-        toolTag.putInt(MAX_DURABILITY_KEY, maxDurability);
+        int finalMaxDurability = maxDurability;
+        updateToolTag(stack, tag -> tag.putInt(MAX_DURABILITY_KEY, finalMaxDurability));
         return maxDurability;
     }
 
@@ -315,7 +318,7 @@ public interface IGTTool extends IUIHolder<PlayerInventoryGuiData<?>>, ItemLike,
             return toolTag.getIntOr(ENCHANTABILITY_KEY, 0);
         }
         int enchantability = getMaterialEnchantability();
-        toolTag.putInt(ENCHANTABILITY_KEY, enchantability);
+        updateToolTag(stack, tag -> tag.putInt(ENCHANTABILITY_KEY, enchantability));
         return enchantability;
     }
 
@@ -325,7 +328,7 @@ public interface IGTTool extends IUIHolder<PlayerInventoryGuiData<?>>, ItemLike,
             return toolTag.getIntOr(HARVEST_LEVEL_KEY, 0);
         }
         int harvestLevel = getMaterialHarvestLevel() + getToolStats().getBaseQuality(stack);
-        toolTag.putInt(HARVEST_LEVEL_KEY, harvestLevel);
+        updateToolTag(stack, tag -> tag.putInt(HARVEST_LEVEL_KEY, harvestLevel));
         return harvestLevel;
     }
 
@@ -465,7 +468,7 @@ public interface IGTTool extends IUIHolder<PlayerInventoryGuiData<?>>, ItemLike,
             int level = entry.getIntValue();
             enchantList.add(EnchantmentHelper.storeEnchantment(EnchantmentHelper.getEnchantmentId(enchantment), level));
         }
-        toolTag.put(DEFAULT_ENCHANTMENTS_KEY, enchantList);
+        updateToolTag(stack, tag -> tag.put(DEFAULT_ENCHANTMENTS_KEY, enchantList));
 
         return defaultEnchantments;
     }
@@ -579,7 +582,7 @@ public interface IGTTool extends IUIHolder<PlayerInventoryGuiData<?>>, ItemLike,
         if ((toolTag.get(DURABILITY_KEY) instanceof IntTag)) {
             int damage = toolTag.getIntOr(DURABILITY_KEY, 0);
             // remove the old durability nbt tag
-            toolTag.remove(DURABILITY_KEY);
+            updateToolTag(stack, tag -> tag.remove(DURABILITY_KEY));
             return damage;
         }
         return IForgeItem.super.getDamage(stack);
@@ -893,7 +896,7 @@ public interface IGTTool extends IUIHolder<PlayerInventoryGuiData<?>>, ItemLike,
     }
 
     default void setLastCraftingSoundTime(ItemStack stack) {
-        getToolTag(stack).putInt(LAST_CRAFTING_USE_KEY, (int) System.currentTimeMillis());
+        updateToolTag(stack, tag -> tag.putInt(LAST_CRAFTING_USE_KEY, (int) System.currentTimeMillis()));
     }
 
     default boolean canPlaySound(ItemStack stack) {

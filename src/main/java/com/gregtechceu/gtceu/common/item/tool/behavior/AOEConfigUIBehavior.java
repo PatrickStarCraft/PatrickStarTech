@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.gregtechceu.gtceu.api.item.tool.ToolHelper.getBehaviorsTag;
 import static com.gregtechceu.gtceu.api.item.tool.ToolHelper.getMaxAoEDefinition;
+import static com.gregtechceu.gtceu.api.item.tool.ToolHelper.updateBehaviorsTag;
 
 public class AOEConfigUIBehavior implements IToolUIBehavior {
 
@@ -83,20 +84,25 @@ public class AOEConfigUIBehavior implements IToolUIBehavior {
     @Override
     public ModularPanel<?> buildUI(PlayerInventoryGuiData<?> data, PanelSyncManager syncManager, UISettings settings) {
         ItemStack held = data.getUsedItemStack();
-        CompoundTag tag = getBehaviorsTag(held);
         AoESymmetrical defaultDefinition = getMaxAoEDefinition(held);
         InteractionSyncHandler minusCols = new InteractionSyncHandler();
-        minusCols.setOnMousePressed(data1 -> AoESymmetrical.decreaseColumn(tag, defaultDefinition));
+        minusCols.setOnMousePressed(data1 -> updateBehaviorsTag(held,
+                tag -> AoESymmetrical.decreaseColumn(tag, defaultDefinition)));
         InteractionSyncHandler plusCols = new InteractionSyncHandler();
-        plusCols.setOnMousePressed(data1 -> AoESymmetrical.increaseColumn(tag, defaultDefinition));
+        plusCols.setOnMousePressed(data1 -> updateBehaviorsTag(held,
+                tag -> AoESymmetrical.increaseColumn(tag, defaultDefinition)));
         InteractionSyncHandler minusRows = new InteractionSyncHandler();
-        minusRows.setOnMousePressed(data1 -> AoESymmetrical.decreaseRow(tag, defaultDefinition));
+        minusRows.setOnMousePressed(data1 -> updateBehaviorsTag(held,
+                tag -> AoESymmetrical.decreaseRow(tag, defaultDefinition)));
         InteractionSyncHandler plusRows = new InteractionSyncHandler();
-        plusRows.setOnMousePressed(data1 -> AoESymmetrical.increaseRow(tag, defaultDefinition));
+        plusRows.setOnMousePressed(data1 -> updateBehaviorsTag(held,
+                tag -> AoESymmetrical.increaseRow(tag, defaultDefinition)));
         InteractionSyncHandler minusLayers = new InteractionSyncHandler();
-        minusLayers.setOnMousePressed(data1 -> AoESymmetrical.decreaseLayer(tag, defaultDefinition));
+        minusLayers.setOnMousePressed(data1 -> updateBehaviorsTag(held,
+                tag -> AoESymmetrical.decreaseLayer(tag, defaultDefinition)));
         InteractionSyncHandler plusLayers = new InteractionSyncHandler();
-        plusLayers.setOnMousePressed(data1 -> AoESymmetrical.increaseLayer(tag, defaultDefinition));
+        plusLayers.setOnMousePressed(data1 -> updateBehaviorsTag(held,
+                tag -> AoESymmetrical.increaseLayer(tag, defaultDefinition)));
         return new ModularPanel<>("aoe_config")
                 .coverChildren()
                 .child(Flow.row()
@@ -124,7 +130,8 @@ public class AOEConfigUIBehavior implements IToolUIBehavior {
                                                         GuiTextures.REMOVE.asIcon().size(10))
                                                 .syncHandler(minusCols))
                                         .child(new TextWidget<>(Text.dynamic(() -> Component.literal(Integer.toString(
-                                                2 * AoESymmetrical.getColumn(tag, defaultDefinition) + 1)))))
+                                                2 * AoESymmetrical.getColumn(getBehaviorsTag(held), defaultDefinition)
+                                                        + 1)))))
                                         .child(new ButtonWidget<>()
                                                 .size(12)
                                                 .background(GuiTextures.MC_BUTTON,
@@ -143,7 +150,8 @@ public class AOEConfigUIBehavior implements IToolUIBehavior {
                                                         GuiTextures.REMOVE.asIcon().size(10))
                                                 .syncHandler(minusRows))
                                         .child(new TextWidget<>(Text.dynamic(() -> Component.literal(Integer.toString(
-                                                2 * AoESymmetrical.getRow(tag, defaultDefinition) + 1)))))
+                                                2 * AoESymmetrical.getRow(getBehaviorsTag(held), defaultDefinition)
+                                                        + 1)))))
                                         .child(new ButtonWidget<>()
                                                 .size(12)
                                                 .background(GuiTextures.MC_BUTTON,
@@ -162,7 +170,8 @@ public class AOEConfigUIBehavior implements IToolUIBehavior {
                                                         GuiTextures.REMOVE.asIcon().size(10))
                                                 .syncHandler(minusLayers))
                                         .child(new TextWidget<>(Text.dynamic(() -> Component.literal(Integer.toString(
-                                                AoESymmetrical.getLayer(tag, defaultDefinition) + 1)))))
+                                                AoESymmetrical.getLayer(getBehaviorsTag(held), defaultDefinition)
+                                                        + 1)))))
                                         .child(new ButtonWidget<>()
                                                 .size(12)
                                                 .background(GuiTextures.MC_BUTTON,

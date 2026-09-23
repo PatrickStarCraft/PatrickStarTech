@@ -155,15 +155,28 @@ public class ToolHelper {
     }
 
     public static CompoundTag getToolTag(ItemStack stack) {
-        return stack.getOrCreateTagElement(TOOL_TAG_KEY);
+        return com.gregtechceu.gtceu.api.item.data.ItemStackData.read(stack)
+                .getCompound(TOOL_TAG_KEY).orElseGet(CompoundTag::new);
     }
 
     public static CompoundTag getBehaviorsTag(ItemStack stack) {
-        return stack.getOrCreateTagElement(BEHAVIOURS_TAG_KEY);
+        return com.gregtechceu.gtceu.api.item.data.ItemStackData.read(stack)
+                .getCompound(BEHAVIOURS_TAG_KEY).orElseGet(CompoundTag::new);
+    }
+
+    /** Persist mutations to GT tool fields, preserving other custom item data. */
+    public static void updateToolTag(ItemStack stack, java.util.function.Consumer<CompoundTag> mutation) {
+        com.gregtechceu.gtceu.api.item.data.ItemStackData.updateCompound(stack, TOOL_TAG_KEY, mutation);
+    }
+
+    /** Persist mutations to GT tool behavior fields, preserving other custom item data. */
+    public static void updateBehaviorsTag(ItemStack stack, java.util.function.Consumer<CompoundTag> mutation) {
+        com.gregtechceu.gtceu.api.item.data.ItemStackData.updateCompound(stack, BEHAVIOURS_TAG_KEY, mutation);
     }
 
     public static boolean hasBehaviorsTag(ItemStack stack) {
-        return stack.getTagElement(BEHAVIOURS_TAG_KEY) != null;
+        return com.gregtechceu.gtceu.api.item.data.ItemStackData.read(stack)
+                .getCompound(BEHAVIOURS_TAG_KEY).isPresent();
     }
 
     public static ItemStack get(GTToolType toolType, Material material) {
@@ -198,7 +211,8 @@ public class ToolHelper {
         if (!(stack.getItem() instanceof IGTTool tool)) {
             if (user != null) stack.hurtAndBreak(damage, user, p -> {});
         } else {
-            if (com.gregtechceu.gtceu.api.item.data.ItemStackData.read(stack).getBoolean(UNBREAKABLE_KEY)) {
+            if (com.gregtechceu.gtceu.api.item.data.ItemStackData.read(stack)
+                    .getBooleanOr(UNBREAKABLE_KEY, false)) {
                 return;
             }
             if (!(user instanceof Player player) || !player.isCreative()) {
@@ -262,11 +276,12 @@ public class ToolHelper {
         if (tool == null) return ItemStack.EMPTY;
         ItemStack stack = tool.get().getRaw();
         com.gregtechceu.gtceu.api.item.data.ItemStackData.update(stack, tag -> tag.putInt(HIDE_FLAGS, 2));
-        CompoundTag toolTag = getToolTag(stack);
-        toolTag.putInt(MAX_DURABILITY_KEY, maxDurability);
-        toolTag.putInt(HARVEST_LEVEL_KEY, harvestLevel);
-        toolTag.putFloat(TOOL_SPEED_KEY, toolSpeed);
-        toolTag.putFloat(ATTACK_DAMAGE_KEY, attackDamage);
+        updateToolTag(stack, toolTag -> {
+            toolTag.putInt(MAX_DURABILITY_KEY, maxDurability);
+            toolTag.putInt(HARVEST_LEVEL_KEY, harvestLevel);
+            toolTag.putFloat(TOOL_SPEED_KEY, toolSpeed);
+            toolTag.putFloat(ATTACK_DAMAGE_KEY, attackDamage);
+        });
         ToolProperty toolProperty = material.getProperty(PropertyKey.TOOL);
         if (toolProperty != null) {
             for (var entry : Object2IntMaps.fastIterable(toolProperty.getEnchantments())) {

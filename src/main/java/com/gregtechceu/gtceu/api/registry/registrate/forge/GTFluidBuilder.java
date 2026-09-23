@@ -209,11 +209,10 @@ public class GTFluidBuilder<P> extends AbstractBuilder<Fluid, GTFluid.Flowing, P
             throw new IllegalStateException("Only one call to bucket/noBucket per builder allowed");
         }
 
-        return getOwner().item(this, bucketName, p -> new GTBucketItem(this.source, p, this.material, this.langKey))
-                .properties(p -> p.craftRemainder(Items.BUCKET).stacksTo(1))
-                .color(() -> () -> GTBucketItem::color)
+        return getOwner().item(this, bucketName, p -> new GTBucketItem(this.getSource(), p, this.material, this.langKey))
+                .properties(p -> p.craftRemainder(Items.BUCKET).stacksTo(1).overrideDescription("item.gtceu.bucket"))
                 .setData(ProviderType.LANG, NonNullBiConsumer.noop())
-                .model(NonNullBiConsumer.noop())
+                .model(() -> NonNullBiConsumer.noop())
                 .onRegister(bucket -> this.bucket = () -> bucket);
     }
 

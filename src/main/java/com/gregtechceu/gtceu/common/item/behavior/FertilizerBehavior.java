@@ -52,12 +52,12 @@ public class FertilizerBehavior implements IInteractionItem {
             @Override
             protected @NotNull ItemStack execute(@NotNull BlockSource source, @NotNull ItemStack stack) {
                 this.setSuccess(true);
-                var level = source.getLevel();
-                var blockpos = source.getPos().relative(source.getBlockState().getValue(DispenserBlock.FACING));
+                var level = source.level();
+                var blockpos = source.pos().relative(source.state().getValue(DispenserBlock.FACING));
                 if (!BoneMealItem.growCrop(stack, level, blockpos) &&
                         !BoneMealItem.growWaterPlant(stack, level, blockpos, null)) {
                     this.setSuccess(false);
-                } else if (!level.isClientSide) {
+                } else {
                     level.levelEvent(1505, blockpos, 0);
                 }
                 return stack;

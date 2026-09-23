@@ -9,7 +9,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.vehicle.boat.Boat;
+import net.minecraft.world.entity.vehicle.boat.AbstractBoat;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -58,7 +58,7 @@ public class GTBoatItem extends Item {
             }
 
             if (hitresult.getType() == HitResult.Type.BLOCK) {
-                Boat boat;
+                AbstractBoat boat;
                 if (hasChest) {
                     boat = new GTChestBoat(level, hitresult.getLocation().x, hitresult.getLocation().y,
                             hitresult.getLocation().z);

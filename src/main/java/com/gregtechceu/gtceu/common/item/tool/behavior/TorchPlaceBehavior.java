@@ -49,28 +49,29 @@ public class TorchPlaceBehavior implements IToolBehavior {
 
         int cachedTorchSlot;
         ItemStack slotStack;
-        if (behaviourTag.getBooleanOr(ToolHelper.TORCH_PLACING_CACHE_SLOT_KEY, false)) {
+        if (behaviourTag.getInt(ToolHelper.TORCH_PLACING_CACHE_SLOT_KEY).isPresent()) {
             cachedTorchSlot = behaviourTag.getIntOr(ToolHelper.TORCH_PLACING_CACHE_SLOT_KEY, 0);
             if (cachedTorchSlot < 0) {
-                slotStack = player.getInventory().offhand.get(0);
-            } else {
+                slotStack = player.getOffhandItem();
+            } else if (cachedTorchSlot < player.getInventory().getNonEquipmentItems().size()) {
                 slotStack = player.getInventory().getNonEquipmentItems().get(cachedTorchSlot);
-            }
-            if (checkAndPlaceTorch(context, slotStack)) {
-                return InteractionResult.SUCCESS;
+                if (checkAndPlaceTorch(context, slotStack)) {
+                    return InteractionResult.SUCCESS;
+                }
             }
         }
-        for (int i = 0; i < player.getInventory().offhand.size(); i++) {
-            slotStack = player.getInventory().offhand.get(i);
-            if (checkAndPlaceTorch(context, slotStack)) {
-                behaviourTag.putInt(ToolHelper.TORCH_PLACING_CACHE_SLOT_KEY, -(i + 1));
-                return InteractionResult.SUCCESS;
-            }
+        slotStack = player.getOffhandItem();
+        if (checkAndPlaceTorch(context, slotStack)) {
+            ToolHelper.updateBehaviorsTag(stack,
+                    tag -> tag.putInt(ToolHelper.TORCH_PLACING_CACHE_SLOT_KEY, -1));
+            return InteractionResult.SUCCESS;
         }
         for (int i = 0; i < player.getInventory().getNonEquipmentItems().size(); i++) {
             slotStack = player.getInventory().getNonEquipmentItems().get(i);
             if (checkAndPlaceTorch(context, slotStack)) {
-                behaviourTag.putInt(ToolHelper.TORCH_PLACING_CACHE_SLOT_KEY, i);
+                int cachedSlot = i;
+                ToolHelper.updateBehaviorsTag(stack,
+                        tag -> tag.putInt(ToolHelper.TORCH_PLACING_CACHE_SLOT_KEY, cachedSlot));
                 return InteractionResult.SUCCESS;
             }
         }
@@ -107,7 +108,8 @@ public class TorchPlaceBehavior implements IToolBehavior {
             InteractionResult placed = slotItemBlock.place(blockPlaceContext);
             boolean wasPlaced = placed.consumesAction();
             if (wasPlaced) {
-                SoundType sound = slotItemBlock.getBlock().getSoundType(slotItemBlock.getBlock().defaultBlockState());
+                SoundType sound = slotItemBlock.getBlock().defaultBlockState()
+                        .getSoundType(context.getLevel(), pos, context.getPlayer());
                 context.getLevel().playSound(context.getPlayer(), pos, sound.getPlaceSound(), SoundSource.BLOCKS,
                         (sound.getVolume() + 1.0F) / 2.0F, sound.getPitch() * 0.8F);
             }

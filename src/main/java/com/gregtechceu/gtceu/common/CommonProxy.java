@@ -33,6 +33,7 @@ import com.gregtechceu.gtceu.common.data.loot.*;
 import com.gregtechceu.gtceu.common.data.machines.GTMachineUtils;
 import com.gregtechceu.gtceu.common.data.materials.AlloyBlastPropertyAddition;
 import com.gregtechceu.gtceu.common.data.materials.GTFoods;
+import com.gregtechceu.gtceu.common.item.GTBucketItem;
 import com.gregtechceu.gtceu.common.data.worldgen.*;
 import com.gregtechceu.gtceu.common.item.behavior.SpoilableBehavior;
 import com.gregtechceu.gtceu.common.item.tool.rotation.CustomBlockRotations;
@@ -55,12 +56,14 @@ import com.gregtechceu.gtceu.integration.kjs.events.MaterialModificationEventJS;
 import com.gregtechceu.gtceu.integration.map.WaypointManager;
 import com.gregtechceu.gtceu.utils.input.SyncedKeyMappings;
 
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.common.crafting.IntersectionIngredient;
 import net.neoforged.neoforge.common.crafting.DataComponentIngredient;
@@ -69,6 +72,7 @@ import net.neoforged.neoforge.event.AddPackFindersEvent;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.transfer.fluid.BucketResourceHandler;
 import net.neoforged.fml.ModLoader;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLConstructModEvent;
@@ -320,6 +324,13 @@ public class CommonProxy {
     public void registerCapabilities(RegisterCapabilitiesEvent event) {
         ElectricItemCapabilityRegistration.register(event);
         BlockEnergyCapabilityRegistration.register(event);
+
+        for (var item : BuiltInRegistries.ITEM) {
+            if (item instanceof GTBucketItem) {
+                event.registerItem(Capabilities.Fluid.ITEM,
+                        (stack, access) -> new BucketResourceHandler(access), item);
+            }
+        }
     }
 
     @SubscribeEvent

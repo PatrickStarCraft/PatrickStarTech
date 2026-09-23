@@ -84,22 +84,22 @@ public class ToolModeSwitchBehavior implements IToolBehavior {
             return InteractionResult.SUCCESS;
         }
 
-        if (player != null) world.getBlockState(pos).use(world, player, context.getHand(), blockHitResult);
-        return InteractionResult.SUCCESS;
+        // Vanilla has already offered the click to the block (including its empty-hand fallback)
+        // before ItemStack.useOn reaches this behavior.
+        return InteractionResult.PASS;
     }
 
     @Override
     public @NotNull InteractionResult onItemRightClick(@NotNull Level world, @NotNull Player player,
                                                                         @NotNull InteractionHand hand) {
         var itemStack = player.getItemInHand(hand);
-        var tagCompound = getBehaviorsTag(itemStack);
         if (player.isShiftKeyDown()) {
             var toolTypes = ToolHelper.getToolTypes(itemStack);
             if (toolTypes.contains(GTToolType.WRENCH)) {
-                tagCompound.putByte("Mode",
-                        (byte) ((tagCompound.getByteOr("Mode", (byte) 0) + 1) % WrenchModeType.values().length));
+                ToolHelper.updateBehaviorsTag(itemStack, tag -> tag.putByte("Mode",
+                        (byte) ((tag.getByteOr("Mode", (byte) 0) + 1) % WrenchModeType.values().length)));
                 player.sendOverlayMessage(Component.translatable("metaitem.machine_configuration.mode",
-                        WrenchModeType.values()[tagCompound.getByteOr("Mode", (byte) 0)].getName()));
+                        WrenchModeType.values()[getBehaviorsTag(itemStack).getByteOr("Mode", (byte) 0)].getName()));
             }
             return InteractionResult.SUCCESS.heldItemTransformedTo(itemStack);
         }

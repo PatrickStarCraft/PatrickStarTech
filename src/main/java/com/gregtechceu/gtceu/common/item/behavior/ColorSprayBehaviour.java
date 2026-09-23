@@ -22,6 +22,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.ARGB;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -38,6 +39,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ShulkerBoxBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.world.level.storage.TagValueInput;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.util.TriPredicate;
 
@@ -237,12 +239,13 @@ public class ColorSprayBehaviour implements IDurabilityBar, IInteractionItem, IA
                     paintablePredicate, limit, limit * 6);
             paintPaintables(collected, context);
         } else if (first instanceof ShulkerBoxBlockEntity shulkerBox) {
-            var tag = shulkerBox.saveWithoutMetadata();
             var level = first.getLevel();
+            var tag = shulkerBox.saveWithoutMetadata(level.registryAccess());
             var pos = first.getBlockPos();
             recolorBlockNoState(SHULKER_BOX_MAP, color, level, pos, Blocks.SHULKER_BOX);
             if (level.getBlockEntity(pos) instanceof ShulkerBoxBlockEntity newShulker) {
-                newShulker.load(tag);
+                newShulker.loadWithComponents(TagValueInput.create(ProblemReporter.DISCARDING,
+                        level.registryAccess(), tag));
             }
         } else {
             return false;

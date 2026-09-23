@@ -295,13 +295,13 @@ public class ItemMagnetBehavior implements IInteractionItem, IItemLifeCycle, IAd
             for (ExperienceOrb orb : xp) {
                 if (!world.isClientSide() && !orb.isRemoved()) {
                     if (player.takeXpDelay == 0) {
-                        if (NeoForge.EVENT_BUS.post(new PlayerXpEvent.PickupXp(player, orb))) {
+                        if (NeoForge.EVENT_BUS.post(new PlayerXpEvent.PickupXp(player, orb)).isCanceled()) {
                             continue;
                         }
                         world.playSound(null, entity, SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.PLAYERS,
                                 0.1F, 0.5F * ((world.getRandom().nextFloat() - world.getRandom().nextFloat()) * 0.7F + 1.8F));
                         player.take(orb, 1);
-                        player.giveExperiencePoints(orb.value);
+                        player.giveExperiencePoints(orb.getValue());
                         orb.discard();
                         didMoveEntity = true;
                     }
@@ -387,7 +387,7 @@ public class ItemMagnetBehavior implements IInteractionItem, IItemLifeCycle, IAd
 
         public ItemStack getFilter(ItemStack magnet) {
             var tag = com.gregtechceu.gtceu.api.item.data.ItemStackData.read(magnet);
-            var mockStack = new ItemStack(item);
+            var mockStack = new ItemStack(item.asItem());
             net.minecraft.world.item.component.CustomData.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA,
                     mockStack, tag.getCompoundOrEmpty(FILTER_TAG));
             return mockStack;

@@ -61,7 +61,8 @@ public class TreeFellingBehavior implements IToolBehavior {
         }
         var tag = ToolHelper.getBehaviorsTag(held);
         var disable = tag.getBooleanOr(ToolHelper.DISABLE_TREE_FELLING_KEY, false);
-        tag.putBoolean(ToolHelper.DISABLE_TREE_FELLING_KEY, !disable);
+        ToolHelper.updateBehaviorsTag(held,
+                updatedTag -> updatedTag.putBoolean(ToolHelper.DISABLE_TREE_FELLING_KEY, !disable));
         player.sendSystemMessage(Component.translatable("item.gtceu.tool.behavior.tree_felling").append(" - ")
                 .append(Component.translatable("cover.voiding.label." + (disable ? "enabled" : "disabled"))));
         return InteractionResult.SUCCESS.heldItemTransformedTo(held);

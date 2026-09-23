@@ -383,7 +383,8 @@ public final class ToolRecipeHandler {
         ItemStack toolStack = ToolHelper.get(tool, material);
         if (toolStack.isEmpty()) return;
         for (var color : DyeColor.values()) {
-            ToolHelper.getToolTag(toolStack).putInt(ToolHelper.TINT_COLOR_KEY, color.getTextColor());
+            ToolHelper.updateToolTag(toolStack,
+                    toolTag -> toolTag.putInt(ToolHelper.TINT_COLOR_KEY, color.getTextColor()));
             Object[] recipeWithDye = ArrayUtils.addAll(recipe, 'D',
                     color.getTag());
 

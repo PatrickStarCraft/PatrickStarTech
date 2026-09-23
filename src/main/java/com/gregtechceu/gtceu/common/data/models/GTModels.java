@@ -352,7 +352,7 @@ public class GTModels {
                     JsonObject original;
                     try (BufferedReader reader = Minecraft.getInstance().getResourceManager()
                             .openAsReader(GTCEu.id("models/item/bucket/bucket.json"))) {
-                        original = GsonHelper.parse(reader, true);
+                        original = GsonHelper.parse(reader);
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
@@ -367,9 +367,9 @@ public class GTModels {
                     }
 
                     Identifier bucketId = BuiltInRegistries.ITEM.getKey(gtFluid.getBucket());
-                    Identifier bucketModelId = bucketId.withPrefix("item/");
-                    RuntimeModelResources.emitModel(bucketModelId, newJson, GTDynamicResourcePack::addResource);
-                    RuntimeModelResources.emitItem(bucketId, bucketModelId, GTDynamicResourcePack::addResource);
+                    JsonObject itemDefinition = new JsonObject();
+                    itemDefinition.add("model", newJson);
+                    RuntimeModelResources.emitItem(bucketId, itemDefinition, GTDynamicResourcePack::addResource);
                 }
             }
         }
