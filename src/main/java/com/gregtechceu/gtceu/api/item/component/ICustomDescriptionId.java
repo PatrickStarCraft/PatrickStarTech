@@ -14,6 +14,7 @@ public interface ICustomDescriptionId extends IItemComponent {
 
     @Nullable
     default Component getItemName(ItemStack stack) {
-        return null;
+        String descriptionId = getItemDescriptionId(stack);
+        return descriptionId == null ? null : Component.translatable(descriptionId);
     }
 }

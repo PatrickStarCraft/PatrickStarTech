@@ -9,6 +9,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.throwableitemprojectile.ThrowableItemProjectile;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -24,16 +25,16 @@ public class DynamiteEntity extends ThrowableItemProjectile {
     }
 
     public DynamiteEntity(double x, double y, double z, Level worldIn) {
-        super(GTEntityTypes.DYNAMITE.get(), x, y, z, worldIn);
+        super(GTEntityTypes.DYNAMITE.get(), x, y, z, worldIn, new ItemStack(GTItems.DYNAMITE.get()));
     }
 
     public DynamiteEntity(LivingEntity throwerIn, Level worldIn) {
-        super(GTEntityTypes.DYNAMITE.get(), throwerIn, worldIn);
+        super(GTEntityTypes.DYNAMITE.get(), throwerIn, worldIn, new ItemStack(GTItems.DYNAMITE.get()));
     }
 
     @Override
-    public void onAddedToWorld() {
-        super.onAddedToWorld();
+    public void onAddedToLevel() {
+        super.onAddedToLevel();
         ticksUntilExplosion = 80 + level().getRandom().nextInt(60);
     }
 

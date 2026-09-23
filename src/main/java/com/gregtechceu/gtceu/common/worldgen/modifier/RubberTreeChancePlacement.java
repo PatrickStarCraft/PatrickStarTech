@@ -8,13 +8,12 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
 import net.minecraft.world.level.levelgen.placement.RepeatingPlacement;
 
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 
 public class RubberTreeChancePlacement extends RepeatingPlacement {
 
     public static final RubberTreeChancePlacement INSTANCE = new RubberTreeChancePlacement();
-    public static final Codec<RubberTreeChancePlacement> CODEC = MapCodec.unit(INSTANCE).codec();
+    public static final MapCodec<RubberTreeChancePlacement> CODEC = MapCodec.unit(INSTANCE);
 
     @Override
     protected int count(RandomSource random, BlockPos pos) {

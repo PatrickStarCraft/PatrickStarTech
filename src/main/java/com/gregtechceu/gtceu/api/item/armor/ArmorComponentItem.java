@@ -17,6 +17,7 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.equipment.ArmorType;
 import net.minecraft.world.level.Level;
@@ -163,11 +164,12 @@ public class ArmorComponentItem extends Item implements IComponentItem {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltipComponents,
-                                TooltipFlag isAdvanced) {
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display,
+                                Consumer<Component> tooltip, TooltipFlag isAdvanced) {
+        super.appendHoverText(stack, context, display, tooltip, isAdvanced);
         for (IItemComponent component : components) {
             if (component instanceof IAddInformation addInformation) {
-                addInformation.appendHoverText(stack, level, tooltipComponents, isAdvanced);
+                addInformation.appendHoverText(stack, context, display, tooltip, isAdvanced);
             }
         }
     }
@@ -230,12 +232,13 @@ public class ArmorComponentItem extends Item implements IComponentItem {
 
     @Override
     public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity livingEntity) {
+        stack = super.finishUsingItem(stack, level, livingEntity);
         for (IItemComponent component : components) {
             if (component instanceof IInteractionItem interactionItem) {
                 stack = interactionItem.finishUsingItem(stack, level, livingEntity);
             }
         }
-        return super.finishUsingItem(stack, level, livingEntity);
+        return stack;
     }
 
     @Override
@@ -276,19 +279,6 @@ public class ArmorComponentItem extends Item implements IComponentItem {
             }
         }
         return super.getName(stack);
-    }
-
-    @Override
-    public String getDescriptionId(ItemStack stack) {
-        for (IItemComponent component : components) {
-            if (component instanceof ICustomDescriptionId customDescriptionId) {
-                String langId = customDescriptionId.getItemDescriptionId(stack);
-                if (langId != null) {
-                    return langId;
-                }
-            }
-        }
-        return super.getDescriptionId(stack);
     }
 
     @Override

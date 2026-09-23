@@ -20,13 +20,18 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.world.level.Level;
+import net.minecraft.world.item.Item.TooltipContext;
+import net.minecraft.world.item.component.TooltipDisplay;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.block.entity.FuelValues;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.ArrayList;
+import java.util.function.Consumer;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -47,8 +52,9 @@ public class TagPrefixItem extends Item {
     }
 
     @Override
-    public int getBurnTime(ItemStack itemStack, @Nullable RecipeType<?> recipeType) {
-        return getItemBurnTime();
+    public int getBurnTime(ItemStack itemStack, @Nullable RecipeType<?> recipeType, FuelValues fuelValues) {
+        int burnTime = getItemBurnTime();
+        return burnTime >= 0 ? burnTime : fuelValues.burnDuration(itemStack);
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -57,37 +63,24 @@ public class TagPrefixItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltipComponents,
-                                TooltipFlag isAdvanced) {
-        super.appendHoverText(stack, level, tooltipComponents, isAdvanced);
+    public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay display,
+                                Consumer<Component> tooltip, TooltipFlag isAdvanced) {
+        super.appendHoverText(stack, context, display, tooltip, isAdvanced);
         if (this.tagPrefix.tooltip() != null) {
+            List<Component> tooltipComponents = new ArrayList<>();
             this.tagPrefix.tooltip().accept(material, tooltipComponents);
+            tooltipComponents.forEach(tooltip);
         }
     }
 
     @Override
-    public String getDescriptionId() {
-        return tagPrefix.getUnlocalizedName(material);
-    }
-
-    @Override
-    public String getDescriptionId(ItemStack stack) {
-        return tagPrefix.getUnlocalizedName(material);
-    }
-
-    @Override
-    public Component getDescription() {
+    public Component getName(ItemStack stack) {
         return tagPrefix.getLocalizedName(material);
     }
 
     @Override
-    public Component getName(ItemStack stack) {
-        return getDescription();
-    }
-
-    @Override
-    public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
-        super.inventoryTick(stack, level, entity, slotId, isSelected);
+    public void inventoryTick(ItemStack stack, ServerLevel level, Entity entity, EquipmentSlot slot) {
+        super.inventoryTick(stack, level, entity, slot);
         if (entity instanceof LivingEntity livingEntity) {
             if (livingEntity.tickCount % 20 == 0) {
                 if (tagPrefix != TagPrefix.ingotHot || !material.hasProperty(PropertyKey.BLAST))

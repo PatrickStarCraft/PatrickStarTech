@@ -2,22 +2,38 @@ package com.gregtechceu.gtceu.common.entity;
 
 import com.gregtechceu.gtceu.core.mixins.PrimedTntAccessor;
 
+import net.minecraft.core.particles.ExplosionParticleInfo;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.protocol.game.ClientboundExplodePacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.random.WeightedList;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.PrimedTnt;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerExplosion;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraft.world.phys.Vec3;
+
+import net.neoforged.neoforge.event.EventHooks;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Optional;
+
 public abstract class GTExplosiveEntity extends PrimedTnt {
+
+    private static final WeightedList<ExplosionParticleInfo> DEFAULT_EXPLOSION_BLOCK_PARTICLES =
+            WeightedList.<ExplosionParticleInfo>builder()
+                    .add(new ExplosionParticleInfo(ParticleTypes.POOF, 0.5F, 1.0F))
+                    .add(new ExplosionParticleInfo(ParticleTypes.SMOKE, 1.0F, 1.0F))
+                    .build();
 
     public GTExplosiveEntity(EntityType<? extends GTExplosiveEntity> type, Level level, double x, double y, double z,
                              @Nullable LivingEntity owner) {
@@ -60,29 +76,28 @@ public abstract class GTExplosiveEntity extends PrimedTnt {
 
     @Override
     protected void explode() {
-        explode(level(), this, this.getX(), this.getY(0.0625), this.getZ(), getStrength(), dropsAllBlocks());
+        if (this.level() instanceof ServerLevel serverLevel) {
+            explode(serverLevel, this, this.getX(), this.getY(0.0625), this.getZ(), getStrength(), dropsAllBlocks());
+        }
     }
 
     protected void explode(
-                           Level level, @Nullable Entity source,
+                           ServerLevel level, @Nullable Entity source,
                            double x, double y, double z, float radius, boolean dropBlocks) {
-        Explosion explosion = new Explosion(
-                level, source,
-                x, y, z,
-                radius,
-                false,
-                dropBlocks ? Explosion.BlockInteraction.DESTROY_WITH_DECAY : Explosion.BlockInteraction.DESTROY);
-        if (!ForgeEventFactory.onExplosionStart(level, explosion)) {
-            explosion.explode();
-            explosion.finalizeExplosion(false);
-        }
+        Vec3 center = new Vec3(x, y, z);
+        Explosion.BlockInteraction blockInteraction = dropBlocks ? Explosion.BlockInteraction.DESTROY_WITH_DECAY :
+                Explosion.BlockInteraction.DESTROY;
+        ServerExplosion explosion = new ServerExplosion(level, source, Explosion.getDefaultDamageSource(level, source),
+                null, center, radius, false, blockInteraction);
+        if (EventHooks.onExplosionStart(level, explosion)) return;
 
-        if (level instanceof ServerLevel serverLevel) {
-            for (ServerPlayer serverplayer : serverLevel.players()) {
-                if (serverplayer.distanceToSqr(x, y, z) < 4096.0) {
-                    serverplayer.connection.send(new ClientboundExplodePacket(x, y, z, radius, explosion.getToBlow(),
-                            explosion.getHitPlayers().get(serverplayer)));
-                }
+        int blockCount = explosion.explode();
+        ParticleOptions explosionParticle = explosion.isSmall() ? ParticleTypes.EXPLOSION : ParticleTypes.EXPLOSION_EMITTER;
+        for (ServerPlayer serverPlayer : level.players()) {
+            if (serverPlayer.distanceToSqr(center) < 4096.0) {
+                Optional<Vec3> playerKnockback = Optional.ofNullable(explosion.getHitPlayers().get(serverPlayer));
+                serverPlayer.connection.send(new ClientboundExplodePacket(center, radius, blockCount, playerKnockback,
+                        explosionParticle, SoundEvents.GENERIC_EXPLODE, DEFAULT_EXPLOSION_BLOCK_PARTICLES));
             }
         }
     }

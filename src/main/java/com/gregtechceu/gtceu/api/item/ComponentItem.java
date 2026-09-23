@@ -12,25 +12,25 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.ItemUseAnimation;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.entity.FuelValues;
 
 import brachy.modularui.factory.PlayerInventoryGuiData;
 import brachy.modularui.screen.ModularPanel;
@@ -88,11 +88,12 @@ public class ComponentItem extends Item implements IComponentItem, IItemUIHolder
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltipComponents,
-                                TooltipFlag isAdvanced) {
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display,
+                                java.util.function.Consumer<Component> tooltip, TooltipFlag isAdvanced) {
+        super.appendHoverText(stack, context, display, tooltip, isAdvanced);
         for (IItemComponent component : components) {
             if (component instanceof IAddInformation addInformation) {
-                addInformation.appendHoverText(stack, level, tooltipComponents, isAdvanced);
+                addInformation.appendHoverText(stack, context, display, tooltip, isAdvanced);
             }
         }
     }
@@ -178,6 +179,7 @@ public class ComponentItem extends Item implements IComponentItem, IItemUIHolder
 
     @Override
     public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity livingEntity) {
+        stack = super.finishUsingItem(stack, level, livingEntity);
         for (IItemComponent component : components) {
             if (component instanceof IInteractionItem interactionItem) {
                 stack = interactionItem.finishUsingItem(stack, level, livingEntity);
@@ -190,7 +192,10 @@ public class ComponentItem extends Item implements IComponentItem, IItemUIHolder
     public ItemUseAnimation getUseAnimation(ItemStack stack) {
         for (IItemComponent component : components) {
             if (component instanceof IInteractionItem interactionItem) {
-                return interactionItem.getUseAnimation(stack);
+                ItemUseAnimation animation = interactionItem.getUseAnimation(stack);
+                if (animation != null) {
+                    return animation;
+                }
             }
         }
         return super.getUseAnimation(stack);
@@ -210,15 +215,15 @@ public class ComponentItem extends Item implements IComponentItem, IItemUIHolder
     }
 
     @Override
-    public boolean onEntitySwing(ItemStack stack, LivingEntity entity) {
+    public boolean onEntitySwing(ItemStack stack, LivingEntity entity, InteractionHand hand) {
         for (IItemComponent component : components) {
             if (component instanceof IInteractionItem interactionItem) {
                 // this will cancel the left click animation
-                return interactionItem.onEntitySwing(stack, entity);
+                return interactionItem.onEntitySwing(stack, entity, hand);
             }
         }
         // normal behavior
-        return super.onEntitySwing(stack, entity);
+        return super.onEntitySwing(stack, entity, hand);
     }
 
     @Override
@@ -236,14 +241,12 @@ public class ComponentItem extends Item implements IComponentItem, IItemUIHolder
     }
 
     @Override
-    public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
-        boolean result = false;
+    public void hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
         for (IItemComponent component : components) {
             if (component instanceof IInteractionItem interactionItem) {
-                result |= interactionItem.hurtEnemy(stack, target, attacker);
+                interactionItem.hurtEnemy(stack, target, attacker);
             }
         }
-        return result;
     }
 
     @Override
@@ -257,19 +260,6 @@ public class ComponentItem extends Item implements IComponentItem, IItemUIHolder
             }
         }
         return super.getName(stack);
-    }
-
-    @Override
-    public String getDescriptionId(ItemStack stack) {
-        for (IItemComponent component : components) {
-            if (component instanceof ICustomDescriptionId customDescriptionId) {
-                String langId = customDescriptionId.getItemDescriptionId(stack);
-                if (langId != null) {
-                    return langId;
-                }
-            }
-        }
-        return super.getDescriptionId(stack);
     }
 
     @Override
@@ -313,60 +303,8 @@ public class ComponentItem extends Item implements IComponentItem, IItemUIHolder
     }
 
     @Override
-    public int getBurnTime(ItemStack itemStack, @Nullable RecipeType<?> recipeType) {
-        return burnTime;
-    }
-
-    @Override
-    public @Nullable FoodProperties getFoodProperties(ItemStack stack, @Nullable LivingEntity entity) {
-        for (IItemComponent component : components) {
-            if (component instanceof IEdibleItem foodBehavior) {
-                return foodBehavior.getFoodProperties(stack, entity);
-            }
-        }
-        return super.getFoodProperties(stack, entity);
-    }
-
-    @Override
-    @Deprecated
-    @SuppressWarnings("deprecation")
-    public @Nullable FoodProperties getFoodProperties() {
-        // If item has `foodProperties` from super, return it.
-        if (super.isEdible()) return super.getFoodProperties();
-        // If item has `IEdibleItem` components, return food stats from default stack
-        if (isEdible()) return getFoodProperties(this.getDefaultInstance(), null);
-        // Not edible, so null.
-        return null;
-    }
-
-    @Override
-    public boolean isEdible() {
-        for (IItemComponent component : components) {
-            if (component instanceof IEdibleItem foodBehavior) {
-                return foodBehavior.isEdible();
-            }
-        }
-        return super.isEdible();
-    }
-
-    @Override
-    public SoundEvent getEatingSound() {
-        for (IItemComponent component : components) {
-            if (component instanceof IEdibleItem foodBehavior) {
-                return foodBehavior.getEatingSound();
-            }
-        }
-        return super.getEatingSound();
-    }
-
-    @Override
-    public SoundEvent getDrinkingSound() {
-        for (IItemComponent component : components) {
-            if (component instanceof IEdibleItem foodBehavior) {
-                return foodBehavior.getDrinkingSound();
-            }
-        }
-        return super.getDrinkingSound();
+    public int getBurnTime(ItemStack itemStack, @Nullable RecipeType<?> recipeType, FuelValues fuelValues) {
+        return burnTime >= 0 ? burnTime : fuelValues.burnDuration(itemStack);
     }
 
     public void burnTime(int burnTime) {

@@ -7,7 +7,9 @@ import com.gregtechceu.gtceu.api.registry.GTRegistries;
 import com.gregtechceu.gtceu.api.sound.SoundEntry;
 
 import net.neoforged.fml.ModLoader;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.registries.RegisterEvent;
+import net.minecraft.core.registries.Registries;
 
 import static com.gregtechceu.gtceu.common.registry.GTRegistration.REGISTRATE;
 
@@ -58,18 +60,17 @@ public class GTSoundEntries {
     public static final SoundEntry PORTAL_CLOSING = REGISTRATE.sound("portal_closing").build();
     public static final SoundEntry METAL_PIPE = REGISTRATE.sound("metal_pipe").build();
 
-    public static void init() {
+    public static void init(IEventBus modBus) {
         AddonFinder.getAddons().forEach(IGTAddon::registerSounds);
         ModLoader.postEvent(new GTCEuAPI.RegisterEvent<>(GTRegistries.SOUNDS, SoundEntry.class));
         GTRegistries.SOUNDS.forEach(SoundEntry::prepare);
-        registerSounds();
+        modBus.addListener(GTSoundEntries::registerSounds);
 
         GTRegistries.SOUNDS.freeze();
     }
 
-    private static void registerSounds() {
-        for (SoundEntry entry : GTRegistries.SOUNDS) {
-            entry.register(soundEvent -> ForgeRegistries.SOUND_EVENTS.register(soundEvent.getLocation(), soundEvent));
-        }
+    private static void registerSounds(RegisterEvent event) {
+        event.register(Registries.SOUND_EVENT, helper -> GTRegistries.SOUNDS.forEach(entry ->
+                entry.register(soundEvent -> helper.register(soundEvent.location(), soundEvent))));
     }
 }

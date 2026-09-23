@@ -9,15 +9,15 @@ import net.minecraft.world.level.levelgen.placement.PlacementContext;
 import net.minecraft.world.level.levelgen.placement.PlacementModifier;
 import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 
 import java.util.List;
 import java.util.stream.Stream;
 
 public class BiomeDependentPlacement extends PlacementModifier {
 
-    public static final Codec<BiomeDependentPlacement> CODEC = BiomeWeightModifier.CODEC.listOf().fieldOf("modifiers")
-            .xmap(BiomeDependentPlacement::new, placement -> placement.modifiers).codec();
+    public static final MapCodec<BiomeDependentPlacement> CODEC = BiomeWeightModifier.CODEC.listOf()
+            .fieldOf("modifiers").xmap(BiomeDependentPlacement::new, placement -> placement.modifiers);
 
     public final List<BiomeWeightModifier> modifiers;
 

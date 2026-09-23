@@ -12,8 +12,8 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.neoforged.neoforge.common.world.BiomeModifier;
+import net.neoforged.neoforge.common.world.BiomeModifiers;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
-import net.minecraftforge.common.world.ForgeBiomeModifiers;
 
 public class GTBiomeModifiers {
 
@@ -30,7 +30,7 @@ public class GTBiomeModifiers {
 
         HolderSet<Biome> biomes = biomeLookup.getOrThrow(CustomTags.HAS_RUBBER_TREE);
         Holder<PlacedFeature> rubberTree = placedFeatureRegistry.getOrThrow(GTPlacedFeatures.RUBBER_CHECKED);
-        ctx.register(RUBBER, new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
+        ctx.register(RUBBER, new BiomeModifiers.AddFeaturesBiomeModifier(
                 biomes,
                 HolderSet.direct(rubberTree),
                 GenerationStep.Decoration.VEGETAL_DECORATION));
@@ -38,13 +38,13 @@ public class GTBiomeModifiers {
         HolderSet<Biome> overworld = biomeLookup.getOrThrow(BiomeTags.IS_OVERWORLD);
         Holder<PlacedFeature> redGraniteBlob = placedFeatureRegistry.getOrThrow(GTPlacedFeatures.RED_GRANITE_BLOB);
         Holder<PlacedFeature> marbleBlob = placedFeatureRegistry.getOrThrow(GTPlacedFeatures.MARBLE_BLOB);
-        ctx.register(STONE_BLOB, new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
+        ctx.register(STONE_BLOB, new BiomeModifiers.AddFeaturesBiomeModifier(
                 overworld,
                 HolderSet.direct(redGraniteBlob, marbleBlob),
                 GenerationStep.Decoration.UNDERGROUND_ORES));
 
         Holder<PlacedFeature> rawOilSprout = placedFeatureRegistry.getOrThrow(GTPlacedFeatures.RAW_OIL_SPROUT);
-        ctx.register(RAW_OIL_SPROUT, new ForgeBiomeModifiers.AddFeaturesBiomeModifier(
+        ctx.register(RAW_OIL_SPROUT, new BiomeModifiers.AddFeaturesBiomeModifier(
                 overworld,
                 HolderSet.direct(rawOilSprout),
                 GenerationStep.Decoration.FLUID_SPRINGS));

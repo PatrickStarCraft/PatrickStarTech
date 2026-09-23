@@ -49,14 +49,8 @@ public class GTArmorItem extends ArmorItem {
         };
     }
 
-    @Override
-    public @NotNull String getDescriptionId() {
-        return "item.gtceu.armor." + type.getName();
-    }
-
-    @Override
     public @NotNull Component getDescription() {
-        return Component.translatable(getDescriptionId(), material.getLocalizedName());
+        return Component.translatable("item.gtceu.armor." + type.getName(), material.getLocalizedName());
     }
 
     @Override

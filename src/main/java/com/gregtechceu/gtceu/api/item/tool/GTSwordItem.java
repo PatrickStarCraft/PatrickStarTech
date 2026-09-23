@@ -83,12 +83,6 @@ public class GTSwordItem extends SwordItem implements IGTTool {
         return definition$onItemUse(context);
     }
 
-    @Override
-    public String getDescriptionId() {
-        return toolType.getUnlocalizedName();
-    }
-
-    @Override
     public Component getDescription() {
         return Component.translatable(toolType.getUnlocalizedName(), material.getLocalizedName());
     }

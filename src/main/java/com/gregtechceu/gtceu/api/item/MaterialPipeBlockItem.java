@@ -39,12 +39,7 @@ public class MaterialPipeBlockItem extends PipeBlockItem {
     }
 
     @Override
-    public Component getDescription() {
-        return this.getBlock().getName();
-    }
-
-    @Override
     public Component getName(ItemStack stack) {
-        return getDescription();
+        return this.getBlock().getName();
     }
 }

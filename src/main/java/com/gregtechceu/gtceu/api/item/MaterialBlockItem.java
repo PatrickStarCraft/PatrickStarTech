@@ -13,6 +13,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.FuelValues;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
@@ -31,8 +32,9 @@ public class MaterialBlockItem extends BlockItem {
     }
 
     @Override
-    public int getBurnTime(ItemStack itemStack, @Nullable RecipeType<?> recipeType) {
-        return getItemBurnTime();
+    public int getBurnTime(ItemStack itemStack, @Nullable RecipeType<?> recipeType, FuelValues fuelValues) {
+        int burnTime = getItemBurnTime();
+        return burnTime >= 0 ? burnTime : fuelValues.burnDuration(itemStack);
     }
 
     @Override
@@ -47,23 +49,8 @@ public class MaterialBlockItem extends BlockItem {
     }
 
     @Override
-    public @NotNull String getDescriptionId() {
-        return getBlock().getDescriptionId();
-    }
-
-    @Override
-    public String getDescriptionId(ItemStack stack) {
-        return getDescriptionId();
-    }
-
-    @Override
-    public Component getDescription() {
-        return getBlock().getName();
-    }
-
-    @Override
     public Component getName(ItemStack stack) {
-        return getDescription();
+        return getBlock().getName();
     }
 
     public int getItemBurnTime() {

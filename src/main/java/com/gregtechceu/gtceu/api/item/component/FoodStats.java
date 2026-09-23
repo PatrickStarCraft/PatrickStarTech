@@ -7,6 +7,9 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ItemStack;
@@ -92,6 +95,20 @@ public class FoodStats implements IEdibleItem, IInteractionItem, IAddInformation
     }
 
     @Override
+    public InteractionResult use(Item item, Level level, Player player, InteractionHand usedHand) {
+        ItemStack stack = player.getItemInHand(usedHand);
+        if (!player.canEat(properties.canAlwaysEat())) {
+            return InteractionResult.FAIL;
+        }
+        InteractionResult result = IInteractionItem.super.use(item, level, player, usedHand);
+        if (result != InteractionResult.PASS) {
+            return result;
+        }
+        player.startUsingItem(usedHand);
+        return InteractionResult.CONSUME.heldItemTransformedTo(stack);
+    }
+
+    @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltipComponents,
                                 TooltipFlag isAdvanced) {
         GTUtil.addPotionTooltip(tooltipEffects, tooltipComponents);
@@ -100,16 +117,19 @@ public class FoodStats implements IEdibleItem, IInteractionItem, IAddInformation
     @Override
     public ItemStack finishUsingItem(ItemStack food, Level level, LivingEntity livingEntity) {
         Player player = livingEntity instanceof Player ? (Player) livingEntity : null;
-        Consumable consumable = food.get(DataComponents.CONSUMABLE);
-        ItemStack stack;
-        if (consumable == null) {
-            consumable = (isDrink ? Consumables.defaultDrink() : Consumables.defaultFood()).build();
+        if (!food.isEmpty() && food.get(DataComponents.CONSUMABLE) == null) {
+            Consumable consumable = (isDrink ? Consumables.defaultDrink() : Consumables.defaultFood()).build();
             properties.onConsume(level, livingEntity, food, consumable);
+            if (!level.isClientSide()) {
+                for (Pair<MobEffectInstance, Float> effect : tooltipEffects) {
+                    if (livingEntity.getRandom().nextFloat() < effect.getSecond()) {
+                        livingEntity.addEffect(new MobEffectInstance(effect.getFirst()));
+                    }
+                }
+            }
             food.consume(1, livingEntity);
-            stack = food;
-        } else {
-            stack = consumable.onConsume(level, livingEntity, food);
         }
+        ItemStack stack = food;
         if (containerItem != null && (player == null || !player.getAbilities().instabuild)) {
             var container = containerItem.get();
             if (stack.isEmpty()) {
