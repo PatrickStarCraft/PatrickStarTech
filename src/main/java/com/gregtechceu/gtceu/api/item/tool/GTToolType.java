@@ -21,8 +21,6 @@ import net.minecraft.world.entity.animal.golem.IronGolem;
 import net.minecraft.world.entity.monster.spider.Spider;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.EnchantmentCategory;
-import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.ItemAbility;
 import net.neoforged.neoforge.common.ItemAbilities;
@@ -125,7 +123,7 @@ public class GTToolType {
                     .attackDamage(5.0F).attackSpeed(-3.0F).durabilityMultiplier(3.0F)
                     .aoe(2, 2, 2)
                     .behaviors(AOEConfigUIBehavior.INSTANCE, HoeGroundBehavior.INSTANCE, HarvestCropsBehavior.INSTANCE)
-                    .canApplyEnchantment(EnchantmentCategory.DIGGER))
+                    .canApplyEnchantment((stack, enchantment) -> enchantment.isSupportedItem(stack)))
             .constructor(GTHoeItem::new)
             .toolClassNames("scythe")
             .toolClasses(GTToolType.HOE)

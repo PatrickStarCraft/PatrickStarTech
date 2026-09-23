@@ -23,7 +23,7 @@ public final class GTCodecUtils {
             (val) -> "Value must be positive: " + val);
 
     public static Codec<Long> longRangeWithMessage(long min, long max, Function<Long, String> errorMessage) {
-        return ExtraCodecs.validate(Codec.LONG, (val) -> {
+        return Codec.LONG.validate((val) -> {
             if (val.compareTo(min) >= 0 && val.compareTo(max) <= 0) {
                 return DataResult.success(val);
             } else {
@@ -57,10 +57,9 @@ public final class GTCodecUtils {
         }
 
         private <T> A deferredDecode(DynamicOps<T> ops, T input) {
-            return this.codec.decode(ops, input).get()
-                    .map(Pair::getFirst, partial -> {
-                        throw new IllegalStateException("Unable to parse deferred value: " + partial.message());
-                    });
+            return this.codec.decode(ops, input)
+                    .getOrThrow(error -> new IllegalStateException("Unable to parse deferred value: " + error))
+                    .getFirst();
         }
     }
 }

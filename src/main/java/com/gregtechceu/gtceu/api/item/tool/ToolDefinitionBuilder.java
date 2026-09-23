@@ -6,7 +6,6 @@ import com.gregtechceu.gtceu.config.ConfigHolder;
 
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentCategory;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -105,19 +104,6 @@ public class ToolDefinitionBuilder {
     public ToolDefinitionBuilder canApplyEnchantment(BiPredicate<ItemStack, Enchantment> canApplyEnchantment) {
         this.isEnchantable = true;
         this.canApplyEnchantment = canApplyEnchantment;
-        return this;
-    }
-
-    public ToolDefinitionBuilder canApplyEnchantment(EnchantmentCategory... enchantmentTypes) {
-        this.isEnchantable = true;
-        this.canApplyEnchantment = (stack, enchantment) -> {
-            for (EnchantmentCategory type : enchantmentTypes) {
-                if (enchantment.category == type) {
-                    return true;
-                }
-            }
-            return false;
-        };
         return this;
     }
 

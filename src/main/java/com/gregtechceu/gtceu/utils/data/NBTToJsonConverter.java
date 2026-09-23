@@ -18,7 +18,7 @@ public class NBTToJsonConverter {
                 ((JsonObject) jsonRoot).add(key, getObject(nbt));
             }
         } else if (tag instanceof NumericTag numericTag) {
-            jsonRoot = new JsonPrimitive(numericTag.getAsNumber());
+            jsonRoot = new JsonPrimitive(numericTag.doubleValue());
         } else if (tag instanceof StringTag) {
             jsonRoot = new JsonPrimitive(tag.asString().orElseThrow());
         } else {

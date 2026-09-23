@@ -91,12 +91,12 @@ public class WorldGeneratorUtils {
     }
 
     public static Map<ChunkPos, List<BlockPos>> groupByChunks(Collection<BlockPos> positions) {
-        return positions.stream().collect(Collectors.groupingBy(ChunkPos::new));
+        return positions.stream().collect(Collectors.groupingBy(ChunkPos::containing));
     }
 
     public static Collection<ChunkPos> getChunks(Collection<BlockPos> positions) {
         return positions.stream()
-                .collect(Collectors.groupingBy(ChunkPos::new))
+                .collect(Collectors.groupingBy(ChunkPos::containing))
                 .keySet();
     }
 

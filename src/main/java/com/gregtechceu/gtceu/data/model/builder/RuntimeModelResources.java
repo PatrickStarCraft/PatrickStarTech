@@ -68,6 +68,14 @@ public final class RuntimeModelResources {
         return tints;
     }
 
+    public static JsonArray dynamicTint(Identifier type) {
+        JsonArray tints = new JsonArray();
+        JsonObject tint = new JsonObject();
+        tint.addProperty("type", type.toString());
+        tints.add(tint);
+        return tints;
+    }
+
     public static void emitModel(Identifier modelId, JsonElement json,
                                  BiConsumer<Identifier, JsonElement> sink) {
         sink.accept(modelPath(modelId), json);

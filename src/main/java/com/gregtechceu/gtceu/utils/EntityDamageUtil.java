@@ -10,7 +10,9 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.*;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.core.registries.Registries;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -48,7 +50,7 @@ public class EntityDamageUtil {
         if (damage <= 0) return;
         if (!entity.isAlive()) return;
         // fire/lava mobs cannot be burned
-        if (entity.getType().is(CustomTags.HEAT_IMMUNE))
+        if (entity.getType().getTags().anyMatch(CustomTags.HEAT_IMMUNE::equals))
             return;
         // fire resistance entities cannot be burned
         if (entity.getEffect(MobEffects.FIRE_RESISTANCE) != null) return;
@@ -68,14 +70,16 @@ public class EntityDamageUtil {
         if (damage <= 0) return;
         if (!entity.isAlive()) return;
         // snow/frost mobs cannot be chilled
-        if (entity.getType().is(EntityTypeTags.FREEZE_IMMUNE_ENTITY_TYPES))
+        if (entity.getType().getTags().anyMatch(EntityTypeTags.FREEZE_IMMUNE_ENTITY_TYPES::equals))
             return;
         // frost walker entities cannot be chilled
         ItemStack stack = entity.getItemBySlot(EquipmentSlot.FEET);
         // check for empty in order to force damage to be applied if armor breaks
         if (!stack.isEmpty()) {
-            if (stack.getEnchantmentLevel(Enchantments.FROST_WALKER) > 0) {
-                stack.hurtAndBreak(1, entity, ent -> ent.broadcastBreakEvent(EquipmentSlot.FEET));
+            var frostWalker = entity.registryAccess().lookupOrThrow(Registries.ENCHANTMENT)
+                    .getOrThrow(Enchantments.FROST_WALKER);
+            if (EnchantmentHelper.getItemEnchantmentLevel(frostWalker, stack) > 0) {
+                stack.hurtAndBreak(1, entity, EquipmentSlot.FEET);
                 return;
             }
         }
@@ -96,7 +100,7 @@ public class EntityDamageUtil {
         if (damage <= 0) return;
         if (!entity.isAlive()) return;
         // skeletons cannot breathe in the toxins
-        if (entity.getType().is(CustomTags.CHEMICAL_IMMUNE))
+        if (entity.getType().getTags().anyMatch(CustomTags.CHEMICAL_IMMUNE::equals))
             return;
 
         entity.hurt(GTDamageTypes.CHEMICAL.source(entity.level()), damage);

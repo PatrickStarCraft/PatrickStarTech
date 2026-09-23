@@ -54,6 +54,10 @@ public class ItemModelProvider extends ModelProvider<ItemModelBuilder> {
         itemDefinitions.put(itemId, definition.deepCopy());
     }
 
+    public void addTint(Identifier itemId, Identifier modelId, Identifier tintSource) {
+        bindItemDefinition(itemId, RuntimeModelResources.itemDefinition(modelId, RuntimeModelResources.dynamicTint(tintSource)));
+    }
+
     public void emitItemDefinitions(BiConsumer<Identifier, JsonElement> sink) {
         itemDefinitionBuilders.forEach((item, builder) -> sink.accept(
                 Identifier.fromNamespaceAndPath(item.getNamespace(), "items/" + item.getPath() + ".json"),

@@ -12,6 +12,7 @@
         "client.BakedQuadMixin",
         "client.BiomeColorsMixin",
         "client.BlockModelMixin",
+        "client.ClientBootstrapMixin",
         "client.ClientLevelAccessor",
         "client.FaceBakeryMixin",
         "client.GuiGraphicsAccessor",

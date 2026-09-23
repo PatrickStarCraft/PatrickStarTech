@@ -265,7 +265,7 @@ public class GTTransferUtils {
             ItemStack slotStack = handler.getStackInSlot(i);
             if (slotStack.isEmpty()) {
                 emptySlots.add(i);
-            } else if (ItemHandlerHelper.canItemStacksStack(stack, slotStack)) {
+            } else if (ItemStack.isSameItemSameComponents(stack, slotStack)) {
                 stack = handler.insertItem(i, stack, simulate);
                 if (stack.isEmpty()) {
                     return ItemStack.EMPTY;

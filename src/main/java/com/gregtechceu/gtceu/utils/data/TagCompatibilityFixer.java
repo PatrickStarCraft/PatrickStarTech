@@ -29,7 +29,7 @@ public final class TagCompatibilityFixer {
         }
 
         var persistent = traits.get(0).getTraitName();
-        machineTag.getCompound("traitHolder").put(Objects.requireNonNull(persistent), data);
+        machineTag.getCompoundOrEmpty("traitHolder").put(Objects.requireNonNull(persistent), data);
     }
 
     public static void fixTraitTags(MetaMachine machine, CompoundTag tag) {
@@ -155,7 +155,7 @@ public final class TagCompatibilityFixer {
             return tag.getCompoundOrEmpty("p");
         }
         if ((tag.get("t") instanceof CompoundTag)) {
-            return tag.getCompound("t").getCompound("p");
+            return tag.getCompoundOrEmpty("t").getCompoundOrEmpty("p");
         }
         return tag;
     }

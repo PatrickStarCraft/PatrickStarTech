@@ -98,6 +98,13 @@ public class GTModels {
         prov.generated(ctx.getId(), texture);
     }
 
+    public static void createMaterialPartTextureModel(DataGenContext<Item, ? extends Item> ctx, ItemModelProvider prov,
+                                                       Identifier texture) {
+        prov.generated(ctx.getId(), texture);
+        Identifier modelId = Identifier.fromNamespaceAndPath(ctx.getId().getNamespace(), "item/" + ctx.getId().getPath());
+        prov.addTint(ctx.getId(), modelId, Identifier.fromNamespaceAndPath("gtceu", "material_part"));
+    }
+
     public static void rubberTreeSaplingModel(DataGenContext<Item, BlockItem> context,
                                               ItemModelProvider provider) {
         provider.generated(context.getId(), provider.modLoc("block/" + context.getName()));

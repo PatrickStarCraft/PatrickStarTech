@@ -133,8 +133,8 @@ public abstract class ProspectorMode<T> {
         @Override
         public String getUniqueId(Either<Material, BlockState> item) {
             return item.map(material -> MATERIAL_PREFIX + material.getResourceLocation(),
-                    state -> state.getBlockHolder().unwrapKey()
-                            .map(ResourceKey::location)
+                    state -> state.getBlock().builtInRegistryHolder().unwrapKey()
+                            .map(ResourceKey::identifier)
                             .map(Identifier::toString)
                             .orElse("Unknown entry ???"));
         }
@@ -157,7 +157,7 @@ public abstract class ProspectorMode<T> {
             } else {
                 CompoundTag tag = buf.readNbt();
                 assert tag != null;
-                return Either.right(NbtUtils.readBlockState(BuiltInRegistries.BLOCK.asLookup(), tag));
+                return Either.right(NbtUtils.readBlockState(BuiltInRegistries.BLOCK, tag));
             }
         }
 

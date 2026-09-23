@@ -15,6 +15,7 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -113,7 +114,7 @@ public class ToolHeadReplaceRecipe extends CustomRecipe {
             IElectricItem powerUnit = GTCapabilityHelper.getElectricItem(realTool);
             if (toolHead == null || powerUnit == null) return ItemStack.EMPTY;
             GTToolType[] toolArray = TOOL_HEAD_TO_TOOL_MAP.get(toolHead.tagPrefix());
-            ItemProviderEntry<IGTTool> toolEntry = GTMaterialItems.TOOL_ITEMS.get(toolHead.material(),
+            ItemProviderEntry<Item, ? extends Item> toolEntry = GTMaterialItems.TOOL_ITEMS.get(toolHead.material(),
                     toolArray[tool.getElectricTier()]);
             if (toolEntry == null) return ItemStack.EMPTY;
             ItemStack newTool = toolEntry.get().get(powerUnit.getCharge(), powerUnit.getMaxCharge());

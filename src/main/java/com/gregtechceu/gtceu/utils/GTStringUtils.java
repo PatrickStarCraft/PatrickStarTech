@@ -148,17 +148,20 @@ public class GTStringUtils {
         MutableComponent component = Component.literal("[");
         if (arr.size() <= 5) {
             for (int i = 0; i < arr.size(); i++) {
-                component.append(Component.literal('"' + arr.getString(i) + '"').withStyle(ChatFormatting.DARK_AQUA));
+                component.append(Component.literal("\"" + arr.getString(i).orElse("") + "\"")
+                        .withStyle(ChatFormatting.DARK_AQUA));
                 if (i != arr.size() - 1) component.append(", ");
             }
         } else {
             for (int i = 0; i < 2; i++) {
-                component.append(Component.literal('"' + arr.getString(i) + '"').withStyle(ChatFormatting.DARK_AQUA));
+                component.append(Component.literal("\"" + arr.getString(i).orElse("") + "\"")
+                        .withStyle(ChatFormatting.DARK_AQUA));
                 component.append(", ");
             }
             component.append("..., ");
             for (int i = arr.size() - 2; i < arr.size(); i++) {
-                component.append(Component.literal('"' + arr.getString(i) + '"').withStyle(ChatFormatting.DARK_AQUA));
+                component.append(Component.literal("\"" + arr.getString(i).orElse("") + "\"")
+                        .withStyle(ChatFormatting.DARK_AQUA));
                 if (i != arr.size() - 1) component.append(", ");
             }
         }

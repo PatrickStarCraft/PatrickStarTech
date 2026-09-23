@@ -6,6 +6,7 @@ import com.gregtechceu.gtceu.common.network.packets.CPacketKeyDown;
 
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
@@ -128,7 +129,9 @@ public final class SyncedKeyMapping {
     @OnlyIn(Dist.CLIENT)
     private @NotNull Object createKeyMapping(@NotNull String nameKey, @NotNull IKeyConflictContext ctx, int keyCode,
                                              String category) {
-        return new KeyMapping(nameKey, ctx, InputConstants.Type.KEYSYM, keyCode, category);
+        return new KeyMapping(nameKey, ctx, InputConstants.Type.KEYSYM, keyCode,
+                KeyMapping.Category.register(Identifier.fromNamespaceAndPath(GTCEu.MOD_ID,
+                        category.toLowerCase(java.util.Locale.ROOT))));
     }
 
     /**
@@ -167,8 +170,7 @@ public final class SyncedKeyMapping {
         if (keyMapping != null) {
             return keyMapping.isDown();
         }
-        long id = Minecraft.getInstance().getWindow().getWindow();
-        return InputConstants.isKeyDown(id, keyCode);
+        return InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), keyCode);
     }
 
     /**
@@ -244,8 +246,7 @@ public final class SyncedKeyMapping {
             if (keyMapping.keyMapping != null) {
                 keyMapping.isKeyDown = keyMapping.keyMapping.isDown();
             } else {
-                long id = Minecraft.getInstance().getWindow().getWindow();
-                keyMapping.isKeyDown = InputConstants.isKeyDown(id, keyMapping.keyCode);
+                keyMapping.isKeyDown = InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), keyMapping.keyCode);
             }
 
             if (previousKeyDown != keyMapping.isKeyDown) {

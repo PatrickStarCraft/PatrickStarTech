@@ -38,10 +38,8 @@ import com.gregtechceu.gtceu.data.lang.LangHandler;
 import com.gregtechceu.gtceu.data.model.builder.ModelFile;
 import com.gregtechceu.gtceu.data.recipe.CustomTags;
 import com.gregtechceu.gtceu.utils.FormattingUtil;
-import com.gregtechceu.gtceu.utils.GTUtil;
 import com.gregtechceu.gtceu.utils.memoization.GTMemoizer;
 
-import net.minecraft.client.color.item.ItemColor;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.cauldron.CauldronInteraction;
 import net.minecraft.network.chat.Component;
@@ -57,9 +55,6 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.item.equipment.ArmorType;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
-import net.minecraft.world.level.material.Fluids;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.common.Tags;
 import net.minecraftforge.common.TierSortingRegistry;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -341,18 +336,6 @@ public class GTItems {
                     attach(ElectricStats.createElectricItem(1_000_000L, GTValues.MV), new PortableScannerBehavior(1)))
             .register();
 
-    @OnlyIn(Dist.CLIENT)
-    public static ItemColor cellColor() {
-        return (itemStack, index) -> {
-            if (index == 1) {
-                return FluidUtil.getFluidContained(itemStack)
-                        .map(f -> f.getFluid() == Fluids.LAVA ? 0xFFFF7000 : GTUtil.getFluidColor(f))
-                        .orElse(-1);
-            }
-            return -1;
-        };
-    }
-
     public static ICustomDescriptionId cellName() {
         return new ICustomDescriptionId() {
 
@@ -367,8 +350,7 @@ public class GTItems {
 
     public static ItemEntry<ComponentItem> FLUID_CELL = REGISTRATE.item("fluid_cell", ComponentItem::create)
             .lang("%s Fluid Cell")
-            .setData(ProviderType.ITEM_MODEL, NonNullBiConsumer.noop())
-            .color(() -> GTItems::cellColor)
+            .setData(GTBlockstateProvider.ITEM_MODEL, (ctx, gen) -> GTBlockstateProvider.getCurrentProvider().itemModels().addTint(ctx.getId(), Identifier.fromNamespaceAndPath("gtceu", "item/fluid_cell"), Identifier.fromNamespaceAndPath("gtceu", "fluid_cell")))
             .onRegister(attach(
                     ThermalFluidStats.create(FluidType.BUCKET_VOLUME, 1800, true, false, false, false, false),
                     new ItemFluidContainer(), cellName()))
@@ -376,8 +358,7 @@ public class GTItems {
     public static ItemEntry<ComponentItem> FLUID_CELL_UNIVERSAL = REGISTRATE
             .item("universal_fluid_cell", ComponentItem::create)
             .lang("%s Universal Cell")
-            .color(() -> GTItems::cellColor)
-            .setData(ProviderType.ITEM_MODEL, NonNullBiConsumer.noop())
+            .setData(GTBlockstateProvider.ITEM_MODEL, (ctx, gen) -> GTBlockstateProvider.getCurrentProvider().itemModels().addTint(ctx.getId(), Identifier.fromNamespaceAndPath("gtceu", "item/universal_fluid_cell"), Identifier.fromNamespaceAndPath("gtceu", "fluid_cell")))
             .onRegister(attach(cellName(),
                     ThermalFluidStats.create(FluidType.BUCKET_VOLUME, 1800, true, false, false, false, true),
                     new ItemFluidContainer()))
@@ -394,8 +375,7 @@ public class GTItems {
 
     public static ItemEntry<ComponentItem> FLUID_CELL_GLASS_VIAL = REGISTRATE.item("glass_vial", ComponentItem::create)
             .lang("%s Glass Vial")
-            .color(() -> GTItems::cellColor)
-            .setData(ProviderType.ITEM_MODEL, NonNullBiConsumer.noop())
+            .setData(GTBlockstateProvider.ITEM_MODEL, (ctx, gen) -> GTBlockstateProvider.getCurrentProvider().itemModels().addTint(ctx.getId(), Identifier.fromNamespaceAndPath("gtceu", "item/glass_vial"), Identifier.fromNamespaceAndPath("gtceu", "fluid_cell")))
             .onRegister(
                     attach(cellName(),
                             ThermalFluidStats.create(FluidType.BUCKET_VOLUME, 1200, false, true, false, false,
@@ -411,8 +391,7 @@ public class GTItems {
         return REGISTRATE
                 .item("%s_fluid_cell".formatted(mat.getName()), ComponentItem::create)
                 .lang("%s " + toEnglishName(mat.getName()) + " Cell")
-                .color(() -> GTItems::cellColor)
-                .setData(ProviderType.ITEM_MODEL, NonNullBiConsumer.noop())
+                .setData(GTBlockstateProvider.ITEM_MODEL, (ctx, gen) -> GTBlockstateProvider.getCurrentProvider().itemModels().addTint(ctx.getId(), Identifier.fromNamespaceAndPath("gtceu", "item/%s_fluid_cell".formatted(mat.getName())), Identifier.fromNamespaceAndPath("gtceu", "fluid_cell")))
                 .properties(p -> p.stacksTo(stackSize))
                 .onRegister(attach(cellName(),
                         ThermalFluidStats.create(FluidType.BUCKET_VOLUME * capacity, prop, true),
@@ -2194,8 +2173,7 @@ public class GTItems {
     public static ItemEntry<ComponentItem> TURBINE_ROTOR = REGISTRATE.item("turbine_rotor", ComponentItem::create)
             .lang("%s Turbine Rotor")
             .properties(p -> p.stacksTo(1))
-            .setData(GTBlockstateProvider.ITEM_MODEL, (ctx, prov) -> createTextureModel(ctx, prov, GTCEu.id("item/tools/turbine")))
-            .color(() -> IMaterialPartItem::getItemStackColor)
+            .setData(GTBlockstateProvider.ITEM_MODEL, (ctx, prov) -> createMaterialPartTextureModel(ctx, prov, GTCEu.id("item/tools/turbine")))
             .onRegister(attach(new TurbineRotorBehaviour())).register();
 
     public static ItemEntry<Item> NEURO_PROCESSOR = REGISTRATE.item("neuro_processing_unit", Item::new)

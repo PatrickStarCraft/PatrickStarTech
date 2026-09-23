@@ -51,7 +51,7 @@ public class BedrockFluidVeinSavedData extends CompoundTagSavedData {
         this(serverLevel);
         var list = com.gregtechceu.gtceu.utils.data.TypedTagList.read(nbt, "veinInfo", Tag.TAG_COMPOUND);
         for (int i = 0; i < list.size(); ++i) {
-            CompoundTag compoundTag = list.getCompound(i);
+            CompoundTag compoundTag = list.getCompound(i).orElseGet(CompoundTag::new);
             var chunkPos = ChunkPos.unpack(compoundTag.getLongOr("p", 0));
             veinFluids.put(chunkPos, FluidVeinWorldEntry.readFromNBT(compoundTag.getCompoundOrEmpty("d")));
         }
