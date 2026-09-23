@@ -61,7 +61,7 @@ public class WrappedSoundEntry extends SoundEntry {
             JsonObject s = new JsonObject();
             s.addProperty("name", event.event()
                     .get()
-                    .getLocation()
+                    .location()
                     .toString());
             s.addProperty("type", "event");
             if (attenuationDistance != 0)

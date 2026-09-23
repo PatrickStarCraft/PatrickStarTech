@@ -279,7 +279,7 @@ public class CapeRegistry extends CompoundTagSavedData {
         // sync to others
         GTNetwork.sendToAll(new SPacketNotifyCapeChange(uuid, CURRENT_CAPES.get(uuid)));
         // sync to the one who's logging in
-        for (ServerPlayer otherPlayer : serverPlayer.getServer().getPlayerList().getPlayers()) {
+        for (ServerPlayer otherPlayer : serverPlayer.level().getServer().getPlayerList().getPlayers()) {
             uuid = otherPlayer.getUUID();
             GTNetwork.sendToPlayer(serverPlayer, new SPacketNotifyCapeChange(uuid, CURRENT_CAPES.get(uuid)));
         }

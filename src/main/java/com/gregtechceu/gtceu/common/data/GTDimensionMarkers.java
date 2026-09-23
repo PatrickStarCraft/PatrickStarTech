@@ -7,7 +7,7 @@ import com.gregtechceu.gtceu.api.registry.GTRegistries;
 import com.gregtechceu.gtceu.integration.kjs.GTRegistryInfo;
 import com.gregtechceu.gtceu.utils.FormattingUtil;
 
-import net.minecraft.client.renderer.block.model.BlockModel;
+import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
@@ -65,7 +65,7 @@ public class GTDimensionMarkers {
                         prov.modLoc("block/dim_markers/%s/east".formatted(name)),
                         prov.modLoc("block/dim_markers/%s/west".formatted(name)))
                         .texture("particle", "#north")
-                        .guiLight(BlockModel.GuiLight.FRONT)))
+                        .guiLight(UnbakedModel.GuiLight.FRONT)))
                 .simpleItem()
                 .register();
     }

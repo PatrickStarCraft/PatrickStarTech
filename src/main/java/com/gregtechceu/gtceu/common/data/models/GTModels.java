@@ -12,12 +12,14 @@ import com.gregtechceu.gtceu.api.machine.multiblock.IBatteryData;
 import com.gregtechceu.gtceu.api.registry.GTRegistries;
 import com.gregtechceu.gtceu.api.registry.registrate.provider.GTBlockstateProvider;
 import com.gregtechceu.gtceu.common.block.*;
+import com.gregtechceu.gtceu.common.data.GTItems;
 import com.gregtechceu.gtceu.core.MixinHelpers;
 import com.gregtechceu.gtceu.data.pack.GTDynamicResourcePack;
 import com.gregtechceu.gtceu.data.model.builder.ConfiguredModel;
 import com.gregtechceu.gtceu.data.model.builder.ItemModelProvider;
 import com.gregtechceu.gtceu.data.model.builder.ModelFile;
 import com.gregtechceu.gtceu.data.model.builder.RuntimeModelResources;
+import com.gregtechceu.gtceu.utils.data.RuntimeBlockstateProvider;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -36,6 +38,7 @@ import com.tterrag.registrate.util.nullness.NonNullBiConsumer;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.List;
 
 public class GTModels {
 
@@ -96,6 +99,64 @@ public class GTModels {
     public static void createTextureModel(DataGenContext<Item, ? extends Item> ctx, ItemModelProvider prov,
                                           Identifier texture) {
         prov.generated(ctx.getId(), texture);
+    }
+
+    /** Bind the modern NeoForge dynamic fluid-container item model for the registered container. */
+    public static void createFluidContainerItemDefinition(DataGenContext<Item, ? extends Item> ctx,
+                                                          ItemModelProvider prov, boolean hasCover) {
+        prov.bindItemDefinition(ctx.getId(), fluidContainerItemDefinition(ctx.getName(), hasCover));
+    }
+
+    private static JsonObject fluidContainerItemDefinition(String itemPath, boolean hasCover) {
+        JsonObject textures = new JsonObject();
+        textures.addProperty("base", GTCEu.id("item/" + itemPath + "/base").toString());
+        textures.addProperty("fluid", GTCEu.id("item/" + itemPath + "/overlay").toString());
+        if (hasCover) {
+            textures.addProperty("cover", GTCEu.id("item/" + itemPath + "/base").toString());
+        }
+
+        JsonObject model = new JsonObject();
+        model.addProperty("type", "neoforge:fluid_container");
+        model.add("textures", textures);
+        model.addProperty("fluid", "minecraft:empty");
+
+        JsonObject definition = new JsonObject();
+        definition.add("model", model);
+        return definition;
+    }
+
+    /** Generate the rotor's texture model and bind its 26.2 material tint source in the item definition. */
+    public static void createMaterialPartItemModel(DataGenContext<Item, ? extends Item> ctx,
+                                                   ItemModelProvider prov, Identifier texture) {
+        prov.generated(ctx.getId(), texture);
+        prov.bindItemDefinition(ctx.getId(), materialPartItemDefinition(ctx.getId().withPrefix("item/")));
+    }
+
+    private static JsonObject materialPartItemDefinition(Identifier modelId) {
+        JsonArray tints = new JsonArray();
+        JsonObject materialPartTint = new JsonObject();
+        materialPartTint.addProperty("type", "gtceu:material_part");
+        tints.add(materialPartTint);
+        return RuntimeModelResources.itemDefinition(modelId, tints);
+    }
+
+    /** Add item definitions and their generated model to the live dynamic resource pack. */
+    public static void registerRuntimeTintedItemModels() {
+        ItemModelProvider itemModels = RuntimeBlockstateProvider.INSTANCE.itemModels();
+        for (Item item : List.of(GTItems.FLUID_CELL.get(), GTItems.FLUID_CELL_UNIVERSAL.get(),
+                GTItems.FLUID_CELL_GLASS_VIAL.get(), GTItems.FLUID_CELL_LARGE_STEEL.get(),
+                GTItems.FLUID_CELL_LARGE_ALUMINIUM.get(), GTItems.FLUID_CELL_LARGE_STAINLESS_STEEL.get(),
+                GTItems.FLUID_CELL_LARGE_TITANIUM.get(), GTItems.FLUID_CELL_LARGE_TUNGSTEN_STEEL.get())) {
+            Identifier itemId = BuiltInRegistries.ITEM.getKey(item);
+            boolean hasCover = item == GTItems.FLUID_CELL_GLASS_VIAL.get();
+            itemModels.bindItemDefinition(itemId,
+                    fluidContainerItemDefinition(itemId.getPath(), hasCover));
+        }
+
+        Item rotor = GTItems.TURBINE_ROTOR.get();
+        Identifier rotorId = BuiltInRegistries.ITEM.getKey(rotor);
+        itemModels.generated(rotorId, GTCEu.id("item/tools/turbine"));
+        itemModels.bindItemDefinition(rotorId, materialPartItemDefinition(rotorId.withPrefix("item/")));
     }
 
     public static void rubberTreeSaplingModel(DataGenContext<Item, BlockItem> context,

@@ -62,7 +62,8 @@ public class DamageTypeData {
     private Holder<DamageType> getHolder(LevelAccessor level) {
         if (this.holder == null) {
             Registry<DamageType> registry = level.registryAccess().lookupOrThrow(Registries.DAMAGE_TYPE);
-            this.holder = registry.getHolderOrThrow(key);
+            this.holder = registry.get(key.identifier())
+                    .orElseThrow(() -> new IllegalStateException("Missing key in " + registry.key() + ": " + key));
         }
         return holder;
     }

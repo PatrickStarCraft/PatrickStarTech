@@ -7,15 +7,12 @@ import com.gregtechceu.gtceu.api.item.data.ItemStackData;
 import com.gregtechceu.gtceu.api.registry.GTRegistries;
 import com.gregtechceu.gtceu.common.data.GTMaterials;
 
-import net.minecraft.client.color.item.ItemColor;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -74,7 +71,7 @@ public interface IMaterialPartItem extends IItemComponent, IDurabilityBar, IAddI
     @Nullable
     default Component getItemName(ItemStack stack) {
         var material = getPartMaterial(stack);
-        return Component.translatable(stack.getDescriptionId(), material.getLocalizedName());
+        return Component.translatable(stack.getItem().getDescriptionId(), material.getLocalizedName());
     }
 
     @Override
@@ -89,18 +86,15 @@ public interface IMaterialPartItem extends IItemComponent, IDurabilityBar, IAddI
                 .add(Component.translatable("metaitem.tool.tooltip.primary_material", material.getLocalizedName()));
     }
 
-    @OnlyIn(Dist.CLIENT)
-    static ItemColor getItemStackColor() {
-        return (itemStack, i) -> {
-            if (itemStack.getItem() instanceof IComponentItem componentItem) {
-                for (IItemComponent component : componentItem.getComponents()) {
-                    if (component instanceof IMaterialPartItem materialPartItem) {
-                        return materialPartItem.getPartMaterial(itemStack).getMaterialARGB();
-                    }
+    static int getItemStackColor(ItemStack itemStack) {
+        if (itemStack.getItem() instanceof IComponentItem componentItem) {
+            for (IItemComponent component : componentItem.getComponents()) {
+                if (component instanceof IMaterialPartItem materialPartItem) {
+                    return materialPartItem.getPartMaterial(itemStack).getMaterialARGB();
                 }
             }
-            return -1;
-        };
+        }
+        return -1;
     }
 
     @Override

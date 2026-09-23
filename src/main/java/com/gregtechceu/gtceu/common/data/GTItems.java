@@ -24,6 +24,7 @@ import com.gregtechceu.gtceu.api.registry.registrate.provider.GTBlockstateProvid
 import com.gregtechceu.gtceu.common.cover.ConveyorCover;
 import com.gregtechceu.gtceu.common.cover.PumpCover;
 import com.gregtechceu.gtceu.common.data.materials.GTFoods;
+import com.gregtechceu.gtceu.common.data.models.GTModels;
 import com.gregtechceu.gtceu.common.entity.GTBoat;
 import com.gregtechceu.gtceu.common.item.*;
 import com.gregtechceu.gtceu.common.item.armor.*;
@@ -41,9 +42,8 @@ import com.gregtechceu.gtceu.utils.FormattingUtil;
 import com.gregtechceu.gtceu.utils.GTUtil;
 import com.gregtechceu.gtceu.utils.memoization.GTMemoizer;
 
-import net.minecraft.client.color.item.ItemColor;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.core.cauldron.CauldronInteraction;
+import net.minecraft.core.cauldron.CauldronInteractions;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.stats.Stats;
@@ -54,6 +54,9 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.food.Foods;
 import net.minecraft.world.item.*;
+import net.minecraft.world.item.component.Consumable;
+import net.minecraft.world.item.component.Consumables;
+import net.minecraft.world.item.consume_effects.ApplyStatusEffectsConsumeEffect;
 import net.minecraft.world.item.equipment.ArmorType;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
@@ -78,6 +81,7 @@ import com.tterrag.registrate.util.nullness.NonNullConsumer;
 import com.tterrag.registrate.util.nullness.NonNullFunction;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.apache.commons.lang3.StringUtils;
+import com.mojang.datafixers.util.Pair;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -341,18 +345,6 @@ public class GTItems {
                     attach(ElectricStats.createElectricItem(1_000_000L, GTValues.MV), new PortableScannerBehavior(1)))
             .register();
 
-    @OnlyIn(Dist.CLIENT)
-    public static ItemColor cellColor() {
-        return (itemStack, index) -> {
-            if (index == 1) {
-                return FluidUtil.getFluidContained(itemStack)
-                        .map(f -> f.getFluid() == Fluids.LAVA ? 0xFFFF7000 : GTUtil.getFluidColor(f))
-                        .orElse(-1);
-            }
-            return -1;
-        };
-    }
-
     public static ICustomDescriptionId cellName() {
         return new ICustomDescriptionId() {
 
@@ -367,8 +359,8 @@ public class GTItems {
 
     public static ItemEntry<ComponentItem> FLUID_CELL = REGISTRATE.item("fluid_cell", ComponentItem::create)
             .lang("%s Fluid Cell")
-            .setData(ProviderType.ITEM_MODEL, NonNullBiConsumer.noop())
-            .color(() -> GTItems::cellColor)
+            .setData(GTBlockstateProvider.ITEM_MODEL, (ctx, prov) ->
+                    GTModels.createFluidContainerItemDefinition(ctx, prov, false))
             .onRegister(attach(
                     ThermalFluidStats.create(FluidType.BUCKET_VOLUME, 1800, true, false, false, false, false),
                     new ItemFluidContainer(), cellName()))
@@ -376,8 +368,8 @@ public class GTItems {
     public static ItemEntry<ComponentItem> FLUID_CELL_UNIVERSAL = REGISTRATE
             .item("universal_fluid_cell", ComponentItem::create)
             .lang("%s Universal Cell")
-            .color(() -> GTItems::cellColor)
-            .setData(ProviderType.ITEM_MODEL, NonNullBiConsumer.noop())
+            .setData(GTBlockstateProvider.ITEM_MODEL, (ctx, prov) ->
+                    GTModels.createFluidContainerItemDefinition(ctx, prov, false))
             .onRegister(attach(cellName(),
                     ThermalFluidStats.create(FluidType.BUCKET_VOLUME, 1800, true, false, false, false, true),
                     new ItemFluidContainer()))
@@ -394,8 +386,8 @@ public class GTItems {
 
     public static ItemEntry<ComponentItem> FLUID_CELL_GLASS_VIAL = REGISTRATE.item("glass_vial", ComponentItem::create)
             .lang("%s Glass Vial")
-            .color(() -> GTItems::cellColor)
-            .setData(ProviderType.ITEM_MODEL, NonNullBiConsumer.noop())
+            .setData(GTBlockstateProvider.ITEM_MODEL, (ctx, prov) ->
+                    GTModels.createFluidContainerItemDefinition(ctx, prov, true))
             .onRegister(
                     attach(cellName(),
                             ThermalFluidStats.create(FluidType.BUCKET_VOLUME, 1200, false, true, false, false,
@@ -411,8 +403,8 @@ public class GTItems {
         return REGISTRATE
                 .item("%s_fluid_cell".formatted(mat.getName()), ComponentItem::create)
                 .lang("%s " + toEnglishName(mat.getName()) + " Cell")
-                .color(() -> GTItems::cellColor)
-                .setData(ProviderType.ITEM_MODEL, NonNullBiConsumer.noop())
+                .setData(GTBlockstateProvider.ITEM_MODEL, (ctx, prov) ->
+                        GTModels.createFluidContainerItemDefinition(ctx, prov, false))
                 .properties(p -> p.stacksTo(stackSize))
                 .onRegister(attach(cellName(),
                         ThermalFluidStats.create(FluidType.BUCKET_VOLUME * capacity, prop, true),
@@ -2031,15 +2023,22 @@ public class GTItems {
 
     public static ItemEntry<ComponentItem> BOTTLE_PURPLE_DRINK = REGISTRATE.item("purple_drink", ComponentItem::create)
             .lang("Purple Drink")
-            .onRegister(attach(new FoodStats(GTFoods.DRINK, true, Items.GLASS_BOTTLE::getDefaultInstance)))
+            .properties(p -> p.food(GTFoods.DRINK, GTFoods.DRINK_CONSUMABLE))
+            .onRegister(attach(new FoodStats(GTFoods.DRINK, true, Items.GLASS_BOTTLE::getDefaultInstance,
+                    GTFoods.DRINK_EFFECTS)))
             .register();
+    private static final FoodProperties DOUGH_FOOD = new FoodProperties.Builder().nutrition(1).build();
+    private static final List<Pair<MobEffectInstance, Float>> DOUGH_EFFECTS = List.of(
+            Pair.of(new MobEffectInstance(MobEffects.HUNGER, 400), .40f),
+            Pair.of(new MobEffectInstance(MobEffects.POISON, 100), .05f));
+    private static final Consumable DOUGH_CONSUMABLE = Consumables.defaultFood()
+            .onConsume(new ApplyStatusEffectsConsumeEffect(DOUGH_EFFECTS.get(0).getFirst(), DOUGH_EFFECTS.get(0).getSecond()))
+            .onConsume(new ApplyStatusEffectsConsumeEffect(DOUGH_EFFECTS.get(1).getFirst(), DOUGH_EFFECTS.get(1).getSecond()))
+            .build();
     public static ItemEntry<ComponentItem> DOUGH = REGISTRATE.item("dough", ComponentItem::create)
             .lang("Dough")
-            .onRegister(attach(new FoodStats(
-                    new FoodProperties.Builder().nutrition(1)
-                            .effect(() -> new MobEffectInstance(MobEffects.HUNGER, 400), .40f)
-                            .effect(() -> new MobEffectInstance(MobEffects.POISON, 100), .05f)
-                            .build())))
+            .properties(p -> p.food(DOUGH_FOOD, DOUGH_CONSUMABLE))
+            .onRegister(attach(new FoodStats(DOUGH_FOOD, DOUGH_EFFECTS)))
             .tag(CustomTags.WHEAT_DOUGHS)
             .register();
     public static ItemEntry<ComponentItem> PLANT_BALL = REGISTRATE.item("plant_ball", ComponentItem::create)
@@ -2089,7 +2088,7 @@ public class GTItems {
     // TODO add more medications for specific conditions & then remove them from paracetamol
     public static ItemEntry<ComponentItem> PARACETAMOL_PILL = REGISTRATE.item("paracetamol_pill", ComponentItem::create)
             .lang("Paracetamol Pill")
-            .properties(p -> p.food(GTFoods.ANTIDOTE))
+            .properties(p -> p.food(GTFoods.ANTIDOTE, GTFoods.ANTIDOTE_CONSUMABLE))
             .onRegister(attach(new AntidoteBehavior(10,
                     GTMedicalConditions.CHEMICAL_BURNS,
                     GTMedicalConditions.WEAK_POISON,
@@ -2100,7 +2099,7 @@ public class GTItems {
             .register();
     public static ItemEntry<ComponentItem> RAD_AWAY_PILL = REGISTRATE.item("rad_away_pill", ComponentItem::create)
             .lang("RadAway™ Pill")
-            .properties(p -> p.food(GTFoods.ANTIDOTE))
+            .properties(p -> p.food(GTFoods.ANTIDOTE, GTFoods.ANTIDOTE_CONSUMABLE))
             .onRegister(attach(new AntidoteBehavior(50, GTMedicalConditions.CARCINOGEN)))
             .register();
 
@@ -2194,8 +2193,8 @@ public class GTItems {
     public static ItemEntry<ComponentItem> TURBINE_ROTOR = REGISTRATE.item("turbine_rotor", ComponentItem::create)
             .lang("%s Turbine Rotor")
             .properties(p -> p.stacksTo(1))
-            .setData(GTBlockstateProvider.ITEM_MODEL, (ctx, prov) -> createTextureModel(ctx, prov, GTCEu.id("item/tools/turbine")))
-            .color(() -> IMaterialPartItem::getItemStackColor)
+            .setData(GTBlockstateProvider.ITEM_MODEL, (ctx, prov) ->
+                    GTModels.createMaterialPartItemModel(ctx, prov, GTCEu.id("item/tools/turbine")))
             .onRegister(attach(new TurbineRotorBehaviour())).register();
 
     public static ItemEntry<Item> NEURO_PROCESSOR = REGISTRATE.item("neuro_processing_unit", Item::new)
@@ -2494,10 +2493,12 @@ public class GTItems {
             .lang("Gravitation Engine Unit").properties(p -> p.rarity(Rarity.EPIC))
             .register();
 
-    public static ItemEntry<RecordItem> SUS_RECORD = REGISTRATE
-            .item("sus_record", p -> new RecordItem(15, GTSoundEntries.SUS_RECORD::getMainEvent, p, 820))
+    public static ItemEntry<Item> SUS_RECORD = REGISTRATE
+            .item("sus_record", Item::new)
             .lang("Music Disc")
-            .properties(p -> p.stacksTo(1).rarity(Rarity.RARE))
+            .properties(p -> p.stacksTo(1).rarity(Rarity.RARE).jukeboxPlayable(
+                    net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.JUKEBOX_SONG,
+                            GTCEu.id("sus"))))
             .tag(net.neoforged.neoforge.common.Tags.Items.MUSIC_DISCS)
             .register();
     public static ItemEntry<Item> NAN_CERTIFICATE = REGISTRATE.item("nan_certificate", Item::new)
@@ -2572,16 +2573,19 @@ public class GTItems {
         }
     }
 
+    private static final FoodProperties MAGNETIC_GOLDEN_CARROT_FOOD = new FoodProperties.Builder()
+            .nutrition(Foods.GOLDEN_CARROT.nutrition()).saturationModifier(1.2F).alwaysEdible().build();
+    private static final List<Pair<MobEffectInstance, Float>> MAGNETIC_GOLDEN_CARROT_EFFECTS = List.of(
+            Pair.of(new MobEffectInstance(MobEffects.HASTE, 20 * 60 * 10, 1), 1.0f));
+    private static final Consumable MAGNETIC_GOLDEN_CARROT_CONSUMABLE = Consumables.defaultFood()
+            .onConsume(new ApplyStatusEffectsConsumeEffect(MAGNETIC_GOLDEN_CARROT_EFFECTS.get(0).getFirst(),
+                    MAGNETIC_GOLDEN_CARROT_EFFECTS.get(0).getSecond()))
+            .build();
     public static ItemEntry<ComponentItem> MAGNETIC_GOLDEN_CARROT = REGISTRATE
             .item("magnetic_golden_carrot", ComponentItem::create)
             .lang("Magnetic Golden Carrot")
-            .onRegister(attach(new FoodStats(new FoodProperties.Builder()
-                    .nutrition(Foods.GOLDEN_CARROT.getNutrition())
-                    .saturationMod(Foods.GOLDEN_CARROT.getSaturationModifier())
-                    .effect(() -> new MobEffectInstance(MobEffects.HASTE, 20 * 60 * 10, 1), 1)
-                    .fast()
-                    .alwaysEat()
-                    .build())))
+            .properties(p -> p.food(MAGNETIC_GOLDEN_CARROT_FOOD, MAGNETIC_GOLDEN_CARROT_CONSUMABLE))
+            .onRegister(attach(new FoodStats(MAGNETIC_GOLDEN_CARROT_FOOD, MAGNETIC_GOLDEN_CARROT_EFFECTS)))
             .register();
 
     public static void init() {
@@ -2611,8 +2615,8 @@ public class GTItems {
     public static <T extends Item> void cauldronInteraction(T item) {
         if (item instanceof TagPrefixItem tagPrefixItem &&
                 GTMaterialItems.purifyMap.containsKey(tagPrefixItem.tagPrefix)) {
-            CauldronInteraction.WATER.put(item, (state, world, pos, player, hand, stack) -> {
-                if (!world.isClientSide) {
+            CauldronInteractions.WATER.put(item, (state, world, pos, player, hand, stack) -> {
+                if (!world.isClientSide()) {
                     Item stackItem = stack.getItem();
                     if (stackItem instanceof TagPrefixItem prefixItem) {
                         if (!GTMaterialItems.purifyMap.containsKey(prefixItem.tagPrefix))
@@ -2635,7 +2639,7 @@ public class GTItems {
                     }
                 }
 
-                return InteractionResult.sidedSuccess(world.isClientSide);
+                return world.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER;
             });
 
         }
