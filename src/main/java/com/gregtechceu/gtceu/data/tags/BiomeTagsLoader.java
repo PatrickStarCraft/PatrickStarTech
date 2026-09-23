@@ -10,12 +10,14 @@ import net.minecraft.tags.BiomeTags;
 import net.minecraft.world.level.biome.Biomes;
 import net.neoforged.neoforge.common.Tags;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.util.concurrent.CompletableFuture;
 
 public class BiomeTagsLoader extends BiomeTagsProvider {
 
-    public BiomeTagsLoader(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
-        super(output, registries, GTCEu.MOD_ID);
+    public BiomeTagsLoader(PackOutput arg, CompletableFuture<HolderLookup.Provider> completableFuture) {
+        super(arg, completableFuture, GTCEu.MOD_ID);
     }
 
     @Override

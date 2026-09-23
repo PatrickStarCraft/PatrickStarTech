@@ -6,7 +6,9 @@ import com.gregtechceu.gtceu.api.sync_system.SyncDataHolder;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.ByteArrayTag;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
@@ -17,7 +19,11 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.util.ExtraCodecs;
 
+import com.mojang.serialization.MapCodec;
 import io.netty.buffer.Unpooled;
 import lombok.Getter;
 import lombok.Setter;
@@ -51,9 +57,9 @@ public abstract class ManagedSyncBlockEntity extends BlockEntity implements ISyn
      * Saves BE data to world save.
      */
     @Override
-    protected final void saveAdditional(CompoundTag tag) {
-        super.saveAdditional(tag);
-        tag.merge(getSyncDataHolder().serializeNBT(getHolderLookup()));
+    protected final void saveAdditional(ValueOutput output) {
+        super.saveAdditional(output);
+        output.store(getSyncDataHolder().serializeNBT(getHolderLookup()));
     }
 
     /**
@@ -66,23 +72,15 @@ public abstract class ManagedSyncBlockEntity extends BlockEntity implements ISyn
      */
     @Override
     @MustBeInvokedByOverriders
-    public void load(CompoundTag tag) {
-        super.load(tag);
-        getSyncDataHolder().deserializeNBT(getHolderLookup(), tag);
-    }
-
-    @Override
-    public final void handleUpdateTag(CompoundTag tag) {
-        byte[] data = tag.getByteArray("data").orElse(new byte[0]);
-        getSyncDataHolder().readClientPacket(getHolderLookup(), new FriendlyByteBuf(Unpooled.wrappedBuffer(data)));
-    }
-
-    @Override
-    public final void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
-        CompoundTag tag = pkt.getTag();
-        if (tag != null) {
-        byte[] data = tag.getByteArray("data").orElse(new byte[0]);
+    protected void loadAdditional(ValueInput input) {
+        super.loadAdditional(input);
+        byte[] data = input.read("data", ExtraCodecs.NBT).filter(ByteArrayTag.class::isInstance)
+                .map(ByteArrayTag.class::cast).map(ByteArrayTag::getAsByteArray).orElse(new byte[0]);
+        if (data.length > 0) {
             getSyncDataHolder().readClientPacket(getHolderLookup(), new FriendlyByteBuf(Unpooled.wrappedBuffer(data)));
+        } else {
+            CompoundTag savedData = input.read(MapCodec.assumeMapUnsafe(CompoundTag.CODEC)).orElseGet(CompoundTag::new);
+            getSyncDataHolder().deserializeNBT(getHolderLookup(), savedData);
         }
     }
 
@@ -90,7 +88,7 @@ public abstract class ManagedSyncBlockEntity extends BlockEntity implements ISyn
      * Called to gather BE data to be sent when a client loads this BE.
      */
     @Override
-    public CompoundTag getUpdateTag() {
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         return writeClientPacket(true);
     }
 
@@ -99,7 +97,7 @@ public abstract class ManagedSyncBlockEntity extends BlockEntity implements ISyn
      */
     @Override
     public @Nullable Packet<ClientGamePacketListener> getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this, b -> writeClientPacket(false));
+        return ClientboundBlockEntityDataPacket.create(this, (blockEntity, registries) -> writeClientPacket(false));
     }
 
     private CompoundTag writeClientPacket(boolean fullSync) {

@@ -69,7 +69,7 @@ public class GTCommands {
     private static final Dynamic2CommandExceptionType ERROR_USE_FAILED = new Dynamic2CommandExceptionType(
             (player, cape) -> Component.translatable("command.gtceu.cape.use.failed", player, cape));
     private static final Dynamic2CommandExceptionType ERROR_PLACE_VEIN_FAILED = new Dynamic2CommandExceptionType(
-            (id, sourcePos) -> Component.translatable("command.gtceu.place_vein.failure", id, sourcePos));
+            (id, pos) -> Component.translatable("command.gtceu.place_vein.failure", id, pos));
 
     // spotless:off
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext buildContext) {

@@ -19,11 +19,9 @@ import net.minecraft.resources.FileToIdConverter;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.ExtraCodecs;
-import net.minecraft.util.GsonHelper;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.neoforged.fml.ModLoader;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
@@ -37,7 +35,6 @@ import java.util.Map;
 
 public class GTOreLoader extends SimpleJsonResourceReloadListener<JsonElement> {
 
-    public static final Gson GSON_INSTANCE = new Gson();
     public static final String FOLDER = "gtceu/ore_veins";
     protected static final Logger LOGGER = LogManager.getLogger();
 
@@ -66,8 +63,7 @@ public class GTOreLoader extends SimpleJsonResourceReloadListener<JsonElement> {
             Identifier location = entry.getKey();
 
             try {
-                GTOreDefinition ore = fromJson(location,
-                        GsonHelper.convertToJsonObject(entry.getValue(), "top element"), ops);
+                GTOreDefinition ore = fromJson(location, entry.getValue().getAsJsonObject(), ops);
                 if (ore == null) {
                     LOGGER.info("Skipping loading ore vein {} as it's serializer returned null", location);
                 } else if (ore.veinGenerator() instanceof NoopVeinGenerator) {

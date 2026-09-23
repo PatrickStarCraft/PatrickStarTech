@@ -9,8 +9,8 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -36,13 +36,10 @@ public class FoamBlock extends Block {
     protected InteractionResult useItemOn(ItemStack stackInHand, BlockState state, Level level, BlockPos pos,
                                           Player player, InteractionHand hand, BlockHitResult hit) {
         if (!stackInHand.isEmpty() && stackInHand.is(ItemTags.SAND)) {
-            if (!level.isClientSide()) {
-                level.setBlockAndUpdate(pos, getPetrifiedBlock(state));
-                if (!player.isCreative()) {
-                    stackInHand.shrink(1);
-                }
-            }
+            level.setBlockAndUpdate(pos, getPetrifiedBlock(state));
             level.playSound(player, pos, SoundEvents.SAND_PLACE, SoundSource.BLOCKS, 1.0F, 1.0F);
+            if (!player.isCreative())
+                stackInHand.shrink(1);
             return InteractionResult.SUCCESS;
         }
         return super.useItemOn(stackInHand, state, level, pos, player, hand, hit);
@@ -52,8 +49,7 @@ public class FoamBlock extends Block {
     @SuppressWarnings("deprecation")
     public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
         super.randomTick(state, level, pos, random);
-        boolean isDay = level.getOverworldClockTime() % 24000L < 12000L;
-        int lightLevel = (level.canSeeSky(pos) && isDay) ? 16 : level.getRawBrightness(pos, 0);
+        int lightLevel = (level.canSeeSky(pos) && level.isBrightOutside()) ? 16 : level.getRawBrightness(pos, 0);
         if (random.nextInt(20 - lightLevel) == 0) {
             level.setBlockAndUpdate(pos, getPetrifiedBlock(state));
         }

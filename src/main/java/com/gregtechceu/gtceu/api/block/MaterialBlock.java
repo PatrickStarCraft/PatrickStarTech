@@ -26,6 +26,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.InsideBlockEffectApplier;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.entity.player.Player;
@@ -277,7 +278,8 @@ public class MaterialBlock extends Block {
     }
 
     @Override
-    public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
+    public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity,
+                             InsideBlockEffectApplier effectApplier, boolean isPrecise) {
         if (this.tagPrefix == TagPrefix.frameGt && entity instanceof LivingEntity livingEntity) {
             double currentAccel = 0.15D * (livingEntity.getDeltaMovement().y < 0.3D ? 2.5D : 1.0D);
             double currentSpeedVertical = 0.9D * (livingEntity.isInWater() ? 0.4D : 1.0D);
@@ -287,7 +289,7 @@ public class MaterialBlock extends Block {
             double d0 = Mth.clamp(deltaMovement.x, -f, f);
             double d1 = Mth.clamp(deltaMovement.z, -f, f);
             double d2 = Math.max(deltaMovement.y, -f);
-            if (d2 < 0.0 && !livingEntity.getFeetBlockState().isScaffolding(livingEntity) &&
+            if (d2 < 0.0 && !level.getBlockState(livingEntity.blockPosition()).isScaffolding(livingEntity) &&
                     livingEntity.isSuppressingSlidingDownLadder() &&
                     livingEntity instanceof Player) {
                 d2 = Math.min(deltaMovement.y + currentAccel, 0.0D);

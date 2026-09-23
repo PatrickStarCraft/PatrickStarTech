@@ -29,9 +29,6 @@ import java.util.function.Function;
 
 public class GTRegistryArgument<K, V> implements ArgumentType<V> {
 
-    private static final SimpleCommandExceptionType ERROR_INVALID = new SimpleCommandExceptionType(
-            Component.translatable("argument.id.invalid"));
-
     private static final Collection<String> EXAMPLES = Arrays.asList("gtceu:iron_vein", "gtceu:pitchblende_vein_end",
             "gtceu:lava_deposit");
 
@@ -71,15 +68,7 @@ public class GTRegistryArgument<K, V> implements ArgumentType<V> {
     }
 
     public static String readId(StringReader reader) throws CommandSyntaxException {
-        int cursor = reader.getCursor();
-
-        while (reader.canRead() && Identifier.isAllowedInIdentifier(reader.peek())) {
-            reader.skip();
-        }
-
-        String s = reader.getString().substring(cursor, reader.getCursor());
-
-        return s;
+        return Identifier.read(reader).toString();
     }
 
     @Override

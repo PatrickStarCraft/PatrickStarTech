@@ -760,8 +760,7 @@ public class HPCAMachine extends WorkableElectricMultiblockMachine
             if (components.get(index).getMachine() instanceof HPCAComponentPartMachine componentPartMachine) {
                 ItemStack stack = componentPartMachine.getDefinition().asStack();
                 RichTooltip tooltip = new RichTooltip();
-                stack.getTooltipLines(Item.TooltipContext.of(componentPartMachine.getLevel()), null,
-                        TooltipFlag.NORMAL).forEach(tooltip::addLine);
+                stack.getTooltipLines(Item.TooltipContext.EMPTY, null, TooltipFlag.NORMAL).forEach(tooltip::addLine);
                 return tooltip;
             }
             return new RichTooltip();

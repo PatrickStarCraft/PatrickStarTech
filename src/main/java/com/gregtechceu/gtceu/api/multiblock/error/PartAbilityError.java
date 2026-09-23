@@ -4,6 +4,7 @@ import com.gregtechceu.gtceu.GTCEu;
 import com.gregtechceu.gtceu.api.machine.multiblock.PartAbility;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 
 import brachy.modularui.api.drawable.Text;
@@ -54,7 +55,7 @@ public class PartAbilityError extends PatternError {
                             .childSeparator(Icon.EMPTY_2PX)
                             .children(blocks, block -> {
                                 return new ItemDrawable(block.asItem()).asWidget()
-                                        .tooltip(r -> r.add(block.getName()));
+                                        .tooltip(r -> r.add(new ItemStack(block).getHoverName()));
                             })));
             parent.child(row);
         };

@@ -613,7 +613,7 @@ public class ConfigHolder {
         public boolean onlyOwnerBreak = false;
         @Configurable
         @Configurable.Comment({ "Minimum op level to bypass the ownership checks", "Default: 2" })
-        @Configurable.Range(min = 0, max = 4)
+        @Configurable.Range(min = -1, max = 4)
         @Configurable.Synchronized
         public int ownerOPBypass = 2;
 

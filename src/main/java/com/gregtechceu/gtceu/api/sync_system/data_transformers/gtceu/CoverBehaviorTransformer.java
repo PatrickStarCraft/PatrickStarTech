@@ -54,14 +54,13 @@ public class CoverBehaviorTransformer implements ValueTransformer<CoverBehavior>
 
         /// Ldlib backwards compat
         if (tag.contains("payload") && tag.contains("uid")) {
-            CompoundTag uid = tag.getCompoundOrEmpty("uid");
-            CompoundTag payload = tag.getCompoundOrEmpty("payload");
+            var uid = tag.getCompound("uid").orElseGet(CompoundTag::new);
+            var payload = tag.getCompound("payload").orElseGet(CompoundTag::new);
             tag.putInt("side", uid.getIntOr("side", 0));
             tag.putString("coverType", uid.getStringOr("id", ""));
             tag.put("data", payload.getCompoundOrEmpty("d"));
         }
 
-        String coverTypeString = tag.getStringOr("coverType", "");
         Direction side;
         if ((tag.get("side") instanceof StringTag)) {
             side = Direction.CODEC.byName(tag.getStringOr("side", ""));
@@ -73,16 +72,16 @@ public class CoverBehaviorTransformer implements ValueTransformer<CoverBehavior>
             return null;
         }
 
-        if (tag.isEmpty() || coverTypeString.isEmpty()) {
+        if (tag.isEmpty() || tag.getString("coverType").isEmpty()) {
             holder.setCoverAtSide(null, side);
             return null;
         }
-        Identifier coverType = Identifier.tryParse(coverTypeString);
+        Identifier coverType = Identifier.tryParse(tag.getStringOr("coverType", ""));
         if (cover == null || !cover.coverDefinition.getId().equals(coverType)) {
             var coverReg = GTRegistries.COVERS.get(coverType);
             if (coverReg == null) {
                 GTCEu.LOGGER.error("Error during NBT load: unknown cover type {} ({})", coverType,
-                        coverTypeString);
+                        tag.getString("coverType"));
                 return null;
             }
             holder.setCoverAtSide(coverReg.createCoverBehavior(holder, side), side);

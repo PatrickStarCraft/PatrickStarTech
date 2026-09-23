@@ -9,12 +9,14 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.world.damagesource.DamageType;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.util.concurrent.CompletableFuture;
 
 public class DamageTagsLoader extends TagsProvider<DamageType> {
 
-    public DamageTagsLoader(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
-        super(output, Registries.DAMAGE_TYPE, registries, GTCEu.MOD_ID);
+    public DamageTagsLoader(PackOutput arg, CompletableFuture<HolderLookup.Provider> completableFuture) {
+        super(arg, Registries.DAMAGE_TYPE, completableFuture, GTCEu.MOD_ID);
     }
 
     @Override

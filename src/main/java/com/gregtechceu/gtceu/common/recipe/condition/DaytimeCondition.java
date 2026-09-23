@@ -43,7 +43,7 @@ public class DaytimeCondition extends RecipeCondition<DaytimeCondition> {
     @Override
     public boolean testCondition(@NotNull GTRecipe recipe, @NotNull RecipeLogic recipeLogic) {
         Level level = recipeLogic.getLevel();
-        return level.getOverworldClockTime() % 24000L < 12000L;
+        return level.isBrightOutside();
     }
 
     @Override

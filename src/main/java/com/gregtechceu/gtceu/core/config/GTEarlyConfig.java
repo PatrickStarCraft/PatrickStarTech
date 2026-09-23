@@ -39,7 +39,7 @@ public class GTEarlyConfig {
         addDelegateRule("client.bloom.normal", SAFE_MODE, true);
 
         // hidden rules for dev-only mixins
-        addHiddenRule("dev", !FMLEnvironment.isProduction());
+        addHiddenRule("dev", !FMLLoader.getCurrent().isProduction());
         addHiddenRule("dev.datagen", FMLLoader.getLaunchHandler().isData());
 
         // hidden rules for mod dependencies
@@ -322,7 +322,7 @@ public class GTEarlyConfig {
         if (modId.equals("optifine")) {
             return OPTIFINE_PRESENT;
         } else {
-            return FMLLoader.getLoadingModList().getModFileById(modId) != null;
+            return FMLLoader.getCurrent().getLoadingModList().getModFileById(modId) != null;
         }
     }
 

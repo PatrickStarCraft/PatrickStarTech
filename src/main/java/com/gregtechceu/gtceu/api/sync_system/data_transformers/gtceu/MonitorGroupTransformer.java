@@ -3,7 +3,6 @@ package com.gregtechceu.gtceu.api.sync_system.data_transformers.gtceu;
 import com.gregtechceu.gtceu.GTCEu;
 import com.gregtechceu.gtceu.api.sync_system.data_transformers.ValueTransformer;
 import com.gregtechceu.gtceu.common.machine.multiblock.electric.monitor.MonitorGroup;
-import com.gregtechceu.gtceu.utils.data.BlockPosNbt;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.*;
@@ -30,16 +29,19 @@ public class MonitorGroupTransformer implements ValueTransformer<MonitorGroup> {
 
         var positions = (compoundTag.get("positions") instanceof ListTag) ?
                 com.gregtechceu.gtceu.utils.data.TypedTagList.read(compoundTag, "positions", Tag.TAG_COMPOUND) : null;
-        var placeholderItems = compoundTag.getCompound("placeholderSlots").orElse(null);
-        var targetPos = compoundTag.getCompound("targetPos").orElse(null);
-        var items = compoundTag.getCompound("items").orElse(null);
+        var placeholderItems = (compoundTag.get("placeholderSlots") instanceof CompoundTag) ?
+                compoundTag.getCompound("placeholderSlots").orElse(null) : null;
+        var targetPos = (compoundTag.get("targetPos") instanceof CompoundTag) ?
+                compoundTag.getCompound("targetPos").orElse(null) : null;
+        var items = (compoundTag.get("items") instanceof CompoundTag) ?
+                compoundTag.getCompound("items").orElse(null) : null;
 
         if (positions != null && !compoundTag.contains("monitorPositions")) {
             List<BlockPos> posList = new ArrayList<>();
 
             for (int i = 0; i < positions.size(); i++) {
-                CompoundTag posTag = positions.getCompound(i).orElseThrow();
-                posList.add(BlockPosNbt.read(posTag, context.nbtOps()));
+                CompoundTag posTag = positions.getCompound(i).orElseGet(CompoundTag::new);
+                posList.add(readLegacyBlockPos(posTag));
             }
 
             compoundTag.put("monitorPositions", BlockPos.CODEC.listOf().encodeStart(context.nbtOps(), posList)
@@ -52,7 +54,7 @@ public class MonitorGroupTransformer implements ValueTransformer<MonitorGroup> {
         }
 
         if (targetPos != null) {
-            BlockPos pos = BlockPosNbt.read(targetPos, context.nbtOps());
+            BlockPos pos = readLegacyBlockPos(targetPos);
             compoundTag.put("targetPos",
                     BlockPos.CODEC.encodeStart(context.nbtOps(), pos).getOrThrow(message -> { GTCEu.LOGGER.error(message); return new RuntimeException(message); }));
         }
@@ -62,6 +64,10 @@ public class MonitorGroupTransformer implements ValueTransformer<MonitorGroup> {
         }
 
         return MonitorGroup.CODEC.parse(context.nbtOps(), tag).getOrThrow(message -> { GTCEu.LOGGER.error(message); return new RuntimeException(message); });
+    }
+
+    private static BlockPos readLegacyBlockPos(CompoundTag tag) {
+        return new BlockPos(tag.getIntOr("X", 0), tag.getIntOr("Y", 0), tag.getIntOr("Z", 0));
     }
 
     @Override

@@ -25,28 +25,29 @@ import java.util.Set;
 public class DataGenerators {
 
     @SubscribeEvent
-    public static void gatherData(GatherDataEvent event) {
+    public static void gatherClientData(GatherDataEvent.Client event) {
+        DataGenerator generator = event.getGenerator();
+        PackOutput packOutput = generator.getPackOutput();
+        event.addProvider(new SoundEntryBuilder.SoundEntryProvider(packOutput, GTCEu.MOD_ID));
+    }
+
+    @SubscribeEvent
+    public static void gatherServerData(GatherDataEvent.Server event) {
         DataGenerator generator = event.getGenerator();
         PackOutput packOutput = generator.getPackOutput();
         var registries = event.getLookupProvider();
-        if (event instanceof GatherDataEvent.Client) {
-            generator.addProvider(true, new SoundEntryBuilder.SoundEntryProvider(packOutput, GTCEu.MOD_ID));
-        }
-        if (event instanceof GatherDataEvent.Server) {
-            var set = Set.of(GTCEu.MOD_ID);
-            generator.addProvider(true, new BiomeTagsLoader(packOutput, registries));
-            DatapackBuiltinEntriesProvider provider = generator.addProvider(true, new DatapackBuiltinEntriesProvider(
-                    packOutput, registries, new RegistrySetBuilder()
-                            .add(Registries.DAMAGE_TYPE, GTDamageTypes::bootstrap)
-                            .add(Registries.CONFIGURED_FEATURE, GTConfiguredFeatures::bootstrap)
-                            .add(Registries.PLACED_FEATURE, GTPlacedFeatures::bootstrap)
-                            .add(Registries.DENSITY_FUNCTION, GTDensityFunctions::bootstrap)
-                            .add(NeoForgeRegistries.Keys.BIOME_MODIFIERS, GTBiomeModifiers::bootstrap),
-                    set));
-            generator.addProvider(true,
-                    new DamageTagsLoader(packOutput, provider.getRegistryProvider()));
-        generator.addProvider(true, new GTLootTables(packOutput, registries));
-        generator.addProvider(true, new GTLootModifications(packOutput, registries));
-        }
+        var set = Set.of(GTCEu.MOD_ID);
+        event.addProvider(new BiomeTagsLoader(packOutput, registries));
+        DatapackBuiltinEntriesProvider provider = event.addProvider(new DatapackBuiltinEntriesProvider(
+                packOutput, registries, new RegistrySetBuilder()
+                        .add(Registries.DAMAGE_TYPE, GTDamageTypes::bootstrap)
+                        .add(Registries.CONFIGURED_FEATURE, GTConfiguredFeatures::bootstrap)
+                        .add(Registries.PLACED_FEATURE, GTPlacedFeatures::bootstrap)
+                        .add(Registries.DENSITY_FUNCTION, GTDensityFunctions::bootstrap)
+                        .add(NeoForgeRegistries.Keys.BIOME_MODIFIERS, GTBiomeModifiers::bootstrap),
+                set));
+        event.addProvider(new DamageTagsLoader(packOutput, provider.getRegistryProvider()));
+        event.addProvider(new GTLootTables(packOutput, registries));
+        event.addProvider(new GTLootModifications(packOutput, registries));
     }
 }

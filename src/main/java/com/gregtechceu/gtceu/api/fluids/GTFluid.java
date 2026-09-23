@@ -21,8 +21,8 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
-import net.neoforged.neoforge.fluids.FluidType;
 import net.minecraft.server.level.ServerLevel;
+import net.neoforged.neoforge.fluids.FluidType;
 
 import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
 import lombok.Getter;
@@ -133,7 +133,6 @@ public abstract class GTFluid extends FlowingFluid implements IAttributedFluid {
         return still || flowing;
     }
 
-    @Override
     public FluidType getFluidType() {
         return fluidType.get();
     }

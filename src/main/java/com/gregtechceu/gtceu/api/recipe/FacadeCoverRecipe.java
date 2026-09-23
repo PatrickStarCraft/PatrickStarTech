@@ -12,28 +12,26 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.network.codec.StreamCodec;
 
 import org.jspecify.annotations.NullMarked;
-import net.minecraft.core.NonNullList;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.RegistryAccess;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.ItemStackTemplate;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.CraftingInput;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.PlacementInfo;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.display.RecipeDisplay;
-import net.minecraft.world.item.crafting.display.ShapelessCraftingRecipeDisplay;
-import net.minecraft.world.item.crafting.display.SlotDisplay;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
+import com.google.gson.JsonObject;
+
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.List;
 
 @NullMarked
 @ParametersAreNonnullByDefault
@@ -91,29 +89,20 @@ public class FacadeCoverRecipe implements CraftingRecipe {
         return ItemStack.EMPTY;
     }
 
-    public NonNullList<Ingredient> getIngredients() {
-        NonNullList<Ingredient> ingredients = NonNullList.create();
-        ingredients.add(Ingredient.of(itemTag(ChemicalHelper.getTagOrThrow(TagPrefix.plate, GTMaterials.Iron))));
-        ingredients.add(Ingredient.of(Blocks.STONE));
-        return ingredients;
+    @Override
+    public PlacementInfo placementInfo() {
+        var ironPlateTag = ChemicalHelper.getTagOrThrow(TagPrefix.plate, GTMaterials.Iron);
+        HolderSet<Item> ironPlates = BuiltInRegistries.ITEM.get(ironPlateTag)
+                .<HolderSet<Item>>map(tag -> tag).orElseGet(HolderSet::empty);
+        return PlacementInfo.create(List.of(Ingredient.of(ironPlates), Ingredient.of(Blocks.STONE)));
     }
 
-    public boolean canCraftInDimensions(int width, int height) {
-        return true;
-    }
-
-    public ItemStack getResultItem(RegistryAccess registryManager) {
-        return createPreviewStack();
-    }
-
-    private static ItemStack createPreviewStack() {
-        ItemStack result = GTItems.COVER_FACADE.asStack(6);
-        FacadeItemBehaviour.setFacadeState(result, Blocks.STONE.defaultBlockState());
-        return result;
+    public Identifier getId() {
+        return ID;
     }
 
     @Override
-    public RecipeSerializer<? extends CraftingRecipe> getSerializer() {
+    public RecipeSerializer<FacadeCoverRecipe> getSerializer() {
         return SERIALIZER;
     }
 
@@ -123,31 +112,12 @@ public class FacadeCoverRecipe implements CraftingRecipe {
     }
 
     @Override
-    public boolean showNotification() {
-        return true;
-    }
-
-    @Override
     public String group() {
         return "";
     }
 
     @Override
-    public PlacementInfo placementInfo() {
-        return PlacementInfo.create(this.getIngredients());
-    }
-
-    @Override
-    public java.util.List<RecipeDisplay> display() {
-        return java.util.List.of(new ShapelessCraftingRecipeDisplay(
-                this.getIngredients().stream().map(Ingredient::display).toList(),
-                new SlotDisplay.ItemStackSlotDisplay(ItemStackTemplate.fromNonEmptyStack(createPreviewStack())),
-                new SlotDisplay.ItemSlotDisplay(Items.CRAFTING_TABLE)));
-    }
-
-    private static HolderSet<net.minecraft.world.item.Item> itemTag(net.minecraft.tags.TagKey<net.minecraft.world.item.Item> tag) {
-        return BuiltInRegistries.ITEM.get(tag)
-                .<HolderSet<net.minecraft.world.item.Item>>map(holders -> holders)
-                .orElseThrow(() -> new IllegalStateException("Missing item tag " + tag.location()));
+    public boolean showNotification() {
+        return true;
     }
 }

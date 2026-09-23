@@ -12,14 +12,14 @@ import com.gregtechceu.gtceu.data.recipe.builder.GTRecipeBuilder;
 import com.gregtechceu.gtceu.utils.FormattingUtil;
 import com.gregtechceu.gtceu.data.recipe.GeneratedRecipe;
 
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.SmeltingRecipe;
-import net.minecraft.world.item.crafting.display.FurnaceRecipeDisplay;
-import net.minecraft.world.item.crafting.display.SlotDisplay;
+import net.minecraft.world.item.crafting.SingleRecipeInput;
+import net.minecraft.world.item.crafting.RecipeType;
 
 import it.unimi.dsi.fastutil.objects.*;
 import lombok.Getter;
@@ -267,19 +267,12 @@ public class GTRecipeType implements RecipeType<GTRecipe> {
         return false;
     }
 
-    public GTRecipe toGTrecipe(Identifier id, Recipe<?> recipe) {
-        if (!(recipe instanceof SmeltingRecipe smeltingRecipe)) {
-            throw new IllegalArgumentException("Only smelting recipes can be converted to GT furnace recipes");
-        }
-
+    public GTRecipe toGTrecipe(Identifier id, SmeltingRecipe recipe) {
         var builder = recipeBuilder(id);
-        for (var ingredient : recipe.placementInfo().ingredients()) {
-            builder.inputItems(ingredient);
-        }
-        var display = (FurnaceRecipeDisplay) smeltingRecipe.display().getFirst();
-        var result = (SlotDisplay.ItemStackSlotDisplay) display.result();
-        builder.outputItems(result.stack().create()).duration(smeltingRecipe.cookingTime());
-        return GTRecipeSerializer.fromJson(id, builder.build().recipeJson());
+        builder.inputItems(recipe.input());
+        builder.outputItems(recipe.assemble(new SingleRecipeInput(ItemStack.EMPTY)));
+        builder.duration(recipe.cookingTime());
+        return builder.buildRawRecipe();
     }
 
     public void buildRepresentativeRecipes() {

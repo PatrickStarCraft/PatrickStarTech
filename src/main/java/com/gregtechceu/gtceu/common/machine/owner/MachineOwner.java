@@ -6,8 +6,8 @@ import com.gregtechceu.gtceu.config.ConfigHolder;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.permissions.Permission;
 import net.minecraft.server.permissions.PermissionLevel;
+import net.minecraft.server.permissions.Permissions;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.common.UsernameCache;
 import net.neoforged.fml.ModLoader;
@@ -90,7 +90,7 @@ public abstract sealed class MachineOwner permits PlayerOwner, FTBOwner, Argonau
 
     public static boolean canOpenOwnerMachine(Player player, MetaMachine machine) {
         if (!ConfigHolder.INSTANCE.machines.onlyOwnerGUI) return true;
-        if (hasPermissionLevel(player, ConfigHolder.INSTANCE.machines.ownerOPBypass)) return true;
+        if (hasOwnerBypassPermission(player)) return true;
         var owner = machine.getOwner();
         if (owner == null) return true;
         return owner.isPlayerInTeam(player) || owner.isPlayerFriendly(player);
@@ -98,14 +98,20 @@ public abstract sealed class MachineOwner permits PlayerOwner, FTBOwner, Argonau
 
     public static boolean canBreakOwnerMachine(Player player, MetaMachine machine) {
         if (!ConfigHolder.INSTANCE.machines.onlyOwnerBreak) return true;
-        if (hasPermissionLevel(player, ConfigHolder.INSTANCE.machines.ownerOPBypass)) return true;
+        if (hasOwnerBypassPermission(player)) return true;
         var owner = machine.getOwner();
         if (owner == null) return true;
         return owner.isPlayerInTeam(player);
     }
 
-    private static boolean hasPermissionLevel(Player player, int level) {
-        return player.permissions().hasPermission(new Permission.HasCommandLevel(PermissionLevel.byId(level)));
+    private static boolean hasOwnerBypassPermission(Player player) {
+        return switch (PermissionLevel.byId(ConfigHolder.INSTANCE.machines.ownerOPBypass)) {
+            case ALL -> true;
+            case MODERATORS -> player.permissions().hasPermission(Permissions.COMMANDS_MODERATOR);
+            case GAMEMASTERS -> player.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER);
+            case ADMINS -> player.permissions().hasPermission(Permissions.COMMANDS_ADMIN);
+            case OWNERS -> player.permissions().hasPermission(Permissions.COMMANDS_OWNER);
+        };
     }
 
     public static void displayPlayerInfo(List<Component> compList, UUID playerUUID) {

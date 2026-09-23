@@ -9,7 +9,6 @@ import com.gregtechceu.gtceu.api.registry.GTRegistries;
 import com.gregtechceu.gtceu.common.particle.HazardParticleOptions;
 import com.gregtechceu.gtceu.config.ConfigHolder;
 import com.gregtechceu.gtceu.utils.BreadthFirstBlockSearch;
-import com.gregtechceu.gtceu.utils.data.BlockPosNbt;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -315,7 +314,13 @@ public class LocalizedHazardSavedData extends CompoundTagSavedData {
         public CompoundTag serializeNBT(CompoundTag zoneTag) {
             ListTag blocksTag = new ListTag();
             blocks.stream()
-                    .map(BlockPosNbt::writeLegacy)
+                    .map(pos -> {
+                        CompoundTag blockPosTag = new CompoundTag();
+                        blockPosTag.putInt("X", pos.getX());
+                        blockPosTag.putInt("Y", pos.getY());
+                        blockPosTag.putInt("Z", pos.getZ());
+                        return blockPosTag;
+                    })
                     .forEach(blocksTag::add);
             zoneTag.put("blocks", blocksTag);
             zoneTag.putBoolean("can_spread", canSpread);
@@ -328,7 +333,7 @@ public class LocalizedHazardSavedData extends CompoundTagSavedData {
         public static HazardZone deserializeNBT(CompoundTag zoneTag) {
             Set<BlockPos> blocks = com.gregtechceu.gtceu.utils.data.TypedTagList.read(zoneTag, "blocks", Tag.TAG_COMPOUND).stream()
                     .map(CompoundTag.class::cast)
-                    .map(BlockPosNbt::readLegacy)
+                    .map(pos -> new BlockPos(pos.getIntOr("X", 0), pos.getIntOr("Y", 0), pos.getIntOr("Z", 0)))
                     .collect(Collectors.toSet());
             boolean canSpread = zoneTag.getBooleanOr("can_spread", false);
             HazardProperty.HazardTrigger trigger = HazardProperty.HazardTrigger.ALL_TRIGGERS

@@ -1,9 +1,9 @@
 package com.gregtechceu.gtceu.api.sync_system.data_transformers;
 
 import com.gregtechceu.gtceu.GTCEu;
-import com.gregtechceu.gtceu.utils.data.BlockPosNbt;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 
@@ -18,7 +18,11 @@ public class BlockPosTransformer implements ValueTransformer<BlockPos> {
 
     @Override
     public @Nullable BlockPos deserializeNBT(Tag tag, TransformerContext<BlockPos> context) {
-        return BlockPosNbt.read(tag, context.nbtOps());
+        if (tag instanceof CompoundTag compoundTag) {
+            return new BlockPos(compoundTag.getIntOr("X", 0), compoundTag.getIntOr("Y", 0),
+                    compoundTag.getIntOr("Z", 0));
+        }
+        return BlockPos.CODEC.parse(context.nbtOps(), tag).getOrThrow(message -> { GTCEu.LOGGER.error(message); return new RuntimeException(message); });
     }
 
     @Override

@@ -4,6 +4,8 @@ import com.gregtechceu.gtceu.common.data.GTBlocks;
 import com.gregtechceu.gtceu.common.data.GTEntityTypes;
 import com.gregtechceu.gtceu.common.data.GTItems;
 
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -15,37 +17,52 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
 public class GTBoat extends Boat {
 
-    private static final EntityDataAccessor<Integer> DATA_GT_BOAT_TYPE =
+    private static final EntityDataAccessor<Integer> DATA_ID_GT_BOAT_TYPE =
             SynchedEntityData.defineId(GTBoat.class, EntityDataSerializers.INT);
 
-    private final DropItemSupplier dropItemSupplier;
-
-    public GTBoat(EntityType<? extends GTBoat> entityType, Level level) {
-        this(entityType, level, new DropItemSupplier(GTItems.RUBBER_BOAT.get()));
+    public GTBoat(EntityType<? extends Boat> entityType, Level level) {
+        this(entityType, level, new AtomicReference<>());
     }
 
-    private GTBoat(EntityType<? extends GTBoat> entityType, Level level, DropItemSupplier dropItemSupplier) {
-        super(entityType, level, dropItemSupplier);
-        this.dropItemSupplier = dropItemSupplier;
+    private GTBoat(EntityType<? extends Boat> entityType, Level level, AtomicReference<GTBoat> self) {
+        super(entityType, level, dropItemSupplier(self));
+        self.set(this);
     }
 
     public GTBoat(Level level, double x, double y, double z) {
         this(GTEntityTypes.BOAT.get(), level);
-        this.setPos(x, y, z);
-        this.xo = x;
-        this.yo = y;
-        this.zo = z;
+        this.setInitialPos(x, y, z);
+    }
+
+    private static Supplier<Item> dropItemSupplier(AtomicReference<GTBoat> self) {
+        return () -> {
+            GTBoat boat = self.get();
+            if (boat == null) return GTItems.RUBBER_BOAT.get();
+            return switch (boat.getBoatType()) {
+                case RUBBER -> GTItems.RUBBER_BOAT.get();
+                case TREATED_WOOD -> GTItems.TREATED_WOOD_BOAT.get();
+            };
+        };
     }
 
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder entityData) {
         super.defineSynchedData(entityData);
-        entityData.define(DATA_GT_BOAT_TYPE, BoatType.RUBBER.ordinal());
+        entityData.define(DATA_ID_GT_BOAT_TYPE, BoatType.RUBBER.ordinal());
+    }
+
+    @Nullable
+    @Override
+    public Component getCustomName() {
+        return super.getCustomName();
     }
 
     @Override
@@ -57,31 +74,16 @@ public class GTBoat extends Boat {
     @Override
     protected void readAdditionalSaveData(ValueInput input) {
         super.readAdditionalSaveData(input);
-        setBoatType(BoatType.byName(input.getStringOr("Type", BoatType.RUBBER.getName())));
+        // Keep the legacy string key so existing GregTech boats retain their wood type when loaded.
+        setBoatType(BoatType.byName(input.getStringOr("Type", "")));
     }
 
     public void setBoatType(BoatType type) {
-        this.entityData.set(DATA_GT_BOAT_TYPE, type.ordinal());
-        updateDropItem();
+        this.entityData.set(DATA_ID_GT_BOAT_TYPE, type.ordinal());
     }
 
     public BoatType getBoatType() {
-        return BoatType.byId(this.entityData.get(DATA_GT_BOAT_TYPE));
-    }
-
-    @Override
-    public void onSyncedDataUpdated(EntityDataAccessor<?> accessor) {
-        super.onSyncedDataUpdated(accessor);
-        if (DATA_GT_BOAT_TYPE.equals(accessor)) {
-            updateDropItem();
-        }
-    }
-
-    private void updateDropItem() {
-        this.dropItemSupplier.set(switch (getBoatType()) {
-            case RUBBER -> GTItems.RUBBER_BOAT.get();
-            case TREATED_WOOD -> GTItems.TREATED_WOOD_BOAT.get();
-        });
+        return BoatType.byId(this.entityData.get(DATA_ID_GT_BOAT_TYPE));
     }
 
     public enum BoatType {
@@ -119,24 +121,6 @@ public class GTBoat extends Boat {
 
         public static BoatType byName(String name) {
             return Arrays.stream(VALUES).filter(type -> type.getName().equals(name)).findFirst().orElse(VALUES[0]);
-        }
-    }
-
-    public static final class DropItemSupplier implements Supplier<Item> {
-
-        private Item item;
-
-        DropItemSupplier(Item item) {
-            this.item = item;
-        }
-
-        void set(Item item) {
-            this.item = item;
-        }
-
-        @Override
-        public Item get() {
-            return this.item;
         }
     }
 }

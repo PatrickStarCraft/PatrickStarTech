@@ -7,25 +7,27 @@ import com.gregtechceu.gtceu.common.data.GTRecipes;
 import com.gregtechceu.gtceu.config.ConfigHolder;
 import com.gregtechceu.gtceu.data.recipe.GeneratedRecipe;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.mojang.serialization.JsonOps;
-import com.google.common.collect.Sets;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import it.unimi.dsi.fastutil.objects.ObjectSet;
 import net.minecraft.SharedConstants;
 import net.minecraft.util.Util;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.FileToIdConverter;
 import net.minecraft.resources.Identifier;
-import net.minecraft.server.packs.PackLocationInfo;
 import net.minecraft.server.packs.PackResources;
+import net.minecraft.server.packs.PackLocationInfo;
 import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.server.packs.metadata.MetadataSectionType;
 import net.minecraft.server.packs.metadata.pack.PackMetadataSection;
-import net.minecraft.server.packs.repository.PackSource;
+import net.minecraft.server.packs.metadata.pack.PackFormat;
 import net.minecraft.server.packs.resources.IoSupplier;
+import net.minecraft.util.InclusiveRange;
 
+import com.google.common.collect.Sets;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.mojang.serialization.JsonOps;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import it.unimi.dsi.fastutil.objects.ObjectSet;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -163,10 +165,10 @@ public class GTDynamicDataPack implements PackResources {
 
     @Nullable
     @Override
-    public <T> T getMetadataSection(MetadataSectionType<T> metaReader) throws IOException {
+    public <T> T getMetadataSection(MetadataSectionType<T> metaReader) {
         if (metaReader == PackMetadataSection.SERVER_TYPE) {
             return (T) new PackMetadataSection(Component.literal("GTCEu dynamic data"),
-                    SharedConstants.getCurrentVersion().packVersion(PackType.SERVER_DATA).minorRange());
+                    new InclusiveRange<>(SharedConstants.getCurrentVersion().packVersion(PackType.SERVER_DATA)));
         } else if (metaReader.name().equals("filter")) {
             JsonObject filter = new JsonObject();
             JsonArray block = new JsonArray();
@@ -183,13 +185,14 @@ public class GTDynamicDataPack implements PackResources {
     }
 
     @Override
-    public PackLocationInfo location() {
-        return new PackLocationInfo(this.name, Component.literal(this.name), PackSource.BUILT_IN, Optional.empty());
+    public @NotNull String packId() {
+        return this.name;
     }
 
     @Override
-    public @NotNull String packId() {
-        return this.name;
+    public PackLocationInfo location() {
+        return new PackLocationInfo(this.name, Component.literal(this.name), PackSource.BUILT_IN,
+                Optional.empty());
     }
 
     public boolean isBuiltin() {

@@ -175,6 +175,7 @@ public class ItemCollectorMachine extends TieredEnergyMachine
     }
 
     public void moveItemsInRange() {
+        ServerLevel serverLevel = (ServerLevel) getLevel();
         Filter<ItemStack> filter = null;
         if (!filterInventory.getStackInSlot(0).isEmpty())
             filter = Filters.loadItemFilter(filterInventory.getStackInSlot(0));
@@ -199,13 +200,9 @@ public class ItemCollectorMachine extends TieredEnergyMachine
                 if (!canFillOutput(stack)) continue;
 
                 ItemStack remainder = fillOutput(stack);
-                if (remainder.isEmpty()) {
-                    if (getLevel() instanceof ServerLevel serverLevel) {
-                        itemEntity.kill(serverLevel);
-                    } else {
-                        itemEntity.discard();
-                    }
-                } else if (stack.getCount() > remainder.getCount())
+                if (remainder.isEmpty())
+                    itemEntity.kill(serverLevel);
+                else if (stack.getCount() > remainder.getCount())
                     itemEntity.setItem(remainder);
             }
         }
