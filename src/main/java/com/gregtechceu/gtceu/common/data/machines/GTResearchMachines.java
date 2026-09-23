@@ -88,7 +88,8 @@ public class GTResearchMachines {
             .modelProperty(IS_FORMED, false)
             .modelProperty(GTMachineModelProperties.RECIPE_LOGIC_STATUS, RecipeLogic.Status.IDLE)
             .model(createWorkableTieredHullMachineModel(GTCEu.id("block/machines/object_holder"))
-                    .andThen((ctx, prov, model) -> model.addReplaceableTextures("bottom", "top", "side")))
+                    .andThen((com.gregtechceu.gtceu.api.registry.registrate.MachineBuilder.ModelInitializer)
+                            (ctx, prov, model) -> model.addReplaceableTextures("bottom", "top", "side")))
             .register();
 
     public static final MultiblockMachineDefinition DATA_BANK = REGISTRATE.multiblock("data_bank", DataBankMachine::new)

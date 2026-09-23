@@ -2,16 +2,17 @@ package com.gregtechceu.gtceu.api.loot.modifier;
 
 import com.gregtechceu.gtceu.common.data.loot.GTGlobalLootModifiers;
 
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
-import net.minecraft.world.level.storage.loot.LootDataType;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
 import net.neoforged.neoforge.common.loot.LootModifier;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.Getter;
@@ -48,34 +49,39 @@ public class AddTableLootModifier extends LootModifier {
      */
     // spotless:off
     @ApiStatus.Internal
-    public static final Codec<AddTableLootModifier> CODEC = RecordCodecBuilder.create(instance -> LootModifier.codecStart(instance).and(
+    public static final MapCodec<AddTableLootModifier> CODEC = RecordCodecBuilder.mapCodec(instance -> LootModifier.codecStart(instance).and(
             Identifier.CODEC.fieldOf("table").forGetter(AddTableLootModifier::table)
-    ).apply(instance, AddTableLootModifier::new));
+    ).apply(instance, (conditions, priority, table) -> new AddTableLootModifier(conditions, priority, table)));
     // spotless:on
 
     @Getter
     private final Identifier table;
 
     public AddTableLootModifier(LootItemCondition[] conditionsIn, Identifier table) {
-        super(conditionsIn);
+        this(conditionsIn, IGlobalLootModifier.DEFAULT_PRIORITY, table);
+    }
+
+    public AddTableLootModifier(LootItemCondition[] conditionsIn, int priority, Identifier table) {
+        super(conditionsIn, priority);
         this.table = table;
     }
 
     @SuppressWarnings("deprecation")
     @Override
     protected ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> generatedLoot, LootContext context) {
-        context.getResolver().getElementOptional(LootDataType.TABLE, this.table).ifPresent(extraTable -> {
+        context.getResolver().lookupOrThrow(Registries.LOOT_TABLE)
+                .get(ResourceKey.create(Registries.LOOT_TABLE, this.table)).ifPresent(extraTable -> {
             // Don't run loot modifiers for subtables;
             // the added loot will be modifiable by downstream loot modifiers modifying the target table,
             // so if we modify it here then it could get modified twice.
-            extraTable.getRandomItemsRaw(context,
+            extraTable.value().getRandomItemsRaw(context,
                     LootTable.createStackSplitter(context.getLevel(), generatedLoot::add));
         });
         return generatedLoot;
     }
 
     @Override
-    public Codec<? extends IGlobalLootModifier> codec() {
+    public MapCodec<? extends IGlobalLootModifier> codec() {
         return GTGlobalLootModifiers.ADD_TABLE_LOOT_MODIFIER.get();
     }
 }

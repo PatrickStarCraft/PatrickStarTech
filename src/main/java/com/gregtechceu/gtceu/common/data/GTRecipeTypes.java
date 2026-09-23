@@ -570,7 +570,7 @@ public class GTRecipeTypes {
             .setSound(GTSoundEntries.CHEMICAL)
             .UI(builder -> builder.setProgressBar(GTGuiTextures.PROGRESS_ARROW_MULTIPLE))
             .onRecipeBuild((recipeBuilder, provider) -> {
-                if (recipeBuilder.data.getBoolean("disable_distillery")) return;
+                if (recipeBuilder.data.getBooleanOr("disable_distillery", false)) return;
                 if (recipeBuilder.output.containsKey(FluidRecipeCapability.CAP)) {
                     Content inputContent = recipeBuilder.input.get(FluidRecipeCapability.CAP).get(0);
                     FluidIngredient input = FluidRecipeCapability.CAP.of(inputContent.content());

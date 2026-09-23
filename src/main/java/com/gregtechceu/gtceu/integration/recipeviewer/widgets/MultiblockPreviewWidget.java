@@ -174,8 +174,8 @@ public class MultiblockPreviewWidget extends ParentWidget<MultiblockPreviewWidge
                     if (hit != null && hit.getType() == HitResult.Type.BLOCK) {
                         BlockState state = this.getMultiblockSchemaInfo().getMapSchema().getLevel()
                                 .getBlockState(hit.getBlockPos());
-                        ItemStack pickedItem = state.getCloneItemStack(hit,
-                                this.getMultiblockSchemaInfo().getMapSchema().getLevel(), hit.getBlockPos(),
+                        ItemStack pickedItem = state.getCloneItemStack(hit.getBlockPos(),
+                                this.getMultiblockSchemaInfo().getMapSchema().getLevel(), false,
                                 this.getContext().getMC().player);
                         text.addFromItem(pickedItem);
                         IBlockPattern value = patterns.get(0).getValue();

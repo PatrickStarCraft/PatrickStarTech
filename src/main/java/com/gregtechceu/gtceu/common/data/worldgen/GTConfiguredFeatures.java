@@ -22,6 +22,7 @@ import net.minecraft.world.level.levelgen.feature.foliageplacers.MegaJungleFolia
 import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
 import net.minecraft.world.level.levelgen.feature.trunkplacers.ForkingTrunkPlacer;
 import net.minecraft.world.level.levelgen.structure.templatesystem.TagMatchTest;
+import net.minecraft.world.level.block.Blocks;
 
 public class GTConfiguredFeatures {
 
@@ -38,7 +39,8 @@ public class GTConfiguredFeatures {
                         new ForkingTrunkPlacer(5, 1, 3),
                         BlockStateProvider.simple(GTBlocks.RUBBER_LEAVES.get()),
                         new MegaJungleFoliagePlacer(ConstantInt.of(1), UniformInt.of(0, 1), 1),
-                        new TwoLayersFeatureSize(1, 0, 2)
+                        new TwoLayersFeatureSize(1, 0, 2),
+                        BlockStateProvider.simple(Blocks.DIRT)
                 ).ignoreVines().build()
         );
 
