@@ -3,14 +3,17 @@ package com.gregtechceu.gtceu.api.registry.registrate.forge;
 import com.gregtechceu.gtceu.GTCEu;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.color.block.BlockTintSources;
 import net.minecraft.client.renderer.block.FluidModel;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.client.event.RegisterFluidModelsEvent;
+import net.neoforged.neoforge.client.fluid.FluidTintSource;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
+import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidType;
 
 import com.tterrag.registrate.AbstractRegistrate;
@@ -52,7 +55,18 @@ public class GTClientFluidTypeExtensions implements IClientFluidTypeExtensions {
     public FluidModel.Unbaked createModel(boolean forceTranslucent) {
         boolean translucent = forceTranslucent || (tintColor >>> 24) != 255;
         return new FluidModel.Unbaked(new Material(stillTexture, translucent),
-                new Material(flowingTexture, translucent), null, BlockTintSources.constant(tintColor));
+                new Material(flowingTexture, translucent), null, new FluidTintSource() {
+                    @Override
+                    public int color(FluidState state) {
+                        return tintColor;
+                    }
+
+                    @Override
+                    public int colorAsStack(FluidStack stack) {
+                        var potionContents = stack.get(DataComponents.POTION_CONTENTS);
+                        return potionContents != null ? potionContents.getColor() | 0xFF000000 : tintColor;
+                    }
+                });
     }
 
     @Override

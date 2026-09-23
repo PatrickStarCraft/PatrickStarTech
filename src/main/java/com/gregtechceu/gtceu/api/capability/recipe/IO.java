@@ -1,5 +1,7 @@
 package com.gregtechceu.gtceu.api.capability.recipe;
 
+import com.gregtechceu.gtceu.GTCEu;
+
 import brachy.modularui.drawable.UITexture;
 import lombok.Getter;
 
@@ -19,7 +21,7 @@ public enum IO {
 
     IO(String localeName) {
         this.localeName = localeName;
-        this.uiTexture = UITexture.fullImage("gtceu:textures/gui/icon/io_mode/" + localeName + ".png");
+        this.uiTexture = UITexture.fullImage(GTCEu.id("textures/gui/icon/io_mode/" + localeName + ".png"));
     }
 
     public static String getTitle() {

@@ -7,13 +7,12 @@ import com.gregtechceu.gtceu.utils.memoization.GTMemoizer;
 import com.gregtechceu.gtceu.utils.memoization.MemoizedSupplier;
 
 import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
-import net.minecraftforge.registries.ForgeRegistries;
-
 import dev.latvian.mods.rhino.util.HideFromJS;
 import lombok.Getter;
 import lombok.Setter;
@@ -38,8 +37,8 @@ public class DimensionMarker {
     public DimensionMarker(int tier, Identifier itemKey, @Nullable String overrideName) {
         this.tier = tier;
         this.overrideName = overrideName;
-        this.iconSupplier = GTMemoizer.memoize(() -> ForgeRegistries.ITEMS.getDelegate(itemKey)
-                .map(Holder::get)
+        this.iconSupplier = GTMemoizer.memoize(() -> BuiltInRegistries.ITEM.get(itemKey)
+                .map(Holder::value)
                 .map(this::getStack)
                 .orElse(ItemStack.EMPTY));
     }

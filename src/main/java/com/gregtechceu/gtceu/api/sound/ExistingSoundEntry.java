@@ -17,7 +17,7 @@ public class ExistingSoundEntry extends SoundEntry {
     protected SoundEvent event;
 
     public ExistingSoundEntry(SoundEvent event, SoundSource category) {
-        super(event.getLocation(), "", category, 0);
+        super(event.location(), "", category, 0);
         this.event = event;
     }
 

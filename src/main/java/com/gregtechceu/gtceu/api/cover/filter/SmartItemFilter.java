@@ -175,8 +175,9 @@ public class SmartItemFilter extends Filter<ItemStack> {
 
         public static UITexture[] getTextures() {
             return Arrays.stream(VALUES)
-                    .map(v -> UITexture.fullImage(GTCEu.MOD_ID,
-                            "textures/block/machines/" + v.localeName + "/overlay_front.png", ColorType.DEFAULT))
+                    .map(v -> UITexture.fullImage(
+                            GTCEu.id("textures/block/machines/" + v.localeName + "/overlay_front.png"),
+                            ColorType.DEFAULT))
                     .toArray(UITexture[]::new);
         }
     }

@@ -9,6 +9,7 @@ import com.gregtechceu.gtceu.api.data.worldgen.bedrockore.BedrockOreDefinition;
 import com.gregtechceu.gtceu.api.item.IComponentItem;
 import com.gregtechceu.gtceu.api.item.IGTTool;
 import com.gregtechceu.gtceu.client.model.item.CustomItemRendererWrapperModel;
+import com.gregtechceu.gtceu.client.color.item.GTMaterialPartTintSource;
 import com.gregtechceu.gtceu.client.model.item.FacadeUnbakedModel;
 import com.gregtechceu.gtceu.client.model.machine.MachineModelLoader;
 import com.gregtechceu.gtceu.client.model.pipe.PipeModel;
@@ -62,6 +63,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.client.event.*;
+import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -150,6 +152,11 @@ public class ClientProxy extends CommonProxy {
     }
 
     @SubscribeEvent
+    public void onRegisterItemTintSources(RegisterColorHandlersEvent.ItemTintSources event) {
+        event.register(GTMaterialPartTintSource.ID, GTMaterialPartTintSource.MAP_CODEC);
+    }
+
+    @SubscribeEvent
     public void registerKeyBindings(RegisterKeyMappingsEvent event) {
         SyncedKeyMapping.onRegisterKeyBinds(event);
     }
@@ -225,6 +232,7 @@ public class ClientProxy extends CommonProxy {
         ArmorItemModelGenerator.reinitModels();
         SurfaceRockModelGenerator.reinitModels();
         GTModels.registerMaterialFluidModels();
+        GTModels.registerRuntimeTintedItemModels();
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
