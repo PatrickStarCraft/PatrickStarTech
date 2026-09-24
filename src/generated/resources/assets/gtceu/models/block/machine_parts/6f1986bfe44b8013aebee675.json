@@ -1,0 +1,6 @@
+{
+  "parent": "gtceu:block/casings/steam/bricked_steel",
+  "textures": {
+    "overlay_top": "gtceu:block/generators/boiler/solar/overlay_top_active"
+  }
+}

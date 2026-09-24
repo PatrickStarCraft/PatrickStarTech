@@ -1,0 +1,7 @@
+{
+  "parent": "gtceu:block/machine/template/cube_all/sided",
+  "textures": {
+    "all": "gtceu:block/casings/solid/machine_casing_palladium_substation",
+    "overlay_front": "gtceu:block/multiblock/power_substation/overlay_front"
+  }
+}

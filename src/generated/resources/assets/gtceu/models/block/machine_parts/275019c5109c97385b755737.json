@@ -1,0 +1,7 @@
+{
+  "parent": "gtceu:block/machine/template/cube_all/sided",
+  "textures": {
+    "all": "gtceu:block/casings/solid/machine_casing_bronze_plated_bricks",
+    "overlay_front": "gtceu:block/multiblock/multiblock_tank/overlay_front"
+  }
+}

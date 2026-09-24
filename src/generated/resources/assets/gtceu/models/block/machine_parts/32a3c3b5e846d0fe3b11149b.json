@@ -1,0 +1,7 @@
+{
+  "parent": "gtceu:block/hpca_active_cooler_component_base",
+  "textures": {
+    "overlay": "gtceu:block/overlay/machine/hpca/active_cooler",
+    "overlay_emissive": "gtceu:block/void"
+  }
+}

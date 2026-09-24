@@ -1,0 +1,6 @@
+{
+  "parent": "gtceu:block/casings/voltage/ev",
+  "textures": {
+    "overlay_front": "gtceu:block/machines/block_breaker/overlay_front_active"
+  }
+}

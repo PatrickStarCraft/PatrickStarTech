@@ -1,0 +1,9 @@
+{
+  "parent": "gtceu:block/machine/template/generator_machine",
+  "textures": {
+    "bottom": "gtceu:block/casings/voltage/mv/bottom",
+    "overlay_side": "gtceu:block/generators/gas_turbine/overlay_side_active",
+    "side": "gtceu:block/casings/voltage/mv/side",
+    "top": "gtceu:block/casings/voltage/mv/top"
+  }
+}

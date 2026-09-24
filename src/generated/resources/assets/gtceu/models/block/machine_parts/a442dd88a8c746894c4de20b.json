@@ -1,0 +1,9 @@
+{
+  "parent": "gtceu:block/casings/steam/bricked_steel",
+  "textures": {
+    "overlay_back": "gtceu:block/machines/high_pressure_steam_miner/overlay_back",
+    "overlay_bottom": "gtceu:block/machines/high_pressure_steam_miner/overlay_bottom",
+    "overlay_front": "gtceu:block/machines/high_pressure_steam_miner/overlay_front",
+    "overlay_side": "gtceu:block/machines/high_pressure_steam_miner/overlay_side"
+  }
+}

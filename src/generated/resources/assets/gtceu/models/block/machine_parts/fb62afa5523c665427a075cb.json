@@ -1,0 +1,6 @@
+{
+  "parent": "gtceu:block/casings/steam/bricked_bronze",
+  "textures": {
+    "overlay_front": "gtceu:block/machines/rock_crusher/overlay_front_active"
+  }
+}
