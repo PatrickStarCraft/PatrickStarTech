@@ -5,12 +5,17 @@ import com.gregtechceu.gtceu.api.item.ComponentItem;
 import com.gregtechceu.gtceu.api.item.component.IItemComponent;
 import com.gregtechceu.gtceu.api.item.component.IMonitorModuleItem;
 import com.gregtechceu.gtceu.client.renderer.machine.DynamicRender;
+import com.gregtechceu.gtceu.client.renderer.machine.DynamicRenderSnapshot;
 import com.gregtechceu.gtceu.client.renderer.machine.DynamicRenderType;
+import com.gregtechceu.gtceu.client.renderer.monitor.IMonitorRenderSnapshotProvider;
+import com.gregtechceu.gtceu.client.renderer.monitor.IMonitorRenderer;
+import com.gregtechceu.gtceu.client.renderer.monitor.MonitorRenderSnapshot;
 import com.gregtechceu.gtceu.client.util.RenderUtil;
 import com.gregtechceu.gtceu.common.machine.multiblock.electric.CentralMonitorMachine;
 import com.gregtechceu.gtceu.common.machine.multiblock.electric.monitor.MonitorGroup;
 
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
@@ -20,6 +25,8 @@ import net.minecraft.world.phys.Vec3;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.serialization.MapCodec;
+
+import java.util.List;
 
 public class CentralMonitorRender extends DynamicRender<CentralMonitorMachine, CentralMonitorRender> {
 
@@ -37,31 +44,44 @@ public class CentralMonitorRender extends DynamicRender<CentralMonitorMachine, C
     }
 
     @Override
-    public void render(CentralMonitorMachine machine, float partialTick, PoseStack poseStack, MultiBufferSource buffer,
-                       int packedLight, int packedOverlay) {
-        poseStack.pushPose();
-        RenderUtil.moveToFace(poseStack, 0.5f, 0.5f, 0.5f, machine.getFrontFacing());
-        RenderUtil.rotateToFace(poseStack, machine.getFrontFacing(), Direction.NORTH);
-        poseStack.translate(-machine.getRightDist() - 0.5f, -machine.getUpDist() - 0.5f, SCREEN_OFFSET_Z);
-
-        if (machine.getRecipeLogic().isWorking()) {
-            for (MonitorGroup group : machine.getMonitorGroups()) {
-                ItemStack itemStack = group.getItemStackHandler().getStackInSlot(0);
-                if (!(itemStack.getItem() instanceof ComponentItem item)) {
-                    continue;
-                }
-                for (IItemComponent component : item.getComponents()) {
-                    if (!(component instanceof IMonitorModuleItem module)) {
-                        continue;
-                    }
-                    poseStack.pushPose();
-                    module.getRenderer(group.getItemStackHandler().getStackInSlot(0), machine, group)
-                            .render(machine, group, partialTick, poseStack, buffer, packedLight, packedOverlay);
-                    poseStack.popPose();
-                }
+    public DynamicRenderSnapshot extractRenderState(CentralMonitorMachine machine, float partialTicks) {
+        if (!machine.getRecipeLogic().isWorking()) return null;
+        List<MonitorRenderSnapshot> renderers = new java.util.ArrayList<>();
+        for (MonitorGroup group : machine.getMonitorGroups()) {
+            ItemStack stack = group.getItemStackHandler().getStackInSlot(0);
+            if (!(stack.getItem() instanceof ComponentItem item)) continue;
+            for (IItemComponent component : item.getComponents()) {
+                if (!(component instanceof IMonitorModuleItem module)) continue;
+                IMonitorRenderer renderer = module.getRenderer(stack, machine, group);
+                if (!(renderer instanceof IMonitorRenderSnapshotProvider provider)) continue;
+                MonitorRenderSnapshot snapshot = provider.extractRenderState(machine, group, partialTicks);
+                if (snapshot != null) renderers.add(snapshot);
             }
         }
+        if (renderers.isEmpty()) return null;
+        return new CentralMonitorSnapshot(machine.getFrontFacing(), machine.getRightDist(), machine.getUpDist(),
+                List.copyOf(renderers));
+    }
+
+    @Override
+    public void submitRenderState(DynamicRenderSnapshot state, PoseStack poseStack, SubmitNodeCollector collector,
+                                  CameraRenderState camera) {
+        if (!(state instanceof CentralMonitorSnapshot snapshot)) return;
+        poseStack.pushPose();
+        RenderUtil.moveToFace(poseStack, 0.5f, 0.5f, 0.5f, snapshot.frontFacing());
+        RenderUtil.rotateToFace(poseStack, snapshot.frontFacing(), Direction.NORTH);
+        poseStack.translate(-snapshot.rightDist() - 0.5f, -snapshot.upDist() - 0.5f, SCREEN_OFFSET_Z);
+        for (MonitorRenderSnapshot renderer : snapshot.renderers()) {
+            renderer.submit(poseStack, collector);
+        }
         poseStack.popPose();
+    }
+
+    private record CentralMonitorSnapshot(Direction frontFacing, int rightDist, int upDist,
+                                          List<MonitorRenderSnapshot> renderers) implements DynamicRenderSnapshot {
+        private CentralMonitorSnapshot {
+            renderers = List.copyOf(renderers);
+        }
     }
 
     @Override

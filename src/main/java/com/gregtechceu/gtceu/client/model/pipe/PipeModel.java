@@ -4,7 +4,12 @@ import com.gregtechceu.gtceu.api.block.PipeBlock;
 import com.gregtechceu.gtceu.api.block.property.GTBlockStateProperties;
 import com.gregtechceu.gtceu.api.registry.registrate.GTBlockBuilder;
 import com.gregtechceu.gtceu.api.registry.registrate.provider.GTBlockstateProvider;
+import com.gregtechceu.gtceu.data.model.builder.BlockModelBuilder;
+import com.gregtechceu.gtceu.data.model.builder.ItemModelBuilder;
+import com.gregtechceu.gtceu.data.model.builder.ModelBuilder;
+import com.gregtechceu.gtceu.data.model.builder.ModelFile;
 import com.gregtechceu.gtceu.data.model.builder.PipeModelBuilder;
+import com.gregtechceu.gtceu.data.model.builder.VariantBlockStateBuilder;
 import com.gregtechceu.gtceu.data.pack.event.RegisterDynamicResourcesEvent;
 import com.gregtechceu.gtceu.utils.GTUtil;
 
@@ -12,7 +17,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.client.data.models.blockstates.MultiVariantGenerator;
 import net.minecraft.resources.Identifier;
-import net.minecraftforge.client.model.generators.*;
 
 import com.tterrag.registrate.util.nullness.NonNullBiConsumer;
 import lombok.Getter;
@@ -254,7 +258,7 @@ public class PipeModel {
      * @see ActivablePipeModel#createBlockState()
      */
     @ApiStatus.OverrideOnly
-    public IGeneratedBlockState createBlockState() {
+    public VariantBlockStateBuilder createBlockState() {
         // spotless:off
         return this.provider.getVariantBuilder(this.getBlock())
                 .partialState()
@@ -413,6 +417,6 @@ public class PipeModel {
          *      float, float, Identifier, Identifier, String, String)
          *      ActivablePipeModel.makePartModelElement
          */
-        void accept(Direction face, String texture, ModelBuilder<T>.ElementBuilder.FaceBuilder builder);
+        void accept(Direction face, String texture, ModelBuilder<T>.FaceBuilder builder);
     }
 }

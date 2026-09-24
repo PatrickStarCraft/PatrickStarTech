@@ -1,26 +1,25 @@
 package com.gregtechceu.gtceu.client.renderer.machine.impl;
 
 import com.gregtechceu.gtceu.api.multiblock.util.RelativeDirection;
-import com.gregtechceu.gtceu.client.bloom.*;
+import com.gregtechceu.gtceu.client.bloom.BloomShaderManager;
 import com.gregtechceu.gtceu.client.renderer.GTRenderTypes;
 import com.gregtechceu.gtceu.client.renderer.machine.DynamicRender;
+import com.gregtechceu.gtceu.client.renderer.machine.DynamicRenderSnapshot;
 import com.gregtechceu.gtceu.client.renderer.machine.DynamicRenderType;
 import com.gregtechceu.gtceu.client.util.RenderBufferHelper;
 import com.gregtechceu.gtceu.common.machine.multiblock.electric.FusionReactorMachine;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
-import com.mojang.blaze3d.vertex.*;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.serialization.MapCodec;
-import lombok.RequiredArgsConstructor;
 
 import static net.minecraft.util.ARGB.*;
 
@@ -46,30 +45,12 @@ public class FusionRingRender extends DynamicRender<FusionReactorMachine, Fusion
     }
 
     @Override
-    public void render(FusionReactorMachine machine, float partialTick, PoseStack poseStack, MultiBufferSource buffer,
-                       int packedLight, int packedOverlay) {
-        if (!machine.recipeLogic.isWorking() && machine.delta <= 0) {
-            return;
-        }
+    public DynamicRenderSnapshot extractRenderState(FusionReactorMachine machine, float partialTicks) {
+        boolean working = machine.recipeLogic.isWorking();
+        if (!working && machine.delta <= 0) return null;
 
-        if (machine.getRegisteredBloomTicket().isValid() && !machine.isFormed()) {
-            machine.getRegisteredBloomTicket().invalidate();
-        }
-        if (!machine.getRegisteredBloomTicket().isValid() && BloomShaderManager.isBloomActive()) {
-            BloomRenderTicket ticket = BloomHandler.registerBloomRender(FusionBloomEffect.SETUP,
-                    new FusionBloomEffect(machine), machine);
-
-            machine.setRegisteredBloomTicket(ticket);
-        }
-
-        renderLightRing(machine, partialTick, poseStack, buffer.getBuffer(GTRenderTypes.lightRing()));
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    private void renderLightRing(FusionReactorMachine machine, float partialTicks,
-                                 PoseStack stack, VertexConsumer buffer) {
         float alpha = 1f;
-        if (machine.recipeLogic.isWorking()) {
+        if (working) {
             machine.lastColor = machine.getColor();
             machine.delta = FADEOUT;
         } else {
@@ -79,27 +60,40 @@ public class FusionRingRender extends DynamicRender<FusionReactorMachine, Fusion
             machine.delta -= Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaTicks();
         }
 
-        renderLightRingGeometry(machine, partialTicks, stack, buffer, alpha);
+        float lerpFactor = Math.abs((Math.abs(machine.getOffsetTimer() % 50) + partialTicks) - 25) / 25;
+        float red = Mth.lerp(lerpFactor, red(machine.lastColor), 255) / 255f;
+        float green = Mth.lerp(lerpFactor, green(machine.lastColor), 255) / 255f;
+        float blue = Mth.lerp(lerpFactor, blue(machine.lastColor), 255) / 255f;
+        var back = RelativeDirection.BACK.getRelativeFacing(machine.getFrontFacing(), machine.getUpwardsFacing(),
+                machine.isFlipped());
+        var axis = RelativeDirection.UP.getRelativeFacing(machine.getFrontFacing(), machine.getUpwardsFacing(),
+                machine.isFlipped()).getAxis();
+        float bloomAlpha = working ? 1f : ((machine.lastColor >>> 24) & 0xff) / 255f;
+        return new FusionRingSnapshot(back.getStepX() * 7 + 0.5F, back.getStepY() * 7 + 0.5F,
+                back.getStepZ() * 7 + 0.5F, red, green, blue, alpha, bloomAlpha, axis,
+                BloomShaderManager.isBloomActive());
     }
 
-    private void renderLightRingGeometry(FusionReactorMachine machine, float partialTicks, PoseStack stack,
-                                         VertexConsumer buffer, float alpha) {
-        final var lerpFactor = Math.abs((Math.abs(machine.getOffsetTimer() % 50) + partialTicks) - 25) / 25;
-        var front = machine.getFrontFacing();
-        var upwards = machine.getUpwardsFacing();
-        var flipped = machine.isFlipped();
-        var back = RelativeDirection.BACK.getRelativeFacing(front, upwards, flipped);
-        var axis = RelativeDirection.UP.getRelativeFacing(front, upwards, flipped).getAxis();
-        var r = Mth.lerp(lerpFactor, red(machine.lastColor), 255) / 255f;
-        var g = Mth.lerp(lerpFactor, green(machine.lastColor), 255) / 255f;
-        var b = Mth.lerp(lerpFactor, blue(machine.lastColor), 255) / 255f;
-        RenderBufferHelper.renderRing(stack, buffer,
-                back.getStepX() * 7 + 0.5F,
-                back.getStepY() * 7 + 0.5F,
-                back.getStepZ() * 7 + 0.5F,
-                6, 0.2F, 10, 20,
-                r, g, b, alpha, axis);
+    @Override
+    public void submitRenderState(DynamicRenderSnapshot state, PoseStack poseStack, SubmitNodeCollector collector,
+                                  CameraRenderState camera) {
+        if (!(state instanceof FusionRingSnapshot snapshot)) return;
+        submitRing(snapshot, poseStack, collector, GTRenderTypes.lightRing(), snapshot.alpha());
+        if (snapshot.bloomActive()) {
+            submitRing(snapshot, poseStack, collector, GTRenderTypes.bloomLightRing(), snapshot.bloomAlpha());
+        }
     }
+
+    private static void submitRing(FusionRingSnapshot snapshot, PoseStack poseStack, SubmitNodeCollector collector,
+                                  net.minecraft.client.renderer.rendertype.RenderType renderType, float alpha) {
+        collector.submitCustomGeometry(poseStack, renderType, (pose, buffer) ->
+                RenderBufferHelper.renderRing(pose, buffer, snapshot.x(), snapshot.y(), snapshot.z(), 6, 0.2F,
+                        10, 20, snapshot.red(), snapshot.green(), snapshot.blue(), alpha, snapshot.axis()));
+    }
+
+    private record FusionRingSnapshot(float x, float y, float z, float red, float green, float blue, float alpha,
+                                      float bloomAlpha, Direction.Axis axis, boolean bloomActive)
+            implements DynamicRenderSnapshot {}
 
     @Override
     public boolean shouldRenderOffScreen(FusionReactorMachine machine) {
@@ -111,42 +105,4 @@ public class FusionRingRender extends DynamicRender<FusionReactorMachine, Fusion
         return new AABB(machine.getBlockPos()).inflate(getViewDistance() / 2.0D);
     }
 
-    @RequiredArgsConstructor
-    private final class FusionBloomEffect implements IBloomEffect {
-
-        private final FusionReactorMachine machine;
-
-        private static final IRenderSetup SETUP = new IRenderSetup() {
-
-            @Override
-            @OnlyIn(Dist.CLIENT)
-            public void preDraw(BufferBuilder buffer) {
-                RenderSystem.setShader(GameRenderer::getPositionColorShader);
-                buffer.begin(VertexFormat.Mode.TRIANGLE_STRIP, DefaultVertexFormat.POSITION_COLOR);
-            }
-
-            @Override
-            @OnlyIn(Dist.CLIENT)
-            public void postDraw(BufferBuilder buffer) {
-                BufferUploader.drawWithShader(buffer.end());
-            }
-        };
-
-        @Override
-        public void renderBloomEffect(PoseStack poseStack, BufferBuilder buffer, EffectRenderContext context) {
-            BlockPos pos = machine.getBlockPos();
-            float alpha = machine.recipeLogic.isWorking() ? 1.0F : ((machine.lastColor >>> 24) & 0xFF) / 255.0F;
-
-            poseStack.pushPose();
-            poseStack.translate(pos.getX(), pos.getY(), pos.getZ());
-            FusionRingRender.this.renderLightRingGeometry(machine, context.partialTicks(), poseStack, buffer, alpha);
-            poseStack.popPose();
-        }
-
-        @Override
-        public boolean shouldRenderBloomEffect(EffectRenderContext context) {
-            return FusionRingRender.this.shouldRenderOffScreen(machine) &&
-                    context.frustum().isVisible(FusionRingRender.this.getRenderBoundingBox(machine));
-        }
-    }
 }

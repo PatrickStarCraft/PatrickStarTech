@@ -3,14 +3,14 @@ package com.gregtechceu.gtceu.client.model.pipe;
 import com.gregtechceu.gtceu.api.block.PipeBlock;
 import com.gregtechceu.gtceu.api.block.property.GTBlockStateProperties;
 import com.gregtechceu.gtceu.api.registry.registrate.provider.GTBlockstateProvider;
+import com.gregtechceu.gtceu.data.model.builder.BlockModelBuilder;
+import com.gregtechceu.gtceu.data.model.builder.ModelBuilder;
+import com.gregtechceu.gtceu.data.model.builder.ModelFile;
 import com.gregtechceu.gtceu.data.model.builder.PipeModelBuilder;
+import com.gregtechceu.gtceu.data.model.builder.VariantBlockStateBuilder;
 
 import net.minecraft.core.Direction;
 import net.minecraft.resources.Identifier;
-import net.minecraftforge.client.model.generators.BlockModelBuilder;
-import net.minecraftforge.client.model.generators.IGeneratedBlockState;
-import net.minecraftforge.client.model.generators.ModelBuilder;
-import net.minecraftforge.client.model.generators.ModelFile;
 
 import lombok.Setter;
 import org.jetbrains.annotations.ApiStatus;
@@ -201,7 +201,7 @@ public class ActivablePipeModel extends PipeModel {
     }
 
     @Override
-    public IGeneratedBlockState createBlockState() {
+    public VariantBlockStateBuilder createBlockState() {
         if (!this.getBlock().defaultBlockState().hasProperty(GTBlockStateProperties.ACTIVE)) {
             return super.createBlockState();
         }

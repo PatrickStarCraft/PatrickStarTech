@@ -1,5 +1,7 @@
 package com.gregtechceu.gtceu.client.bloom;
 
+import com.gregtechceu.gtceu.client.renderer.GTRenderTypes;
+
 import net.minecraft.world.level.Level;
 import net.minecraft.client.renderer.rendertype.RenderType;
 

@@ -7,7 +7,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.client.renderer.block.BlockAndTintGetter;
+import net.minecraft.world.level.BlockAndLightGetter;
 import net.minecraft.world.level.lighting.LightEngine;
 import net.minecraft.world.level.material.Fluid;
 
@@ -97,7 +97,7 @@ public class FluidBlockRenderer {
     public void drawPlane(Direction face, Collection<BlockPos> offsets,
                           PoseStack poseStack, VertexConsumer consumer,
                           Fluid fluid, RenderUtil.FluidTextureType texture,
-                          int combinedOverlay, BlockPos origin, @Nullable BlockAndTintGetter level) {
+                          int combinedOverlay, BlockPos origin, @Nullable BlockAndLightGetter level) {
         var sprite = texture.map(fluid);
         float u0 = sprite.getU0(), v0 = sprite.getV0(), u1 = sprite.getU1(), v1 = sprite.getV1();
         int color = getFluidTintColor(fluid);
@@ -130,6 +130,25 @@ public class FluidBlockRenderer {
             poseStack.popPose();
         }
     }
+
+    /** Draws a plane from copied block offsets and light values on the deferred BER path. */
+    public void drawPlane(Direction face, List<LitOffset> offsets, PoseStack.Pose basePose, VertexConsumer consumer,
+                          Fluid fluid, RenderUtil.FluidTextureType texture, int combinedOverlay) {
+        var sprite = texture.map(fluid);
+        float u0 = sprite.getU0(), v0 = sprite.getV0(), u1 = sprite.getU1(), v1 = sprite.getV1();
+        int color = getFluidTintColor(fluid);
+        Vector3fc normal = getNormal(face);
+        Vector3f[] vertices = transformVertices(getVertices(face), face);
+
+        for (LitOffset offset : offsets) {
+            PoseStack.Pose offsetPose = basePose.copy();
+            offsetPose.pose().translate(offset.pos().getX(), offset.pos().getY(), offset.pos().getZ());
+            drawFace(offsetPose, consumer, vertices, normal,
+                    u0, u1, v0, v1, color, combinedOverlay, offset.packedLight());
+        }
+    }
+
+    public record LitOffset(BlockPos pos, int packedLight) {}
 
     public void drawFace(Direction face, PoseStack.Pose pose, VertexConsumer consumer,
                          Fluid fluid, RenderUtil.FluidTextureType texture,

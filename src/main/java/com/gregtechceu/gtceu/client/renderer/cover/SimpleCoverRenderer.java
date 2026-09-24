@@ -24,6 +24,9 @@ import java.util.List;
 
 public class SimpleCoverRenderer implements ICoverRenderer {
 
+    private final Identifier overlayTexture;
+    private final @Nullable Identifier emissiveTexture;
+
     @OnlyIn(Dist.CLIENT)
     protected TextureAtlasSprite sprite = null;
     @OnlyIn(Dist.CLIENT)
@@ -34,6 +37,8 @@ public class SimpleCoverRenderer implements ICoverRenderer {
     }
 
     public SimpleCoverRenderer(Identifier texture, Identifier emissiveTexture) {
+        this.overlayTexture = texture;
+        this.emissiveTexture = emissiveTexture;
         ModelEventHelper.registerAtlasStitchedEventListener(false, TextureAtlas.LOCATION_BLOCKS, event -> {
             var atlas = event.getAtlas();
 
@@ -47,6 +52,14 @@ public class SimpleCoverRenderer implements ICoverRenderer {
                 }
             }
         });
+    }
+
+    public Identifier overlayTexture() {
+        return this.overlayTexture;
+    }
+
+    public @Nullable Identifier emissiveTexture() {
+        return this.emissiveTexture;
     }
 
     @OnlyIn(Dist.CLIENT)

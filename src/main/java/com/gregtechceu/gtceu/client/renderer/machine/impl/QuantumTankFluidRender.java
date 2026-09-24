@@ -1,24 +1,30 @@
 package com.gregtechceu.gtceu.client.renderer.machine.impl;
 
 import com.gregtechceu.gtceu.api.item.MetaMachineItem;
+import com.gregtechceu.gtceu.client.renderer.item.MachineItemRenderSnapshot;
+import com.gregtechceu.gtceu.client.renderer.item.MachineItemRenderSnapshotProvider;
 import com.gregtechceu.gtceu.client.renderer.machine.DynamicRender;
+import com.gregtechceu.gtceu.client.renderer.machine.DynamicRenderSnapshot;
 import com.gregtechceu.gtceu.client.renderer.machine.DynamicRenderType;
 import com.gregtechceu.gtceu.client.util.RenderBufferHelper;
 import com.gregtechceu.gtceu.client.util.RenderUtil;
 import com.gregtechceu.gtceu.common.data.GTMachines;
 import com.gregtechceu.gtceu.common.machine.storage.CreativeTankMachine;
 import com.gregtechceu.gtceu.common.machine.storage.QuantumTankMachine;
+import com.gregtechceu.gtceu.utils.GTUtil;
 
 import net.minecraft.util.LightCoordsUtil;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.Sheets;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.block.FluidModel;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.core.Direction;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.fluids.FluidStack;
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -32,7 +38,8 @@ import javax.annotation.Nullable;
 import static com.gregtechceu.gtceu.client.renderer.machine.impl.QuantumChestItemRender.*;
 import static com.gregtechceu.gtceu.common.machine.storage.QuantumTankMachine.TANK_CAPACITY;
 
-public class QuantumTankFluidRender extends DynamicRender<QuantumTankMachine, QuantumTankFluidRender> {
+public class QuantumTankFluidRender extends DynamicRender<QuantumTankMachine, QuantumTankFluidRender>
+                                   implements MachineItemRenderSnapshotProvider {
 
     // spotless:off
     public static final MapCodec<QuantumTankFluidRender> CODEC = MapCodec.unit(QuantumTankFluidRender::new);
@@ -52,60 +59,66 @@ public class QuantumTankFluidRender extends DynamicRender<QuantumTankMachine, Qu
     }
 
     @Override
-    public void renderByItem(ItemStack stack, ItemDisplayContext displayContext,
-                             PoseStack poseStack, MultiBufferSource buffer, int packedLight, int packedOverlay) {
+    public @Nullable MachineItemRenderSnapshot extractItemRenderState(ItemStack stack) {
+        if (!stack.has(net.minecraft.core.component.DataComponents.CUSTOM_DATA)) return null;
         if (CREATIVE_FLUID_ITEM == null) CREATIVE_FLUID_ITEM = GTMachines.CREATIVE_FLUID.getItem();
-        if (stack.has(net.minecraft.core.component.DataComponents.CUSTOM_DATA)) {
-            poseStack.pushPose();
 
-            FluidStack stored = com.gregtechceu.gtceu.utils.data.StackPersistence.loadFluid(com.gregtechceu.gtceu.api.item.data.ItemStackData.read(stack).getCompoundOrEmpty("stored"));
-            long storedAmount = com.gregtechceu.gtceu.api.item.data.ItemStackData.read(stack).getLongOr("storedAmount", 0L);
-            if (storedAmount == 0 && !stored.isEmpty()) storedAmount = stored.getAmount();
-            long maxAmount = 0;
-            if (stack.getItem() instanceof MetaMachineItem machineItem) {
-                maxAmount = TANK_CAPACITY.getLong(machineItem.getDefinition());
-            }
-            // Don't need to handle locked fluids here since they don't get saved to the item
-            renderTank(poseStack, buffer, Direction.NORTH,
-                    stored, storedAmount, maxAmount, FluidStack.EMPTY,
-                    stack.is(CREATIVE_FLUID_ITEM));
-
-            poseStack.popPose();
-        }
-        super.renderByItem(stack, displayContext, poseStack, buffer, packedLight, packedOverlay);
+        var data = com.gregtechceu.gtceu.api.item.data.ItemStackData.read(stack);
+        FluidStack stored = com.gregtechceu.gtceu.utils.data.StackPersistence.loadFluid(
+                data.getCompoundOrEmpty("stored"));
+        if (stored.isEmpty()) return null;
+        Fluid fluid = stored.getFluid();
+        long storedAmount = data.getLongOr("storedAmount", 0L);
+        if (storedAmount == 0) storedAmount = stored.getAmount();
+        long maxAmount = stack.getItem() instanceof MetaMachineItem machineItem ?
+                TANK_CAPACITY.getLong(machineItem.getDefinition()) : 0;
+        boolean creative = stack.is(CREATIVE_FLUID_ITEM);
+        boolean gas = fluid.getFluidType().isLighterThanAir();
+        int tint = GTUtil.getFluidColor(stored);
+        TankFluidSnapshot tank = new TankFluidSnapshot(fluid, storedAmount, maxAmount, Direction.NORTH, Direction.UP,
+                creative, gas, tint);
+        return new TankItemSnapshot(tank);
     }
 
     @Override
-    public void render(QuantumTankMachine machine, float partialTick, PoseStack poseStack, MultiBufferSource buffer,
-                       int packedLight, int packedOverlay) {
+    public DynamicRenderSnapshot extractRenderState(QuantumTankMachine machine, float partialTicks) {
+        FluidStack stored = machine.getStored();
+        FluidStack fluidStack = stored.isEmpty() ? machine.getLockedFluid() : stored;
+        if (fluidStack.isEmpty()) return null;
+
+        Fluid fluid = fluidStack.getFluid();
+        FluidModel fluidModel = Minecraft.getInstance().getModelManager().getFluidStateModelSet()
+                .get(fluid.defaultFluidState());
+        int tint = fluidModel.fluidTintSource() == null ? -1 : fluidModel.fluidTintSource().colorAsStack(fluidStack);
+        tint |= 0xff000000;
+        return new TankFluidSnapshot(fluid, machine.getStoredAmount(), machine.getMaxAmount(),
+                machine.getFrontFacing(), machine.getUpwardsFacing(), machine instanceof CreativeTankMachine,
+                fluid.getFluidType().isLighterThanAir(), tint);
+    }
+
+    @Override
+    public void submitRenderState(DynamicRenderSnapshot state, PoseStack poseStack, SubmitNodeCollector collector,
+                                  CameraRenderState camera) {
+        if (!(state instanceof TankFluidSnapshot snapshot)) return;
+
         poseStack.pushPose();
-        setupModelRotation(machine, poseStack);
-
-        renderTank(poseStack, buffer, machine.getFrontFacing(),
-                machine.getStored(), machine.getStoredAmount(), machine.getMaxAmount(), machine.getLockedFluid(),
-                machine instanceof CreativeTankMachine);
-
+        setupModelRotation(snapshot.frontFacing(), snapshot.upwardsFacing(), poseStack);
+        RenderType renderType = RenderTypes.entityTranslucent(TextureAtlas.LOCATION_BLOCKS);
+        collector.submitCustomGeometry(poseStack, renderType, (pose, buffer) ->
+                drawTankGeometry(snapshot, pose, buffer));
+        submitAmountText(poseStack, collector, snapshot.frontFacing(), snapshot.storedAmount(), snapshot.creative());
         poseStack.popPose();
     }
 
-    @OnlyIn(Dist.CLIENT)
-    public void renderTank(PoseStack poseStack, MultiBufferSource buffer, Direction frontFacing,
-                           FluidStack stored, long storedAmount, long maxAmount, FluidStack locked,
-                           boolean isCreative) {
-        FluidStack fluid = !stored.isEmpty() ? stored : locked;
-        if (fluid.isEmpty()) return;
-
-        var ext = IClientFluidTypeExtensions.of(fluid.getFluid());
-        var fluidSprite = RenderUtil.FluidTextureType.STILL.map(fluid.getFluid());
-
+    private static void drawTankGeometry(TankFluidSnapshot snapshot, PoseStack.Pose pose, VertexConsumer builder) {
+        var fluidSprite = RenderUtil.FluidTextureType.STILL.map(snapshot.fluid());
+        Direction frontFacing = snapshot.frontFacing();
         EnumSet<Direction> sidesToRender = EnumSet.of(frontFacing);
-        VertexConsumer builder = buffer.getBuffer(Sheets.translucentCullBlockSheet());
 
-        boolean gas = fluid.getFluid().getFluidType().isLighterThanAir();
-        float percentFull = isCreative || maxAmount <= storedAmount ? 1f : (float) storedAmount / maxAmount;
-
-        float maxTop = gas ? MAX : MIN + percentFull * (MAX - MIN);
-        float minBot = gas ? MIN + (1 - percentFull) * (MAX - MIN) : MIN;
+        float percentFull = snapshot.creative() || snapshot.maxAmount() <= snapshot.storedAmount() ? 1f :
+                (float) snapshot.storedAmount() / snapshot.maxAmount();
+        float maxTop = snapshot.gas() ? MAX : MIN + percentFull * (MAX - MIN);
+        float minBot = snapshot.gas() ? MIN + (1 - percentFull) * (MAX - MIN) : MIN;
         float minY, maxY, minZ, maxZ;
         if (frontFacing.getAxis() == Direction.Axis.Y) {
             minY = MIN;
@@ -113,27 +126,39 @@ public class QuantumTankFluidRender extends DynamicRender<QuantumTankMachine, Qu
             if (frontFacing == Direction.UP) {
                 minZ = minBot;
                 maxZ = maxTop;
-                // the output is already rotated in the pose stack, so we don't need to rotate it again here
-                sidesToRender.add(gas ? Direction.SOUTH : Direction.NORTH);
+                sidesToRender.add(snapshot.gas() ? Direction.SOUTH : Direction.NORTH);
             } else {
-                // -z is top
                 minZ = 1 - maxTop;
                 maxZ = 1 - minBot;
-                // the output is already rotated in the pose stack, so we don't need to rotate it again here
-                sidesToRender.add(gas ? Direction.NORTH : Direction.SOUTH);
+                sidesToRender.add(snapshot.gas() ? Direction.NORTH : Direction.SOUTH);
             }
         } else {
             minY = minBot;
             maxY = maxTop;
             minZ = MIN;
             maxZ = MAX;
-
-            sidesToRender.add(gas ? Direction.DOWN : Direction.UP);
+            sidesToRender.add(snapshot.gas() ? Direction.DOWN : Direction.UP);
         }
-        RenderBufferHelper.renderTexturedCube(builder, poseStack.last(), sidesToRender,
-                ext.getTintColor(fluid) | 0xff000000, LightCoordsUtil.FULL_BRIGHT, fluidSprite,
-                MIN, minY, minZ, MAX, maxY, maxZ);
 
-        drawAmountText(poseStack, buffer, frontFacing, storedAmount, isCreative);
+        RenderBufferHelper.renderTexturedCube(builder, pose, sidesToRender, snapshot.tint(),
+                LightCoordsUtil.FULL_BRIGHT, fluidSprite, MIN, minY, minZ, MAX, maxY, maxZ);
     }
+
+    private record TankFluidSnapshot(Fluid fluid, long storedAmount, long maxAmount, Direction frontFacing,
+                                     Direction upwardsFacing, boolean creative, boolean gas, int tint)
+            implements DynamicRenderSnapshot {}
+
+    private record TankItemSnapshot(TankFluidSnapshot tank) implements MachineItemRenderSnapshot {
+        @Override
+        public void submit(PoseStack poseStack, SubmitNodeCollector collector) {
+            poseStack.pushPose();
+            RenderType renderType = RenderTypes.entityTranslucent(TextureAtlas.LOCATION_BLOCKS);
+            collector.submitCustomGeometry(poseStack, renderType, (pose, buffer) ->
+                    drawTankGeometry(this.tank(), pose, buffer));
+            submitAmountText(poseStack, collector, Direction.NORTH, this.tank().storedAmount(),
+                    this.tank().creative());
+            poseStack.popPose();
+        }
+    }
+
 }

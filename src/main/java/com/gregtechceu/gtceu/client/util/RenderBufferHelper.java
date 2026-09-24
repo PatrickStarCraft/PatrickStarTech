@@ -55,7 +55,14 @@ public class RenderBufferHelper {
                                   float r, float tubeRadius,
                                   int sides, int segments, float red, float green, float blue, float alpha,
                                   Direction.Axis axis) {
-        Matrix4f mat = poseStack.last().pose();
+        renderRing(poseStack.last(), buffer, x, y, z, r, tubeRadius, sides, segments, red, green, blue, alpha, axis);
+    }
+
+    public static void renderRing(PoseStack.Pose pose, VertexConsumer buffer, float x, float y, float z,
+                                  float r, float tubeRadius,
+                                  int sides, int segments, float red, float green, float blue, float alpha,
+                                  Direction.Axis axis) {
+        Matrix4f mat = pose.pose();
         float sideDelta = (float) (2.0 * Math.PI / sides); // Subdivision angle of the "pipe"
         float ringDelta = (float) (2.0 * Math.PI / segments); // Subdivision angle of the ring
         float theta = 0; // θ, sin(θ), cos(θ) Main angle
@@ -153,8 +160,8 @@ public class RenderBufferHelper {
         renderSide(buf, stack, bottomLeft2, bottomRight2, bottomLeft, bottomRight, colorARGB);
     }
 
-    private static void renderLine(VertexConsumer buf, PoseStack.Pose pose, Vec3 from, Vec3 to, double thickness,
-                                   int colorARGB) {
+    public static void renderLine(VertexConsumer buf, PoseStack.Pose pose, Vec3 from, Vec3 to, double thickness,
+                                  int colorARGB) {
         Vec3 law = getFirstPerpendicular(from, to).scale(thickness);
         Vec3 law2 = getSecondPerpendicular(from, to).scale(thickness);
         Vec3 topRight = from.add(law2);
