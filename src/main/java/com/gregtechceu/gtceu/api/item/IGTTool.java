@@ -26,7 +26,6 @@ import com.gregtechceu.gtceu.utils.FormattingUtil;
 import com.gregtechceu.gtceu.utils.GTUtil;
 
 import net.minecraft.util.Util;
-import net.minecraft.client.color.item.ItemColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -964,32 +963,23 @@ public interface IGTTool extends IUIHolder<PlayerInventoryGuiData<?>>, ItemLike,
     }
 
     @OnlyIn(Dist.CLIENT)
-    static ItemColor tintColor() {
-        return (itemStack, index) -> {
-            if (itemStack.getItem() instanceof IGTTool item) {
-                Material material = item.getMaterial();
-                // TODO switch around main and secondary color once new textures are added
-                return switch (index) {
-                    case 0, -101 -> {
-                        if (item.getToolClasses(itemStack).contains(GTToolType.CROWBAR)) {
-                            if (ItemStackData.readNullable(itemStack) != null) {
-                                yield getToolTag(itemStack).getInt(TINT_COLOR_KEY).orElse(-1);
-                            }
-                        }
-                        yield -1;
-                    }
-                    case 1, -111 -> material.getMaterialARGB();
-                    case 2, -121 -> {
-                        if (material.getMaterialSecondaryARGB() != -1) {
-                            yield material.getMaterialSecondaryARGB();
-                        } else {
-                            yield material.getMaterialARGB();
-                        }
-                    }
-                    default -> -1;
-                };
+    static int tintColor(ItemStack itemStack, int index) {
+        if (!(itemStack.getItem() instanceof IGTTool item)) return -1;
+
+        Material material = item.getMaterial();
+        // TODO switch around main and secondary color once new textures are added
+        return switch (index) {
+            case 0, -101 -> {
+                if (item.getToolClasses(itemStack).contains(GTToolType.CROWBAR) &&
+                        ItemStackData.readNullable(itemStack) != null) {
+                    yield getToolTag(itemStack).getInt(TINT_COLOR_KEY).orElse(-1);
+                }
+                yield -1;
             }
-            return -1;
+            case 1, -111 -> material.getMaterialARGB();
+            case 2, -121 -> material.getMaterialSecondaryARGB() != -1 ?
+                    material.getMaterialSecondaryARGB() : material.getMaterialARGB();
+            default -> -1;
         };
     }
 }

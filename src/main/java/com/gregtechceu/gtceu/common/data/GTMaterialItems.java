@@ -5,7 +5,6 @@ import com.gregtechceu.gtceu.api.data.chemical.material.info.MaterialFlags;
 import com.gregtechceu.gtceu.api.data.chemical.material.properties.PropertyKey;
 import com.gregtechceu.gtceu.api.data.chemical.material.stack.MaterialEntry;
 import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
-import com.gregtechceu.gtceu.api.item.IGTTool;
 import com.gregtechceu.gtceu.api.item.TagPrefixItem;
 import com.gregtechceu.gtceu.api.item.tool.GTToolType;
 import com.gregtechceu.gtceu.api.registry.GTRegistries;
@@ -137,7 +136,6 @@ public class GTMaterialItems {
         TOOL_ITEMS.put(material, toolType, (ItemProviderEntry<Item, ? extends Item>) (ItemProviderEntry<?, ?>) toolItem
                 .setData(ProviderType.LANG, NonNullBiConsumer.noop())
                 .model(() -> NonNullBiConsumer.noop())
-                .color(() -> IGTTool::tintColor)
                 .register());
     }
 

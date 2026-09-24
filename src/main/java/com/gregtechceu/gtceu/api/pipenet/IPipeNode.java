@@ -7,15 +7,27 @@ import com.gregtechceu.gtceu.api.blockentity.ITickSubscription;
 import com.gregtechceu.gtceu.api.blockentity.PipeBlockEntity;
 import com.gregtechceu.gtceu.api.capability.ICoverable;
 import com.gregtechceu.gtceu.api.data.chemical.material.Material;
+import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
+import com.gregtechceu.gtceu.api.cover.CoverBehavior;
 import com.gregtechceu.gtceu.client.model.GTModelProperties;
+import com.gregtechceu.gtceu.client.model.CoverRenderState;
+import com.gregtechceu.gtceu.client.model.item.FacadeRenderState;
+import com.gregtechceu.gtceu.common.cover.FacadeCover;
+import com.gregtechceu.gtceu.common.data.GTMaterialBlocks;
 
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.model.data.ModelData;
 
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.EnumMap;
+import java.util.EnumSet;
+import java.util.Map;
 
 public interface IPipeNode<PipeType extends Enum<PipeType> & IPipeType<NodeDataType>, NodeDataType>
                           extends ITickSubscription, IPaintable, IGregtechBlockEntity {
@@ -124,11 +136,50 @@ public interface IPipeNode<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
     @ApiStatus.Internal
     @Override
     default @NotNull ModelData getModelData() {
-        return ModelData.builder()
-                .with(GTModelProperties.LEVEL, self().getLevel())
-                .with(GTModelProperties.POS, self().getBlockPos())
+        var pos = self().getBlockPos();
+        var builder = ModelData.builder()
+                .with(GTModelProperties.POS, pos)
                 .with(GTModelProperties.PIPE_CONNECTION_MASK, this.getVisualConnections())
-                .with(GTModelProperties.PIPE_BLOCKED_MASK, this.getBlockedConnections())
-                .build();
+                .with(GTModelProperties.PIPE_BLOCKED_MASK, this.getBlockedConnections());
+
+        int paintingColor = getPaintingColor();
+        if (isPainted() && paintingColor != -1) {
+            builder.with(GTModelProperties.PIPE_PAINTING_COLOR, paintingColor);
+        }
+        Material frameMaterial = getFrameMaterial();
+        if (frameMaterial != null) {
+            BlockState frameState = java.util.Objects.requireNonNull(
+                    GTMaterialBlocks.MATERIAL_BLOCKS.get(TagPrefix.frameGt, frameMaterial))
+                    .getDefaultState();
+            builder.with(GTModelProperties.PIPE_FRAME_STATE, frameState);
+        }
+
+        if (self().getLevel() instanceof BlockAndTintGetter renderLevel) {
+            builder.with(GTModelProperties.LEVEL, renderLevel);
+            ModelData parentModelData = builder.build();
+            var result = parentModelData.derive();
+            ICoverable coverable = getCoverContainer();
+            Map<Direction, ModelData> coverModelData = new EnumMap<>(Direction.class);
+            Map<Direction, FacadeRenderState.Facade> facades = new EnumMap<>(Direction.class);
+            EnumSet<Direction> occupiedFaces = EnumSet.noneOf(Direction.class);
+            for (Direction direction : Direction.values()) {
+                CoverBehavior cover = coverable.getCoverAtSide(direction);
+                if (cover == null) continue;
+
+                occupiedFaces.add(direction);
+                coverModelData.put(direction, cover.getCoverRenderer().get().getModelData(
+                        cover, pos, renderLevel, parentModelData));
+                if (cover instanceof FacadeCover facadeCover) {
+                    facades.put(direction, new FacadeRenderState.Facade(facadeCover.getFacadeState(),
+                            facadeCover.shouldRenderPlate(), coverable.shouldRenderBackSide()));
+                }
+            }
+            result.with(GTModelProperties.COVER_MODEL_DATA, Map.copyOf(coverModelData));
+            result.with(GTModelProperties.COVER_RENDER_STATE, CoverRenderState.capture(coverable));
+            result.with(GTModelProperties.FACADE_RENDER_STATE, new FacadeRenderState(facades,
+                    coverable.getCoverPlateThickness(), occupiedFaces));
+            return result.build();
+        }
+        return builder.build();
     }
 }

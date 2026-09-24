@@ -1,6 +1,7 @@
 package com.gregtechceu.gtceu.client.color;
 
 import com.gregtechceu.gtceu.GTCEu;
+import com.gregtechceu.gtceu.api.item.IGTTool;
 import com.gregtechceu.gtceu.api.item.IComponentItem;
 import com.gregtechceu.gtceu.api.item.MaterialBlockItem;
 import com.gregtechceu.gtceu.api.item.MaterialPipeBlockItem;
@@ -27,6 +28,9 @@ public record MaterialLayerTintSource(int layer) implements ItemTintSource {
 
     @Override
     public int calculate(ItemStack itemStack, @Nullable ClientLevel level, @Nullable LivingEntity owner) {
+        if (itemStack.getItem() instanceof IGTTool) {
+            return IGTTool.tintColor(itemStack, this.layer);
+        }
         if (itemStack.getItem() instanceof TagPrefixItem materialItem) {
             return materialItem.material.getLayerARGB(this.layer);
         }

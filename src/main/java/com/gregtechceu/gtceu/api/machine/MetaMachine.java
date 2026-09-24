@@ -33,8 +33,13 @@ import com.gregtechceu.gtceu.api.sync_system.annotations.SyncToClient;
 import com.gregtechceu.gtceu.api.sync_system.managed.ManagedSyncBlockEntity;
 import com.gregtechceu.gtceu.api.transfer.fluid.IFluidHandlerModifiable;
 import com.gregtechceu.gtceu.client.model.IBlockEntityRendererBakedModel;
+import com.gregtechceu.gtceu.client.model.CoverRenderState;
+import com.gregtechceu.gtceu.client.model.GTModelProperties;
+import com.gregtechceu.gtceu.client.model.item.FacadeRenderState;
+import com.gregtechceu.gtceu.client.model.machine.MachineOutputRenderState;
 import com.gregtechceu.gtceu.client.model.machine.MachineRenderState;
 import com.gregtechceu.gtceu.client.util.RenderUtil;
+import com.gregtechceu.gtceu.common.cover.FacadeCover;
 import com.gregtechceu.gtceu.common.cover.FluidFilterCover;
 import com.gregtechceu.gtceu.common.cover.ItemFilterCover;
 import com.gregtechceu.gtceu.common.cover.data.ManualIOMode;
@@ -895,7 +900,43 @@ public class MetaMachine extends ManagedSyncBlockEntity implements IGregtechBloc
      */
     @Override
     public ModelData getModelData() {
-        return super.getModelData().derive().build();
+        ModelData parentModelData = super.getModelData();
+        var builder = parentModelData.derive();
+        builder.with(GTModelProperties.MACHINE_RENDER_STATE, getRenderState());
+
+        AutoOutputTrait autoOutput = getTrait(AutoOutputTrait.class);
+        boolean supportsItemOutput = autoOutput != null && autoOutput.supportsAutoOutputItems();
+        boolean supportsFluidOutput = autoOutput != null && autoOutput.supportsAutoOutputFluids();
+        builder.with(GTModelProperties.MACHINE_OUTPUT_RENDER_STATE, new MachineOutputRenderState(
+                supportsItemOutput ? autoOutput.getItemOutputDirection() : null,
+                supportsItemOutput && autoOutput.isAutoOutputItems(),
+                supportsFluidOutput ? autoOutput.getFluidOutputDirection() : null,
+                supportsFluidOutput && autoOutput.isAutoOutputFluids()));
+
+        if (getLevel() instanceof BlockAndTintGetter renderLevel) {
+            var pos = getBlockPos();
+            ICoverable coverable = getCoverContainer();
+            Map<Direction, ModelData> coverModelData = new EnumMap<>(Direction.class);
+            Map<Direction, FacadeRenderState.Facade> facades = new EnumMap<>(Direction.class);
+            EnumSet<Direction> occupiedFaces = EnumSet.noneOf(Direction.class);
+            for (Direction direction : Direction.values()) {
+                CoverBehavior cover = coverable.getCoverAtSide(direction);
+                if (cover == null) continue;
+
+                occupiedFaces.add(direction);
+                coverModelData.put(direction, cover.getCoverRenderer().get().getModelData(
+                        cover, pos, renderLevel, parentModelData));
+                if (cover instanceof FacadeCover facadeCover) {
+                    facades.put(direction, new FacadeRenderState.Facade(facadeCover.getFacadeState(),
+                            facadeCover.shouldRenderPlate(), coverable.shouldRenderBackSide()));
+                }
+            }
+            builder.with(GTModelProperties.COVER_MODEL_DATA, Map.copyOf(coverModelData));
+            builder.with(GTModelProperties.COVER_RENDER_STATE, CoverRenderState.capture(coverable));
+            builder.with(GTModelProperties.FACADE_RENDER_STATE, new FacadeRenderState(facades,
+                    coverable.getCoverPlateThickness(), occupiedFaces));
+        }
+        return builder.build();
     }
 
     /**

@@ -160,6 +160,8 @@ public abstract class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile 
         int rotation;
         Integer tintIndex;
         float[] uv;
+        Integer lightEmission;
+        Boolean ambientOcclusion;
         JsonObject toJson() {
             JsonObject json = new JsonObject();
             if (texture != null) json.addProperty("texture", texture);
@@ -170,6 +172,12 @@ public abstract class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile 
                 JsonArray array = new JsonArray();
                 for (float value : uv) array.add(value);
                 json.add("uv", array);
+            }
+            if (lightEmission != null || ambientOcclusion != null) {
+                JsonObject extraData = new JsonObject();
+                if (lightEmission != null) extraData.addProperty("light_emission", lightEmission);
+                if (ambientOcclusion != null) extraData.addProperty("ambient_occlusion", ambientOcclusion);
+                json.add("neoforge_data", extraData);
             }
             return json;
         }
@@ -185,6 +193,17 @@ public abstract class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile 
         public FaceBuilder tintindex(int tintIndex) { data.tintIndex = tintIndex; return this; }
         public FaceBuilder uv(float u1, float v1, float u2, float v2) { data.uv = new float[]{u1,v1,u2,v2}; return this; }
         public FaceBuilder uvs(float u1, float v1, float u2, float v2) { return uv(u1, v1, u2, v2); }
+        public FaceBuilder emissivity(int min, int max) {
+            if (min != max) {
+                throw new IllegalArgumentException("Minecraft 26.2 face light emission requires one value, got " + min + ".." + max);
+            }
+            if (min < 0 || min > 15) {
+                throw new IllegalArgumentException("Minecraft 26.2 face light emission must be between 0 and 15: " + min);
+            }
+            data.lightEmission = min;
+            return this;
+        }
+        public FaceBuilder ao(boolean ambientOcclusion) { data.ambientOcclusion = ambientOcclusion; return this; }
         public ElementBuilder end() { return new ElementBuilder(element); }
     }
 }

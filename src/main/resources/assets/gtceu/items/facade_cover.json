@@ -1,0 +1,6 @@
+{
+    "model": {
+        "type": "gtceu:facade",
+        "base": "gtceu:item/facade_cover_base"
+    }
+}
