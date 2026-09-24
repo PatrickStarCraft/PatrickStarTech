@@ -3,6 +3,7 @@ package com.gregtechceu.gtceu.client.bloom;
 import com.gregtechceu.gtceu.GTCEu;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.SectionPos;
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 import net.minecraft.world.level.ChunkPos;
@@ -97,12 +98,16 @@ public class BloomEventListeners {
 
     @SubscribeEvent
     public static void onLevelUnload(LevelEvent.Unload event) {
+        if (!(event.getLevel() instanceof ClientLevel)) return;
+        ClientLevel currentLevel = Minecraft.getInstance().level;
+        if (currentLevel != null && event.getLevel() != currentLevel) return;
         BloomHandler.invalidateLevelData(event.getLevel());
         BloomRenderer.SafeMode.invalidateLevelData();
     }
 
     @SubscribeEvent
     public static void onChunkUnload(ChunkEvent.Unload event) {
+        if (event.getLevel() != Minecraft.getInstance().level) return;
         ChunkAccess chunk = event.getChunk();
         LevelAccessor level = event.getLevel();
         ChunkPos chunkPos = chunk.getPos();

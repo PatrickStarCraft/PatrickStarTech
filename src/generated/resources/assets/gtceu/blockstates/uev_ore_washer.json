@@ -1,18 +1,78 @@
 {
   "variants": {
     "facing=east": {
-      "model": "gtceu:block/machine/uev_ore_washer",
+      "machine": "gtceu:uev_ore_washer",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/689223f2bd3e0e12014f0a80"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/689223f2bd3e0e12014f0a80"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/b780df10a72c60ecb925dcba"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/b780df10a72c60ecb925dcba"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/uev_ore_washer"
+      "machine": "gtceu:uev_ore_washer",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/689223f2bd3e0e12014f0a80"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/689223f2bd3e0e12014f0a80"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/b780df10a72c60ecb925dcba"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/b780df10a72c60ecb925dcba"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/uev_ore_washer",
+      "machine": "gtceu:uev_ore_washer",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/689223f2bd3e0e12014f0a80"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/689223f2bd3e0e12014f0a80"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/b780df10a72c60ecb925dcba"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/b780df10a72c60ecb925dcba"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/uev_ore_washer",
+      "machine": "gtceu:uev_ore_washer",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/689223f2bd3e0e12014f0a80"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/689223f2bd3e0e12014f0a80"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/b780df10a72c60ecb925dcba"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/b780df10a72c60ecb925dcba"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

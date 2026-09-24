@@ -1,27 +1,117 @@
 {
   "variants": {
     "facing=down": {
-      "model": "gtceu:block/machine/hv_gas_turbine",
+      "machine": "gtceu:hv_gas_turbine",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/241d5835b442731ab05b988f"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/241d5835b442731ab05b988f"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/6fcfffe6b560a266899f4fa1"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/6fcfffe6b560a266899f4fa1"
+        }
+      },
+      "type": "gtceu:machine",
       "x": 90
     },
     "facing=east": {
-      "model": "gtceu:block/machine/hv_gas_turbine",
+      "machine": "gtceu:hv_gas_turbine",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/241d5835b442731ab05b988f"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/241d5835b442731ab05b988f"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/6fcfffe6b560a266899f4fa1"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/6fcfffe6b560a266899f4fa1"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/hv_gas_turbine"
+      "machine": "gtceu:hv_gas_turbine",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/241d5835b442731ab05b988f"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/241d5835b442731ab05b988f"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/6fcfffe6b560a266899f4fa1"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/6fcfffe6b560a266899f4fa1"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/hv_gas_turbine",
+      "machine": "gtceu:hv_gas_turbine",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/241d5835b442731ab05b988f"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/241d5835b442731ab05b988f"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/6fcfffe6b560a266899f4fa1"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/6fcfffe6b560a266899f4fa1"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=up": {
-      "gtceu:z": 180,
-      "model": "gtceu:block/machine/hv_gas_turbine",
-      "x": 270
+      "machine": "gtceu:hv_gas_turbine",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/241d5835b442731ab05b988f"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/241d5835b442731ab05b988f"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/6fcfffe6b560a266899f4fa1"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/6fcfffe6b560a266899f4fa1"
+        }
+      },
+      "type": "gtceu:machine",
+      "x": 270,
+      "z": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/hv_gas_turbine",
+      "machine": "gtceu:hv_gas_turbine",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/241d5835b442731ab05b988f"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/241d5835b442731ab05b988f"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/6fcfffe6b560a266899f4fa1"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/6fcfffe6b560a266899f4fa1"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

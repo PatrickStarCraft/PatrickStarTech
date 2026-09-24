@@ -1,18 +1,78 @@
 {
   "variants": {
     "facing=east": {
-      "model": "gtceu:block/machine/uhv_electrolyzer",
+      "machine": "gtceu:uhv_electrolyzer",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/2f0a67f8170890e54fdf0696"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/2f0a67f8170890e54fdf0696"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/47848913cd966106d61130e6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/47848913cd966106d61130e6"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/uhv_electrolyzer"
+      "machine": "gtceu:uhv_electrolyzer",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/2f0a67f8170890e54fdf0696"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/2f0a67f8170890e54fdf0696"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/47848913cd966106d61130e6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/47848913cd966106d61130e6"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/uhv_electrolyzer",
+      "machine": "gtceu:uhv_electrolyzer",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/2f0a67f8170890e54fdf0696"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/2f0a67f8170890e54fdf0696"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/47848913cd966106d61130e6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/47848913cd966106d61130e6"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/uhv_electrolyzer",
+      "machine": "gtceu:uhv_electrolyzer",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/2f0a67f8170890e54fdf0696"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/2f0a67f8170890e54fdf0696"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/47848913cd966106d61130e6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/47848913cd966106d61130e6"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

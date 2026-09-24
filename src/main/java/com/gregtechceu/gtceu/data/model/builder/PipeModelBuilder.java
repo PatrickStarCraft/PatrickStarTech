@@ -291,7 +291,19 @@ public class PipeModelBuilder<T extends ModelBuilder<T>> extends CustomLoaderBui
         json = super.toJson(json);
         json.remove("loader");
         json.addProperty("type", GTCEu.id("pipe").toString());
+        addModelParts(json);
+        return json;
+    }
 
+    /** Returns the custom block-state model payload to embed in a 26.2 blockstate variant. */
+    public JsonObject toBlockStateModelJson() {
+        JsonObject json = new JsonObject();
+        json.addProperty("type", GTCEu.id("pipe").toString());
+        addModelParts(json);
+        return json;
+    }
+
+    private void addModelParts(JsonObject json) {
         if (!getParts().isEmpty()) {
             final JsonObject parts = new JsonObject();
             getParts().entrySet().stream()
@@ -316,8 +328,6 @@ public class PipeModelBuilder<T extends ModelBuilder<T>> extends CustomLoaderBui
             }
             json.add("restrictors", restrictors);
         }
-
-        return json;
     }
 
     private static final Identifier PIPE_BLOCKED_OVERLAY = GTCEu.id("block/pipe/blocked/pipe_blocked");

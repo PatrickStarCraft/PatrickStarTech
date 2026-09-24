@@ -1,18 +1,78 @@
 {
   "variants": {
     "facing=east": {
-      "model": "gtceu:block/machine/iv_scanner",
+      "machine": "gtceu:iv_scanner",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/bc7a136517d75396c233d1e8"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/d2ac89f5acbb787bd4adf23c"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/cd63c1138b4e993c2e79bc8d"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/cd63c1138b4e993c2e79bc8d"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/iv_scanner"
+      "machine": "gtceu:iv_scanner",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/bc7a136517d75396c233d1e8"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/d2ac89f5acbb787bd4adf23c"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/cd63c1138b4e993c2e79bc8d"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/cd63c1138b4e993c2e79bc8d"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/iv_scanner",
+      "machine": "gtceu:iv_scanner",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/bc7a136517d75396c233d1e8"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/d2ac89f5acbb787bd4adf23c"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/cd63c1138b4e993c2e79bc8d"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/cd63c1138b4e993c2e79bc8d"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/iv_scanner",
+      "machine": "gtceu:iv_scanner",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/bc7a136517d75396c233d1e8"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/d2ac89f5acbb787bd4adf23c"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/cd63c1138b4e993c2e79bc8d"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/cd63c1138b4e993c2e79bc8d"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

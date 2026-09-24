@@ -1,18 +1,78 @@
 {
   "variants": {
     "facing=east": {
-      "model": "gtceu:block/machine/lv_alloy_smelter",
+      "machine": "gtceu:lv_alloy_smelter",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/0458a5e49a7197ffcec402bf"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/0458a5e49a7197ffcec402bf"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/f10d327aa343881f4c6da2e3"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/f10d327aa343881f4c6da2e3"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/lv_alloy_smelter"
+      "machine": "gtceu:lv_alloy_smelter",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/0458a5e49a7197ffcec402bf"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/0458a5e49a7197ffcec402bf"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/f10d327aa343881f4c6da2e3"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/f10d327aa343881f4c6da2e3"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/lv_alloy_smelter",
+      "machine": "gtceu:lv_alloy_smelter",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/0458a5e49a7197ffcec402bf"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/0458a5e49a7197ffcec402bf"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/f10d327aa343881f4c6da2e3"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/f10d327aa343881f4c6da2e3"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/lv_alloy_smelter",
+      "machine": "gtceu:lv_alloy_smelter",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/0458a5e49a7197ffcec402bf"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/0458a5e49a7197ffcec402bf"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/f10d327aa343881f4c6da2e3"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/f10d327aa343881f4c6da2e3"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

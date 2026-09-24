@@ -1,18 +1,78 @@
 {
   "variants": {
     "facing=east": {
-      "model": "gtceu:block/machine/lv_wiremill",
+      "machine": "gtceu:lv_wiremill",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/5efc3a951a5c419fb1b1ce7d"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/6ac9753130f11330ca2396f0"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/d8197d9590948611adbe04ba"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/d8197d9590948611adbe04ba"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/lv_wiremill"
+      "machine": "gtceu:lv_wiremill",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/5efc3a951a5c419fb1b1ce7d"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/6ac9753130f11330ca2396f0"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/d8197d9590948611adbe04ba"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/d8197d9590948611adbe04ba"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/lv_wiremill",
+      "machine": "gtceu:lv_wiremill",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/5efc3a951a5c419fb1b1ce7d"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/6ac9753130f11330ca2396f0"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/d8197d9590948611adbe04ba"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/d8197d9590948611adbe04ba"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/lv_wiremill",
+      "machine": "gtceu:lv_wiremill",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/5efc3a951a5c419fb1b1ce7d"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/6ac9753130f11330ca2396f0"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/d8197d9590948611adbe04ba"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/d8197d9590948611adbe04ba"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

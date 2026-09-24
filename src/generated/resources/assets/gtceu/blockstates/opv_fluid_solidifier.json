@@ -1,18 +1,78 @@
 {
   "variants": {
     "facing=east": {
-      "model": "gtceu:block/machine/opv_fluid_solidifier",
+      "machine": "gtceu:opv_fluid_solidifier",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/a77131725d93702e7ac5a9d8"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/a77131725d93702e7ac5a9d8"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/f46e352de4ac3d1c3ef4438d"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/f46e352de4ac3d1c3ef4438d"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/opv_fluid_solidifier"
+      "machine": "gtceu:opv_fluid_solidifier",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/a77131725d93702e7ac5a9d8"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/a77131725d93702e7ac5a9d8"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/f46e352de4ac3d1c3ef4438d"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/f46e352de4ac3d1c3ef4438d"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/opv_fluid_solidifier",
+      "machine": "gtceu:opv_fluid_solidifier",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/a77131725d93702e7ac5a9d8"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/a77131725d93702e7ac5a9d8"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/f46e352de4ac3d1c3ef4438d"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/f46e352de4ac3d1c3ef4438d"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/opv_fluid_solidifier",
+      "machine": "gtceu:opv_fluid_solidifier",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/a77131725d93702e7ac5a9d8"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/a77131725d93702e7ac5a9d8"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/f46e352de4ac3d1c3ef4438d"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/f46e352de4ac3d1c3ef4438d"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

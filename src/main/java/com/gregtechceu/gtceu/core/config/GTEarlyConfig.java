@@ -49,13 +49,9 @@ public class GTEarlyConfig {
         enableIfModPresent("jei", "jei");
         enableIfModPresent("rei", "roughlyenoughitems");
 
-        final String[] EMBEDDIUM_MOD_IDS = { "embeddium", "sodium" };
         final String[] OCULUS_MOD_IDS = { "oculus", "iris" };
-        enableIfModPresent("embeddium", EMBEDDIUM_MOD_IDS);
         enableIfModPresent("oculus", OCULUS_MOD_IDS);
-        enableIfModPresent("client.bloom.normal.embeddium", EMBEDDIUM_MOD_IDS);
         enableIfModPresent("client.bloom.normal.oculus", OCULUS_MOD_IDS);
-        enableIfModPresent("client.bloom.safemode.embeddium", EMBEDDIUM_MOD_IDS);
 
         enableIfModPresent("top", "top");
 

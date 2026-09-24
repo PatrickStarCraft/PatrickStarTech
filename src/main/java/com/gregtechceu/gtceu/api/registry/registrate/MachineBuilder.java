@@ -23,10 +23,11 @@ import com.gregtechceu.gtceu.api.recipe.modifier.RecipeModifierList;
 import com.gregtechceu.gtceu.api.registry.GTRegistries;
 import com.gregtechceu.gtceu.api.registry.registrate.provider.GTBlockstateProvider;
 import com.gregtechceu.gtceu.client.model.machine.MachineRenderState;
-import com.gregtechceu.gtceu.client.renderer.BlockEntityWithBERModelRenderer;
+import com.gregtechceu.gtceu.client.renderer.machine.MachineBlockEntityRenderer;
 import com.gregtechceu.gtceu.common.data.GTRecipeModifiers;
 import com.gregtechceu.gtceu.common.data.GTRecipeTypes;
 import com.gregtechceu.gtceu.common.data.models.GTMachineModels;
+import com.gregtechceu.gtceu.common.data.models.GTModels;
 import com.gregtechceu.gtceu.config.ConfigHolder;
 import com.gregtechceu.gtceu.data.model.builder.MachineModelBuilder;
 import com.gregtechceu.gtceu.integration.kjs.GTCEuStartupEvents;
@@ -714,7 +715,7 @@ public class MachineBuilder<DEFINITION extends MachineDefinition, MACHINE extend
                 .onRegister(onBlockEntityRegister)
                 .validBlock(block);
         if (hasBER) {
-            blockEntityBuilder = blockEntityBuilder.renderer(() -> BlockEntityWithBERModelRenderer::new);
+            blockEntityBuilder = blockEntityBuilder.renderer(() -> MachineBlockEntityRenderer::new);
         }
         var blockEntity = blockEntityBuilder.register();
         if (this.ui != null) {
@@ -830,6 +831,7 @@ public class MachineBuilder<DEFINITION extends MachineDefinition, MACHINE extend
                     .setData(ProviderType.LANG, NonNullBiConsumer.noop()) // do not gen any lang keys
                     // copied from BlockBuilder#item
                     .model((ctx, prov) -> prov.withExistingParent(ctx.getName(), builder.registrate.makeResourceLocation("block/machine/" + ctx.getName())))
+                    .setData(GTBlockstateProvider.ITEM_MODEL, GTModels::createMachineItemDefinition)
                     .color(() -> () -> builder.itemColor::apply)
                     .properties(builder.itemProp);
         }
@@ -844,18 +846,14 @@ public class MachineBuilder<DEFINITION extends MachineDefinition, MACHINE extend
             if (builder.model() == null && builder.blockModel() == null) return;
 
             final Identifier id = definition.getId();
-            // if generator is null, we're making the block models through GT
-            if (generator == null) {
-                // Fake a data provider for the GT model builders
-                var context = new DataGenContext<>(definition::getBlock, definition.getName(), id);
-                if (builder.blockModel() != null) {
-                    builder.blockModel().accept(context, RuntimeBlockstateProvider.INSTANCE);
-                } else {
-                    GTMachineModels.createMachineModel(builder.model())
-                            .accept(context, RuntimeBlockstateProvider.INSTANCE);
-                }
+            // The target blockstate model and item definition are generated together by the
+            // runtime provider. The legacy KubeJS generator only emits pre-26.2 item models.
+            var context = new DataGenContext<>(definition::getBlock, definition.getName(), id);
+            if (builder.blockModel() != null) {
+                builder.blockModel().accept(context, RuntimeBlockstateProvider.INSTANCE);
             } else {
-                generator.itemModel(id, gen -> gen.parent(id.withPrefix("block/machine/").toString()));
+                GTMachineModels.createMachineModel(builder.model())
+                        .accept(context, RuntimeBlockstateProvider.INSTANCE);
             }
         }
 

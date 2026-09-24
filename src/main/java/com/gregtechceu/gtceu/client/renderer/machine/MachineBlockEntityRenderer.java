@@ -102,8 +102,12 @@ public final class MachineBlockEntityRenderer implements BlockEntityRenderer<Met
     }
 
     @Override
-    @SuppressWarnings({ "rawtypes", "unchecked" })
     public AABB getRenderBoundingBox(MetaMachine machine) {
+        return getMachineRenderBoundingBox(machine);
+    }
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public static AABB getMachineRenderBoundingBox(MetaMachine machine) {
         BlockPos pos = machine.getBlockPos();
         AABB bounds = new AABB(Vec3.atLowerCornerOf(pos.offset(-1, 0, -1)),
                 Vec3.atLowerCornerOf(pos.offset(2, 2, 2)));

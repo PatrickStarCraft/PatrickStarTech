@@ -90,6 +90,10 @@ public final class VariantBlockStateBuilder {
             return setModels(ConfiguredModel.builder().modelFile(model).build());
         }
 
+        public VariantBlockStateBuilder setInlineModel(JsonObject definition) {
+            return setModels(ConfiguredModel.inlineModel(definition));
+        }
+
         public VariantBlockStateBuilder setModels(ConfiguredModel... models) {
             Map<Property<?>, Comparable<?>> key = Map.copyOf(values);
             for (BlockState state : block.getStateDefinition().getPossibleStates()) {

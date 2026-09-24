@@ -1,150 +1,798 @@
 {
   "variants": {
     "facing=down,upwards_facing=down": {
-      "model": "gtceu:block/machine/multi_smelter"
+      "machine": "gtceu:multi_smelter",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_heatproof"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ef77ae8cded6cfb2465a2392"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/9938ede86f78270c91678ee1"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=down,upwards_facing=east": {
-      "gtceu:z": 90,
-      "model": "gtceu:block/machine/multi_smelter",
-      "x": 90
+      "machine": "gtceu:multi_smelter",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_heatproof"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ef77ae8cded6cfb2465a2392"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/9938ede86f78270c91678ee1"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        }
+      },
+      "type": "gtceu:machine",
+      "x": 90,
+      "z": 90
     },
     "facing=down,upwards_facing=north": {
-      "model": "gtceu:block/machine/multi_smelter",
+      "machine": "gtceu:multi_smelter",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_heatproof"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ef77ae8cded6cfb2465a2392"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/9938ede86f78270c91678ee1"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        }
+      },
+      "type": "gtceu:machine",
       "x": 90
     },
     "facing=down,upwards_facing=south": {
-      "gtceu:z": 180,
-      "model": "gtceu:block/machine/multi_smelter",
-      "x": 90
+      "machine": "gtceu:multi_smelter",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_heatproof"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ef77ae8cded6cfb2465a2392"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/9938ede86f78270c91678ee1"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        }
+      },
+      "type": "gtceu:machine",
+      "x": 90,
+      "z": 180
     },
     "facing=down,upwards_facing=up": {
-      "model": "gtceu:block/machine/multi_smelter"
+      "machine": "gtceu:multi_smelter",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_heatproof"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ef77ae8cded6cfb2465a2392"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/9938ede86f78270c91678ee1"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=down,upwards_facing=west": {
-      "gtceu:z": 270,
-      "model": "gtceu:block/machine/multi_smelter",
-      "x": 90
+      "machine": "gtceu:multi_smelter",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_heatproof"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ef77ae8cded6cfb2465a2392"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/9938ede86f78270c91678ee1"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        }
+      },
+      "type": "gtceu:machine",
+      "x": 90,
+      "z": 270
     },
     "facing=east,upwards_facing=down": {
-      "gtceu:z": 180,
-      "model": "gtceu:block/machine/multi_smelter",
-      "y": 90
+      "machine": "gtceu:multi_smelter",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_heatproof"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ef77ae8cded6cfb2465a2392"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/9938ede86f78270c91678ee1"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        }
+      },
+      "type": "gtceu:machine",
+      "y": 90,
+      "z": 180
     },
     "facing=east,upwards_facing=east": {
-      "model": "gtceu:block/machine/multi_smelter"
+      "machine": "gtceu:multi_smelter",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_heatproof"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ef77ae8cded6cfb2465a2392"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/9938ede86f78270c91678ee1"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=east,upwards_facing=north": {
-      "gtceu:z": 270,
-      "model": "gtceu:block/machine/multi_smelter",
-      "y": 90
+      "machine": "gtceu:multi_smelter",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_heatproof"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ef77ae8cded6cfb2465a2392"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/9938ede86f78270c91678ee1"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        }
+      },
+      "type": "gtceu:machine",
+      "y": 90,
+      "z": 270
     },
     "facing=east,upwards_facing=south": {
-      "gtceu:z": 90,
-      "model": "gtceu:block/machine/multi_smelter",
-      "y": 90
+      "machine": "gtceu:multi_smelter",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_heatproof"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ef77ae8cded6cfb2465a2392"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/9938ede86f78270c91678ee1"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        }
+      },
+      "type": "gtceu:machine",
+      "y": 90,
+      "z": 90
     },
     "facing=east,upwards_facing=up": {
-      "model": "gtceu:block/machine/multi_smelter",
+      "machine": "gtceu:multi_smelter",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_heatproof"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ef77ae8cded6cfb2465a2392"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/9938ede86f78270c91678ee1"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=east,upwards_facing=west": {
-      "model": "gtceu:block/machine/multi_smelter"
+      "machine": "gtceu:multi_smelter",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_heatproof"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ef77ae8cded6cfb2465a2392"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/9938ede86f78270c91678ee1"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=north,upwards_facing=down": {
-      "gtceu:z": 180,
-      "model": "gtceu:block/machine/multi_smelter"
+      "machine": "gtceu:multi_smelter",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_heatproof"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ef77ae8cded6cfb2465a2392"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/9938ede86f78270c91678ee1"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        }
+      },
+      "type": "gtceu:machine",
+      "z": 180
     },
     "facing=north,upwards_facing=east": {
-      "gtceu:z": 90,
-      "model": "gtceu:block/machine/multi_smelter"
+      "machine": "gtceu:multi_smelter",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_heatproof"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ef77ae8cded6cfb2465a2392"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/9938ede86f78270c91678ee1"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        }
+      },
+      "type": "gtceu:machine",
+      "z": 90
     },
     "facing=north,upwards_facing=north": {
-      "model": "gtceu:block/machine/multi_smelter"
+      "machine": "gtceu:multi_smelter",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_heatproof"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ef77ae8cded6cfb2465a2392"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/9938ede86f78270c91678ee1"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=north,upwards_facing=south": {
-      "model": "gtceu:block/machine/multi_smelter"
+      "machine": "gtceu:multi_smelter",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_heatproof"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ef77ae8cded6cfb2465a2392"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/9938ede86f78270c91678ee1"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=north,upwards_facing=up": {
-      "model": "gtceu:block/machine/multi_smelter"
+      "machine": "gtceu:multi_smelter",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_heatproof"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ef77ae8cded6cfb2465a2392"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/9938ede86f78270c91678ee1"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=north,upwards_facing=west": {
-      "gtceu:z": 270,
-      "model": "gtceu:block/machine/multi_smelter"
+      "machine": "gtceu:multi_smelter",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_heatproof"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ef77ae8cded6cfb2465a2392"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/9938ede86f78270c91678ee1"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        }
+      },
+      "type": "gtceu:machine",
+      "z": 270
     },
     "facing=south,upwards_facing=down": {
-      "gtceu:z": 180,
-      "model": "gtceu:block/machine/multi_smelter",
-      "y": 180
+      "machine": "gtceu:multi_smelter",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_heatproof"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ef77ae8cded6cfb2465a2392"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/9938ede86f78270c91678ee1"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        }
+      },
+      "type": "gtceu:machine",
+      "y": 180,
+      "z": 180
     },
     "facing=south,upwards_facing=east": {
-      "gtceu:z": 270,
-      "model": "gtceu:block/machine/multi_smelter",
-      "y": 180
+      "machine": "gtceu:multi_smelter",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_heatproof"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ef77ae8cded6cfb2465a2392"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/9938ede86f78270c91678ee1"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        }
+      },
+      "type": "gtceu:machine",
+      "y": 180,
+      "z": 270
     },
     "facing=south,upwards_facing=north": {
-      "model": "gtceu:block/machine/multi_smelter"
+      "machine": "gtceu:multi_smelter",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_heatproof"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ef77ae8cded6cfb2465a2392"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/9938ede86f78270c91678ee1"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south,upwards_facing=south": {
-      "model": "gtceu:block/machine/multi_smelter"
+      "machine": "gtceu:multi_smelter",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_heatproof"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ef77ae8cded6cfb2465a2392"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/9938ede86f78270c91678ee1"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south,upwards_facing=up": {
-      "model": "gtceu:block/machine/multi_smelter",
+      "machine": "gtceu:multi_smelter",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_heatproof"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ef77ae8cded6cfb2465a2392"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/9938ede86f78270c91678ee1"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=south,upwards_facing=west": {
-      "gtceu:z": 90,
-      "model": "gtceu:block/machine/multi_smelter",
-      "y": 180
+      "machine": "gtceu:multi_smelter",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_heatproof"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ef77ae8cded6cfb2465a2392"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/9938ede86f78270c91678ee1"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        }
+      },
+      "type": "gtceu:machine",
+      "y": 180,
+      "z": 90
     },
     "facing=up,upwards_facing=down": {
-      "model": "gtceu:block/machine/multi_smelter"
+      "machine": "gtceu:multi_smelter",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_heatproof"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ef77ae8cded6cfb2465a2392"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/9938ede86f78270c91678ee1"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=up,upwards_facing=east": {
-      "gtceu:z": 90,
-      "model": "gtceu:block/machine/multi_smelter",
-      "x": 270
+      "machine": "gtceu:multi_smelter",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_heatproof"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ef77ae8cded6cfb2465a2392"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/9938ede86f78270c91678ee1"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        }
+      },
+      "type": "gtceu:machine",
+      "x": 270,
+      "z": 90
     },
     "facing=up,upwards_facing=north": {
-      "gtceu:z": 180,
-      "model": "gtceu:block/machine/multi_smelter",
-      "x": 270
+      "machine": "gtceu:multi_smelter",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_heatproof"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ef77ae8cded6cfb2465a2392"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/9938ede86f78270c91678ee1"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        }
+      },
+      "type": "gtceu:machine",
+      "x": 270,
+      "z": 180
     },
     "facing=up,upwards_facing=south": {
-      "model": "gtceu:block/machine/multi_smelter",
+      "machine": "gtceu:multi_smelter",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_heatproof"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ef77ae8cded6cfb2465a2392"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/9938ede86f78270c91678ee1"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        }
+      },
+      "type": "gtceu:machine",
       "x": 270
     },
     "facing=up,upwards_facing=up": {
-      "model": "gtceu:block/machine/multi_smelter"
+      "machine": "gtceu:multi_smelter",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_heatproof"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ef77ae8cded6cfb2465a2392"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/9938ede86f78270c91678ee1"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=up,upwards_facing=west": {
-      "gtceu:z": 270,
-      "model": "gtceu:block/machine/multi_smelter",
-      "x": 270
+      "machine": "gtceu:multi_smelter",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_heatproof"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ef77ae8cded6cfb2465a2392"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/9938ede86f78270c91678ee1"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        }
+      },
+      "type": "gtceu:machine",
+      "x": 270,
+      "z": 270
     },
     "facing=west,upwards_facing=down": {
-      "gtceu:z": 180,
-      "model": "gtceu:block/machine/multi_smelter",
-      "y": 270
+      "machine": "gtceu:multi_smelter",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_heatproof"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ef77ae8cded6cfb2465a2392"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/9938ede86f78270c91678ee1"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        }
+      },
+      "type": "gtceu:machine",
+      "y": 270,
+      "z": 180
     },
     "facing=west,upwards_facing=east": {
-      "model": "gtceu:block/machine/multi_smelter"
+      "machine": "gtceu:multi_smelter",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_heatproof"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ef77ae8cded6cfb2465a2392"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/9938ede86f78270c91678ee1"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=west,upwards_facing=north": {
-      "gtceu:z": 90,
-      "model": "gtceu:block/machine/multi_smelter",
-      "y": 270
+      "machine": "gtceu:multi_smelter",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_heatproof"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ef77ae8cded6cfb2465a2392"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/9938ede86f78270c91678ee1"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        }
+      },
+      "type": "gtceu:machine",
+      "y": 270,
+      "z": 90
     },
     "facing=west,upwards_facing=south": {
-      "gtceu:z": 270,
-      "model": "gtceu:block/machine/multi_smelter",
-      "y": 270
+      "machine": "gtceu:multi_smelter",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_heatproof"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ef77ae8cded6cfb2465a2392"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/9938ede86f78270c91678ee1"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        }
+      },
+      "type": "gtceu:machine",
+      "y": 270,
+      "z": 270
     },
     "facing=west,upwards_facing=up": {
-      "model": "gtceu:block/machine/multi_smelter",
+      "machine": "gtceu:multi_smelter",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_heatproof"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ef77ae8cded6cfb2465a2392"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/9938ede86f78270c91678ee1"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     },
     "facing=west,upwards_facing=west": {
-      "model": "gtceu:block/machine/multi_smelter"
+      "machine": "gtceu:multi_smelter",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_heatproof"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ef77ae8cded6cfb2465a2392"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/9938ede86f78270c91678ee1"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/b217e0283533ff40b82692c6"
+        }
+      },
+      "type": "gtceu:machine"
     }
   }
 }

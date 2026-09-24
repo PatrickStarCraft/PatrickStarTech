@@ -1,18 +1,78 @@
 {
   "variants": {
     "facing=east": {
-      "model": "gtceu:block/machine/lv_polarizer",
+      "machine": "gtceu:lv_polarizer",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/e57a2ab8637763de35823bbc"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/e50f0d73f40aab0e0fab8839"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/3f1146446d522747c0cfd1c0"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/3f1146446d522747c0cfd1c0"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/lv_polarizer"
+      "machine": "gtceu:lv_polarizer",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/e57a2ab8637763de35823bbc"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/e50f0d73f40aab0e0fab8839"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/3f1146446d522747c0cfd1c0"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/3f1146446d522747c0cfd1c0"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/lv_polarizer",
+      "machine": "gtceu:lv_polarizer",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/e57a2ab8637763de35823bbc"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/e50f0d73f40aab0e0fab8839"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/3f1146446d522747c0cfd1c0"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/3f1146446d522747c0cfd1c0"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/lv_polarizer",
+      "machine": "gtceu:lv_polarizer",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/e57a2ab8637763de35823bbc"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/e50f0d73f40aab0e0fab8839"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/3f1146446d522747c0cfd1c0"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/3f1146446d522747c0cfd1c0"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

@@ -16,6 +16,10 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.level.block.Block;
 
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonParser;
 import com.tterrag.registrate.AbstractRegistrate;
 import com.tterrag.registrate.providers.GeneratorType;
 import com.tterrag.registrate.providers.ProviderType;
@@ -29,6 +33,10 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Comparator;
 
 /**
  * GT model output, shared by datagen and the runtime resource pack. Custom loader payloads retain
@@ -53,6 +61,7 @@ public class GTBlockstateProvider implements RegistrateProvider {
     protected final Map<Block, Supplier<? extends JsonElement>> registeredBlocks = new LinkedHashMap<>();
     private final Map<Block, VariantBlockStateBuilder> variants = new LinkedHashMap<>();
     private final Map<Block, MultiPartBlockStateBuilder> multipart = new LinkedHashMap<>();
+    private final Map<Identifier, JsonObject> machinePartModels = new LinkedHashMap<>();
 
     public GTBlockstateProvider(ProviderType.Context<GTBlockstateProvider> context) {
         this(context.parent(), context.output(), fileHelper(context.event().getResourceManager(PackType.CLIENT_RESOURCES)));
@@ -126,6 +135,7 @@ public class GTBlockstateProvider implements RegistrateProvider {
         itemModels.generatedModels.values().forEach(model ->
                 sink.accept(RuntimeModelResources.modelPath(model.getLocation()), model.toJson()));
         itemModels.emitItemDefinitions(sink);
+        machinePartModels.forEach((id, json) -> sink.accept(RuntimeModelResources.modelPath(id), json));
         registeredBlocks.forEach((block, state) -> sink.accept(
                 RuntimeModelResources.blockStatePath(BuiltInRegistries.BLOCK.getKey(block)), state.get()));
     }
@@ -136,6 +146,7 @@ public class GTBlockstateProvider implements RegistrateProvider {
         registeredBlocks.clear();
         variants.clear();
         multipart.clear();
+        machinePartModels.clear();
     }
 
     public BlockModelProvider models() { return blockModels; }
@@ -188,6 +199,75 @@ public class GTBlockstateProvider implements RegistrateProvider {
                 builder.partialState().with(rotation.property, front)
                         .setModels(oriented(model, ExtendedBlockModelRotation.get(front)));
             }
+        }
+    }
+
+    /** Writes the 26.2 machine custom model in blockstate variants while keeping item parents as plain models. */
+    public void machineBlockstate(Block block, MachineDefinition definition, JsonObject machineModel) {
+        JsonObject payload = machineModel.deepCopy();
+        payload.remove("parent");
+        payload.remove("loader");
+        var variants = getVariantBuilder(block);
+        RotationState rotation = definition.getRotationState();
+        variants.forAllStates(state -> {
+            ExtendedBlockModelRotation oriented = rotation == RotationState.NONE ? null :
+                    definition.isAllowExtendedFacing() ? ExtendedBlockModelRotation.getExtended(
+                            state.getValue(rotation.property), state.getValue(GTBlockStateProperties.UPWARDS_FACING)) :
+                            ExtendedBlockModelRotation.get(state.getValue(rotation.property));
+            JsonObject typed = payload.deepCopy();
+            typed.addProperty("type", "gtceu:machine");
+            if (oriented != null) {
+                if (oriented.getAngleX() != 0) typed.addProperty("x", oriented.getAngleX());
+                if (oriented.getAngleY() != 0) typed.addProperty("y", oriented.getAngleY());
+                if (oriented.getAngleZ() != 0) typed.addProperty("z", oriented.getAngleZ());
+            }
+            return new ConfiguredModel[] { ConfiguredModel.inlineModel(typed) };
+        });
+    }
+
+    /** Promotes anonymous machine geometry to a real model resource for 26.2 model-reference codecs. */
+    @SuppressWarnings("unchecked")
+    public Identifier registerMachineNestedModel(ModelBuilder<?> model) {
+        if (blockModels.generatedModels.containsKey(model.getLocation())) return model.getLocation();
+        JsonObject json = model.toJson();
+        String hash = sha256(canonicalJson(json)).substring(0, 24);
+        Identifier id = Identifier.fromNamespaceAndPath(parent.getModid(), "block/machine_parts/" + hash);
+        JsonObject previous = machinePartModels.putIfAbsent(id, json);
+        if (previous != null && !previous.equals(json)) {
+            throw new IllegalStateException("Machine model part hash collision for " + id);
+        }
+        blockModels.getExistingFileHelper().trackGenerated(id, ModelFileHelper.ResourceType.MODEL);
+        return id;
+    }
+
+    private static String canonicalJson(JsonElement element) {
+        if (element.isJsonObject()) {
+            var entries = element.getAsJsonObject().entrySet().stream()
+                    .sorted(Comparator.comparing(Map.Entry::getKey)).toList();
+            JsonObject sorted = new JsonObject();
+            for (var entry : entries) sorted.add(entry.getKey(), JsonParser.parseString(canonicalJson(entry.getValue())));
+            return sorted.toString();
+        }
+        if (element.isJsonArray()) {
+            JsonArray array = new JsonArray();
+            for (JsonElement value : element.getAsJsonArray()) {
+                array.add(JsonParser.parseString(canonicalJson(value)));
+            }
+            return array.toString();
+        }
+        JsonPrimitive primitive = element.getAsJsonPrimitive();
+        return primitive.toString();
+    }
+
+    private static String sha256(String value) {
+        try {
+            byte[] digest = MessageDigest.getInstance("SHA-256").digest(value.getBytes(StandardCharsets.UTF_8));
+            StringBuilder hex = new StringBuilder(digest.length * 2);
+            for (byte b : digest) hex.append(Character.forDigit((b >>> 4) & 0xF, 16))
+                    .append(Character.forDigit(b & 0xF, 16));
+            return hex.toString();
+        } catch (NoSuchAlgorithmException exception) {
+            throw new IllegalStateException("SHA-256 is unavailable", exception);
         }
     }
 

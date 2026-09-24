@@ -1,18 +1,78 @@
 {
   "variants": {
     "facing=east": {
-      "model": "gtceu:block/machine/uhv_rock_crusher",
+      "machine": "gtceu:uhv_rock_crusher",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/604faeb94fad50d4a3f9ff14"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/604faeb94fad50d4a3f9ff14"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/b9c4971538f6f76848a6d666"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/b9c4971538f6f76848a6d666"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/uhv_rock_crusher"
+      "machine": "gtceu:uhv_rock_crusher",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/604faeb94fad50d4a3f9ff14"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/604faeb94fad50d4a3f9ff14"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/b9c4971538f6f76848a6d666"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/b9c4971538f6f76848a6d666"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/uhv_rock_crusher",
+      "machine": "gtceu:uhv_rock_crusher",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/604faeb94fad50d4a3f9ff14"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/604faeb94fad50d4a3f9ff14"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/b9c4971538f6f76848a6d666"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/b9c4971538f6f76848a6d666"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/uhv_rock_crusher",
+      "machine": "gtceu:uhv_rock_crusher",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/604faeb94fad50d4a3f9ff14"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/604faeb94fad50d4a3f9ff14"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/b9c4971538f6f76848a6d666"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/b9c4971538f6f76848a6d666"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

@@ -6,7 +6,6 @@ import com.gregtechceu.gtceu.api.placeholder.exceptions.UnclosedBracketException
 import com.gregtechceu.gtceu.api.placeholder.exceptions.UnexpectedBracketException;
 import com.gregtechceu.gtceu.api.placeholder.exceptions.UnknownPlaceholderException;
 import com.gregtechceu.gtceu.api.registry.GTRegistries;
-import com.gregtechceu.gtceu.client.renderer.monitor.IMonitorRenderer;
 import com.gregtechceu.gtceu.common.mui.widgets.textfield.CodeEditorWidget;
 import com.gregtechceu.gtceu.data.lang.LangHandler;
 import com.gregtechceu.gtceu.utils.GTUtil;
@@ -85,19 +84,12 @@ public class PlaceholderHandler {
     }
 
     @OnlyIn(Dist.CLIENT)
-    public static @Nullable IMonitorRenderer getRenderer(String id, CompoundTag renderData) {
+    public static @Nullable IPlaceholderRenderer getRenderer(String id, CompoundTag renderData) {
         if (!RendererHolder.renderers.containsKey(id)) {
             GTCEu.LOGGER.warn("Attempt to access a placeholder renderer that doesn't exist ({})", id);
             return null;
         }
-        IPlaceholderRenderer renderer = RendererHolder.renderers.get(id);
-        CompoundTag tag = renderData.copy();
-        return (machine, group,
-                partialTick, poseStack, buffer,
-                packedLight, packedOverlay) -> renderer.render(
-                        machine, group,
-                        partialTick, poseStack, buffer,
-                        packedLight, packedOverlay, tag);
+        return RendererHolder.renderers.get(id);
     }
 
     public static @Nullable Identifier toId(String placeholder) {

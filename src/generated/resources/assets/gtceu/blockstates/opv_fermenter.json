@@ -1,18 +1,78 @@
 {
   "variants": {
     "facing=east": {
-      "model": "gtceu:block/machine/opv_fermenter",
+      "machine": "gtceu:opv_fermenter",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/6ce61eb98d27d274974af3ff"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/f6f94e0e59ff58ed9fe1e860"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/f1f03ac812d9486efa694570"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/f1f03ac812d9486efa694570"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/opv_fermenter"
+      "machine": "gtceu:opv_fermenter",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/6ce61eb98d27d274974af3ff"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/f6f94e0e59ff58ed9fe1e860"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/f1f03ac812d9486efa694570"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/f1f03ac812d9486efa694570"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/opv_fermenter",
+      "machine": "gtceu:opv_fermenter",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/6ce61eb98d27d274974af3ff"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/f6f94e0e59ff58ed9fe1e860"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/f1f03ac812d9486efa694570"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/f1f03ac812d9486efa694570"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/opv_fermenter",
+      "machine": "gtceu:opv_fermenter",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/6ce61eb98d27d274974af3ff"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/f6f94e0e59ff58ed9fe1e860"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/f1f03ac812d9486efa694570"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/f1f03ac812d9486efa694570"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

@@ -1,7 +1,13 @@
 {
   "variants": {
     "": {
-      "model": "gtceu:block/machine/steel_drum"
+      "machine": "gtceu:steel_drum",
+      "variants": {
+        "": {
+          "model": "gtceu:block/machine/template/drum/metal_drum"
+        }
+      },
+      "type": "gtceu:machine"
     }
   }
 }

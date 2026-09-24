@@ -3,18 +3,13 @@ package com.gregtechceu.gtceu.client;
 import com.gregtechceu.gtceu.GTCEu;
 import com.gregtechceu.gtceu.api.GTValues;
 import com.gregtechceu.gtceu.api.block.BlockAttributes;
-import com.gregtechceu.gtceu.api.cosmetics.CapeRegistry;
 import com.gregtechceu.gtceu.client.renderer.PatternPreviewRenderer;
-import com.gregtechceu.gtceu.client.renderer.cover.FacadeCoverRenderer;
 import com.gregtechceu.gtceu.client.util.TooltipHelper;
 import com.gregtechceu.gtceu.common.commands.GTClientCommands;
-import com.gregtechceu.gtceu.core.mixins.client.AbstractClientPlayerAccessor;
-import com.gregtechceu.gtceu.core.mixins.client.PlayerInfoAccessor;
 import com.gregtechceu.gtceu.data.recipe.CustomTags;
 import com.gregtechceu.gtceu.integration.map.ClientCacheManager;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -25,49 +20,14 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
-import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 
-import com.mojang.authlib.minecraft.MinecraftProfileTexture;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-
-import java.util.Map;
-import java.util.UUID;
 
 @net.neoforged.fml.common.EventBusSubscriber(modid = GTCEu.MOD_ID, value = Dist.CLIENT)
 @OnlyIn(Dist.CLIENT)
 public class ClientEventListener {
-
-    @SubscribeEvent
-    public static void onLevelUnload(LevelEvent.Unload event) {
-        FacadeCoverRenderer.clearItemModelCache();
-    }
-
-    private static final Map<UUID, Identifier> DEFAULT_CAPES = new Object2ObjectOpenHashMap<>();
-
-    @SubscribeEvent
-    public static void onPlayerRender(RenderPlayerEvent.Pre event) {
-        Player player = event.getEntity();
-        AbstractClientPlayerAccessor clientPlayer = (AbstractClientPlayerAccessor) player;
-        if (clientPlayer.gtceu$getPlayerInfo() != null) {
-            PlayerInfoAccessor playerInfo = ((PlayerInfoAccessor) clientPlayer.gtceu$getPlayerInfo());
-            Map<MinecraftProfileTexture.Type, Identifier> playerTextures = playerInfo.getTextureLocations();
-
-            UUID uuid = player.getUUID();
-            Identifier defaultPlayerCape;
-            if (!DEFAULT_CAPES.containsKey(uuid)) {
-                defaultPlayerCape = playerTextures.get(MinecraftProfileTexture.Type.CAPE);
-                DEFAULT_CAPES.put(uuid, defaultPlayerCape);
-            } else {
-                defaultPlayerCape = DEFAULT_CAPES.get(uuid);
-            }
-
-            Identifier cape = CapeRegistry.getPlayerCapeTexture(uuid);
-            playerTextures.put(MinecraftProfileTexture.Type.CAPE, cape == null ? defaultPlayerCape : cape);
-        }
-    }
 
     @SubscribeEvent
     public static void updateFOV(ComputeFovModifierEvent event) {

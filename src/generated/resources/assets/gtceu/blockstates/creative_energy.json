@@ -1,7 +1,18 @@
 {
   "variants": {
     "": {
-      "model": "gtceu:block/machine/creative_energy"
+      "machine": "gtceu:creative_energy",
+      "replaceable_textures": [
+        "bottom",
+        "top",
+        "side"
+      ],
+      "variants": {
+        "": {
+          "model": "gtceu:block/machine_parts/74bcdf9124dff3fc59d86e29"
+        }
+      },
+      "type": "gtceu:machine"
     }
   }
 }

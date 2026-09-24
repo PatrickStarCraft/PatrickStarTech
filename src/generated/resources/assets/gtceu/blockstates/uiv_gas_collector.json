@@ -1,18 +1,78 @@
 {
   "variants": {
     "facing=east": {
-      "model": "gtceu:block/machine/uiv_gas_collector",
+      "machine": "gtceu:uiv_gas_collector",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/548cc428d00e109d957d2065"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/4ac4c1961ddfca7476f81077"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/5c19c59bc575f3c4ec20920f"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/5c19c59bc575f3c4ec20920f"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/uiv_gas_collector"
+      "machine": "gtceu:uiv_gas_collector",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/548cc428d00e109d957d2065"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/4ac4c1961ddfca7476f81077"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/5c19c59bc575f3c4ec20920f"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/5c19c59bc575f3c4ec20920f"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/uiv_gas_collector",
+      "machine": "gtceu:uiv_gas_collector",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/548cc428d00e109d957d2065"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/4ac4c1961ddfca7476f81077"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/5c19c59bc575f3c4ec20920f"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/5c19c59bc575f3c4ec20920f"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/uiv_gas_collector",
+      "machine": "gtceu:uiv_gas_collector",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/548cc428d00e109d957d2065"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/4ac4c1961ddfca7476f81077"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/5c19c59bc575f3c4ec20920f"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/5c19c59bc575f3c4ec20920f"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

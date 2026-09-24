@@ -1,18 +1,78 @@
 {
   "variants": {
     "facing=east": {
-      "model": "gtceu:block/machine/hv_distillery",
+      "machine": "gtceu:hv_distillery",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/e0a151c60b7eafbbbfba644d"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/c669bf99b40c05da47925458"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/140abd5600677646cd3844db"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/140abd5600677646cd3844db"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/hv_distillery"
+      "machine": "gtceu:hv_distillery",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/e0a151c60b7eafbbbfba644d"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/c669bf99b40c05da47925458"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/140abd5600677646cd3844db"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/140abd5600677646cd3844db"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/hv_distillery",
+      "machine": "gtceu:hv_distillery",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/e0a151c60b7eafbbbfba644d"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/c669bf99b40c05da47925458"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/140abd5600677646cd3844db"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/140abd5600677646cd3844db"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/hv_distillery",
+      "machine": "gtceu:hv_distillery",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/e0a151c60b7eafbbbfba644d"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/c669bf99b40c05da47925458"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/140abd5600677646cd3844db"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/140abd5600677646cd3844db"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

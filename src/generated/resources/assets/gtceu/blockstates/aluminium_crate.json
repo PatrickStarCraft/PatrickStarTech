@@ -1,7 +1,16 @@
 {
   "variants": {
     "": {
-      "model": "gtceu:block/machine/aluminium_crate"
+      "machine": "gtceu:aluminium_crate",
+      "variants": {
+        "taped=false": {
+          "model": "gtceu:block/machine/template/crate/metal_crate"
+        },
+        "taped=true": {
+          "model": "gtceu:block/machine/template/crate/metal_crate_taped"
+        }
+      },
+      "type": "gtceu:machine"
     }
   }
 }

@@ -1,5 +1,12 @@
 # Friend Client Port Handoff
 
+## 2026-09-24 integrated `1.20.1` continuation
+
+- Clean starting HEAD `5e6b34afaa13ae45a9481cffc9a3f720a18c1645`, branch `1.20.1`. Fresh offline Java 25 `compileJava -PportDiagnostics --max-workers=1 --console=plain --offline` reached javac: `build/client-baseline-20260924-turn2.log`, **681 global / 368 exact-owned errors**. The later bloom-guard verification `build/client-bloom-level-guard-20260924.log` also reached javac at **681 / 368** with no `BloomEventListeners` diagnostic. The complete project does not compile; no runtime launch or visual check is possible yet.
+- Bounded Luna read-only audits: target pipe and item paths already exist, while old loaders, baked models, and renderer wrappers remain referenced by shared `ClientProxy`, machine builder/item hooks, and generated item models. Do not delete them before requests 10, 12, 18, and 20–22 switch those producers. Neither Luna edited files, ran Gradle, or used Git.
+- Sol changed only `client/bloom/BloomEventListeners.java`: chunk unload invalidation now requires the active `Minecraft.level`; level unload cleanup requires a `ClientLevel` and rejects an unrelated currently active client level. The bloom cache is keyed by section position and otherwise a server unload in integrated single-player can clear client geometry at the same coordinates. Patched 26.2 sources confirm the client level type and inclusive max section index. Runtime behavior remains untested.
+- Worktree has uncommitted client/docs changes; no reset, stash, pull, merge, commit, push, or PR in this continuation. AI assistance used Codex GPT-6 Sol and GPT-6 Luna. `AI_POLICY.md` human review and editing are pending for these new changes before contribution.
+
 ## 2026-09-24 coordinator takeover checkpoint
 
 - Checkout: `C:\Users\georg\IdeaProjects\PatrickStarTech`, branch `1.20.1`, HEAD `a9176b5c9f3b7eb422bdb65767ee0991b99936e8`. It was clean at takeover; current uncommitted changes are confined to owned bloom/GUI/mixin paths and these friend documents. The dedicated `codex/friend-client-port` worktree remains untouched at `ae73bb7c7d85d2b609c6f4e0a1f5195bc10da61c`. Visible Codex tasks using the IDE checkout were idle before editing. No commit, merge, rebase, push, or PR was made.

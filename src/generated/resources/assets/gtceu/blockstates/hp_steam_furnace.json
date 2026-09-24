@@ -1,27 +1,555 @@
 {
   "variants": {
     "facing=down": {
-      "model": "gtceu:block/machine/hp_steam_furnace",
+      "machine": "gtceu:hp_steam_furnace",
+      "multipart": [
+        {
+          "apply": {
+            "model": "gtceu:block/machine_parts/a3ee0f9110e17129ae0fab3b"
+          },
+          "when": {
+            "recipe_logic_status": "idle"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/machine_parts/633c552170a61f826fa6c0ff"
+          },
+          "when": {
+            "recipe_logic_status": "working"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/machine_parts/633c552170a61f826fa6c0ff"
+          },
+          "when": {
+            "recipe_logic_status": "waiting"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/machine_parts/a3ee0f9110e17129ae0fab3b"
+          },
+          "when": {
+            "recipe_logic_status": "suspend"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/overlay/machine/overlay_steam_vent",
+            "x": 270
+          },
+          "when": {
+            "steam_vent": "up"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/overlay/machine/overlay_steam_vent",
+            "x": 90
+          },
+          "when": {
+            "steam_vent": "down"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/overlay/machine/overlay_steam_vent",
+            "y": 270
+          },
+          "when": {
+            "steam_vent": "left"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/overlay/machine/overlay_steam_vent",
+            "y": 90
+          },
+          "when": {
+            "steam_vent": "right"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/overlay/machine/overlay_steam_vent"
+          },
+          "when": {
+            "steam_vent": "front"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/overlay/machine/overlay_steam_vent",
+            "y": 180
+          },
+          "when": {
+            "steam_vent": "back"
+          }
+        }
+      ],
+      "type": "gtceu:machine",
       "x": 90
     },
     "facing=east": {
-      "model": "gtceu:block/machine/hp_steam_furnace",
+      "machine": "gtceu:hp_steam_furnace",
+      "multipart": [
+        {
+          "apply": {
+            "model": "gtceu:block/machine_parts/a3ee0f9110e17129ae0fab3b"
+          },
+          "when": {
+            "recipe_logic_status": "idle"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/machine_parts/633c552170a61f826fa6c0ff"
+          },
+          "when": {
+            "recipe_logic_status": "working"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/machine_parts/633c552170a61f826fa6c0ff"
+          },
+          "when": {
+            "recipe_logic_status": "waiting"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/machine_parts/a3ee0f9110e17129ae0fab3b"
+          },
+          "when": {
+            "recipe_logic_status": "suspend"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/overlay/machine/overlay_steam_vent",
+            "x": 270
+          },
+          "when": {
+            "steam_vent": "up"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/overlay/machine/overlay_steam_vent",
+            "x": 90
+          },
+          "when": {
+            "steam_vent": "down"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/overlay/machine/overlay_steam_vent",
+            "y": 270
+          },
+          "when": {
+            "steam_vent": "left"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/overlay/machine/overlay_steam_vent",
+            "y": 90
+          },
+          "when": {
+            "steam_vent": "right"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/overlay/machine/overlay_steam_vent"
+          },
+          "when": {
+            "steam_vent": "front"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/overlay/machine/overlay_steam_vent",
+            "y": 180
+          },
+          "when": {
+            "steam_vent": "back"
+          }
+        }
+      ],
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/hp_steam_furnace"
+      "machine": "gtceu:hp_steam_furnace",
+      "multipart": [
+        {
+          "apply": {
+            "model": "gtceu:block/machine_parts/a3ee0f9110e17129ae0fab3b"
+          },
+          "when": {
+            "recipe_logic_status": "idle"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/machine_parts/633c552170a61f826fa6c0ff"
+          },
+          "when": {
+            "recipe_logic_status": "working"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/machine_parts/633c552170a61f826fa6c0ff"
+          },
+          "when": {
+            "recipe_logic_status": "waiting"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/machine_parts/a3ee0f9110e17129ae0fab3b"
+          },
+          "when": {
+            "recipe_logic_status": "suspend"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/overlay/machine/overlay_steam_vent",
+            "x": 270
+          },
+          "when": {
+            "steam_vent": "up"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/overlay/machine/overlay_steam_vent",
+            "x": 90
+          },
+          "when": {
+            "steam_vent": "down"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/overlay/machine/overlay_steam_vent",
+            "y": 270
+          },
+          "when": {
+            "steam_vent": "left"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/overlay/machine/overlay_steam_vent",
+            "y": 90
+          },
+          "when": {
+            "steam_vent": "right"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/overlay/machine/overlay_steam_vent"
+          },
+          "when": {
+            "steam_vent": "front"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/overlay/machine/overlay_steam_vent",
+            "y": 180
+          },
+          "when": {
+            "steam_vent": "back"
+          }
+        }
+      ],
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/hp_steam_furnace",
+      "machine": "gtceu:hp_steam_furnace",
+      "multipart": [
+        {
+          "apply": {
+            "model": "gtceu:block/machine_parts/a3ee0f9110e17129ae0fab3b"
+          },
+          "when": {
+            "recipe_logic_status": "idle"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/machine_parts/633c552170a61f826fa6c0ff"
+          },
+          "when": {
+            "recipe_logic_status": "working"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/machine_parts/633c552170a61f826fa6c0ff"
+          },
+          "when": {
+            "recipe_logic_status": "waiting"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/machine_parts/a3ee0f9110e17129ae0fab3b"
+          },
+          "when": {
+            "recipe_logic_status": "suspend"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/overlay/machine/overlay_steam_vent",
+            "x": 270
+          },
+          "when": {
+            "steam_vent": "up"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/overlay/machine/overlay_steam_vent",
+            "x": 90
+          },
+          "when": {
+            "steam_vent": "down"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/overlay/machine/overlay_steam_vent",
+            "y": 270
+          },
+          "when": {
+            "steam_vent": "left"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/overlay/machine/overlay_steam_vent",
+            "y": 90
+          },
+          "when": {
+            "steam_vent": "right"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/overlay/machine/overlay_steam_vent"
+          },
+          "when": {
+            "steam_vent": "front"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/overlay/machine/overlay_steam_vent",
+            "y": 180
+          },
+          "when": {
+            "steam_vent": "back"
+          }
+        }
+      ],
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=up": {
-      "gtceu:z": 180,
-      "model": "gtceu:block/machine/hp_steam_furnace",
-      "x": 270
+      "machine": "gtceu:hp_steam_furnace",
+      "multipart": [
+        {
+          "apply": {
+            "model": "gtceu:block/machine_parts/a3ee0f9110e17129ae0fab3b"
+          },
+          "when": {
+            "recipe_logic_status": "idle"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/machine_parts/633c552170a61f826fa6c0ff"
+          },
+          "when": {
+            "recipe_logic_status": "working"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/machine_parts/633c552170a61f826fa6c0ff"
+          },
+          "when": {
+            "recipe_logic_status": "waiting"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/machine_parts/a3ee0f9110e17129ae0fab3b"
+          },
+          "when": {
+            "recipe_logic_status": "suspend"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/overlay/machine/overlay_steam_vent",
+            "x": 270
+          },
+          "when": {
+            "steam_vent": "up"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/overlay/machine/overlay_steam_vent",
+            "x": 90
+          },
+          "when": {
+            "steam_vent": "down"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/overlay/machine/overlay_steam_vent",
+            "y": 270
+          },
+          "when": {
+            "steam_vent": "left"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/overlay/machine/overlay_steam_vent",
+            "y": 90
+          },
+          "when": {
+            "steam_vent": "right"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/overlay/machine/overlay_steam_vent"
+          },
+          "when": {
+            "steam_vent": "front"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/overlay/machine/overlay_steam_vent",
+            "y": 180
+          },
+          "when": {
+            "steam_vent": "back"
+          }
+        }
+      ],
+      "type": "gtceu:machine",
+      "x": 270,
+      "z": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/hp_steam_furnace",
+      "machine": "gtceu:hp_steam_furnace",
+      "multipart": [
+        {
+          "apply": {
+            "model": "gtceu:block/machine_parts/a3ee0f9110e17129ae0fab3b"
+          },
+          "when": {
+            "recipe_logic_status": "idle"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/machine_parts/633c552170a61f826fa6c0ff"
+          },
+          "when": {
+            "recipe_logic_status": "working"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/machine_parts/633c552170a61f826fa6c0ff"
+          },
+          "when": {
+            "recipe_logic_status": "waiting"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/machine_parts/a3ee0f9110e17129ae0fab3b"
+          },
+          "when": {
+            "recipe_logic_status": "suspend"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/overlay/machine/overlay_steam_vent",
+            "x": 270
+          },
+          "when": {
+            "steam_vent": "up"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/overlay/machine/overlay_steam_vent",
+            "x": 90
+          },
+          "when": {
+            "steam_vent": "down"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/overlay/machine/overlay_steam_vent",
+            "y": 270
+          },
+          "when": {
+            "steam_vent": "left"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/overlay/machine/overlay_steam_vent",
+            "y": 90
+          },
+          "when": {
+            "steam_vent": "right"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/overlay/machine/overlay_steam_vent"
+          },
+          "when": {
+            "steam_vent": "front"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/overlay/machine/overlay_steam_vent",
+            "y": 180
+          },
+          "when": {
+            "steam_vent": "back"
+          }
+        }
+      ],
+      "type": "gtceu:machine",
       "y": 270
     }
   }

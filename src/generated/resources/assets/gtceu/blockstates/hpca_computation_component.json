@@ -1,27 +1,117 @@
 {
   "variants": {
     "facing=down": {
-      "model": "gtceu:block/machine/hpca_computation_component",
+      "machine": "gtceu:hpca_computation_component",
+      "variants": {
+        "active=false,hpca_part_damaged=false": {
+          "model": "gtceu:block/machine_parts/f3850eb0bfeec3cdfb957d5e"
+        },
+        "active=false,hpca_part_damaged=true": {
+          "model": "gtceu:block/machine_parts/c166c68ce777a682fd921f3c"
+        },
+        "active=true,hpca_part_damaged=false": {
+          "model": "gtceu:block/machine_parts/943b4e793be1fc1882cb556a"
+        },
+        "active=true,hpca_part_damaged=true": {
+          "model": "gtceu:block/machine_parts/06513da58ee8e831f84751df"
+        }
+      },
+      "type": "gtceu:machine",
       "x": 90
     },
     "facing=east": {
-      "model": "gtceu:block/machine/hpca_computation_component",
+      "machine": "gtceu:hpca_computation_component",
+      "variants": {
+        "active=false,hpca_part_damaged=false": {
+          "model": "gtceu:block/machine_parts/f3850eb0bfeec3cdfb957d5e"
+        },
+        "active=false,hpca_part_damaged=true": {
+          "model": "gtceu:block/machine_parts/c166c68ce777a682fd921f3c"
+        },
+        "active=true,hpca_part_damaged=false": {
+          "model": "gtceu:block/machine_parts/943b4e793be1fc1882cb556a"
+        },
+        "active=true,hpca_part_damaged=true": {
+          "model": "gtceu:block/machine_parts/06513da58ee8e831f84751df"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/hpca_computation_component"
+      "machine": "gtceu:hpca_computation_component",
+      "variants": {
+        "active=false,hpca_part_damaged=false": {
+          "model": "gtceu:block/machine_parts/f3850eb0bfeec3cdfb957d5e"
+        },
+        "active=false,hpca_part_damaged=true": {
+          "model": "gtceu:block/machine_parts/c166c68ce777a682fd921f3c"
+        },
+        "active=true,hpca_part_damaged=false": {
+          "model": "gtceu:block/machine_parts/943b4e793be1fc1882cb556a"
+        },
+        "active=true,hpca_part_damaged=true": {
+          "model": "gtceu:block/machine_parts/06513da58ee8e831f84751df"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/hpca_computation_component",
+      "machine": "gtceu:hpca_computation_component",
+      "variants": {
+        "active=false,hpca_part_damaged=false": {
+          "model": "gtceu:block/machine_parts/f3850eb0bfeec3cdfb957d5e"
+        },
+        "active=false,hpca_part_damaged=true": {
+          "model": "gtceu:block/machine_parts/c166c68ce777a682fd921f3c"
+        },
+        "active=true,hpca_part_damaged=false": {
+          "model": "gtceu:block/machine_parts/943b4e793be1fc1882cb556a"
+        },
+        "active=true,hpca_part_damaged=true": {
+          "model": "gtceu:block/machine_parts/06513da58ee8e831f84751df"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=up": {
-      "gtceu:z": 180,
-      "model": "gtceu:block/machine/hpca_computation_component",
-      "x": 270
+      "machine": "gtceu:hpca_computation_component",
+      "variants": {
+        "active=false,hpca_part_damaged=false": {
+          "model": "gtceu:block/machine_parts/f3850eb0bfeec3cdfb957d5e"
+        },
+        "active=false,hpca_part_damaged=true": {
+          "model": "gtceu:block/machine_parts/c166c68ce777a682fd921f3c"
+        },
+        "active=true,hpca_part_damaged=false": {
+          "model": "gtceu:block/machine_parts/943b4e793be1fc1882cb556a"
+        },
+        "active=true,hpca_part_damaged=true": {
+          "model": "gtceu:block/machine_parts/06513da58ee8e831f84751df"
+        }
+      },
+      "type": "gtceu:machine",
+      "x": 270,
+      "z": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/hpca_computation_component",
+      "machine": "gtceu:hpca_computation_component",
+      "variants": {
+        "active=false,hpca_part_damaged=false": {
+          "model": "gtceu:block/machine_parts/f3850eb0bfeec3cdfb957d5e"
+        },
+        "active=false,hpca_part_damaged=true": {
+          "model": "gtceu:block/machine_parts/c166c68ce777a682fd921f3c"
+        },
+        "active=true,hpca_part_damaged=false": {
+          "model": "gtceu:block/machine_parts/943b4e793be1fc1882cb556a"
+        },
+        "active=true,hpca_part_damaged=true": {
+          "model": "gtceu:block/machine_parts/06513da58ee8e831f84751df"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

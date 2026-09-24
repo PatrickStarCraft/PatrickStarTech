@@ -1,7 +1,16 @@
 {
   "variants": {
     "": {
-      "model": "gtceu:block/machine/wood_crate"
+      "machine": "gtceu:wood_crate",
+      "variants": {
+        "taped=false": {
+          "model": "gtceu:block/machine/template/crate/wooden_crate"
+        },
+        "taped=true": {
+          "model": "gtceu:block/machine/template/crate/wooden_crate_taped"
+        }
+      },
+      "type": "gtceu:machine"
     }
   }
 }

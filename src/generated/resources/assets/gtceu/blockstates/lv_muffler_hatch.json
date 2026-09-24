@@ -1,27 +1,93 @@
 {
   "variants": {
     "facing=down": {
-      "model": "gtceu:block/machine/lv_muffler_hatch",
+      "machine": "gtceu:lv_muffler_hatch",
+      "replaceable_textures": [
+        "bottom",
+        "top",
+        "side"
+      ],
+      "variants": {
+        "": {
+          "model": "gtceu:block/machine_parts/3603f12398ea07b41d190f5a"
+        }
+      },
+      "type": "gtceu:machine",
       "x": 90
     },
     "facing=east": {
-      "model": "gtceu:block/machine/lv_muffler_hatch",
+      "machine": "gtceu:lv_muffler_hatch",
+      "replaceable_textures": [
+        "bottom",
+        "top",
+        "side"
+      ],
+      "variants": {
+        "": {
+          "model": "gtceu:block/machine_parts/3603f12398ea07b41d190f5a"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/lv_muffler_hatch"
+      "machine": "gtceu:lv_muffler_hatch",
+      "replaceable_textures": [
+        "bottom",
+        "top",
+        "side"
+      ],
+      "variants": {
+        "": {
+          "model": "gtceu:block/machine_parts/3603f12398ea07b41d190f5a"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/lv_muffler_hatch",
+      "machine": "gtceu:lv_muffler_hatch",
+      "replaceable_textures": [
+        "bottom",
+        "top",
+        "side"
+      ],
+      "variants": {
+        "": {
+          "model": "gtceu:block/machine_parts/3603f12398ea07b41d190f5a"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=up": {
-      "gtceu:z": 180,
-      "model": "gtceu:block/machine/lv_muffler_hatch",
-      "x": 270
+      "machine": "gtceu:lv_muffler_hatch",
+      "replaceable_textures": [
+        "bottom",
+        "top",
+        "side"
+      ],
+      "variants": {
+        "": {
+          "model": "gtceu:block/machine_parts/3603f12398ea07b41d190f5a"
+        }
+      },
+      "type": "gtceu:machine",
+      "x": 270,
+      "z": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/lv_muffler_hatch",
+      "machine": "gtceu:lv_muffler_hatch",
+      "replaceable_textures": [
+        "bottom",
+        "top",
+        "side"
+      ],
+      "variants": {
+        "": {
+          "model": "gtceu:block/machine_parts/3603f12398ea07b41d190f5a"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

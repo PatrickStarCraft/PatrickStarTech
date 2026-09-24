@@ -1,27 +1,81 @@
 {
   "variants": {
     "facing=down": {
-      "model": "gtceu:block/machine/uxv_transformer_16a",
+      "machine": "gtceu:uxv_transformer_16a",
+      "variants": {
+        "transform_up=false": {
+          "model": "gtceu:block/machine_parts/1089b9daa7d8a180d59b9c39"
+        },
+        "transform_up=true": {
+          "model": "gtceu:block/machine_parts/3931d63d13a2135dce26dfd9"
+        }
+      },
+      "type": "gtceu:machine",
       "x": 90
     },
     "facing=east": {
-      "model": "gtceu:block/machine/uxv_transformer_16a",
+      "machine": "gtceu:uxv_transformer_16a",
+      "variants": {
+        "transform_up=false": {
+          "model": "gtceu:block/machine_parts/1089b9daa7d8a180d59b9c39"
+        },
+        "transform_up=true": {
+          "model": "gtceu:block/machine_parts/3931d63d13a2135dce26dfd9"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/uxv_transformer_16a"
+      "machine": "gtceu:uxv_transformer_16a",
+      "variants": {
+        "transform_up=false": {
+          "model": "gtceu:block/machine_parts/1089b9daa7d8a180d59b9c39"
+        },
+        "transform_up=true": {
+          "model": "gtceu:block/machine_parts/3931d63d13a2135dce26dfd9"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/uxv_transformer_16a",
+      "machine": "gtceu:uxv_transformer_16a",
+      "variants": {
+        "transform_up=false": {
+          "model": "gtceu:block/machine_parts/1089b9daa7d8a180d59b9c39"
+        },
+        "transform_up=true": {
+          "model": "gtceu:block/machine_parts/3931d63d13a2135dce26dfd9"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=up": {
-      "gtceu:z": 180,
-      "model": "gtceu:block/machine/uxv_transformer_16a",
-      "x": 270
+      "machine": "gtceu:uxv_transformer_16a",
+      "variants": {
+        "transform_up=false": {
+          "model": "gtceu:block/machine_parts/1089b9daa7d8a180d59b9c39"
+        },
+        "transform_up=true": {
+          "model": "gtceu:block/machine_parts/3931d63d13a2135dce26dfd9"
+        }
+      },
+      "type": "gtceu:machine",
+      "x": 270,
+      "z": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/uxv_transformer_16a",
+      "machine": "gtceu:uxv_transformer_16a",
+      "variants": {
+        "transform_up=false": {
+          "model": "gtceu:block/machine_parts/1089b9daa7d8a180d59b9c39"
+        },
+        "transform_up=true": {
+          "model": "gtceu:block/machine_parts/3931d63d13a2135dce26dfd9"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

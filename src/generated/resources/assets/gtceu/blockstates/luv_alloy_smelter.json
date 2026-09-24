@@ -1,18 +1,78 @@
 {
   "variants": {
     "facing=east": {
-      "model": "gtceu:block/machine/luv_alloy_smelter",
+      "machine": "gtceu:luv_alloy_smelter",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/d4aef2c7f463c7533aeceffd"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/d4aef2c7f463c7533aeceffd"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/4d3f138a685e87ee9a35db1b"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/4d3f138a685e87ee9a35db1b"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/luv_alloy_smelter"
+      "machine": "gtceu:luv_alloy_smelter",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/d4aef2c7f463c7533aeceffd"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/d4aef2c7f463c7533aeceffd"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/4d3f138a685e87ee9a35db1b"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/4d3f138a685e87ee9a35db1b"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/luv_alloy_smelter",
+      "machine": "gtceu:luv_alloy_smelter",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/d4aef2c7f463c7533aeceffd"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/d4aef2c7f463c7533aeceffd"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/4d3f138a685e87ee9a35db1b"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/4d3f138a685e87ee9a35db1b"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/luv_alloy_smelter",
+      "machine": "gtceu:luv_alloy_smelter",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/d4aef2c7f463c7533aeceffd"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/d4aef2c7f463c7533aeceffd"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/4d3f138a685e87ee9a35db1b"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/4d3f138a685e87ee9a35db1b"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

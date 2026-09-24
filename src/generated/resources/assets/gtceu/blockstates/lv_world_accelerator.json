@@ -1,7 +1,34 @@
 {
   "variants": {
     "": {
-      "model": "gtceu:block/machine/lv_world_accelerator"
+      "machine": "gtceu:lv_world_accelerator",
+      "variants": {
+        "active=false,random_tick_mode=false,working_enabled=false": {
+          "model": "gtceu:block/machine_parts/ec6fe957ba170ece18db6279"
+        },
+        "active=false,random_tick_mode=false,working_enabled=true": {
+          "model": "gtceu:block/machine_parts/ec6fe957ba170ece18db6279"
+        },
+        "active=false,random_tick_mode=true,working_enabled=false": {
+          "model": "gtceu:block/machine_parts/525ea8c3ff88d377977951b8"
+        },
+        "active=false,random_tick_mode=true,working_enabled=true": {
+          "model": "gtceu:block/machine_parts/525ea8c3ff88d377977951b8"
+        },
+        "active=true,random_tick_mode=false,working_enabled=false": {
+          "model": "gtceu:block/machine_parts/ec6fe957ba170ece18db6279"
+        },
+        "active=true,random_tick_mode=false,working_enabled=true": {
+          "model": "gtceu:block/machine_parts/851e810914267047ee7f031f"
+        },
+        "active=true,random_tick_mode=true,working_enabled=false": {
+          "model": "gtceu:block/machine_parts/525ea8c3ff88d377977951b8"
+        },
+        "active=true,random_tick_mode=true,working_enabled=true": {
+          "model": "gtceu:block/machine_parts/d4f9671813e0cbc25296b2aa"
+        }
+      },
+      "type": "gtceu:machine"
     }
   }
 }

@@ -14,6 +14,8 @@ import net.minecraft.client.resources.model.ModelDebugName;
 import net.minecraft.client.resources.model.ResolvableModel;
 import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import com.mojang.math.OctahedralGroup;
+import com.mojang.math.Quadrant;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -49,7 +51,8 @@ public record UnbakedMachineBlockStateModel(
         List<MultipartUnbaked> multipart,
         List<DynamicRender<?, ?>> dynamicRenders,
         Set<String> replaceableTextures,
-        Map<String, Identifier> textureOverrides) implements CustomUnbakedBlockStateModel {
+        Map<String, Identifier> textureOverrides,
+        Quadrant x, Quadrant y, Quadrant z) implements CustomUnbakedBlockStateModel {
 
     private static final Identifier PIPE_OUTPUT_OVERLAY = GTCEu.id("block/overlay/machine/overlay_pipe");
     private static final Identifier FLUID_OUTPUT_OVERLAY = GTCEu.id("block/overlay/machine/overlay_fluid_output");
@@ -78,7 +81,10 @@ public record UnbakedMachineBlockStateModel(
                     .forGetter(UnbakedMachineBlockStateModel::replaceableTextures),
             Codec.unboundedMap(Codec.STRING, Identifier.CODEC)
                     .optionalFieldOf("texture_overrides", Map.of())
-                    .forGetter(UnbakedMachineBlockStateModel::textureOverrides))
+                    .forGetter(UnbakedMachineBlockStateModel::textureOverrides),
+            Quadrant.CODEC.optionalFieldOf("x", Quadrant.R0).forGetter(UnbakedMachineBlockStateModel::x),
+            Quadrant.CODEC.optionalFieldOf("y", Quadrant.R0).forGetter(UnbakedMachineBlockStateModel::y),
+            Quadrant.CODEC.optionalFieldOf("z", Quadrant.R0).forGetter(UnbakedMachineBlockStateModel::z))
             .apply(instance, UnbakedMachineBlockStateModel::new));
 
     public UnbakedMachineBlockStateModel {
@@ -139,7 +145,7 @@ public record UnbakedMachineBlockStateModel(
 
         return new MachineBlockStateModel(this.definition, bakedVariants, bakedMultipart, this.dynamicRenders,
                 this.replaceableTextures, bakedTextureOverrides, pipeOverlay, fluidOutputOverlay, itemOutputOverlay,
-                new FacadeBlockStateModel(coverBackPlate));
+                new FacadeBlockStateModel(coverBackPlate), Quadrant.fromXYZAngles(this.x, this.y, this.z));
     }
 
     private static Predicate<MachineRenderState> variantPredicate(

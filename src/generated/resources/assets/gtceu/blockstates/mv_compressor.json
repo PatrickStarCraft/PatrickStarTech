@@ -1,18 +1,78 @@
 {
   "variants": {
     "facing=east": {
-      "model": "gtceu:block/machine/mv_compressor",
+      "machine": "gtceu:mv_compressor",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ab3f252d611520c22bd6a7ae"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/ab3f252d611520c22bd6a7ae"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/59fc783c2b5abd075fafb879"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/59fc783c2b5abd075fafb879"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/mv_compressor"
+      "machine": "gtceu:mv_compressor",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ab3f252d611520c22bd6a7ae"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/ab3f252d611520c22bd6a7ae"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/59fc783c2b5abd075fafb879"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/59fc783c2b5abd075fafb879"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/mv_compressor",
+      "machine": "gtceu:mv_compressor",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ab3f252d611520c22bd6a7ae"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/ab3f252d611520c22bd6a7ae"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/59fc783c2b5abd075fafb879"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/59fc783c2b5abd075fafb879"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/mv_compressor",
+      "machine": "gtceu:mv_compressor",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ab3f252d611520c22bd6a7ae"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/ab3f252d611520c22bd6a7ae"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/59fc783c2b5abd075fafb879"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/59fc783c2b5abd075fafb879"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

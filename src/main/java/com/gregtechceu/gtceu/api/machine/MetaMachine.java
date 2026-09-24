@@ -32,13 +32,12 @@ import com.gregtechceu.gtceu.api.sync_system.annotations.SaveField;
 import com.gregtechceu.gtceu.api.sync_system.annotations.SyncToClient;
 import com.gregtechceu.gtceu.api.sync_system.managed.ManagedSyncBlockEntity;
 import com.gregtechceu.gtceu.api.transfer.fluid.IFluidHandlerModifiable;
-import com.gregtechceu.gtceu.client.model.IBlockEntityRendererBakedModel;
 import com.gregtechceu.gtceu.client.model.CoverRenderState;
 import com.gregtechceu.gtceu.client.model.GTModelProperties;
 import com.gregtechceu.gtceu.client.model.item.FacadeRenderState;
 import com.gregtechceu.gtceu.client.model.machine.MachineOutputRenderState;
 import com.gregtechceu.gtceu.client.model.machine.MachineRenderState;
-import com.gregtechceu.gtceu.client.util.RenderUtil;
+import com.gregtechceu.gtceu.client.renderer.machine.MachineBlockEntityRenderer;
 import com.gregtechceu.gtceu.common.cover.FacadeCover;
 import com.gregtechceu.gtceu.common.cover.FluidFilterCover;
 import com.gregtechceu.gtceu.common.cover.ItemFilterCover;
@@ -55,7 +54,6 @@ import com.gregtechceu.gtceu.utils.GTUtil;
 import com.gregtechceu.gtceu.utils.data.TagCompatibilityFixer;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -896,7 +894,7 @@ public class MetaMachine extends ManagedSyncBlockEntity implements IGregtechBloc
 
     /**
      * @see ModelData
-     * @return ModelData to be passed to the {@link BakedModel}
+     * @return immutable model data consumed by the client block-state model
      */
     @Override
     public ModelData getModelData() {
@@ -1088,20 +1086,10 @@ public class MetaMachine extends ManagedSyncBlockEntity implements IGregtechBloc
         return getDefinition().getDefaultPaintingColor();
     }
 
-    @SuppressWarnings("unchecked")
     @OnlyIn(Dist.CLIENT)
     @Override
     public AABB getRenderBoundingBox() {
-        BakedModel model = RenderUtil.getModelForState(this.getBlockState());
-
-        if (model instanceof IBlockEntityRendererBakedModel<?> modelWithBER) {
-            if (modelWithBER.getBlockEntityType() == this.getType()) {
-                return ((IBlockEntityRendererBakedModel<MetaMachine>) modelWithBER)
-                        .getRenderBoundingBox(this);
-            }
-        }
-        return new AABB(worldPosition.getX() - 1, worldPosition.getY(), worldPosition.getZ() - 1,
-                worldPosition.getX() + 2, worldPosition.getY() + 2, worldPosition.getZ() + 2);
+        return MachineBlockEntityRenderer.getMachineRenderBoundingBox(this);
     }
 
     //////////////////////////////////////

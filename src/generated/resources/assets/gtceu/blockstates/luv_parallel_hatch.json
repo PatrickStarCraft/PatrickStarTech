@@ -1,27 +1,147 @@
 {
   "variants": {
     "facing=down": {
-      "model": "gtceu:block/machine/luv_parallel_hatch",
+      "machine": "gtceu:luv_parallel_hatch",
+      "replaceable_textures": [
+        "bottom",
+        "top",
+        "side"
+      ],
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/0ffc1accdcd2234254e81f63"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/0ffc1accdcd2234254e81f63"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/2251d3f27ba7d3541ddef5ad"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/2251d3f27ba7d3541ddef5ad"
+        }
+      },
+      "type": "gtceu:machine",
       "x": 90
     },
     "facing=east": {
-      "model": "gtceu:block/machine/luv_parallel_hatch",
+      "machine": "gtceu:luv_parallel_hatch",
+      "replaceable_textures": [
+        "bottom",
+        "top",
+        "side"
+      ],
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/0ffc1accdcd2234254e81f63"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/0ffc1accdcd2234254e81f63"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/2251d3f27ba7d3541ddef5ad"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/2251d3f27ba7d3541ddef5ad"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/luv_parallel_hatch"
+      "machine": "gtceu:luv_parallel_hatch",
+      "replaceable_textures": [
+        "bottom",
+        "top",
+        "side"
+      ],
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/0ffc1accdcd2234254e81f63"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/0ffc1accdcd2234254e81f63"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/2251d3f27ba7d3541ddef5ad"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/2251d3f27ba7d3541ddef5ad"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/luv_parallel_hatch",
+      "machine": "gtceu:luv_parallel_hatch",
+      "replaceable_textures": [
+        "bottom",
+        "top",
+        "side"
+      ],
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/0ffc1accdcd2234254e81f63"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/0ffc1accdcd2234254e81f63"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/2251d3f27ba7d3541ddef5ad"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/2251d3f27ba7d3541ddef5ad"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=up": {
-      "gtceu:z": 180,
-      "model": "gtceu:block/machine/luv_parallel_hatch",
-      "x": 270
+      "machine": "gtceu:luv_parallel_hatch",
+      "replaceable_textures": [
+        "bottom",
+        "top",
+        "side"
+      ],
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/0ffc1accdcd2234254e81f63"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/0ffc1accdcd2234254e81f63"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/2251d3f27ba7d3541ddef5ad"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/2251d3f27ba7d3541ddef5ad"
+        }
+      },
+      "type": "gtceu:machine",
+      "x": 270,
+      "z": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/luv_parallel_hatch",
+      "machine": "gtceu:luv_parallel_hatch",
+      "replaceable_textures": [
+        "bottom",
+        "top",
+        "side"
+      ],
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/0ffc1accdcd2234254e81f63"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/0ffc1accdcd2234254e81f63"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/2251d3f27ba7d3541ddef5ad"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/2251d3f27ba7d3541ddef5ad"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

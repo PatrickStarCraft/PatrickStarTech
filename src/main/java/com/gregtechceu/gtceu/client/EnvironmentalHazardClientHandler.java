@@ -103,13 +103,7 @@ public class EnvironmentalHazardClientHandler {
         for (var entry : newZones.entrySet()) {
             if (entry.getValue().strength() > COLORING_LOW) {
                 ChunkPos pos = entry.getKey();
-                for (int y = Minecraft.getInstance().level.getMinSection(); y <
-                        Minecraft.getInstance().level.getMaxSection(); ++y) {
-                    Minecraft.getInstance().levelRenderer.setSectionDirtyWithNeighbors(pos.x(), y, pos.z());
-                }
-
-                ((ClientLevelAccessor) Minecraft.getInstance().level).getTintCaches()
-                        .forEach((colorResolver, blockTintCache) -> blockTintCache.invalidateForChunk(pos.x(), pos.z()));
+                updateChunks(pos);
             }
         }
     }
@@ -147,12 +141,15 @@ public class EnvironmentalHazardClientHandler {
     }
 
     private void updateChunks(ChunkPos pos) {
-        for (int y = Minecraft.getInstance().level.getMinSection(); y <
-                Minecraft.getInstance().level.getMaxSection(); ++y) {
-            Minecraft.getInstance().levelRenderer.setSectionDirtyWithNeighbors(pos.x(), y, pos.z());
+        var level = Minecraft.getInstance().level;
+        if (level == null) {
+            return;
+        }
+        for (int y = level.getMinSectionY(); y <= level.getMaxSectionY(); ++y) {
+            level.setSectionDirtyWithNeighbors(pos.x(), y, pos.z());
         }
 
-        ((ClientLevelAccessor) Minecraft.getInstance().level).getTintCaches()
+        ((ClientLevelAccessor) level).getTintCaches()
                 .forEach((colorResolver, blockTintCache) -> blockTintCache.invalidateForChunk(pos.x(), pos.z()));
     }
 

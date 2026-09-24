@@ -1,18 +1,78 @@
 {
   "variants": {
     "facing=east": {
-      "model": "gtceu:block/machine/uxv_forge_hammer",
+      "machine": "gtceu:uxv_forge_hammer",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/5e0602daea94840978373b55"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/5e0602daea94840978373b55"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/9c2a8987056fd7911b483d7a"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/9c2a8987056fd7911b483d7a"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/uxv_forge_hammer"
+      "machine": "gtceu:uxv_forge_hammer",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/5e0602daea94840978373b55"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/5e0602daea94840978373b55"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/9c2a8987056fd7911b483d7a"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/9c2a8987056fd7911b483d7a"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/uxv_forge_hammer",
+      "machine": "gtceu:uxv_forge_hammer",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/5e0602daea94840978373b55"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/5e0602daea94840978373b55"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/9c2a8987056fd7911b483d7a"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/9c2a8987056fd7911b483d7a"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/uxv_forge_hammer",
+      "machine": "gtceu:uxv_forge_hammer",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/5e0602daea94840978373b55"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/5e0602daea94840978373b55"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/9c2a8987056fd7911b483d7a"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/9c2a8987056fd7911b483d7a"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

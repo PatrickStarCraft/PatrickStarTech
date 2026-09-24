@@ -146,17 +146,29 @@ public class GTModels {
     /** Keep the generated block-item model as the base so its display transforms stay active. */
     public static void createLampItemDefinition(DataGenContext<Item, ? extends Item> ctx,
                                                 ItemModelProvider prov) {
+        prov.bindItemDefinition(ctx.getId(), specialItemDefinition(ctx.getId().withPrefix("item/"),
+                GTCEu.id("lamp")));
+    }
+
+    /** Keep the generated machine item model as the base so its display transforms stay active. */
+    public static void createMachineItemDefinition(DataGenContext<Item, ? extends Item> ctx,
+                                                   ItemModelProvider prov) {
+        prov.bindItemDefinition(ctx.getId(), specialItemDefinition(ctx.getId().withPrefix("item/"),
+                GTCEu.id("machine_dynamic")));
+    }
+
+    public static JsonObject specialItemDefinition(Identifier baseModel, Identifier rendererType) {
         JsonObject specialModel = new JsonObject();
         specialModel.addProperty("type", "minecraft:special");
-        specialModel.addProperty("base", ctx.getId().withPrefix("item/").toString());
+        specialModel.addProperty("base", baseModel.toString());
 
         JsonObject renderer = new JsonObject();
-        renderer.addProperty("type", GTCEu.id("lamp").toString());
+        renderer.addProperty("type", rendererType.toString());
         specialModel.add("model", renderer);
 
         JsonObject definition = new JsonObject();
         definition.add("model", specialModel);
-        prov.bindItemDefinition(ctx.getId(), definition);
+        return definition;
     }
 
     /** Add item definitions and their generated model to the live dynamic resource pack. */

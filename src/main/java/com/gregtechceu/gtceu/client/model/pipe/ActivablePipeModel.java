@@ -31,6 +31,7 @@ public class ActivablePipeModel extends PipeModel {
 
     /// Use {@link #getOrCreateActiveBlockModel()} instead of referencing this field directly.
     private BlockModelBuilder activeBlockModel;
+    private PipeModelBuilder<BlockModelBuilder> activePipeModelDefinition;
     /// Use {@link #getOrCreateActiveCenterElement()} instead of referencing this field directly.
     private BlockModelBuilder activeCenterElement;
     /// Use {@link #getOrCreateActiveConnectionElement()} instead of referencing this field directly.
@@ -69,14 +70,14 @@ public class ActivablePipeModel extends PipeModel {
         if (this.activeBlockModel != null) {
             return this.activeBlockModel;
         }
-        // spotless:off
-        return this.activeBlockModel = this.provider.models().getBuilder(this.blockId.withSuffix("_active").toString())
-                .parent(this.getOrCreateActiveCenterElement())
-                .customLoader(PipeModelBuilder.begin(this.thickness, this.provider))
-                    .centerModels(this.getOrCreateActiveCenterElement().getLocation())
-                    .connectionModels(this.getOrCreateActiveConnectionElement().getLocation())
+        this.activeBlockModel = new BlockModelBuilder(this.blockId.withSuffix("_active"),
+                this.provider.getExistingFileHelper()).parent(this.getOrCreateActiveCenterElement());
+        this.activePipeModelDefinition = PipeModelBuilder.<BlockModelBuilder>begin(this.thickness, this.provider)
+                .apply(this.activeBlockModel, this.provider.getExistingFileHelper());
+        this.activePipeModelDefinition.centerModels(this.getOrCreateActiveCenterElement().getLocation())
+                .connectionModels(this.getOrCreateActiveConnectionElement().getLocation())
                 .end();
-        // spotless:on
+        return this.activeBlockModel;
     }
 
     /**
@@ -205,18 +206,16 @@ public class ActivablePipeModel extends PipeModel {
         if (!this.getBlock().defaultBlockState().hasProperty(GTBlockStateProperties.ACTIVE)) {
             return super.createBlockState();
         }
+        getOrCreateBlockModel();
+        getOrCreateActiveBlockModel();
         // spotless:off
         return this.provider.getVariantBuilder(this.getBlock())
                 .partialState()
                     .with(GTBlockStateProperties.ACTIVE, false)
-                    .modelForState()
-                        .modelFile(this.provider.models().getExistingFile(this.blockId))
-                    .addModel()
+                    .setInlineModel(this.pipeModelDefinition.toBlockStateModelJson())
                 .partialState()
                     .with(GTBlockStateProperties.ACTIVE, true)
-                    .modelForState()
-                        .modelFile(this.provider.models().getExistingFile(this.blockId.withSuffix("_active")))
-                    .addModel();
+                    .setInlineModel(this.activePipeModelDefinition.toBlockStateModelJson());
         // spotless:on
     }
 

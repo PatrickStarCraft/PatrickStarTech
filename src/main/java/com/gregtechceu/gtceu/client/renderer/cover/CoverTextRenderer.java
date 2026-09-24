@@ -6,7 +6,6 @@ import com.gregtechceu.gtceu.client.util.RenderUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.util.LightCoordsUtil;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -47,33 +46,6 @@ public class CoverTextRenderer implements IDynamicCoverRenderer {
             if (!didAnything) y += font.lineHeight;
         }
         return new CoverTextSnapshot(face, List.copyOf(lines));
-    }
-
-    @Override
-    public void render(MetaMachine machine, Direction face, float partialTick, PoseStack poseStack,
-                       MultiBufferSource buffer, int packedLight, int packedOverlay) {
-        poseStack.translate(3 / 16f, 3 / 16f, 0);
-        poseStack.scale(TEXT_SCALE, TEXT_SCALE, TEXT_SCALE);
-        int y = 0;
-        for (Component s : text.get()) {
-            boolean didAnything = false;
-            for (FormattedCharSequence line : Minecraft.getInstance().font.split(s, 90)) {
-                if (y >= 90) return;
-                Minecraft.getInstance().font.drawInBatch(
-                        line,
-                        0, y,
-                        0x72e500,
-                        false,
-                        poseStack.last().pose(),
-                        buffer,
-                        Font.DisplayMode.NORMAL,
-                        0,
-                        LightCoordsUtil.FULL_BRIGHT);
-                y += Minecraft.getInstance().font.lineHeight;
-                didAnything = true;
-            }
-            if (!didAnything) y += Minecraft.getInstance().font.lineHeight;
-        }
     }
 
     private record TextLine(FormattedCharSequence text, int y) {}

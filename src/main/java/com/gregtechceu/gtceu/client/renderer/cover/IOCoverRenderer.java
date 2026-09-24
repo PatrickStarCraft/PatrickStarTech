@@ -89,7 +89,6 @@ public class IOCoverRenderer implements ICoverRenderer {
         return this.invertedEmissiveOverlayTexture;
     }
 
-    @Override
     @OnlyIn(Dist.CLIENT)
     public void renderCover(List<BakedQuad> quads, @Nullable Direction side, RandomSource rand,
                             @NotNull CoverBehavior coverBehavior, BlockPos pos, BlockAndTintGetter level,

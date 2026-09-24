@@ -1,18 +1,78 @@
 {
   "variants": {
     "facing=east": {
-      "model": "gtceu:block/machine/ev_air_scrubber",
+      "machine": "gtceu:ev_air_scrubber",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/20f82b7d83e3415101a7a588"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/617a6b3317ae99252e200af5"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/138c410599afce06d6895aed"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/138c410599afce06d6895aed"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/ev_air_scrubber"
+      "machine": "gtceu:ev_air_scrubber",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/20f82b7d83e3415101a7a588"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/617a6b3317ae99252e200af5"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/138c410599afce06d6895aed"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/138c410599afce06d6895aed"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/ev_air_scrubber",
+      "machine": "gtceu:ev_air_scrubber",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/20f82b7d83e3415101a7a588"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/617a6b3317ae99252e200af5"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/138c410599afce06d6895aed"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/138c410599afce06d6895aed"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/ev_air_scrubber",
+      "machine": "gtceu:ev_air_scrubber",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/20f82b7d83e3415101a7a588"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/617a6b3317ae99252e200af5"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/138c410599afce06d6895aed"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/138c410599afce06d6895aed"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

@@ -1,18 +1,78 @@
 {
   "variants": {
     "facing=east": {
-      "model": "gtceu:block/machine/ev_block_breaker",
+      "machine": "gtceu:ev_block_breaker",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/a38bd75728600722a9204430"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/a38bd75728600722a9204430"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/629d262d3351ce5393217b96"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/629d262d3351ce5393217b96"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/ev_block_breaker"
+      "machine": "gtceu:ev_block_breaker",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/a38bd75728600722a9204430"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/a38bd75728600722a9204430"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/629d262d3351ce5393217b96"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/629d262d3351ce5393217b96"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/ev_block_breaker",
+      "machine": "gtceu:ev_block_breaker",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/a38bd75728600722a9204430"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/a38bd75728600722a9204430"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/629d262d3351ce5393217b96"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/629d262d3351ce5393217b96"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/ev_block_breaker",
+      "machine": "gtceu:ev_block_breaker",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/a38bd75728600722a9204430"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/a38bd75728600722a9204430"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/629d262d3351ce5393217b96"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/629d262d3351ce5393217b96"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

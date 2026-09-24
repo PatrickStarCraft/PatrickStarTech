@@ -1,150 +1,474 @@
 {
   "variants": {
     "facing=down,upwards_facing=down": {
-      "model": "gtceu:block/machine/advanced_monitor"
+      "machine": "gtceu:advanced_monitor",
+      "replaceable_textures": [
+        "all"
+      ],
+      "variants": {
+        "": {
+          "model": "gtceu:block/machine_parts/2c8169844571de1aef170101"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=down,upwards_facing=east": {
-      "gtceu:z": 90,
-      "model": "gtceu:block/machine/advanced_monitor",
-      "x": 90
+      "machine": "gtceu:advanced_monitor",
+      "replaceable_textures": [
+        "all"
+      ],
+      "variants": {
+        "": {
+          "model": "gtceu:block/machine_parts/2c8169844571de1aef170101"
+        }
+      },
+      "type": "gtceu:machine",
+      "x": 90,
+      "z": 90
     },
     "facing=down,upwards_facing=north": {
-      "model": "gtceu:block/machine/advanced_monitor",
+      "machine": "gtceu:advanced_monitor",
+      "replaceable_textures": [
+        "all"
+      ],
+      "variants": {
+        "": {
+          "model": "gtceu:block/machine_parts/2c8169844571de1aef170101"
+        }
+      },
+      "type": "gtceu:machine",
       "x": 90
     },
     "facing=down,upwards_facing=south": {
-      "gtceu:z": 180,
-      "model": "gtceu:block/machine/advanced_monitor",
-      "x": 90
+      "machine": "gtceu:advanced_monitor",
+      "replaceable_textures": [
+        "all"
+      ],
+      "variants": {
+        "": {
+          "model": "gtceu:block/machine_parts/2c8169844571de1aef170101"
+        }
+      },
+      "type": "gtceu:machine",
+      "x": 90,
+      "z": 180
     },
     "facing=down,upwards_facing=up": {
-      "model": "gtceu:block/machine/advanced_monitor"
+      "machine": "gtceu:advanced_monitor",
+      "replaceable_textures": [
+        "all"
+      ],
+      "variants": {
+        "": {
+          "model": "gtceu:block/machine_parts/2c8169844571de1aef170101"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=down,upwards_facing=west": {
-      "gtceu:z": 270,
-      "model": "gtceu:block/machine/advanced_monitor",
-      "x": 90
+      "machine": "gtceu:advanced_monitor",
+      "replaceable_textures": [
+        "all"
+      ],
+      "variants": {
+        "": {
+          "model": "gtceu:block/machine_parts/2c8169844571de1aef170101"
+        }
+      },
+      "type": "gtceu:machine",
+      "x": 90,
+      "z": 270
     },
     "facing=east,upwards_facing=down": {
-      "gtceu:z": 180,
-      "model": "gtceu:block/machine/advanced_monitor",
-      "y": 90
+      "machine": "gtceu:advanced_monitor",
+      "replaceable_textures": [
+        "all"
+      ],
+      "variants": {
+        "": {
+          "model": "gtceu:block/machine_parts/2c8169844571de1aef170101"
+        }
+      },
+      "type": "gtceu:machine",
+      "y": 90,
+      "z": 180
     },
     "facing=east,upwards_facing=east": {
-      "model": "gtceu:block/machine/advanced_monitor"
+      "machine": "gtceu:advanced_monitor",
+      "replaceable_textures": [
+        "all"
+      ],
+      "variants": {
+        "": {
+          "model": "gtceu:block/machine_parts/2c8169844571de1aef170101"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=east,upwards_facing=north": {
-      "gtceu:z": 270,
-      "model": "gtceu:block/machine/advanced_monitor",
-      "y": 90
+      "machine": "gtceu:advanced_monitor",
+      "replaceable_textures": [
+        "all"
+      ],
+      "variants": {
+        "": {
+          "model": "gtceu:block/machine_parts/2c8169844571de1aef170101"
+        }
+      },
+      "type": "gtceu:machine",
+      "y": 90,
+      "z": 270
     },
     "facing=east,upwards_facing=south": {
-      "gtceu:z": 90,
-      "model": "gtceu:block/machine/advanced_monitor",
-      "y": 90
+      "machine": "gtceu:advanced_monitor",
+      "replaceable_textures": [
+        "all"
+      ],
+      "variants": {
+        "": {
+          "model": "gtceu:block/machine_parts/2c8169844571de1aef170101"
+        }
+      },
+      "type": "gtceu:machine",
+      "y": 90,
+      "z": 90
     },
     "facing=east,upwards_facing=up": {
-      "model": "gtceu:block/machine/advanced_monitor",
+      "machine": "gtceu:advanced_monitor",
+      "replaceable_textures": [
+        "all"
+      ],
+      "variants": {
+        "": {
+          "model": "gtceu:block/machine_parts/2c8169844571de1aef170101"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=east,upwards_facing=west": {
-      "model": "gtceu:block/machine/advanced_monitor"
+      "machine": "gtceu:advanced_monitor",
+      "replaceable_textures": [
+        "all"
+      ],
+      "variants": {
+        "": {
+          "model": "gtceu:block/machine_parts/2c8169844571de1aef170101"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=north,upwards_facing=down": {
-      "gtceu:z": 180,
-      "model": "gtceu:block/machine/advanced_monitor"
+      "machine": "gtceu:advanced_monitor",
+      "replaceable_textures": [
+        "all"
+      ],
+      "variants": {
+        "": {
+          "model": "gtceu:block/machine_parts/2c8169844571de1aef170101"
+        }
+      },
+      "type": "gtceu:machine",
+      "z": 180
     },
     "facing=north,upwards_facing=east": {
-      "gtceu:z": 90,
-      "model": "gtceu:block/machine/advanced_monitor"
+      "machine": "gtceu:advanced_monitor",
+      "replaceable_textures": [
+        "all"
+      ],
+      "variants": {
+        "": {
+          "model": "gtceu:block/machine_parts/2c8169844571de1aef170101"
+        }
+      },
+      "type": "gtceu:machine",
+      "z": 90
     },
     "facing=north,upwards_facing=north": {
-      "model": "gtceu:block/machine/advanced_monitor"
+      "machine": "gtceu:advanced_monitor",
+      "replaceable_textures": [
+        "all"
+      ],
+      "variants": {
+        "": {
+          "model": "gtceu:block/machine_parts/2c8169844571de1aef170101"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=north,upwards_facing=south": {
-      "model": "gtceu:block/machine/advanced_monitor"
+      "machine": "gtceu:advanced_monitor",
+      "replaceable_textures": [
+        "all"
+      ],
+      "variants": {
+        "": {
+          "model": "gtceu:block/machine_parts/2c8169844571de1aef170101"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=north,upwards_facing=up": {
-      "model": "gtceu:block/machine/advanced_monitor"
+      "machine": "gtceu:advanced_monitor",
+      "replaceable_textures": [
+        "all"
+      ],
+      "variants": {
+        "": {
+          "model": "gtceu:block/machine_parts/2c8169844571de1aef170101"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=north,upwards_facing=west": {
-      "gtceu:z": 270,
-      "model": "gtceu:block/machine/advanced_monitor"
+      "machine": "gtceu:advanced_monitor",
+      "replaceable_textures": [
+        "all"
+      ],
+      "variants": {
+        "": {
+          "model": "gtceu:block/machine_parts/2c8169844571de1aef170101"
+        }
+      },
+      "type": "gtceu:machine",
+      "z": 270
     },
     "facing=south,upwards_facing=down": {
-      "gtceu:z": 180,
-      "model": "gtceu:block/machine/advanced_monitor",
-      "y": 180
+      "machine": "gtceu:advanced_monitor",
+      "replaceable_textures": [
+        "all"
+      ],
+      "variants": {
+        "": {
+          "model": "gtceu:block/machine_parts/2c8169844571de1aef170101"
+        }
+      },
+      "type": "gtceu:machine",
+      "y": 180,
+      "z": 180
     },
     "facing=south,upwards_facing=east": {
-      "gtceu:z": 270,
-      "model": "gtceu:block/machine/advanced_monitor",
-      "y": 180
+      "machine": "gtceu:advanced_monitor",
+      "replaceable_textures": [
+        "all"
+      ],
+      "variants": {
+        "": {
+          "model": "gtceu:block/machine_parts/2c8169844571de1aef170101"
+        }
+      },
+      "type": "gtceu:machine",
+      "y": 180,
+      "z": 270
     },
     "facing=south,upwards_facing=north": {
-      "model": "gtceu:block/machine/advanced_monitor"
+      "machine": "gtceu:advanced_monitor",
+      "replaceable_textures": [
+        "all"
+      ],
+      "variants": {
+        "": {
+          "model": "gtceu:block/machine_parts/2c8169844571de1aef170101"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south,upwards_facing=south": {
-      "model": "gtceu:block/machine/advanced_monitor"
+      "machine": "gtceu:advanced_monitor",
+      "replaceable_textures": [
+        "all"
+      ],
+      "variants": {
+        "": {
+          "model": "gtceu:block/machine_parts/2c8169844571de1aef170101"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south,upwards_facing=up": {
-      "model": "gtceu:block/machine/advanced_monitor",
+      "machine": "gtceu:advanced_monitor",
+      "replaceable_textures": [
+        "all"
+      ],
+      "variants": {
+        "": {
+          "model": "gtceu:block/machine_parts/2c8169844571de1aef170101"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=south,upwards_facing=west": {
-      "gtceu:z": 90,
-      "model": "gtceu:block/machine/advanced_monitor",
-      "y": 180
+      "machine": "gtceu:advanced_monitor",
+      "replaceable_textures": [
+        "all"
+      ],
+      "variants": {
+        "": {
+          "model": "gtceu:block/machine_parts/2c8169844571de1aef170101"
+        }
+      },
+      "type": "gtceu:machine",
+      "y": 180,
+      "z": 90
     },
     "facing=up,upwards_facing=down": {
-      "model": "gtceu:block/machine/advanced_monitor"
+      "machine": "gtceu:advanced_monitor",
+      "replaceable_textures": [
+        "all"
+      ],
+      "variants": {
+        "": {
+          "model": "gtceu:block/machine_parts/2c8169844571de1aef170101"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=up,upwards_facing=east": {
-      "gtceu:z": 90,
-      "model": "gtceu:block/machine/advanced_monitor",
-      "x": 270
+      "machine": "gtceu:advanced_monitor",
+      "replaceable_textures": [
+        "all"
+      ],
+      "variants": {
+        "": {
+          "model": "gtceu:block/machine_parts/2c8169844571de1aef170101"
+        }
+      },
+      "type": "gtceu:machine",
+      "x": 270,
+      "z": 90
     },
     "facing=up,upwards_facing=north": {
-      "gtceu:z": 180,
-      "model": "gtceu:block/machine/advanced_monitor",
-      "x": 270
+      "machine": "gtceu:advanced_monitor",
+      "replaceable_textures": [
+        "all"
+      ],
+      "variants": {
+        "": {
+          "model": "gtceu:block/machine_parts/2c8169844571de1aef170101"
+        }
+      },
+      "type": "gtceu:machine",
+      "x": 270,
+      "z": 180
     },
     "facing=up,upwards_facing=south": {
-      "model": "gtceu:block/machine/advanced_monitor",
+      "machine": "gtceu:advanced_monitor",
+      "replaceable_textures": [
+        "all"
+      ],
+      "variants": {
+        "": {
+          "model": "gtceu:block/machine_parts/2c8169844571de1aef170101"
+        }
+      },
+      "type": "gtceu:machine",
       "x": 270
     },
     "facing=up,upwards_facing=up": {
-      "model": "gtceu:block/machine/advanced_monitor"
+      "machine": "gtceu:advanced_monitor",
+      "replaceable_textures": [
+        "all"
+      ],
+      "variants": {
+        "": {
+          "model": "gtceu:block/machine_parts/2c8169844571de1aef170101"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=up,upwards_facing=west": {
-      "gtceu:z": 270,
-      "model": "gtceu:block/machine/advanced_monitor",
-      "x": 270
+      "machine": "gtceu:advanced_monitor",
+      "replaceable_textures": [
+        "all"
+      ],
+      "variants": {
+        "": {
+          "model": "gtceu:block/machine_parts/2c8169844571de1aef170101"
+        }
+      },
+      "type": "gtceu:machine",
+      "x": 270,
+      "z": 270
     },
     "facing=west,upwards_facing=down": {
-      "gtceu:z": 180,
-      "model": "gtceu:block/machine/advanced_monitor",
-      "y": 270
+      "machine": "gtceu:advanced_monitor",
+      "replaceable_textures": [
+        "all"
+      ],
+      "variants": {
+        "": {
+          "model": "gtceu:block/machine_parts/2c8169844571de1aef170101"
+        }
+      },
+      "type": "gtceu:machine",
+      "y": 270,
+      "z": 180
     },
     "facing=west,upwards_facing=east": {
-      "model": "gtceu:block/machine/advanced_monitor"
+      "machine": "gtceu:advanced_monitor",
+      "replaceable_textures": [
+        "all"
+      ],
+      "variants": {
+        "": {
+          "model": "gtceu:block/machine_parts/2c8169844571de1aef170101"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=west,upwards_facing=north": {
-      "gtceu:z": 90,
-      "model": "gtceu:block/machine/advanced_monitor",
-      "y": 270
+      "machine": "gtceu:advanced_monitor",
+      "replaceable_textures": [
+        "all"
+      ],
+      "variants": {
+        "": {
+          "model": "gtceu:block/machine_parts/2c8169844571de1aef170101"
+        }
+      },
+      "type": "gtceu:machine",
+      "y": 270,
+      "z": 90
     },
     "facing=west,upwards_facing=south": {
-      "gtceu:z": 270,
-      "model": "gtceu:block/machine/advanced_monitor",
-      "y": 270
+      "machine": "gtceu:advanced_monitor",
+      "replaceable_textures": [
+        "all"
+      ],
+      "variants": {
+        "": {
+          "model": "gtceu:block/machine_parts/2c8169844571de1aef170101"
+        }
+      },
+      "type": "gtceu:machine",
+      "y": 270,
+      "z": 270
     },
     "facing=west,upwards_facing=up": {
-      "model": "gtceu:block/machine/advanced_monitor",
+      "machine": "gtceu:advanced_monitor",
+      "replaceable_textures": [
+        "all"
+      ],
+      "variants": {
+        "": {
+          "model": "gtceu:block/machine_parts/2c8169844571de1aef170101"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     },
     "facing=west,upwards_facing=west": {
-      "model": "gtceu:block/machine/advanced_monitor"
+      "machine": "gtceu:advanced_monitor",
+      "replaceable_textures": [
+        "all"
+      ],
+      "variants": {
+        "": {
+          "model": "gtceu:block/machine_parts/2c8169844571de1aef170101"
+        }
+      },
+      "type": "gtceu:machine"
     }
   }
 }

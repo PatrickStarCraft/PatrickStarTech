@@ -1,18 +1,78 @@
 {
   "variants": {
     "facing=east": {
-      "model": "gtceu:block/machine/opv_thermal_centrifuge",
+      "machine": "gtceu:opv_thermal_centrifuge",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/5e429501b099b02692c9dc1e"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/3a7b1561a6f13ec998a403e8"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/3a81ba78cfaa3748440c4dcc"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/3a81ba78cfaa3748440c4dcc"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/opv_thermal_centrifuge"
+      "machine": "gtceu:opv_thermal_centrifuge",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/5e429501b099b02692c9dc1e"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/3a7b1561a6f13ec998a403e8"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/3a81ba78cfaa3748440c4dcc"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/3a81ba78cfaa3748440c4dcc"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/opv_thermal_centrifuge",
+      "machine": "gtceu:opv_thermal_centrifuge",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/5e429501b099b02692c9dc1e"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/3a7b1561a6f13ec998a403e8"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/3a81ba78cfaa3748440c4dcc"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/3a81ba78cfaa3748440c4dcc"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/opv_thermal_centrifuge",
+      "machine": "gtceu:opv_thermal_centrifuge",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/5e429501b099b02692c9dc1e"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/3a7b1561a6f13ec998a403e8"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/3a81ba78cfaa3748440c4dcc"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/3a81ba78cfaa3748440c4dcc"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

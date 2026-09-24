@@ -1,27 +1,165 @@
 {
   "variants": {
     "facing=down": {
-      "model": "gtceu:block/machine/iv_diode",
+      "machine": "gtceu:iv_diode",
+      "replaceable_textures": [
+        "bottom",
+        "top",
+        "side"
+      ],
+      "variants": {
+        "amp_mode=16a": {
+          "model": "gtceu:block/machine_parts/c027c1d5ef91142e8c388350"
+        },
+        "amp_mode=1a": {
+          "model": "gtceu:block/machine_parts/9dd3520d59e0a9a23ceecad5"
+        },
+        "amp_mode=2a": {
+          "model": "gtceu:block/machine_parts/b133a1f65696a72f64352c06"
+        },
+        "amp_mode=4a": {
+          "model": "gtceu:block/machine_parts/ad0b8f619d42b7cfbd91e860"
+        },
+        "amp_mode=8a": {
+          "model": "gtceu:block/machine_parts/58e28ced960a59645636824e"
+        }
+      },
+      "type": "gtceu:machine",
       "x": 90
     },
     "facing=east": {
-      "model": "gtceu:block/machine/iv_diode",
+      "machine": "gtceu:iv_diode",
+      "replaceable_textures": [
+        "bottom",
+        "top",
+        "side"
+      ],
+      "variants": {
+        "amp_mode=16a": {
+          "model": "gtceu:block/machine_parts/c027c1d5ef91142e8c388350"
+        },
+        "amp_mode=1a": {
+          "model": "gtceu:block/machine_parts/9dd3520d59e0a9a23ceecad5"
+        },
+        "amp_mode=2a": {
+          "model": "gtceu:block/machine_parts/b133a1f65696a72f64352c06"
+        },
+        "amp_mode=4a": {
+          "model": "gtceu:block/machine_parts/ad0b8f619d42b7cfbd91e860"
+        },
+        "amp_mode=8a": {
+          "model": "gtceu:block/machine_parts/58e28ced960a59645636824e"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/iv_diode"
+      "machine": "gtceu:iv_diode",
+      "replaceable_textures": [
+        "bottom",
+        "top",
+        "side"
+      ],
+      "variants": {
+        "amp_mode=16a": {
+          "model": "gtceu:block/machine_parts/c027c1d5ef91142e8c388350"
+        },
+        "amp_mode=1a": {
+          "model": "gtceu:block/machine_parts/9dd3520d59e0a9a23ceecad5"
+        },
+        "amp_mode=2a": {
+          "model": "gtceu:block/machine_parts/b133a1f65696a72f64352c06"
+        },
+        "amp_mode=4a": {
+          "model": "gtceu:block/machine_parts/ad0b8f619d42b7cfbd91e860"
+        },
+        "amp_mode=8a": {
+          "model": "gtceu:block/machine_parts/58e28ced960a59645636824e"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/iv_diode",
+      "machine": "gtceu:iv_diode",
+      "replaceable_textures": [
+        "bottom",
+        "top",
+        "side"
+      ],
+      "variants": {
+        "amp_mode=16a": {
+          "model": "gtceu:block/machine_parts/c027c1d5ef91142e8c388350"
+        },
+        "amp_mode=1a": {
+          "model": "gtceu:block/machine_parts/9dd3520d59e0a9a23ceecad5"
+        },
+        "amp_mode=2a": {
+          "model": "gtceu:block/machine_parts/b133a1f65696a72f64352c06"
+        },
+        "amp_mode=4a": {
+          "model": "gtceu:block/machine_parts/ad0b8f619d42b7cfbd91e860"
+        },
+        "amp_mode=8a": {
+          "model": "gtceu:block/machine_parts/58e28ced960a59645636824e"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=up": {
-      "gtceu:z": 180,
-      "model": "gtceu:block/machine/iv_diode",
-      "x": 270
+      "machine": "gtceu:iv_diode",
+      "replaceable_textures": [
+        "bottom",
+        "top",
+        "side"
+      ],
+      "variants": {
+        "amp_mode=16a": {
+          "model": "gtceu:block/machine_parts/c027c1d5ef91142e8c388350"
+        },
+        "amp_mode=1a": {
+          "model": "gtceu:block/machine_parts/9dd3520d59e0a9a23ceecad5"
+        },
+        "amp_mode=2a": {
+          "model": "gtceu:block/machine_parts/b133a1f65696a72f64352c06"
+        },
+        "amp_mode=4a": {
+          "model": "gtceu:block/machine_parts/ad0b8f619d42b7cfbd91e860"
+        },
+        "amp_mode=8a": {
+          "model": "gtceu:block/machine_parts/58e28ced960a59645636824e"
+        }
+      },
+      "type": "gtceu:machine",
+      "x": 270,
+      "z": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/iv_diode",
+      "machine": "gtceu:iv_diode",
+      "replaceable_textures": [
+        "bottom",
+        "top",
+        "side"
+      ],
+      "variants": {
+        "amp_mode=16a": {
+          "model": "gtceu:block/machine_parts/c027c1d5ef91142e8c388350"
+        },
+        "amp_mode=1a": {
+          "model": "gtceu:block/machine_parts/9dd3520d59e0a9a23ceecad5"
+        },
+        "amp_mode=2a": {
+          "model": "gtceu:block/machine_parts/b133a1f65696a72f64352c06"
+        },
+        "amp_mode=4a": {
+          "model": "gtceu:block/machine_parts/ad0b8f619d42b7cfbd91e860"
+        },
+        "amp_mode=8a": {
+          "model": "gtceu:block/machine_parts/58e28ced960a59645636824e"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

@@ -1,18 +1,78 @@
 {
   "variants": {
     "facing=east": {
-      "model": "gtceu:block/machine/uv_brewery",
+      "machine": "gtceu:uv_brewery",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/5291bf4f4b5f0c37229caae3"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/5291bf4f4b5f0c37229caae3"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/712c952c3bc99ede6fc309e5"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/712c952c3bc99ede6fc309e5"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/uv_brewery"
+      "machine": "gtceu:uv_brewery",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/5291bf4f4b5f0c37229caae3"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/5291bf4f4b5f0c37229caae3"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/712c952c3bc99ede6fc309e5"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/712c952c3bc99ede6fc309e5"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/uv_brewery",
+      "machine": "gtceu:uv_brewery",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/5291bf4f4b5f0c37229caae3"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/5291bf4f4b5f0c37229caae3"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/712c952c3bc99ede6fc309e5"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/712c952c3bc99ede6fc309e5"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/uv_brewery",
+      "machine": "gtceu:uv_brewery",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/5291bf4f4b5f0c37229caae3"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/5291bf4f4b5f0c37229caae3"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/712c952c3bc99ede6fc309e5"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/712c952c3bc99ede6fc309e5"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

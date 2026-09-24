@@ -1,18 +1,78 @@
 {
   "variants": {
     "facing=east": {
-      "model": "gtceu:block/machine/uv_laser_engraver",
+      "machine": "gtceu:uv_laser_engraver",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/6357c4759766ee80435019df"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/6357c4759766ee80435019df"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/41ce0def44d314ce2a67e943"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/41ce0def44d314ce2a67e943"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/uv_laser_engraver"
+      "machine": "gtceu:uv_laser_engraver",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/6357c4759766ee80435019df"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/6357c4759766ee80435019df"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/41ce0def44d314ce2a67e943"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/41ce0def44d314ce2a67e943"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/uv_laser_engraver",
+      "machine": "gtceu:uv_laser_engraver",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/6357c4759766ee80435019df"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/6357c4759766ee80435019df"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/41ce0def44d314ce2a67e943"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/41ce0def44d314ce2a67e943"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/uv_laser_engraver",
+      "machine": "gtceu:uv_laser_engraver",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/6357c4759766ee80435019df"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/6357c4759766ee80435019df"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/41ce0def44d314ce2a67e943"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/41ce0def44d314ce2a67e943"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

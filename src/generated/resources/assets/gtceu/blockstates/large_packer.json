@@ -1,150 +1,798 @@
 {
   "variants": {
     "facing=down,upwards_facing=down": {
-      "model": "gtceu:block/machine/large_packer"
+      "machine": "gtceu:large_packer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_robust_tungstensteel"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/adbdf93b700c35401e46dbe3"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/415caea6f46e225aa4ac825b"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=down,upwards_facing=east": {
-      "gtceu:z": 90,
-      "model": "gtceu:block/machine/large_packer",
-      "x": 90
+      "machine": "gtceu:large_packer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_robust_tungstensteel"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/adbdf93b700c35401e46dbe3"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/415caea6f46e225aa4ac825b"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        }
+      },
+      "type": "gtceu:machine",
+      "x": 90,
+      "z": 90
     },
     "facing=down,upwards_facing=north": {
-      "model": "gtceu:block/machine/large_packer",
+      "machine": "gtceu:large_packer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_robust_tungstensteel"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/adbdf93b700c35401e46dbe3"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/415caea6f46e225aa4ac825b"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        }
+      },
+      "type": "gtceu:machine",
       "x": 90
     },
     "facing=down,upwards_facing=south": {
-      "gtceu:z": 180,
-      "model": "gtceu:block/machine/large_packer",
-      "x": 90
+      "machine": "gtceu:large_packer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_robust_tungstensteel"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/adbdf93b700c35401e46dbe3"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/415caea6f46e225aa4ac825b"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        }
+      },
+      "type": "gtceu:machine",
+      "x": 90,
+      "z": 180
     },
     "facing=down,upwards_facing=up": {
-      "model": "gtceu:block/machine/large_packer"
+      "machine": "gtceu:large_packer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_robust_tungstensteel"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/adbdf93b700c35401e46dbe3"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/415caea6f46e225aa4ac825b"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=down,upwards_facing=west": {
-      "gtceu:z": 270,
-      "model": "gtceu:block/machine/large_packer",
-      "x": 90
+      "machine": "gtceu:large_packer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_robust_tungstensteel"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/adbdf93b700c35401e46dbe3"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/415caea6f46e225aa4ac825b"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        }
+      },
+      "type": "gtceu:machine",
+      "x": 90,
+      "z": 270
     },
     "facing=east,upwards_facing=down": {
-      "gtceu:z": 180,
-      "model": "gtceu:block/machine/large_packer",
-      "y": 90
+      "machine": "gtceu:large_packer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_robust_tungstensteel"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/adbdf93b700c35401e46dbe3"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/415caea6f46e225aa4ac825b"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        }
+      },
+      "type": "gtceu:machine",
+      "y": 90,
+      "z": 180
     },
     "facing=east,upwards_facing=east": {
-      "model": "gtceu:block/machine/large_packer"
+      "machine": "gtceu:large_packer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_robust_tungstensteel"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/adbdf93b700c35401e46dbe3"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/415caea6f46e225aa4ac825b"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=east,upwards_facing=north": {
-      "gtceu:z": 270,
-      "model": "gtceu:block/machine/large_packer",
-      "y": 90
+      "machine": "gtceu:large_packer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_robust_tungstensteel"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/adbdf93b700c35401e46dbe3"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/415caea6f46e225aa4ac825b"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        }
+      },
+      "type": "gtceu:machine",
+      "y": 90,
+      "z": 270
     },
     "facing=east,upwards_facing=south": {
-      "gtceu:z": 90,
-      "model": "gtceu:block/machine/large_packer",
-      "y": 90
+      "machine": "gtceu:large_packer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_robust_tungstensteel"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/adbdf93b700c35401e46dbe3"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/415caea6f46e225aa4ac825b"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        }
+      },
+      "type": "gtceu:machine",
+      "y": 90,
+      "z": 90
     },
     "facing=east,upwards_facing=up": {
-      "model": "gtceu:block/machine/large_packer",
+      "machine": "gtceu:large_packer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_robust_tungstensteel"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/adbdf93b700c35401e46dbe3"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/415caea6f46e225aa4ac825b"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=east,upwards_facing=west": {
-      "model": "gtceu:block/machine/large_packer"
+      "machine": "gtceu:large_packer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_robust_tungstensteel"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/adbdf93b700c35401e46dbe3"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/415caea6f46e225aa4ac825b"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=north,upwards_facing=down": {
-      "gtceu:z": 180,
-      "model": "gtceu:block/machine/large_packer"
+      "machine": "gtceu:large_packer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_robust_tungstensteel"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/adbdf93b700c35401e46dbe3"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/415caea6f46e225aa4ac825b"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        }
+      },
+      "type": "gtceu:machine",
+      "z": 180
     },
     "facing=north,upwards_facing=east": {
-      "gtceu:z": 90,
-      "model": "gtceu:block/machine/large_packer"
+      "machine": "gtceu:large_packer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_robust_tungstensteel"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/adbdf93b700c35401e46dbe3"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/415caea6f46e225aa4ac825b"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        }
+      },
+      "type": "gtceu:machine",
+      "z": 90
     },
     "facing=north,upwards_facing=north": {
-      "model": "gtceu:block/machine/large_packer"
+      "machine": "gtceu:large_packer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_robust_tungstensteel"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/adbdf93b700c35401e46dbe3"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/415caea6f46e225aa4ac825b"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=north,upwards_facing=south": {
-      "model": "gtceu:block/machine/large_packer"
+      "machine": "gtceu:large_packer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_robust_tungstensteel"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/adbdf93b700c35401e46dbe3"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/415caea6f46e225aa4ac825b"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=north,upwards_facing=up": {
-      "model": "gtceu:block/machine/large_packer"
+      "machine": "gtceu:large_packer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_robust_tungstensteel"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/adbdf93b700c35401e46dbe3"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/415caea6f46e225aa4ac825b"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=north,upwards_facing=west": {
-      "gtceu:z": 270,
-      "model": "gtceu:block/machine/large_packer"
+      "machine": "gtceu:large_packer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_robust_tungstensteel"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/adbdf93b700c35401e46dbe3"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/415caea6f46e225aa4ac825b"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        }
+      },
+      "type": "gtceu:machine",
+      "z": 270
     },
     "facing=south,upwards_facing=down": {
-      "gtceu:z": 180,
-      "model": "gtceu:block/machine/large_packer",
-      "y": 180
+      "machine": "gtceu:large_packer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_robust_tungstensteel"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/adbdf93b700c35401e46dbe3"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/415caea6f46e225aa4ac825b"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        }
+      },
+      "type": "gtceu:machine",
+      "y": 180,
+      "z": 180
     },
     "facing=south,upwards_facing=east": {
-      "gtceu:z": 270,
-      "model": "gtceu:block/machine/large_packer",
-      "y": 180
+      "machine": "gtceu:large_packer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_robust_tungstensteel"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/adbdf93b700c35401e46dbe3"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/415caea6f46e225aa4ac825b"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        }
+      },
+      "type": "gtceu:machine",
+      "y": 180,
+      "z": 270
     },
     "facing=south,upwards_facing=north": {
-      "model": "gtceu:block/machine/large_packer"
+      "machine": "gtceu:large_packer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_robust_tungstensteel"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/adbdf93b700c35401e46dbe3"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/415caea6f46e225aa4ac825b"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south,upwards_facing=south": {
-      "model": "gtceu:block/machine/large_packer"
+      "machine": "gtceu:large_packer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_robust_tungstensteel"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/adbdf93b700c35401e46dbe3"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/415caea6f46e225aa4ac825b"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south,upwards_facing=up": {
-      "model": "gtceu:block/machine/large_packer",
+      "machine": "gtceu:large_packer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_robust_tungstensteel"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/adbdf93b700c35401e46dbe3"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/415caea6f46e225aa4ac825b"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=south,upwards_facing=west": {
-      "gtceu:z": 90,
-      "model": "gtceu:block/machine/large_packer",
-      "y": 180
+      "machine": "gtceu:large_packer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_robust_tungstensteel"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/adbdf93b700c35401e46dbe3"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/415caea6f46e225aa4ac825b"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        }
+      },
+      "type": "gtceu:machine",
+      "y": 180,
+      "z": 90
     },
     "facing=up,upwards_facing=down": {
-      "model": "gtceu:block/machine/large_packer"
+      "machine": "gtceu:large_packer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_robust_tungstensteel"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/adbdf93b700c35401e46dbe3"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/415caea6f46e225aa4ac825b"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=up,upwards_facing=east": {
-      "gtceu:z": 90,
-      "model": "gtceu:block/machine/large_packer",
-      "x": 270
+      "machine": "gtceu:large_packer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_robust_tungstensteel"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/adbdf93b700c35401e46dbe3"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/415caea6f46e225aa4ac825b"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        }
+      },
+      "type": "gtceu:machine",
+      "x": 270,
+      "z": 90
     },
     "facing=up,upwards_facing=north": {
-      "gtceu:z": 180,
-      "model": "gtceu:block/machine/large_packer",
-      "x": 270
+      "machine": "gtceu:large_packer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_robust_tungstensteel"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/adbdf93b700c35401e46dbe3"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/415caea6f46e225aa4ac825b"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        }
+      },
+      "type": "gtceu:machine",
+      "x": 270,
+      "z": 180
     },
     "facing=up,upwards_facing=south": {
-      "model": "gtceu:block/machine/large_packer",
+      "machine": "gtceu:large_packer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_robust_tungstensteel"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/adbdf93b700c35401e46dbe3"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/415caea6f46e225aa4ac825b"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        }
+      },
+      "type": "gtceu:machine",
       "x": 270
     },
     "facing=up,upwards_facing=up": {
-      "model": "gtceu:block/machine/large_packer"
+      "machine": "gtceu:large_packer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_robust_tungstensteel"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/adbdf93b700c35401e46dbe3"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/415caea6f46e225aa4ac825b"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=up,upwards_facing=west": {
-      "gtceu:z": 270,
-      "model": "gtceu:block/machine/large_packer",
-      "x": 270
+      "machine": "gtceu:large_packer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_robust_tungstensteel"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/adbdf93b700c35401e46dbe3"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/415caea6f46e225aa4ac825b"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        }
+      },
+      "type": "gtceu:machine",
+      "x": 270,
+      "z": 270
     },
     "facing=west,upwards_facing=down": {
-      "gtceu:z": 180,
-      "model": "gtceu:block/machine/large_packer",
-      "y": 270
+      "machine": "gtceu:large_packer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_robust_tungstensteel"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/adbdf93b700c35401e46dbe3"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/415caea6f46e225aa4ac825b"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        }
+      },
+      "type": "gtceu:machine",
+      "y": 270,
+      "z": 180
     },
     "facing=west,upwards_facing=east": {
-      "model": "gtceu:block/machine/large_packer"
+      "machine": "gtceu:large_packer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_robust_tungstensteel"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/adbdf93b700c35401e46dbe3"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/415caea6f46e225aa4ac825b"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=west,upwards_facing=north": {
-      "gtceu:z": 90,
-      "model": "gtceu:block/machine/large_packer",
-      "y": 270
+      "machine": "gtceu:large_packer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_robust_tungstensteel"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/adbdf93b700c35401e46dbe3"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/415caea6f46e225aa4ac825b"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        }
+      },
+      "type": "gtceu:machine",
+      "y": 270,
+      "z": 90
     },
     "facing=west,upwards_facing=south": {
-      "gtceu:z": 270,
-      "model": "gtceu:block/machine/large_packer",
-      "y": 270
+      "machine": "gtceu:large_packer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_robust_tungstensteel"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/adbdf93b700c35401e46dbe3"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/415caea6f46e225aa4ac825b"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        }
+      },
+      "type": "gtceu:machine",
+      "y": 270,
+      "z": 270
     },
     "facing=west,upwards_facing=up": {
-      "model": "gtceu:block/machine/large_packer",
+      "machine": "gtceu:large_packer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_robust_tungstensteel"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/adbdf93b700c35401e46dbe3"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/415caea6f46e225aa4ac825b"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     },
     "facing=west,upwards_facing=west": {
-      "model": "gtceu:block/machine/large_packer"
+      "machine": "gtceu:large_packer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_robust_tungstensteel"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/adbdf93b700c35401e46dbe3"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/415caea6f46e225aa4ac825b"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/5437e4850c34f1a483e70ec6"
+        }
+      },
+      "type": "gtceu:machine"
     }
   }
 }

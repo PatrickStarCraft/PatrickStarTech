@@ -1,18 +1,78 @@
 {
   "variants": {
     "facing=east": {
-      "model": "gtceu:block/machine/uhv_wiremill",
+      "machine": "gtceu:uhv_wiremill",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/7557637ebe5aa9acfe562c81"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/6f6e5857fd5e86076207b0f4"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/bdc3a0e4077cc8cd679bb975"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/bdc3a0e4077cc8cd679bb975"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/uhv_wiremill"
+      "machine": "gtceu:uhv_wiremill",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/7557637ebe5aa9acfe562c81"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/6f6e5857fd5e86076207b0f4"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/bdc3a0e4077cc8cd679bb975"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/bdc3a0e4077cc8cd679bb975"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/uhv_wiremill",
+      "machine": "gtceu:uhv_wiremill",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/7557637ebe5aa9acfe562c81"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/6f6e5857fd5e86076207b0f4"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/bdc3a0e4077cc8cd679bb975"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/bdc3a0e4077cc8cd679bb975"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/uhv_wiremill",
+      "machine": "gtceu:uhv_wiremill",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/7557637ebe5aa9acfe562c81"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/6f6e5857fd5e86076207b0f4"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/bdc3a0e4077cc8cd679bb975"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/bdc3a0e4077cc8cd679bb975"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

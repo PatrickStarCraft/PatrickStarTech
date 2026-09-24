@@ -1,7 +1,34 @@
 {
   "variants": {
     "": {
-      "model": "gtceu:block/machine/uv_world_accelerator"
+      "machine": "gtceu:uv_world_accelerator",
+      "variants": {
+        "active=false,random_tick_mode=false,working_enabled=false": {
+          "model": "gtceu:block/machine_parts/1e7ebbd049a6ec9ecabab420"
+        },
+        "active=false,random_tick_mode=false,working_enabled=true": {
+          "model": "gtceu:block/machine_parts/1e7ebbd049a6ec9ecabab420"
+        },
+        "active=false,random_tick_mode=true,working_enabled=false": {
+          "model": "gtceu:block/machine_parts/9cea759475fde5c9b82fbecf"
+        },
+        "active=false,random_tick_mode=true,working_enabled=true": {
+          "model": "gtceu:block/machine_parts/9cea759475fde5c9b82fbecf"
+        },
+        "active=true,random_tick_mode=false,working_enabled=false": {
+          "model": "gtceu:block/machine_parts/1e7ebbd049a6ec9ecabab420"
+        },
+        "active=true,random_tick_mode=false,working_enabled=true": {
+          "model": "gtceu:block/machine_parts/274ef5164f43418180e88c0f"
+        },
+        "active=true,random_tick_mode=true,working_enabled=false": {
+          "model": "gtceu:block/machine_parts/9cea759475fde5c9b82fbecf"
+        },
+        "active=true,random_tick_mode=true,working_enabled=true": {
+          "model": "gtceu:block/machine_parts/1370e9b3e5bbbe176a121cd4"
+        }
+      },
+      "type": "gtceu:machine"
     }
   }
 }

@@ -1,27 +1,93 @@
 {
   "variants": {
     "facing=down": {
-      "model": "gtceu:block/machine/hv_machine_hull",
+      "machine": "gtceu:hv_machine_hull",
+      "replaceable_textures": [
+        "bottom",
+        "top",
+        "side"
+      ],
+      "variants": {
+        "": {
+          "model": "gtceu:block/machine_parts/0ddb0527cc5fbbdbf7b13342"
+        }
+      },
+      "type": "gtceu:machine",
       "x": 90
     },
     "facing=east": {
-      "model": "gtceu:block/machine/hv_machine_hull",
+      "machine": "gtceu:hv_machine_hull",
+      "replaceable_textures": [
+        "bottom",
+        "top",
+        "side"
+      ],
+      "variants": {
+        "": {
+          "model": "gtceu:block/machine_parts/0ddb0527cc5fbbdbf7b13342"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/hv_machine_hull"
+      "machine": "gtceu:hv_machine_hull",
+      "replaceable_textures": [
+        "bottom",
+        "top",
+        "side"
+      ],
+      "variants": {
+        "": {
+          "model": "gtceu:block/machine_parts/0ddb0527cc5fbbdbf7b13342"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/hv_machine_hull",
+      "machine": "gtceu:hv_machine_hull",
+      "replaceable_textures": [
+        "bottom",
+        "top",
+        "side"
+      ],
+      "variants": {
+        "": {
+          "model": "gtceu:block/machine_parts/0ddb0527cc5fbbdbf7b13342"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=up": {
-      "gtceu:z": 180,
-      "model": "gtceu:block/machine/hv_machine_hull",
-      "x": 270
+      "machine": "gtceu:hv_machine_hull",
+      "replaceable_textures": [
+        "bottom",
+        "top",
+        "side"
+      ],
+      "variants": {
+        "": {
+          "model": "gtceu:block/machine_parts/0ddb0527cc5fbbdbf7b13342"
+        }
+      },
+      "type": "gtceu:machine",
+      "x": 270,
+      "z": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/hv_machine_hull",
+      "machine": "gtceu:hv_machine_hull",
+      "replaceable_textures": [
+        "bottom",
+        "top",
+        "side"
+      ],
+      "variants": {
+        "": {
+          "model": "gtceu:block/machine_parts/0ddb0527cc5fbbdbf7b13342"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

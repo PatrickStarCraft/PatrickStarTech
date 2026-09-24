@@ -12,7 +12,6 @@ import com.gregtechceu.gtceu.api.item.IGTTool;
 import com.gregtechceu.gtceu.client.color.item.GTMaterialPartTintSource;
 import com.gregtechceu.gtceu.client.color.FluidCellTintSource;
 import com.gregtechceu.gtceu.client.color.MaterialLayerTintSource;
-import com.gregtechceu.gtceu.client.model.machine.MachineModelLoader;
 import com.gregtechceu.gtceu.client.model.pipe.PipeModel;
 import com.gregtechceu.gtceu.client.model.runtimegen.*;
 import com.gregtechceu.gtceu.client.particle.GTParticleManager;
@@ -42,7 +41,6 @@ import com.gregtechceu.gtceu.common.mui.GTGuiTheme;
 import com.gregtechceu.gtceu.config.ConfigHolder;
 import com.gregtechceu.gtceu.data.model.builder.PipeModelBuilder;
 import com.gregtechceu.gtceu.data.pack.event.RegisterDynamicResourcesEvent;
-import com.gregtechceu.gtceu.integration.embeddium.GTEmbeddiumCompat;
 import com.gregtechceu.gtceu.integration.kjs.GregTechKubeJSPlugin;
 import com.gregtechceu.gtceu.integration.modernfix.GTModernFixIntegration;
 import com.gregtechceu.gtceu.integration.map.ClientCacheManager;
@@ -106,9 +104,6 @@ public class ClientProxy extends CommonProxy {
             Layers.registerLayer(FluidRenderLayer::new, "bedrock_fluids");
             CommonEventListener.registerCapes(new RegisterGTCapesEvent());
 
-            if (GTCEu.Mods.isSodiumEmbeddiumLoaded()) {
-                GTEmbeddiumCompat.init();
-            }
         }
         initializeDynamicRenders();
         ModelEventHelper.initInternalAssetReloadListeners();
@@ -238,11 +233,6 @@ public class ClientProxy extends CommonProxy {
         DynamicRenderManager.register(GTCEu.id("growing_plant"), GrowingPlantRender.TYPE);
 
         DynamicRenderManager.register(GTCEu.id("central_monitor"), CentralMonitorRender.TYPE);
-    }
-
-    @SubscribeEvent
-    public void onRegisterModelLoaders(ModelEvent.RegisterLoaders event) {
-        event.register(MachineModelLoader.ID, MachineModelLoader.INSTANCE);
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)

@@ -9,6 +9,7 @@ import com.gregtechceu.gtceu.client.model.ctm.CTMModelPartSource;
 import com.gregtechceu.gtceu.client.model.item.FacadeBlockStateModel;
 import com.gregtechceu.gtceu.client.model.quad.StaticFaceBakery;
 import com.gregtechceu.gtceu.client.renderer.machine.DynamicRender;
+import com.gregtechceu.gtceu.core.util.extensions.BakedQuadExt;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
@@ -24,7 +25,9 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.client.model.DynamicBlockStateModel;
 import net.neoforged.neoforge.model.data.ModelData;
+import com.mojang.math.OctahedralGroup;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3f;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -56,6 +59,7 @@ public final class MachineBlockStateModel implements DynamicBlockStateModel, Mac
     private final TextureAtlasSprite itemOutputOverlaySprite;
     private final FacadeBlockStateModel facadeModel;
     private final CoverBlockStateModel coverModel = new CoverBlockStateModel();
+    private final OctahedralGroup blockRotation;
 
     public MachineBlockStateModel(MachineDefinition definition,
                                   Map<MachineRenderState, BlockStateModel> variants,
@@ -66,7 +70,8 @@ public final class MachineBlockStateModel implements DynamicBlockStateModel, Mac
                                   TextureAtlasSprite pipeOverlaySprite,
                                   TextureAtlasSprite fluidOutputOverlaySprite,
                                   TextureAtlasSprite itemOutputOverlaySprite,
-                                  FacadeBlockStateModel facadeModel) {
+                                  FacadeBlockStateModel facadeModel,
+                                  OctahedralGroup blockRotation) {
         this.definition = definition;
         IdentityHashMap<MachineRenderState, BlockStateModel> identityVariants = new IdentityHashMap<>();
         identityVariants.putAll(variants);
@@ -79,6 +84,7 @@ public final class MachineBlockStateModel implements DynamicBlockStateModel, Mac
         this.fluidOutputOverlaySprite = fluidOutputOverlaySprite;
         this.itemOutputOverlaySprite = itemOutputOverlaySprite;
         this.facadeModel = facadeModel;
+        this.blockRotation = blockRotation;
         this.dynamicRenders.forEach(render -> render.setParent(this));
     }
 
@@ -121,6 +127,7 @@ public final class MachineBlockStateModel implements DynamicBlockStateModel, Mac
     @Override
     public void collectParts(BlockAndTintGetter level, BlockPos pos, BlockState state,
                              RandomSource random, List<BlockStateModelPart> output) {
+        int firstPart = output.size();
         MachineRenderState machineState = getMachineState(level, pos);
         long seed = random.nextLong();
 
@@ -133,6 +140,12 @@ public final class MachineBlockStateModel implements DynamicBlockStateModel, Mac
         BlockStateModel variant = this.getVariant(machineState);
         if (variant != null) {
             variant.collectParts(level, pos, state, RandomSource.create(seed), output);
+        }
+
+        if (this.blockRotation != OctahedralGroup.IDENTITY) {
+            for (int i = firstPart; i < output.size(); i++) {
+                output.set(i, new RotatedPart(output.get(i), this.blockRotation));
+            }
         }
 
         for (ControllerPartSelection selection : this.collectControllerPartSelections(
@@ -148,6 +161,7 @@ public final class MachineBlockStateModel implements DynamicBlockStateModel, Mac
 
     @Override
     public void collectConnectedTextureCandidates(RandomSource random, List<BlockStateModelPart> output) {
+        int firstPart = output.size();
         long seed = random.nextLong();
         Set<BlockStateModel> seen = Collections.newSetFromMap(new IdentityHashMap<>());
         for (MultipartPart part : this.multipart) {
@@ -155,6 +169,11 @@ public final class MachineBlockStateModel implements DynamicBlockStateModel, Mac
         }
         for (BlockStateModel variant : this.variants.values()) {
             if (seen.add(variant)) collectTextureCandidates(variant, seed, output);
+        }
+        if (this.blockRotation != OctahedralGroup.IDENTITY) {
+            for (int i = firstPart; i < output.size(); i++) {
+                output.set(i, new RotatedPart(output.get(i), this.blockRotation));
+            }
         }
     }
 
@@ -166,6 +185,37 @@ public final class MachineBlockStateModel implements DynamicBlockStateModel, Mac
         } else {
             model.collectParts(random, output);
         }
+    }
+
+    /** Applies the same centered, discrete rotation used by vanilla block model variants. */
+    private record RotatedPart(BlockStateModelPart original, OctahedralGroup rotation) implements BlockStateModelPart {
+        @Override
+        public List<BakedQuad> getQuads(@Nullable Direction direction) {
+            Direction source = direction == null ? null : this.rotation.inverse().rotate(direction);
+            List<BakedQuad> quads = this.original.getQuads(source);
+            if (quads.isEmpty()) return quads;
+            return quads.stream().map(this::rotate).toList();
+        }
+
+        private BakedQuad rotate(BakedQuad quad) {
+            Vector3f[] positions = new Vector3f[BakedQuad.VERTEX_COUNT];
+            for (int i = 0; i < positions.length; i++) {
+                positions[i] = new Vector3f(quad.position(i)).sub(8.0F, 8.0F, 8.0F);
+                this.rotation.transformation().transform(positions[i]);
+                positions[i].add(8.0F, 8.0F, 8.0F);
+            }
+            BakedQuad rotated = new BakedQuad(positions[0], positions[1], positions[2], positions[3],
+                    quad.packedUV(0), quad.packedUV(1), quad.packedUV(2), quad.packedUV(3),
+                    this.rotation.rotate(quad.direction()), quad.materialInfo());
+            if ((Object) quad instanceof BakedQuadExt source) {
+                ((BakedQuadExt) (Object) rotated).gtceu$setTextureKey(source.gtceu$getTextureKey());
+            }
+            return rotated;
+        }
+
+        @Override public boolean useAmbientOcclusion() { return this.original.useAmbientOcclusion(); }
+        @Override public Material.Baked particleMaterial() { return this.original.particleMaterial(); }
+        @Override public @BakedQuad.MaterialFlags int materialFlags() { return this.original.materialFlags(); }
     }
 
     @Override
@@ -192,7 +242,8 @@ public final class MachineBlockStateModel implements DynamicBlockStateModel, Mac
         MachineOutputRenderState outputState = getOutputState(level, pos);
         Object facadeKey = this.facadeModel.createGeometryKey(level, pos, state, RandomSource.create(seed));
         Object coverKey = this.coverModel.geometryKey(level, pos);
-        return new GeometryKey(this.definition, machineState, outputState, variantKey, List.copyOf(multipartKeys),
+        return new GeometryKey(this.definition, machineState, outputState, this.blockRotation, variantKey,
+                List.copyOf(multipartKeys),
                 controllerPartKeys, facadeKey, coverKey);
     }
 
@@ -395,7 +446,7 @@ public final class MachineBlockStateModel implements DynamicBlockStateModel, Mac
     private record ControllerPartKey(int descriptorIndex, Object geometryKey) {}
 
     private record GeometryKey(MachineDefinition definition, MachineRenderState machineState,
-                               MachineOutputRenderState outputState, Object variantKey,
+                               MachineOutputRenderState outputState, OctahedralGroup blockRotation, Object variantKey,
                                List<PartGeometryKey> multipartKeys, List<ControllerPartKey> controllerPartKeys,
                                Object facadeKey, Object coverKey) {}
 

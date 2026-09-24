@@ -1,18 +1,158 @@
 {
   "variants": {
     "facing=east": {
-      "model": "gtceu:block/machine/hp_steam_solar_boiler",
+      "machine": "gtceu:hp_steam_solar_boiler",
+      "multipart": [
+        {
+          "apply": {
+            "model": "gtceu:block/machine_parts/62511c10efcde0fb77970f08"
+          },
+          "when": {
+            "recipe_logic_status": "idle"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/machine_parts/6f1986bfe44b8013aebee675"
+          },
+          "when": {
+            "recipe_logic_status": "working"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/machine_parts/6f1986bfe44b8013aebee675"
+          },
+          "when": {
+            "recipe_logic_status": "waiting"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/machine_parts/62511c10efcde0fb77970f08"
+          },
+          "when": {
+            "recipe_logic_status": "suspend"
+          }
+        }
+      ],
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/hp_steam_solar_boiler"
+      "machine": "gtceu:hp_steam_solar_boiler",
+      "multipart": [
+        {
+          "apply": {
+            "model": "gtceu:block/machine_parts/62511c10efcde0fb77970f08"
+          },
+          "when": {
+            "recipe_logic_status": "idle"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/machine_parts/6f1986bfe44b8013aebee675"
+          },
+          "when": {
+            "recipe_logic_status": "working"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/machine_parts/6f1986bfe44b8013aebee675"
+          },
+          "when": {
+            "recipe_logic_status": "waiting"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/machine_parts/62511c10efcde0fb77970f08"
+          },
+          "when": {
+            "recipe_logic_status": "suspend"
+          }
+        }
+      ],
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/hp_steam_solar_boiler",
+      "machine": "gtceu:hp_steam_solar_boiler",
+      "multipart": [
+        {
+          "apply": {
+            "model": "gtceu:block/machine_parts/62511c10efcde0fb77970f08"
+          },
+          "when": {
+            "recipe_logic_status": "idle"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/machine_parts/6f1986bfe44b8013aebee675"
+          },
+          "when": {
+            "recipe_logic_status": "working"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/machine_parts/6f1986bfe44b8013aebee675"
+          },
+          "when": {
+            "recipe_logic_status": "waiting"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/machine_parts/62511c10efcde0fb77970f08"
+          },
+          "when": {
+            "recipe_logic_status": "suspend"
+          }
+        }
+      ],
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/hp_steam_solar_boiler",
+      "machine": "gtceu:hp_steam_solar_boiler",
+      "multipart": [
+        {
+          "apply": {
+            "model": "gtceu:block/machine_parts/62511c10efcde0fb77970f08"
+          },
+          "when": {
+            "recipe_logic_status": "idle"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/machine_parts/6f1986bfe44b8013aebee675"
+          },
+          "when": {
+            "recipe_logic_status": "working"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/machine_parts/6f1986bfe44b8013aebee675"
+          },
+          "when": {
+            "recipe_logic_status": "waiting"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/machine_parts/62511c10efcde0fb77970f08"
+          },
+          "when": {
+            "recipe_logic_status": "suspend"
+          }
+        }
+      ],
+      "type": "gtceu:machine",
       "y": 270
     }
   }

@@ -1,18 +1,78 @@
 {
   "variants": {
     "facing=east": {
-      "model": "gtceu:block/machine/uev_polarizer",
+      "machine": "gtceu:uev_polarizer",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/dd97e10b05610773cf37dc25"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/7b84fd9594f2108714d11ff0"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/8208d6c52a19951268fcaa43"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/8208d6c52a19951268fcaa43"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/uev_polarizer"
+      "machine": "gtceu:uev_polarizer",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/dd97e10b05610773cf37dc25"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/7b84fd9594f2108714d11ff0"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/8208d6c52a19951268fcaa43"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/8208d6c52a19951268fcaa43"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/uev_polarizer",
+      "machine": "gtceu:uev_polarizer",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/dd97e10b05610773cf37dc25"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/7b84fd9594f2108714d11ff0"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/8208d6c52a19951268fcaa43"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/8208d6c52a19951268fcaa43"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/uev_polarizer",
+      "machine": "gtceu:uev_polarizer",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/dd97e10b05610773cf37dc25"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/7b84fd9594f2108714d11ff0"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/8208d6c52a19951268fcaa43"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/8208d6c52a19951268fcaa43"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

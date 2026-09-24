@@ -1,27 +1,117 @@
 {
   "variants": {
     "facing=down": {
-      "model": "gtceu:block/machine/hpca_advanced_computation_component",
+      "machine": "gtceu:hpca_advanced_computation_component",
+      "variants": {
+        "active=false,hpca_part_damaged=false": {
+          "model": "gtceu:block/machine_parts/9bc86765b03fb8b0d90f825f"
+        },
+        "active=false,hpca_part_damaged=true": {
+          "model": "gtceu:block/machine_parts/1d551464649d44c2f7e18bfb"
+        },
+        "active=true,hpca_part_damaged=false": {
+          "model": "gtceu:block/machine_parts/e4680edb44e5a1f3af4611e1"
+        },
+        "active=true,hpca_part_damaged=true": {
+          "model": "gtceu:block/machine_parts/8c7df071105959eb568ad7fc"
+        }
+      },
+      "type": "gtceu:machine",
       "x": 90
     },
     "facing=east": {
-      "model": "gtceu:block/machine/hpca_advanced_computation_component",
+      "machine": "gtceu:hpca_advanced_computation_component",
+      "variants": {
+        "active=false,hpca_part_damaged=false": {
+          "model": "gtceu:block/machine_parts/9bc86765b03fb8b0d90f825f"
+        },
+        "active=false,hpca_part_damaged=true": {
+          "model": "gtceu:block/machine_parts/1d551464649d44c2f7e18bfb"
+        },
+        "active=true,hpca_part_damaged=false": {
+          "model": "gtceu:block/machine_parts/e4680edb44e5a1f3af4611e1"
+        },
+        "active=true,hpca_part_damaged=true": {
+          "model": "gtceu:block/machine_parts/8c7df071105959eb568ad7fc"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/hpca_advanced_computation_component"
+      "machine": "gtceu:hpca_advanced_computation_component",
+      "variants": {
+        "active=false,hpca_part_damaged=false": {
+          "model": "gtceu:block/machine_parts/9bc86765b03fb8b0d90f825f"
+        },
+        "active=false,hpca_part_damaged=true": {
+          "model": "gtceu:block/machine_parts/1d551464649d44c2f7e18bfb"
+        },
+        "active=true,hpca_part_damaged=false": {
+          "model": "gtceu:block/machine_parts/e4680edb44e5a1f3af4611e1"
+        },
+        "active=true,hpca_part_damaged=true": {
+          "model": "gtceu:block/machine_parts/8c7df071105959eb568ad7fc"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/hpca_advanced_computation_component",
+      "machine": "gtceu:hpca_advanced_computation_component",
+      "variants": {
+        "active=false,hpca_part_damaged=false": {
+          "model": "gtceu:block/machine_parts/9bc86765b03fb8b0d90f825f"
+        },
+        "active=false,hpca_part_damaged=true": {
+          "model": "gtceu:block/machine_parts/1d551464649d44c2f7e18bfb"
+        },
+        "active=true,hpca_part_damaged=false": {
+          "model": "gtceu:block/machine_parts/e4680edb44e5a1f3af4611e1"
+        },
+        "active=true,hpca_part_damaged=true": {
+          "model": "gtceu:block/machine_parts/8c7df071105959eb568ad7fc"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=up": {
-      "gtceu:z": 180,
-      "model": "gtceu:block/machine/hpca_advanced_computation_component",
-      "x": 270
+      "machine": "gtceu:hpca_advanced_computation_component",
+      "variants": {
+        "active=false,hpca_part_damaged=false": {
+          "model": "gtceu:block/machine_parts/9bc86765b03fb8b0d90f825f"
+        },
+        "active=false,hpca_part_damaged=true": {
+          "model": "gtceu:block/machine_parts/1d551464649d44c2f7e18bfb"
+        },
+        "active=true,hpca_part_damaged=false": {
+          "model": "gtceu:block/machine_parts/e4680edb44e5a1f3af4611e1"
+        },
+        "active=true,hpca_part_damaged=true": {
+          "model": "gtceu:block/machine_parts/8c7df071105959eb568ad7fc"
+        }
+      },
+      "type": "gtceu:machine",
+      "x": 270,
+      "z": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/hpca_advanced_computation_component",
+      "machine": "gtceu:hpca_advanced_computation_component",
+      "variants": {
+        "active=false,hpca_part_damaged=false": {
+          "model": "gtceu:block/machine_parts/9bc86765b03fb8b0d90f825f"
+        },
+        "active=false,hpca_part_damaged=true": {
+          "model": "gtceu:block/machine_parts/1d551464649d44c2f7e18bfb"
+        },
+        "active=true,hpca_part_damaged=false": {
+          "model": "gtceu:block/machine_parts/e4680edb44e5a1f3af4611e1"
+        },
+        "active=true,hpca_part_damaged=true": {
+          "model": "gtceu:block/machine_parts/8c7df071105959eb568ad7fc"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }
