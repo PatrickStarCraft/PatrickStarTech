@@ -17,8 +17,4 @@ public abstract class LevelRendererMixin {
         BloomShaderManager.resizeTargets(width, height);
     }
 
-    @Inject(method = "graphicsChanged", at = @At(value = "HEAD"))
-    private void gtceu$reinitBloomEffect(CallbackInfo ci) {
-        BloomShaderManager.initPostShaders();
-    }
 }

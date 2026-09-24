@@ -1,5 +1,17 @@
 # Client Port Integration Requests
 
+## Current client-side readiness (2026-09-24)
+
+These are implementation states, not claims that the shared changes have landed. The requests below retain the exact outside method, schema, lifecycle, and evidence.
+
+| State | Requests | Client-side condition |
+| --- | --- | --- |
+| Ready to wire | 1–5, 7–9, 11, 14, 16–20, 22–23, 24 | Owned target consumer or replacement exists; the named shared registration, producer, resource, or mixin change still needs integrated verification. For 17–20 and 22, runtime appearance remains untested. |
+| Partial; do not enable universal path yet | 10, 12, 25 | Pipe and machine target codecs/consumers exist, but generated definitions and immutable model-data publication must match their schemas. Machine custom monitor placeholders still lack a complete snapshot-provider bridge. The GUI hook is migrated, while the shared cape caller and mixin JSON still need changes. |
+| Design or dependency blocker | 6, 13, 15, 21 | ModernFix dynamic-resource hook, external `gtceu:bloom` compatibility, pinned old Embeddium API, and active-pipe per-face emission need exact compatible contracts. |
+
+Legacy facade and pipe loaders remain live in `ClientProxy`, generated model JSON, and their callers. Keep them until requests 10, 17, 19, 21, and 22 switch the relevant producers; do not run the old and target renderers for the same content.
+
 ## Open requests
 
 ### 1. Register particle-count debug entry
@@ -246,6 +258,20 @@
 - **Evidence/impact:** Patched MC 26.2 `SectionCompiler.compile` calls NeoForge additional section renderers with the live `ModelBlockRenderer` and region; NeoForge `AddSectionGeometryEvent` documents the worker-thread callback, and `SubmitCustomGeometryEvent` provides visible sections plus the frame collector. `build/friend-client-port-bloom-section-geometry-verify2.log` reports 718 global / 370 exact-owned diagnostics with no errors in the replacement bloom classes. Until the config entries are removed, game launch may fail while resolving the deleted mixin classes; runtime launch was not attempted per the handoff.
 - **Blocks:** client startup/mixin application if the stale config entries remain; Java compilation itself is unaffected.
 - **Owned implementation:** `client/bloom/BloomChunkGeometry.java`, `client/bloom/BloomRenderer.java`, and `client/bloom/BloomEventListeners.java`.
+
+### 24. Remove two obsolete required model and bloom mixin registrations
+
+- **File:** `src/main/resources/gtceu.mixins.json`, entries `client.ModelBakerImplMixin` and `client.bloom.normal.RenderTypeMixin` (shared owner).
+- **Current evidence:** The patched 26.2 `ModelBakery$ModelBakerImpl` has `missingBlockModelPart`, `materials`, `interner`, `getModel`, and `compute`; it has no `bake(Identifier, ModelState, Function): BakedModel` method targeted by the owned mixin. The patched `rendertype.RenderType` has no static `ImmutableList.of` chunk-layer initialization targeted by `RenderTypeMixin`. Both entries are currently in a `required: true` config with `defaultRequire: 1`, so startup cannot safely apply them. `SpriteFunctionWrapper` feeds only `ModelEventHelper.SCRAPED_TEXTURES`, which has no read path in the current source. Static bloom uses `BloomChunkGeometry` and the target registered render pipeline instead of adding a chunk render layer.
+- **Required change:** Remove the two exact JSON registrations after confirming no external consumer depends on the unused scraped-texture map. The owned Java mixin sources can then be retired in the client checkout; keep the target `FaceBakeryMixin`, CTM model discovery, and section-geometry bloom registration. Do not weaken injection requirements to conceal stale targets.
+- **Status:** Ready for the shared JSON edit; owned source retirement remains pending that edit. Target declarations checked in `minecraft-patched-26.2.0.88-sources.jar`. Runtime launch has not run.
+
+### 25. Replace required GUI and player-skin mixin targets
+
+- **Files:** Shared `src/main/java/com/gregtechceu/gtceu/client/ClientEventListener.java#onPlayerRender` and `src/main/resources/gtceu.mixins.json`; owned `core/mixins/client/GuiGraphicsMixin.java`, `PlayerInfoAccessor.java`, `client/renderer/item/ToolChargeBarRenderer.java`, and `client/util/RenderUtil.java`.
+- **Current evidence:** The owned `GuiGraphicsMixin` now wraps the exact 26.2 `item` and tooltip scheduling overloads, while `ToolChargeBarRenderer` submits ordered extractor fill/gradient commands. The removed `GuiGraphicsAccessor` had no remaining caller after that migration; its Java source is deleted but its JSON registration remains. The patched `PlayerInfo` has no `textureLocations` field, while shared `ClientEventListener#onPlayerRender` still mutates that old cape map through `PlayerInfoAccessor`. The integrated diagnostic compile reached javac at 718 global / 370 exact-owned errors, with no new errors in the GUI edits; this does not validate mixin application or visuals.
+- **Required shared change:** Remove the exact `client.GuiGraphicsAccessor` entry from `gtceu.mixins.json`. Migrate `ClientEventListener#onPlayerRender` cape override through the 26.2 player skin cache/render route, then retire or replace `PlayerInfoAccessor` and its JSON entry. Preserve cape selection and the owned research item, tooltip, and charge-bar behaviors; do not disable the latter to make startup pass.
+- **Status:** GUI owned half is ready for mixin-config integration; cape route remains design/integration work. No runtime GUI or skin checks ran. Tooltip scheduling and bar layering require visual verification after the global build is repaired.
 
 ## Resolved
 

@@ -82,6 +82,8 @@ final class BloomChunkGeometry {
     }
 
     static void addSectionRenderer(AddSectionGeometryEvent event) {
+        Minecraft minecraft = Minecraft.getInstance();
+        if (event.getLevel() != minecraft.level) return;
         SectionPos section = SectionPos.of(event.getSectionOrigin());
         BuildToken token = beginRebuild(section);
         if (!BloomShaderManager.isBloomActive()) {
@@ -89,11 +91,11 @@ final class BloomChunkGeometry {
             return;
         }
 
+        var modelSet = minecraft.getModelManager().getBlockStateModelSet();
         event.addRenderer(context -> {
             Builder builder = new Builder();
             BlockAndTintGetter region = context.getRegion();
             ModelBlockRenderer renderer = context.getBlockRenderer();
-            var modelSet = Minecraft.getInstance().getModelManager().getBlockStateModelSet();
             BlockPos min = section.origin();
             BlockPos max = min.offset(15, 15, 15);
             BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();

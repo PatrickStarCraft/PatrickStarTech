@@ -11,6 +11,7 @@ import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.util.profiling.Profiler;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.client.event.ClientResourceLoadFinishedEvent;
 import net.neoforged.neoforge.client.event.AddClientReloadListenersEvent;
 import net.neoforged.neoforge.client.event.AddSectionGeometryEvent;
 import net.neoforged.neoforge.client.event.RenderFrameEvent;
@@ -25,6 +26,8 @@ import lombok.experimental.UtilityClass;
 @net.neoforged.fml.common.EventBusSubscriber(modid = GTCEu.MOD_ID, value = Dist.CLIENT)
 @UtilityClass
 public class BloomEventListeners {
+
+    private static boolean bloomWasActive;
 
     @SubscribeEvent
     public static void afterLevelRendered(RenderLevelStageEvent.AfterLevel event) {
@@ -46,7 +49,16 @@ public class BloomEventListeners {
     @SubscribeEvent
     public static void onAddReloadListeners(AddClientReloadListenersEvent event) {
         event.addListener(GTCEu.id("bloom_chunk_geometry"), (ResourceManagerReloadListener)
-                resourceManager -> BloomChunkGeometry.invalidateAll());
+                resourceManager -> BloomRenderer.SafeMode.invalidateLevelData());
+    }
+
+    @SubscribeEvent
+    public static void onClientResourcesLoaded(ClientResourceLoadFinishedEvent event) {
+        BloomShaderManager.initPostShaders();
+        bloomWasActive = BloomShaderManager.isBloomActive();
+        if (!event.isInitial() && bloomWasActive) {
+            rebuildBloomSections();
+        }
     }
 
     @SubscribeEvent
@@ -66,6 +78,21 @@ public class BloomEventListeners {
     @SubscribeEvent
     public static void onClientTick(ClientTickEvent.Pre event) {
         BloomShaderManager.updateShaderAvailability(event);
+        boolean bloomIsActive = BloomShaderManager.isBloomActive();
+        if (bloomIsActive == bloomWasActive) return;
+        bloomWasActive = bloomIsActive;
+
+        BloomRenderer.SafeMode.invalidateLevelData();
+        if (bloomIsActive) {
+            rebuildBloomSections();
+        }
+    }
+
+    private static void rebuildBloomSections() {
+        Minecraft minecraft = Minecraft.getInstance();
+        if (minecraft.level == null) return;
+        minecraft.levelRenderer.invalidateCompiledGeometry(minecraft.level, minecraft.options,
+                minecraft.gameRenderer.mainCamera(), minecraft.getBlockColors());
     }
 
     @SubscribeEvent

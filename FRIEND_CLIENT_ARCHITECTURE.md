@@ -1,5 +1,9 @@
 # Client rendering architecture
 
+## Static bloom lifecycle
+
+`BloomChunkGeometry` owns immutable per-section vertex arrays. `AddSectionGeometryEvent` runs on the main client thread; it now ignores other levels and captures the active model set before scheduling the worker callback. Section rebuild workers capture model quads without querying Minecraft's mutable model manager. Visible-section submission reads published arrays without touching live blocks or models. Section revisions and a world generation prevent stale worker callbacks from publishing after invalidation; chunk/level unload and resource reload clear old arrays. The bloom target receives the submitted geometry before the post effect. `BloomEventListeners` detects inactive-to-active transitions, clears old snapshots and optional safe-mode builders, and asks the 26.2 `LevelRenderer` to rebuild sections so bloom can appear on already loaded blocks. Active-to-inactive transitions clear those buffers. Resource-load completion reinitializes the post chain and rebuilds active sections through NeoForge's event; the bloom LevelRenderer mixin now only handles target resize. The availability poll uses a client-tick counter instead of a removed GameRenderer field. Activation causes a full visible-section rebuild; measure its cost and visual result in a running client.
+
 ## Machine block and renderer boundary
 
 - The registered 26.2 machine BlockStateModel owns static baked geometry: variant models, multipart selectors, formed-part geometry, output overlays, facades, and CTM. Its worker-side collection reads only the passed block state, world snapshot, and ModelData; it never looks up or retains a live MetaMachine. Missing or stale machine state falls back to the definition's default render state.

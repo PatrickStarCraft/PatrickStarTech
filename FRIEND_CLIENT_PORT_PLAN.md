@@ -1,5 +1,19 @@
 # Client Port Plan
 
+## Active ownership (2026-09-24 takeover)
+
+Current checkout is `1.20.1` at `a9176b5c9f3b7eb422bdb65767ee0991b99936e8`; the historical baseline below refers to an older integrated commit. The fresh offline Java 25 compile reached javac at `build/client-takeover-baseline-jdk25-escalated-20260924.log`: 718 global / 370 exact-owned diagnostics. The latest integrated GUI/bloom/mixin compile at `build/client-gui-bloom-integrated-verify-20260924.log` also reached javac and remains 718 / 370; the edited GUI/bloom/mixin paths add no diagnostics. Both full builds fail on the remaining port errors. `git diff --check` passes; no tests or runtime visuals have run.
+
+| Owner | Exclusive writable scope | Task |
+| --- | --- | --- |
+| Sol coordinator | Client architecture, bloom review, and the friend plan/handoff/integration documents | Establish current baseline, review model contracts, and integrate verified work. |
+| Luna facade (completed; no edits) | No current writable scope | The legacy facade item and cover routes remain referenced by live shared registration and resources; requests 17 and 19 must switch those producers first. |
+| Luna pipe (completed; no edits) | No current writable scope | The legacy pipe loader remains referenced by the shared builder and generated resources; requests 10, 21, and 22 gate its retirement. |
+| Luna mixins (completed; no edits) | No writable scope | Found removed GUI, player-skin, model-bakery, and bloom mixin targets plus stale/missing JSON entries; requests 24–25 and the handoff record the evidence. |
+| Luna GUI (completed; reviewed) | No current writable scope | Migrated research item, tooltip, and bar extraction to 26.2 APIs. The obsolete `GuiGraphicsAccessor` was removed after review; its shared JSON registration must be removed before startup. |
+
+Both Luna scopes exclude shared registration, generators, API/common code, resources, and Git operations. Only the coordinator runs Gradle. This table records assignments; completion awaits diff and caller review.
+
 ## Baseline
 
 - Active IDE checkout: `1.20.1` / `C:\Users\georg\IdeaProjects\PatrickStarTech`; source worktree: `codex/friend-client-port` / `C:\Users\georg\.codex\worktrees\codex-friend-client-port\PatrickStarTech`.

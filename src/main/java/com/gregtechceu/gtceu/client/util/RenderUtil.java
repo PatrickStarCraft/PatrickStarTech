@@ -314,7 +314,7 @@ public class RenderUtil {
 
     public static boolean renderResearchItemContent(GuiGraphicsExtractor graphics, Operation<Void> originalMethod,
                                                     @Nullable LivingEntity entity, @Nullable Level level,
-                                                    ItemStack stack, int x, int y, int z, int seed) {
+                                                    ItemStack stack, int x, int y, int seed) {
         if (!Minecraft.getInstance().hasShiftDown()) return false;
 
         ResearchManager.ResearchItem researchData = ResearchManager.readResearchId(stack);
@@ -331,7 +331,7 @@ public class RenderUtil {
                 if (items.length > 0) {
                     ItemStack output = items[0];
                     if (!output.isEmpty() && !GTUtil.isSameItemSameTags(output, stack)) {
-                        originalMethod.call(entity, level, output, x, y, seed, z);
+                        originalMethod.call(entity, level, output, x, y, seed);
                         return true;
                     }
                 }
@@ -343,7 +343,8 @@ public class RenderUtil {
                 if (fluids.length != 0) {
                     FluidStack output = fluids[0];
                     if (!output.isEmpty()) {
-                        GuiDraw.drawFluidTexture(graphics, output, x, y, 0, 0, z);
+                        graphics.nextStratum();
+                        GuiDraw.drawFluidTexture(graphics, output, x, y, 0, 0, 0);
                         return true;
                     }
                 }

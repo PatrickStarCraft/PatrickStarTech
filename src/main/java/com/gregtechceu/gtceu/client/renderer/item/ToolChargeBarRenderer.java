@@ -4,14 +4,12 @@ import com.gregtechceu.gtceu.api.item.IGTTool;
 import com.gregtechceu.gtceu.api.item.component.IDurabilityBar;
 import com.gregtechceu.gtceu.api.item.tool.ToolHelper;
 import com.gregtechceu.gtceu.client.util.RenderUtil;
-import com.gregtechceu.gtceu.core.mixins.client.GuiGraphicsAccessor;
 
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.ARGB;
 import net.minecraft.world.item.ItemStack;
 
-import brachy.modularui.drawable.GuiDraw;
 import it.unimi.dsi.fastutil.ints.IntIntPair;
 
 public final class ToolChargeBarRenderer {
@@ -19,8 +17,6 @@ public final class ToolChargeBarRenderer {
     private static final int BAR_W = 12;
 
     private static final int colorShadow = ARGB.color(255, 0, 0, 0);
-    private static final int colorBG = ARGB.color(255, 0x0E, 0x01, 0x16);
-
     private static final int colorBarLeftEnergy = ARGB.color(255, 0, 101, 178);
     private static final int colorBarRightEnergy = ARGB.color(255, 217, 238, 255);
 
@@ -39,12 +35,11 @@ public final class ToolChargeBarRenderer {
 
         int x = xPosition + 2;
         int y = yPosition + 13 - offset;
-        RenderUtil.fillHorizontalGradient(graphics, x, y, x + level, y + 1, left, right);
-        // graphics.fill(RenderType.guiOverlay(), x + BAR_W, y, x + BAR_W - level, y - 1, colorBG);
-
-        GuiDraw.drawRect(graphics, x, y, 13, shadow ? 2 : 1, colorShadow);
-        GuiDraw.drawHorizontalGradientRect(graphics, x, y, level, 1, left, right);
-        ((GuiGraphicsAccessor) graphics).callFlushIfUnmanaged();
+        graphics.nextStratum();
+        graphics.fill(x, y, x + BAR_W + 1, y + (shadow ? 2 : 1), colorShadow);
+        if (level > 0) {
+            RenderUtil.fillHorizontalGradient(graphics, x, y, x + Math.min(level, BAR_W + 1), y + 1, left, right);
+        }
     }
 
     public static void renderBarsTool(GuiGraphicsExtractor graphics, IGTTool tool, ItemStack stack, int xPosition,
