@@ -1,18 +1,78 @@
 {
   "variants": {
     "facing=east": {
-      "model": "gtceu:block/machine/uv_chemical_bath",
+      "machine": "gtceu:uv_chemical_bath",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/98cadd159280ce1caecaa331"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/98cadd159280ce1caecaa331"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/8f66eaa62a54e8407b9eaac2"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/8f66eaa62a54e8407b9eaac2"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/uv_chemical_bath"
+      "machine": "gtceu:uv_chemical_bath",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/98cadd159280ce1caecaa331"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/98cadd159280ce1caecaa331"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/8f66eaa62a54e8407b9eaac2"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/8f66eaa62a54e8407b9eaac2"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/uv_chemical_bath",
+      "machine": "gtceu:uv_chemical_bath",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/98cadd159280ce1caecaa331"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/98cadd159280ce1caecaa331"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/8f66eaa62a54e8407b9eaac2"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/8f66eaa62a54e8407b9eaac2"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/uv_chemical_bath",
+      "machine": "gtceu:uv_chemical_bath",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/98cadd159280ce1caecaa331"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/98cadd159280ce1caecaa331"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/8f66eaa62a54e8407b9eaac2"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/8f66eaa62a54e8407b9eaac2"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

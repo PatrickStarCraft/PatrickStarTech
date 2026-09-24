@@ -1,27 +1,93 @@
 {
   "variants": {
     "facing=down": {
-      "model": "gtceu:block/machine/uiv_dual_output_hatch",
+      "machine": "gtceu:uiv_dual_output_hatch",
+      "replaceable_textures": [
+        "bottom",
+        "top",
+        "side"
+      ],
+      "variants": {
+        "": {
+          "model": "gtceu:block/machine_parts/8e09e4ed344f06d0f7d5cd5a"
+        }
+      },
+      "type": "gtceu:machine",
       "x": 90
     },
     "facing=east": {
-      "model": "gtceu:block/machine/uiv_dual_output_hatch",
+      "machine": "gtceu:uiv_dual_output_hatch",
+      "replaceable_textures": [
+        "bottom",
+        "top",
+        "side"
+      ],
+      "variants": {
+        "": {
+          "model": "gtceu:block/machine_parts/8e09e4ed344f06d0f7d5cd5a"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/uiv_dual_output_hatch"
+      "machine": "gtceu:uiv_dual_output_hatch",
+      "replaceable_textures": [
+        "bottom",
+        "top",
+        "side"
+      ],
+      "variants": {
+        "": {
+          "model": "gtceu:block/machine_parts/8e09e4ed344f06d0f7d5cd5a"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/uiv_dual_output_hatch",
+      "machine": "gtceu:uiv_dual_output_hatch",
+      "replaceable_textures": [
+        "bottom",
+        "top",
+        "side"
+      ],
+      "variants": {
+        "": {
+          "model": "gtceu:block/machine_parts/8e09e4ed344f06d0f7d5cd5a"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=up": {
-      "gtceu:z": 180,
-      "model": "gtceu:block/machine/uiv_dual_output_hatch",
-      "x": 270
+      "machine": "gtceu:uiv_dual_output_hatch",
+      "replaceable_textures": [
+        "bottom",
+        "top",
+        "side"
+      ],
+      "variants": {
+        "": {
+          "model": "gtceu:block/machine_parts/8e09e4ed344f06d0f7d5cd5a"
+        }
+      },
+      "type": "gtceu:machine",
+      "x": 270,
+      "z": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/uiv_dual_output_hatch",
+      "machine": "gtceu:uiv_dual_output_hatch",
+      "replaceable_textures": [
+        "bottom",
+        "top",
+        "side"
+      ],
+      "variants": {
+        "": {
+          "model": "gtceu:block/machine_parts/8e09e4ed344f06d0f7d5cd5a"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

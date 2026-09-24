@@ -1,27 +1,81 @@
 {
   "variants": {
     "facing=down": {
-      "model": "gtceu:block/machine/zpm_1a_energy_converter",
+      "machine": "gtceu:zpm_1a_energy_converter",
+      "variants": {
+        "fe_to_eu=false": {
+          "model": "gtceu:block/machine_parts/4e166f4530d9b92501e04a62"
+        },
+        "fe_to_eu=true": {
+          "model": "gtceu:block/machine_parts/7060d10cdb7f13b1a65d0805"
+        }
+      },
+      "type": "gtceu:machine",
       "x": 90
     },
     "facing=east": {
-      "model": "gtceu:block/machine/zpm_1a_energy_converter",
+      "machine": "gtceu:zpm_1a_energy_converter",
+      "variants": {
+        "fe_to_eu=false": {
+          "model": "gtceu:block/machine_parts/4e166f4530d9b92501e04a62"
+        },
+        "fe_to_eu=true": {
+          "model": "gtceu:block/machine_parts/7060d10cdb7f13b1a65d0805"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/zpm_1a_energy_converter"
+      "machine": "gtceu:zpm_1a_energy_converter",
+      "variants": {
+        "fe_to_eu=false": {
+          "model": "gtceu:block/machine_parts/4e166f4530d9b92501e04a62"
+        },
+        "fe_to_eu=true": {
+          "model": "gtceu:block/machine_parts/7060d10cdb7f13b1a65d0805"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/zpm_1a_energy_converter",
+      "machine": "gtceu:zpm_1a_energy_converter",
+      "variants": {
+        "fe_to_eu=false": {
+          "model": "gtceu:block/machine_parts/4e166f4530d9b92501e04a62"
+        },
+        "fe_to_eu=true": {
+          "model": "gtceu:block/machine_parts/7060d10cdb7f13b1a65d0805"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=up": {
-      "gtceu:z": 180,
-      "model": "gtceu:block/machine/zpm_1a_energy_converter",
-      "x": 270
+      "machine": "gtceu:zpm_1a_energy_converter",
+      "variants": {
+        "fe_to_eu=false": {
+          "model": "gtceu:block/machine_parts/4e166f4530d9b92501e04a62"
+        },
+        "fe_to_eu=true": {
+          "model": "gtceu:block/machine_parts/7060d10cdb7f13b1a65d0805"
+        }
+      },
+      "type": "gtceu:machine",
+      "x": 270,
+      "z": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/zpm_1a_energy_converter",
+      "machine": "gtceu:zpm_1a_energy_converter",
+      "variants": {
+        "fe_to_eu=false": {
+          "model": "gtceu:block/machine_parts/4e166f4530d9b92501e04a62"
+        },
+        "fe_to_eu=true": {
+          "model": "gtceu:block/machine_parts/7060d10cdb7f13b1a65d0805"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

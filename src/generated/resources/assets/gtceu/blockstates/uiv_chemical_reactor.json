@@ -1,18 +1,78 @@
 {
   "variants": {
     "facing=east": {
-      "model": "gtceu:block/machine/uiv_chemical_reactor",
+      "machine": "gtceu:uiv_chemical_reactor",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/24e207ae9af5199c22ea5592"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/24e207ae9af5199c22ea5592"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/42aee970c249b6ae6fed5e46"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/42aee970c249b6ae6fed5e46"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/uiv_chemical_reactor"
+      "machine": "gtceu:uiv_chemical_reactor",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/24e207ae9af5199c22ea5592"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/24e207ae9af5199c22ea5592"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/42aee970c249b6ae6fed5e46"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/42aee970c249b6ae6fed5e46"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/uiv_chemical_reactor",
+      "machine": "gtceu:uiv_chemical_reactor",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/24e207ae9af5199c22ea5592"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/24e207ae9af5199c22ea5592"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/42aee970c249b6ae6fed5e46"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/42aee970c249b6ae6fed5e46"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/uiv_chemical_reactor",
+      "machine": "gtceu:uiv_chemical_reactor",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/24e207ae9af5199c22ea5592"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/24e207ae9af5199c22ea5592"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/42aee970c249b6ae6fed5e46"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/42aee970c249b6ae6fed5e46"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

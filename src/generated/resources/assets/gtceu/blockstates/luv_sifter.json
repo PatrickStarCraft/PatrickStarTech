@@ -1,18 +1,78 @@
 {
   "variants": {
     "facing=east": {
-      "model": "gtceu:block/machine/luv_sifter",
+      "machine": "gtceu:luv_sifter",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/4c575012f656d2423ab25e67"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/4c575012f656d2423ab25e67"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/f9155782360cccd6b6e52091"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/f9155782360cccd6b6e52091"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/luv_sifter"
+      "machine": "gtceu:luv_sifter",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/4c575012f656d2423ab25e67"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/4c575012f656d2423ab25e67"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/f9155782360cccd6b6e52091"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/f9155782360cccd6b6e52091"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/luv_sifter",
+      "machine": "gtceu:luv_sifter",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/4c575012f656d2423ab25e67"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/4c575012f656d2423ab25e67"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/f9155782360cccd6b6e52091"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/f9155782360cccd6b6e52091"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/luv_sifter",
+      "machine": "gtceu:luv_sifter",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/4c575012f656d2423ab25e67"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/4c575012f656d2423ab25e67"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/f9155782360cccd6b6e52091"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/f9155782360cccd6b6e52091"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

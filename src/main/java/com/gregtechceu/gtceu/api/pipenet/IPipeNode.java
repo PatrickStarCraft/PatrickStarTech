@@ -138,7 +138,6 @@ public interface IPipeNode<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
     default @NotNull ModelData getModelData() {
         var pos = self().getBlockPos();
         var builder = ModelData.builder()
-                .with(GTModelProperties.POS, pos)
                 .with(GTModelProperties.PIPE_CONNECTION_MASK, this.getVisualConnections())
                 .with(GTModelProperties.PIPE_BLOCKED_MASK, this.getBlockedConnections());
 
@@ -155,7 +154,6 @@ public interface IPipeNode<PipeType extends Enum<PipeType> & IPipeType<NodeDataT
         }
 
         if (self().getLevel() instanceof BlockAndTintGetter renderLevel) {
-            builder.with(GTModelProperties.LEVEL, renderLevel);
             ModelData parentModelData = builder.build();
             var result = parentModelData.derive();
             ICoverable coverable = getCoverContainer();

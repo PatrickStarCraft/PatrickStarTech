@@ -6,9 +6,15 @@ import com.gregtechceu.gtceu.client.renderer.machine.DynamicRender;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.special.SpecialModelRenderer;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.BlockState;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.serialization.MapCodec;
@@ -31,19 +37,37 @@ public final class MachineItemSpecialRenderer implements SpecialModelRenderer<Ma
         MachineBlockStateModel machineModel = MachineBlockStateModel.find(model);
         if (machineModel == null || machineModel.getDefinition() != machineItem.getDefinition()) return null;
 
+        BlockState blockState = machineItem.getBlock().defaultBlockState();
+        List<BlockStateModelPart> baseParts = new ArrayList<>();
+        model.collectParts(BlockAndTintGetter.EMPTY, BlockPos.ZERO, blockState, RandomSource.create(0L), baseParts);
+        // The special renderer also submits the base geometry, so retain the builder's
+        // per-stack tint callback here rather than drawing a second tinted base model.
+        int[] tintLayers = java.util.stream.IntStream.range(0, 65)
+                .map(layer -> machineItem.getTintColor(stack, layer)).toArray();
+        boolean translucent = model.hasMaterialFlag(BlockAndTintGetter.EMPTY, BlockPos.ZERO, blockState,
+                net.minecraft.client.resources.model.geometry.BakedQuad.FLAG_TRANSLUCENT);
+
         List<MachineItemRenderSnapshot> snapshots = new ArrayList<>();
         for (DynamicRender<?, ?> dynamicRender : machineModel.getDynamicRenders()) {
             if (!(dynamicRender instanceof MachineItemRenderSnapshotProvider provider)) continue;
             MachineItemRenderSnapshot snapshot = provider.extractItemRenderState(stack);
             if (snapshot != null) snapshots.add(snapshot);
         }
-        return snapshots.isEmpty() ? null : new State(snapshots);
+        return new State(baseParts, tintLayers, translucent, snapshots);
     }
 
     @Override
     public void submit(@Nullable State state, PoseStack poseStack, SubmitNodeCollector collector,
                        int lightCoords, int overlayCoords, boolean hasFoil, int outlineColor) {
         if (state == null) return;
+        if (!state.baseParts().isEmpty()) {
+            collector.submitMultiLayerBlockModel(poseStack, state.baseParts(), state.translucent(), state.tintLayers(),
+                    lightCoords, overlayCoords, outlineColor);
+            if (hasFoil) {
+                collector.order(1).submitBlockModel(poseStack, RenderTypes.entityGlint(), state.baseParts(),
+                        state.tintLayers(), lightCoords, overlayCoords, outlineColor);
+            }
+        }
         for (MachineItemRenderSnapshot snapshot : state.snapshots()) snapshot.submit(poseStack, collector);
     }
 
@@ -56,9 +80,17 @@ public final class MachineItemSpecialRenderer implements SpecialModelRenderer<Ma
         }
     }
 
-    public record State(List<MachineItemRenderSnapshot> snapshots) {
+    public record State(List<BlockStateModelPart> baseParts, int[] tintLayers, boolean translucent,
+                        List<MachineItemRenderSnapshot> snapshots) {
         public State {
+            baseParts = List.copyOf(baseParts);
+            tintLayers = tintLayers.clone();
             snapshots = List.copyOf(snapshots);
+        }
+
+        @Override
+        public int[] tintLayers() {
+            return tintLayers.clone();
         }
     }
 

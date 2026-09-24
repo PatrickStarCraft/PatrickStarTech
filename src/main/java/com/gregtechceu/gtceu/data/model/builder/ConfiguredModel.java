@@ -18,9 +18,11 @@ public final class ConfiguredModel {
     public final int rotationZ;
     public final boolean uvLock;
     public final int weight;
+    private final JsonObject inlineDefinition;
 
     private ConfiguredModel(Builder<?> builder) {
         this.model = Objects.requireNonNull(builder.model, "modelFile");
+        this.inlineDefinition = null;
         this.rotationX = normalizeRotation(builder.rotationX, "x");
         this.rotationY = normalizeRotation(builder.rotationY, "y");
         this.rotationZ = normalizeRotation(builder.rotationZ, "z");
@@ -29,12 +31,29 @@ public final class ConfiguredModel {
         this.weight = builder.weight;
     }
 
+    private ConfiguredModel(JsonObject inlineDefinition) {
+        this.model = null;
+        this.inlineDefinition = inlineDefinition.deepCopy();
+        this.rotationX = 0;
+        this.rotationY = 0;
+        this.rotationZ = 0;
+        this.uvLock = false;
+        this.weight = DEFAULT_WEIGHT;
+    }
+
+    public static ConfiguredModel inlineModel(JsonObject definition) {
+        return new ConfiguredModel(Objects.requireNonNull(definition, "definition"));
+    }
+
     private static int normalizeRotation(int rotation, String axis) {
         if (rotation % 90 != 0) throw new IllegalArgumentException("Rotation " + axis + " must be a multiple of 90: " + rotation);
         return Math.floorMod(rotation, 360);
     }
 
-    public ModelFile getModel() { return model; }
+    public ModelFile getModel() {
+        if (model == null) throw new IllegalStateException("Inline blockstate model has no model resource");
+        return model;
+    }
     public int getRotationX() { return rotationX; }
     public int getRotationY() { return rotationY; }
     public int getRotationZ() { return rotationZ; }
@@ -44,9 +63,14 @@ public final class ConfiguredModel {
 
     /** Serialize a normal blockstate model reference; machine models may inline it themselves. */
     public JsonObject toJson(boolean includeWeight) {
-        model.assertExists();
-        JsonObject json = new JsonObject();
-        json.addProperty("model", model.getLocation().toString());
+        JsonObject json;
+        if (inlineDefinition != null) {
+            json = inlineDefinition.deepCopy();
+        } else {
+            model.assertExists();
+            json = new JsonObject();
+            json.addProperty("model", model.getLocation().toString());
+        }
         if (rotationX != 0) json.addProperty("x", rotationX);
         if (rotationY != 0) json.addProperty("y", rotationY);
         if (rotationZ != 0) json.addProperty("z", rotationZ);

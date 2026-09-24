@@ -1,27 +1,99 @@
 {
   "variants": {
     "facing=down": {
-      "model": "gtceu:block/machine/uiv_charger_4x",
+      "machine": "gtceu:uiv_charger_4x",
+      "variants": {
+        "charger_state=finished": {
+          "model": "gtceu:block/machine_parts/ab90de7f6085da02000afbb7"
+        },
+        "charger_state=idle": {
+          "model": "gtceu:block/machine_parts/fb28576566fe55a888e039b1"
+        },
+        "charger_state=running": {
+          "model": "gtceu:block/machine_parts/b9d9eb1dcc0316691f84ef94"
+        }
+      },
+      "type": "gtceu:machine",
       "x": 90
     },
     "facing=east": {
-      "model": "gtceu:block/machine/uiv_charger_4x",
+      "machine": "gtceu:uiv_charger_4x",
+      "variants": {
+        "charger_state=finished": {
+          "model": "gtceu:block/machine_parts/ab90de7f6085da02000afbb7"
+        },
+        "charger_state=idle": {
+          "model": "gtceu:block/machine_parts/fb28576566fe55a888e039b1"
+        },
+        "charger_state=running": {
+          "model": "gtceu:block/machine_parts/b9d9eb1dcc0316691f84ef94"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/uiv_charger_4x"
+      "machine": "gtceu:uiv_charger_4x",
+      "variants": {
+        "charger_state=finished": {
+          "model": "gtceu:block/machine_parts/ab90de7f6085da02000afbb7"
+        },
+        "charger_state=idle": {
+          "model": "gtceu:block/machine_parts/fb28576566fe55a888e039b1"
+        },
+        "charger_state=running": {
+          "model": "gtceu:block/machine_parts/b9d9eb1dcc0316691f84ef94"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/uiv_charger_4x",
+      "machine": "gtceu:uiv_charger_4x",
+      "variants": {
+        "charger_state=finished": {
+          "model": "gtceu:block/machine_parts/ab90de7f6085da02000afbb7"
+        },
+        "charger_state=idle": {
+          "model": "gtceu:block/machine_parts/fb28576566fe55a888e039b1"
+        },
+        "charger_state=running": {
+          "model": "gtceu:block/machine_parts/b9d9eb1dcc0316691f84ef94"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=up": {
-      "gtceu:z": 180,
-      "model": "gtceu:block/machine/uiv_charger_4x",
-      "x": 270
+      "machine": "gtceu:uiv_charger_4x",
+      "variants": {
+        "charger_state=finished": {
+          "model": "gtceu:block/machine_parts/ab90de7f6085da02000afbb7"
+        },
+        "charger_state=idle": {
+          "model": "gtceu:block/machine_parts/fb28576566fe55a888e039b1"
+        },
+        "charger_state=running": {
+          "model": "gtceu:block/machine_parts/b9d9eb1dcc0316691f84ef94"
+        }
+      },
+      "type": "gtceu:machine",
+      "x": 270,
+      "z": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/uiv_charger_4x",
+      "machine": "gtceu:uiv_charger_4x",
+      "variants": {
+        "charger_state=finished": {
+          "model": "gtceu:block/machine_parts/ab90de7f6085da02000afbb7"
+        },
+        "charger_state=idle": {
+          "model": "gtceu:block/machine_parts/fb28576566fe55a888e039b1"
+        },
+        "charger_state=running": {
+          "model": "gtceu:block/machine_parts/b9d9eb1dcc0316691f84ef94"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

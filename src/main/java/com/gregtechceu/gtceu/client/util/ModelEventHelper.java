@@ -4,8 +4,6 @@ import com.gregtechceu.gtceu.GTCEu;
 import com.gregtechceu.gtceu.client.model.ctm.CTMBakedModel;
 import com.gregtechceu.gtceu.client.model.ctm.CTMModelPartSource;
 import com.gregtechceu.gtceu.client.model.ManuallyConnectedTextureModel;
-import com.gregtechceu.gtceu.client.model.machine.MachineModel;
-import com.gregtechceu.gtceu.client.renderer.cover.ICoverableRenderer;
 import com.gregtechceu.gtceu.integration.modernfix.GTModernFixIntegration;
 
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
@@ -165,8 +163,6 @@ public class ModelEventHelper {
                 });
             }
 
-            MachineModel.initSprites(atlas);
-            ICoverableRenderer.initSprites(atlas);
         });
 
         // register CTM model wrapper

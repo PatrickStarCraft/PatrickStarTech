@@ -1,18 +1,78 @@
 {
   "variants": {
     "facing=east": {
-      "model": "gtceu:block/machine/luv_circuit_assembler",
+      "machine": "gtceu:luv_circuit_assembler",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/f359a4f24452b0c2c18b72d2"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/f2fd11450a86ec2144cec7b7"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/764c57a789b00c4dda2e5f98"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/764c57a789b00c4dda2e5f98"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/luv_circuit_assembler"
+      "machine": "gtceu:luv_circuit_assembler",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/f359a4f24452b0c2c18b72d2"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/f2fd11450a86ec2144cec7b7"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/764c57a789b00c4dda2e5f98"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/764c57a789b00c4dda2e5f98"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/luv_circuit_assembler",
+      "machine": "gtceu:luv_circuit_assembler",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/f359a4f24452b0c2c18b72d2"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/f2fd11450a86ec2144cec7b7"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/764c57a789b00c4dda2e5f98"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/764c57a789b00c4dda2e5f98"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/luv_circuit_assembler",
+      "machine": "gtceu:luv_circuit_assembler",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/f359a4f24452b0c2c18b72d2"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/f2fd11450a86ec2144cec7b7"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/764c57a789b00c4dda2e5f98"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/764c57a789b00c4dda2e5f98"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

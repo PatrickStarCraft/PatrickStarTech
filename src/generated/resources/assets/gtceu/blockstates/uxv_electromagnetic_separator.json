@@ -1,18 +1,78 @@
 {
   "variants": {
     "facing=east": {
-      "model": "gtceu:block/machine/uxv_electromagnetic_separator",
+      "machine": "gtceu:uxv_electromagnetic_separator",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/c8142cb4c4da289250bc1f09"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/c8142cb4c4da289250bc1f09"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/f5898a5155fed68f7871cabf"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/f5898a5155fed68f7871cabf"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/uxv_electromagnetic_separator"
+      "machine": "gtceu:uxv_electromagnetic_separator",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/c8142cb4c4da289250bc1f09"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/c8142cb4c4da289250bc1f09"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/f5898a5155fed68f7871cabf"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/f5898a5155fed68f7871cabf"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/uxv_electromagnetic_separator",
+      "machine": "gtceu:uxv_electromagnetic_separator",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/c8142cb4c4da289250bc1f09"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/c8142cb4c4da289250bc1f09"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/f5898a5155fed68f7871cabf"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/f5898a5155fed68f7871cabf"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/uxv_electromagnetic_separator",
+      "machine": "gtceu:uxv_electromagnetic_separator",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/c8142cb4c4da289250bc1f09"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/c8142cb4c4da289250bc1f09"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/f5898a5155fed68f7871cabf"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/f5898a5155fed68f7871cabf"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

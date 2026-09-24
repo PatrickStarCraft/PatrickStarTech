@@ -1,18 +1,78 @@
 {
   "variants": {
     "facing=east": {
-      "model": "gtceu:block/machine/luv_electric_furnace",
+      "machine": "gtceu:luv_electric_furnace",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/a5f3368b461c33a96479ed2d"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/a5f3368b461c33a96479ed2d"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/4e986c12692e9f27b34fe5f0"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/4e986c12692e9f27b34fe5f0"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/luv_electric_furnace"
+      "machine": "gtceu:luv_electric_furnace",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/a5f3368b461c33a96479ed2d"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/a5f3368b461c33a96479ed2d"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/4e986c12692e9f27b34fe5f0"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/4e986c12692e9f27b34fe5f0"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/luv_electric_furnace",
+      "machine": "gtceu:luv_electric_furnace",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/a5f3368b461c33a96479ed2d"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/a5f3368b461c33a96479ed2d"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/4e986c12692e9f27b34fe5f0"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/4e986c12692e9f27b34fe5f0"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/luv_electric_furnace",
+      "machine": "gtceu:luv_electric_furnace",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/a5f3368b461c33a96479ed2d"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/a5f3368b461c33a96479ed2d"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/4e986c12692e9f27b34fe5f0"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/4e986c12692e9f27b34fe5f0"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

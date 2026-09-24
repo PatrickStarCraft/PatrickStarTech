@@ -1,7 +1,25 @@
 {
   "variants": {
     "": {
-      "model": "gtceu:block/machine/charcoal_pile_igniter"
+      "machine": "gtceu:charcoal_pile_igniter",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_bronze_plated_bricks"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/2081e81e4fc7685db78d4aab"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/2081e81e4fc7685db78d4aab"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/8742107be41ef37dc6ed5882"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/8742107be41ef37dc6ed5882"
+        }
+      },
+      "type": "gtceu:machine"
     }
   }
 }

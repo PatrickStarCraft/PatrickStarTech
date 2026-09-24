@@ -12,7 +12,6 @@ import com.gregtechceu.gtceu.api.machine.multiblock.IBatteryData;
 import com.gregtechceu.gtceu.api.registry.GTRegistries;
 import com.gregtechceu.gtceu.api.registry.registrate.provider.GTBlockstateProvider;
 import com.gregtechceu.gtceu.client.color.MaterialLayerTintSource;
-import com.gregtechceu.gtceu.client.color.MachineItemTintSource;
 import com.gregtechceu.gtceu.common.block.*;
 import com.gregtechceu.gtceu.common.data.GTItems;
 import com.gregtechceu.gtceu.common.data.GTMaterialBlocks;
@@ -147,51 +146,30 @@ public class GTModels {
     /** Keep the generated block-item model as the base so its display transforms stay active. */
     public static void createLampItemDefinition(DataGenContext<Item, ? extends Item> ctx,
                                                 ItemModelProvider prov) {
-        JsonObject specialModel = new JsonObject();
-        specialModel.addProperty("type", "minecraft:special");
-        specialModel.addProperty("base", ctx.getId().withPrefix("block/").withSuffix("_on").toString());
-
-        JsonObject renderer = new JsonObject();
-        renderer.addProperty("type", GTCEu.id("lamp").toString());
-        specialModel.add("model", renderer);
-
-        JsonObject definition = new JsonObject();
-        definition.add("model", specialModel);
-        prov.bindItemDefinition(ctx.getId(), definition);
+        prov.bindItemDefinition(ctx.getId(), specialItemDefinition(ctx.getId().withPrefix("item/"),
+                GTCEu.id("lamp")));
     }
 
-    /** Preserve the generated machine item model's transforms while layering its target dynamic renderer. */
+    /** Keep the generated machine item model as the base so its display transforms stay active. */
     public static void createMachineItemDefinition(DataGenContext<Item, ? extends Item> ctx,
                                                    ItemModelProvider prov) {
-        Identifier baseModel = ctx.getId().withPrefix("item/");
-        prov.withExistingParent(baseModel.toString(), ctx.getId().withPrefix("block/machine/"));
-        prov.bindItemDefinition(ctx.getId(), machineItemDefinition(baseModel));
+        prov.withExistingParent(ctx.getId().withPrefix("item/").toString(),
+                ctx.getId().withPrefix("block/machine/"));
+        prov.bindItemDefinition(ctx.getId(), specialItemDefinition(ctx.getId().withPrefix("item/"),
+                GTCEu.id("machine_dynamic")));
     }
 
-    public static JsonObject machineItemDefinition(Identifier baseModel) {
-        JsonObject base = new JsonObject();
-        base.addProperty("type", "minecraft:model");
-        base.addProperty("model", baseModel.toString());
-        base.add("tints", RuntimeModelResources.dynamicLayerTints(MachineItemTintSource.ID, 65));
-
+    public static JsonObject specialItemDefinition(Identifier baseModel, Identifier rendererType) {
         JsonObject specialModel = new JsonObject();
         specialModel.addProperty("type", "minecraft:special");
         specialModel.addProperty("base", baseModel.toString());
 
         JsonObject renderer = new JsonObject();
-        renderer.addProperty("type", GTCEu.id("machine_dynamic").toString());
+        renderer.addProperty("type", rendererType.toString());
         specialModel.add("model", renderer);
 
-        JsonArray models = new JsonArray();
-        models.add(base);
-        models.add(specialModel);
-
-        JsonObject composite = new JsonObject();
-        composite.addProperty("type", "minecraft:composite");
-        composite.add("models", models);
-
         JsonObject definition = new JsonObject();
-        definition.add("model", composite);
+        definition.add("model", specialModel);
         return definition;
     }
 

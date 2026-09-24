@@ -1,18 +1,78 @@
 {
   "variants": {
     "facing=east": {
-      "model": "gtceu:block/machine/lv_electric_furnace",
+      "machine": "gtceu:lv_electric_furnace",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/39b87fd3920c1b3e1282f303"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/39b87fd3920c1b3e1282f303"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/0e682ad2585af74860dd8730"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/0e682ad2585af74860dd8730"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/lv_electric_furnace"
+      "machine": "gtceu:lv_electric_furnace",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/39b87fd3920c1b3e1282f303"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/39b87fd3920c1b3e1282f303"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/0e682ad2585af74860dd8730"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/0e682ad2585af74860dd8730"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/lv_electric_furnace",
+      "machine": "gtceu:lv_electric_furnace",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/39b87fd3920c1b3e1282f303"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/39b87fd3920c1b3e1282f303"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/0e682ad2585af74860dd8730"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/0e682ad2585af74860dd8730"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/lv_electric_furnace",
+      "machine": "gtceu:lv_electric_furnace",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/39b87fd3920c1b3e1282f303"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/39b87fd3920c1b3e1282f303"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/0e682ad2585af74860dd8730"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/0e682ad2585af74860dd8730"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

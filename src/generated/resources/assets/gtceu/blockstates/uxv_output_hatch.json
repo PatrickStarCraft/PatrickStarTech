@@ -1,27 +1,111 @@
 {
   "variants": {
     "facing=down": {
-      "model": "gtceu:block/machine/uxv_output_hatch",
+      "machine": "gtceu:uxv_output_hatch",
+      "replaceable_textures": [
+        "bottom",
+        "top",
+        "side"
+      ],
+      "variants": {
+        "is_painted=false": {
+          "model": "gtceu:block/machine_parts/752e734b3b0e871b629c2bd8"
+        },
+        "is_painted=true": {
+          "model": "gtceu:block/machine_parts/f9efbf4a5647540cc68c45e4"
+        }
+      },
+      "type": "gtceu:machine",
       "x": 90
     },
     "facing=east": {
-      "model": "gtceu:block/machine/uxv_output_hatch",
+      "machine": "gtceu:uxv_output_hatch",
+      "replaceable_textures": [
+        "bottom",
+        "top",
+        "side"
+      ],
+      "variants": {
+        "is_painted=false": {
+          "model": "gtceu:block/machine_parts/752e734b3b0e871b629c2bd8"
+        },
+        "is_painted=true": {
+          "model": "gtceu:block/machine_parts/f9efbf4a5647540cc68c45e4"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/uxv_output_hatch"
+      "machine": "gtceu:uxv_output_hatch",
+      "replaceable_textures": [
+        "bottom",
+        "top",
+        "side"
+      ],
+      "variants": {
+        "is_painted=false": {
+          "model": "gtceu:block/machine_parts/752e734b3b0e871b629c2bd8"
+        },
+        "is_painted=true": {
+          "model": "gtceu:block/machine_parts/f9efbf4a5647540cc68c45e4"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/uxv_output_hatch",
+      "machine": "gtceu:uxv_output_hatch",
+      "replaceable_textures": [
+        "bottom",
+        "top",
+        "side"
+      ],
+      "variants": {
+        "is_painted=false": {
+          "model": "gtceu:block/machine_parts/752e734b3b0e871b629c2bd8"
+        },
+        "is_painted=true": {
+          "model": "gtceu:block/machine_parts/f9efbf4a5647540cc68c45e4"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=up": {
-      "gtceu:z": 180,
-      "model": "gtceu:block/machine/uxv_output_hatch",
-      "x": 270
+      "machine": "gtceu:uxv_output_hatch",
+      "replaceable_textures": [
+        "bottom",
+        "top",
+        "side"
+      ],
+      "variants": {
+        "is_painted=false": {
+          "model": "gtceu:block/machine_parts/752e734b3b0e871b629c2bd8"
+        },
+        "is_painted=true": {
+          "model": "gtceu:block/machine_parts/f9efbf4a5647540cc68c45e4"
+        }
+      },
+      "type": "gtceu:machine",
+      "x": 270,
+      "z": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/uxv_output_hatch",
+      "machine": "gtceu:uxv_output_hatch",
+      "replaceable_textures": [
+        "bottom",
+        "top",
+        "side"
+      ],
+      "variants": {
+        "is_painted=false": {
+          "model": "gtceu:block/machine_parts/752e734b3b0e871b629c2bd8"
+        },
+        "is_painted=true": {
+          "model": "gtceu:block/machine_parts/f9efbf4a5647540cc68c45e4"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

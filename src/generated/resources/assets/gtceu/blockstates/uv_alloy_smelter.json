@@ -1,18 +1,78 @@
 {
   "variants": {
     "facing=east": {
-      "model": "gtceu:block/machine/uv_alloy_smelter",
+      "machine": "gtceu:uv_alloy_smelter",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/6bc2e04eb1388e2ca32196da"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/6bc2e04eb1388e2ca32196da"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/0de89b0176a62abd54989e00"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/0de89b0176a62abd54989e00"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/uv_alloy_smelter"
+      "machine": "gtceu:uv_alloy_smelter",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/6bc2e04eb1388e2ca32196da"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/6bc2e04eb1388e2ca32196da"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/0de89b0176a62abd54989e00"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/0de89b0176a62abd54989e00"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/uv_alloy_smelter",
+      "machine": "gtceu:uv_alloy_smelter",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/6bc2e04eb1388e2ca32196da"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/6bc2e04eb1388e2ca32196da"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/0de89b0176a62abd54989e00"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/0de89b0176a62abd54989e00"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/uv_alloy_smelter",
+      "machine": "gtceu:uv_alloy_smelter",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/6bc2e04eb1388e2ca32196da"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/6bc2e04eb1388e2ca32196da"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/0de89b0176a62abd54989e00"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/0de89b0176a62abd54989e00"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

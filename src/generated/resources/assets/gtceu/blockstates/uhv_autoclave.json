@@ -1,18 +1,78 @@
 {
   "variants": {
     "facing=east": {
-      "model": "gtceu:block/machine/uhv_autoclave",
+      "machine": "gtceu:uhv_autoclave",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/b94377027c4b0d08f760f38f"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/f1a61d27afd3b88330547260"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/c15f5d985bf51c6f16d314b0"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/c15f5d985bf51c6f16d314b0"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/uhv_autoclave"
+      "machine": "gtceu:uhv_autoclave",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/b94377027c4b0d08f760f38f"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/f1a61d27afd3b88330547260"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/c15f5d985bf51c6f16d314b0"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/c15f5d985bf51c6f16d314b0"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/uhv_autoclave",
+      "machine": "gtceu:uhv_autoclave",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/b94377027c4b0d08f760f38f"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/f1a61d27afd3b88330547260"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/c15f5d985bf51c6f16d314b0"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/c15f5d985bf51c6f16d314b0"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/uhv_autoclave",
+      "machine": "gtceu:uhv_autoclave",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/b94377027c4b0d08f760f38f"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/f1a61d27afd3b88330547260"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/c15f5d985bf51c6f16d314b0"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/c15f5d985bf51c6f16d314b0"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

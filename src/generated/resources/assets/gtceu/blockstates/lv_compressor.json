@@ -1,18 +1,78 @@
 {
   "variants": {
     "facing=east": {
-      "model": "gtceu:block/machine/lv_compressor",
+      "machine": "gtceu:lv_compressor",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/5b01357f2f81b99a4c9bdea5"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/5b01357f2f81b99a4c9bdea5"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/edb92a9e845c7ac3328a07a6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/edb92a9e845c7ac3328a07a6"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/lv_compressor"
+      "machine": "gtceu:lv_compressor",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/5b01357f2f81b99a4c9bdea5"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/5b01357f2f81b99a4c9bdea5"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/edb92a9e845c7ac3328a07a6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/edb92a9e845c7ac3328a07a6"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/lv_compressor",
+      "machine": "gtceu:lv_compressor",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/5b01357f2f81b99a4c9bdea5"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/5b01357f2f81b99a4c9bdea5"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/edb92a9e845c7ac3328a07a6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/edb92a9e845c7ac3328a07a6"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/lv_compressor",
+      "machine": "gtceu:lv_compressor",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/5b01357f2f81b99a4c9bdea5"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/5b01357f2f81b99a4c9bdea5"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/edb92a9e845c7ac3328a07a6"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/edb92a9e845c7ac3328a07a6"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

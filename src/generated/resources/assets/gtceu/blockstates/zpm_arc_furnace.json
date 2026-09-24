@@ -1,18 +1,78 @@
 {
   "variants": {
     "facing=east": {
-      "model": "gtceu:block/machine/zpm_arc_furnace",
+      "machine": "gtceu:zpm_arc_furnace",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/2611b1f07a469ae0b9c2a219"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/2611b1f07a469ae0b9c2a219"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/1079647c86689c1d9316102d"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/1079647c86689c1d9316102d"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/zpm_arc_furnace"
+      "machine": "gtceu:zpm_arc_furnace",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/2611b1f07a469ae0b9c2a219"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/2611b1f07a469ae0b9c2a219"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/1079647c86689c1d9316102d"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/1079647c86689c1d9316102d"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/zpm_arc_furnace",
+      "machine": "gtceu:zpm_arc_furnace",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/2611b1f07a469ae0b9c2a219"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/2611b1f07a469ae0b9c2a219"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/1079647c86689c1d9316102d"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/1079647c86689c1d9316102d"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/zpm_arc_furnace",
+      "machine": "gtceu:zpm_arc_furnace",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/2611b1f07a469ae0b9c2a219"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/2611b1f07a469ae0b9c2a219"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/1079647c86689c1d9316102d"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/1079647c86689c1d9316102d"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

@@ -27,6 +27,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.gson.JsonObject;
 import com.tterrag.registrate.providers.DataGenContext;
 import com.tterrag.registrate.util.nullness.NonNullBiConsumer;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
@@ -638,13 +639,12 @@ public class GTMachineModels {
             MachineDefinition definition = machineBlock.getDefinition();
 
             String modelLocation = ctx.getId().withPrefix("block/machine/").toString();
-            MachineModelBuilder<BlockModelBuilder> builder = prov.models().getBuilder(modelLocation)
-                    .customLoader(MachineModelBuilder.begin(definition));
+            BlockModelBuilder itemBaseModel = prov.models().getBuilder(modelLocation)
+                    .parent(new ModelFile.UncheckedModelFile("block/block"));
+            MachineModelBuilder<BlockModelBuilder> builder = MachineModelBuilder.forBlockState(
+                    itemBaseModel, prov.getExistingFileHelper(), definition);
             modelInitializer.configureModel(ctx, prov, builder);
-
-            final BlockModelBuilder model = builder.end();
-            model.parent(new ModelFile.UncheckedModelFile("block/block"));
-            prov.simpleBlockWithFacing(block, model, definition);
+            prov.machineBlockstate(block, definition, builder.toJson(new JsonObject()));
         };
     }
     // spotless:on

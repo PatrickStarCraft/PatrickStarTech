@@ -1,27 +1,147 @@
 {
   "variants": {
     "facing=down": {
-      "model": "gtceu:block/machine/wooden_tank_valve",
+      "machine": "gtceu:wooden_tank_valve",
+      "texture_overrides": {
+        "bottom": "gtceu:block/casings/wood_wall/bottom",
+        "side": "gtceu:block/casings/wood_wall/side",
+        "top": "gtceu:block/casings/wood_wall/top"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/d345ab22a998e65cf55819ce"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/d345ab22a998e65cf55819ce"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/14b953aa601858c0c34ec680"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/14b953aa601858c0c34ec680"
+        }
+      },
+      "type": "gtceu:machine",
       "x": 90
     },
     "facing=east": {
-      "model": "gtceu:block/machine/wooden_tank_valve",
+      "machine": "gtceu:wooden_tank_valve",
+      "texture_overrides": {
+        "bottom": "gtceu:block/casings/wood_wall/bottom",
+        "side": "gtceu:block/casings/wood_wall/side",
+        "top": "gtceu:block/casings/wood_wall/top"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/d345ab22a998e65cf55819ce"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/d345ab22a998e65cf55819ce"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/14b953aa601858c0c34ec680"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/14b953aa601858c0c34ec680"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/wooden_tank_valve"
+      "machine": "gtceu:wooden_tank_valve",
+      "texture_overrides": {
+        "bottom": "gtceu:block/casings/wood_wall/bottom",
+        "side": "gtceu:block/casings/wood_wall/side",
+        "top": "gtceu:block/casings/wood_wall/top"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/d345ab22a998e65cf55819ce"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/d345ab22a998e65cf55819ce"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/14b953aa601858c0c34ec680"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/14b953aa601858c0c34ec680"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/wooden_tank_valve",
+      "machine": "gtceu:wooden_tank_valve",
+      "texture_overrides": {
+        "bottom": "gtceu:block/casings/wood_wall/bottom",
+        "side": "gtceu:block/casings/wood_wall/side",
+        "top": "gtceu:block/casings/wood_wall/top"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/d345ab22a998e65cf55819ce"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/d345ab22a998e65cf55819ce"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/14b953aa601858c0c34ec680"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/14b953aa601858c0c34ec680"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=up": {
-      "gtceu:z": 180,
-      "model": "gtceu:block/machine/wooden_tank_valve",
-      "x": 270
+      "machine": "gtceu:wooden_tank_valve",
+      "texture_overrides": {
+        "bottom": "gtceu:block/casings/wood_wall/bottom",
+        "side": "gtceu:block/casings/wood_wall/side",
+        "top": "gtceu:block/casings/wood_wall/top"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/d345ab22a998e65cf55819ce"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/d345ab22a998e65cf55819ce"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/14b953aa601858c0c34ec680"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/14b953aa601858c0c34ec680"
+        }
+      },
+      "type": "gtceu:machine",
+      "x": 270,
+      "z": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/wooden_tank_valve",
+      "machine": "gtceu:wooden_tank_valve",
+      "texture_overrides": {
+        "bottom": "gtceu:block/casings/wood_wall/bottom",
+        "side": "gtceu:block/casings/wood_wall/side",
+        "top": "gtceu:block/casings/wood_wall/top"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/d345ab22a998e65cf55819ce"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/d345ab22a998e65cf55819ce"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/14b953aa601858c0c34ec680"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/14b953aa601858c0c34ec680"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

@@ -13,33 +13,22 @@ import net.minecraft.util.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.LevelRenderer;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.rendertype.RenderType;
-import net.minecraft.client.renderer.block.BlockRenderDispatcher;
-import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.block.FluidModel;
-import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.Identifier;
 import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockAndLightGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.model.data.ModelData;
 
 import brachy.modularui.drawable.GuiDraw;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
@@ -261,23 +250,6 @@ public class RenderUtil {
         poseStack.translate(Math.fma(face.getStepX(), 0.5f, x),
                 Math.fma(face.getStepY(), 0.5f, y),
                 Math.fma(face.getStepZ(), 0.5f, z));
-    }
-
-    public static BakedModel getModelForState(BlockState state) {
-        return Minecraft.getInstance().getBlockRenderer().getBlockModel(state);
-    }
-
-    public static void drawBlock(BlockAndTintGetter level, BlockPos pos, BlockState state,
-                                 MultiBufferSource bufferSource, PoseStack poseStack) {
-        int packedLight = LevelRenderer.getLightColor(level, state, pos);
-
-        BlockRenderDispatcher blockRenderer = Minecraft.getInstance().getBlockRenderer();
-        BakedModel model = blockRenderer.getBlockModel(state);
-        ModelData modelData = model.getModelData(level, pos, state, ModelData.EMPTY);
-
-        // noinspection DataFlowIssue renderType is nullable, just not marked as such
-        blockRenderer.renderSingleBlock(state, poseStack, bufferSource, packedLight, OverlayTexture.NO_OVERLAY,
-                modelData, null);
     }
 
     /**

@@ -52,6 +52,11 @@ public class MachineModelBuilder<T extends ModelBuilder<T>> extends CustomLoader
         this.owner = owner;
     }
 
+    public static <T extends ModelBuilder<T>> MachineModelBuilder<T> forBlockState(
+            T parent, ModelFileHelper existingFileHelper, MachineDefinition owner) {
+        return new MachineModelBuilder<>(parent, existingFileHelper, owner);
+    }
+
     @Override
     public JsonObject toJson(JsonObject json) {
         json = super.toJson(json);
@@ -122,13 +127,13 @@ public class MachineModelBuilder<T extends ModelBuilder<T>> extends CustomLoader
         // serialize nested models as objects instead of `"model": "dummy:dummy"`
         if (model instanceof ModelBuilder<?> builder) {
             var currentProvider = GTBlockstateProvider.getCurrentProvider();
-            // check if it's a nested model, and if not, only save the model name
-            if (currentProvider != null &&
-                    currentProvider.models().generatedModels.containsKey(builder.getLocation())) {
+            if (currentProvider != null && currentProvider.models().generatedModels.containsKey(builder.getLocation())) {
                 return new JsonPrimitive(builder.getLocation().toString());
-            } else {
-                return builder.toJson();
             }
+            if (currentProvider != null) {
+                return new JsonPrimitive(currentProvider.registerMachineNestedModel(builder).toString());
+            }
+            return builder.toJson();
         } else {
             return new JsonPrimitive(model.getLocation().toString());
         }
@@ -138,11 +143,11 @@ public class MachineModelBuilder<T extends ModelBuilder<T>> extends CustomLoader
         List<ConfiguredModel> models = list.getModels();
 
         if (models.size() == 1) {
-            return configuredModelToJSON(models.get(0), false);
+            return configuredMachineModelToJSON(models.get(0), false);
         } else {
             JsonArray ret = new JsonArray();
             for (ConfiguredModel m : models) {
-                ret.add(configuredModelToJSON(m, true));
+                ret.add(configuredMachineModelToJSON(m, true));
             }
             return ret;
         }
@@ -163,12 +168,20 @@ public class MachineModelBuilder<T extends ModelBuilder<T>> extends CustomLoader
     }
 
     public static JsonObject configuredModelToJSON(ConfiguredModel model, boolean includeWeight) {
+        return configuredModelToJSON(model, includeWeight, GTBlockstateProvider.Z_ROT_PROPERTY_NAME);
+    }
+
+    private static JsonObject configuredMachineModelToJSON(ConfiguredModel model, boolean includeWeight) {
+        return configuredModelToJSON(model, includeWeight, "z");
+    }
+
+    private static JsonObject configuredModelToJSON(ConfiguredModel model, boolean includeWeight, String zProperty) {
         JsonObject modelJson = new JsonObject();
         modelJson.add("model", modelToJson(model.model));
 
         if (model.rotationX != 0) modelJson.addProperty("x", model.rotationX);
         if (model.rotationY != 0) modelJson.addProperty("y", model.rotationY);
-        if (model.rotationZ != 0) modelJson.addProperty(GTBlockstateProvider.Z_ROT_PROPERTY_NAME, model.rotationZ);
+        if (model.rotationZ != 0) modelJson.addProperty(zProperty, model.rotationZ);
         if (model.uvLock) modelJson.addProperty("uvlock", true);
         if (includeWeight && model.weight != ConfiguredModel.DEFAULT_WEIGHT) {
             modelJson.addProperty("weight", model.weight);

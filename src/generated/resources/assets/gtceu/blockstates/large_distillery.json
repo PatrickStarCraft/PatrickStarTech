@@ -1,18 +1,90 @@
 {
   "variants": {
     "facing=east": {
-      "model": "gtceu:block/machine/large_distillery",
+      "machine": "gtceu:large_distillery",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/gcym/watertight_casing"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/bda02d261228f26617ecf452"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/a7fcc950183747fcb404d3a1"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/02a86a8db078fd60109ed8da"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/02a86a8db078fd60109ed8da"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/large_distillery"
+      "machine": "gtceu:large_distillery",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/gcym/watertight_casing"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/bda02d261228f26617ecf452"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/a7fcc950183747fcb404d3a1"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/02a86a8db078fd60109ed8da"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/02a86a8db078fd60109ed8da"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/large_distillery",
+      "machine": "gtceu:large_distillery",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/gcym/watertight_casing"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/bda02d261228f26617ecf452"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/a7fcc950183747fcb404d3a1"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/02a86a8db078fd60109ed8da"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/02a86a8db078fd60109ed8da"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/large_distillery",
+      "machine": "gtceu:large_distillery",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/gcym/watertight_casing"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/bda02d261228f26617ecf452"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/a7fcc950183747fcb404d3a1"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/02a86a8db078fd60109ed8da"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/02a86a8db078fd60109ed8da"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

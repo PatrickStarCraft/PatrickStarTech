@@ -1,7 +1,25 @@
 {
   "variants": {
     "": {
-      "model": "gtceu:block/machine/cleanroom"
+      "machine": "gtceu:cleanroom",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/cleanroom/plascrete"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/5bcdfb306ce22c303bc37ec3"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/5bcdfb306ce22c303bc37ec3"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/0a5774dcd99956016b655a60"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/0a5774dcd99956016b655a60"
+        }
+      },
+      "type": "gtceu:machine"
     }
   }
 }

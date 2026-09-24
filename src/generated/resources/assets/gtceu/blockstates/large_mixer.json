@@ -1,150 +1,1122 @@
 {
   "variants": {
     "facing=down,upwards_facing=down": {
-      "model": "gtceu:block/machine/large_mixer"
+      "dynamic_renders": [
+        {
+          "type": "gtceu:fluid_area",
+          "block_light": 15,
+          "offset_face": -0.125,
+          "overwrite_light": true,
+          "sky_light": 15
+        }
+      ],
+      "machine": "gtceu:large_mixer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/gcym/reaction_safe_mixing_casing"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ba13036fdcf52c1020ada291"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/e5b26e44add34ed1b260b276"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=down,upwards_facing=east": {
-      "gtceu:z": 90,
-      "model": "gtceu:block/machine/large_mixer",
-      "x": 90
+      "dynamic_renders": [
+        {
+          "type": "gtceu:fluid_area",
+          "block_light": 15,
+          "offset_face": -0.125,
+          "overwrite_light": true,
+          "sky_light": 15
+        }
+      ],
+      "machine": "gtceu:large_mixer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/gcym/reaction_safe_mixing_casing"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ba13036fdcf52c1020ada291"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/e5b26e44add34ed1b260b276"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        }
+      },
+      "type": "gtceu:machine",
+      "x": 90,
+      "z": 90
     },
     "facing=down,upwards_facing=north": {
-      "model": "gtceu:block/machine/large_mixer",
+      "dynamic_renders": [
+        {
+          "type": "gtceu:fluid_area",
+          "block_light": 15,
+          "offset_face": -0.125,
+          "overwrite_light": true,
+          "sky_light": 15
+        }
+      ],
+      "machine": "gtceu:large_mixer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/gcym/reaction_safe_mixing_casing"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ba13036fdcf52c1020ada291"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/e5b26e44add34ed1b260b276"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        }
+      },
+      "type": "gtceu:machine",
       "x": 90
     },
     "facing=down,upwards_facing=south": {
-      "gtceu:z": 180,
-      "model": "gtceu:block/machine/large_mixer",
-      "x": 90
+      "dynamic_renders": [
+        {
+          "type": "gtceu:fluid_area",
+          "block_light": 15,
+          "offset_face": -0.125,
+          "overwrite_light": true,
+          "sky_light": 15
+        }
+      ],
+      "machine": "gtceu:large_mixer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/gcym/reaction_safe_mixing_casing"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ba13036fdcf52c1020ada291"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/e5b26e44add34ed1b260b276"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        }
+      },
+      "type": "gtceu:machine",
+      "x": 90,
+      "z": 180
     },
     "facing=down,upwards_facing=up": {
-      "model": "gtceu:block/machine/large_mixer"
+      "dynamic_renders": [
+        {
+          "type": "gtceu:fluid_area",
+          "block_light": 15,
+          "offset_face": -0.125,
+          "overwrite_light": true,
+          "sky_light": 15
+        }
+      ],
+      "machine": "gtceu:large_mixer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/gcym/reaction_safe_mixing_casing"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ba13036fdcf52c1020ada291"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/e5b26e44add34ed1b260b276"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=down,upwards_facing=west": {
-      "gtceu:z": 270,
-      "model": "gtceu:block/machine/large_mixer",
-      "x": 90
+      "dynamic_renders": [
+        {
+          "type": "gtceu:fluid_area",
+          "block_light": 15,
+          "offset_face": -0.125,
+          "overwrite_light": true,
+          "sky_light": 15
+        }
+      ],
+      "machine": "gtceu:large_mixer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/gcym/reaction_safe_mixing_casing"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ba13036fdcf52c1020ada291"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/e5b26e44add34ed1b260b276"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        }
+      },
+      "type": "gtceu:machine",
+      "x": 90,
+      "z": 270
     },
     "facing=east,upwards_facing=down": {
-      "gtceu:z": 180,
-      "model": "gtceu:block/machine/large_mixer",
-      "y": 90
+      "dynamic_renders": [
+        {
+          "type": "gtceu:fluid_area",
+          "block_light": 15,
+          "offset_face": -0.125,
+          "overwrite_light": true,
+          "sky_light": 15
+        }
+      ],
+      "machine": "gtceu:large_mixer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/gcym/reaction_safe_mixing_casing"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ba13036fdcf52c1020ada291"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/e5b26e44add34ed1b260b276"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        }
+      },
+      "type": "gtceu:machine",
+      "y": 90,
+      "z": 180
     },
     "facing=east,upwards_facing=east": {
-      "model": "gtceu:block/machine/large_mixer"
+      "dynamic_renders": [
+        {
+          "type": "gtceu:fluid_area",
+          "block_light": 15,
+          "offset_face": -0.125,
+          "overwrite_light": true,
+          "sky_light": 15
+        }
+      ],
+      "machine": "gtceu:large_mixer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/gcym/reaction_safe_mixing_casing"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ba13036fdcf52c1020ada291"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/e5b26e44add34ed1b260b276"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=east,upwards_facing=north": {
-      "gtceu:z": 270,
-      "model": "gtceu:block/machine/large_mixer",
-      "y": 90
+      "dynamic_renders": [
+        {
+          "type": "gtceu:fluid_area",
+          "block_light": 15,
+          "offset_face": -0.125,
+          "overwrite_light": true,
+          "sky_light": 15
+        }
+      ],
+      "machine": "gtceu:large_mixer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/gcym/reaction_safe_mixing_casing"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ba13036fdcf52c1020ada291"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/e5b26e44add34ed1b260b276"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        }
+      },
+      "type": "gtceu:machine",
+      "y": 90,
+      "z": 270
     },
     "facing=east,upwards_facing=south": {
-      "gtceu:z": 90,
-      "model": "gtceu:block/machine/large_mixer",
-      "y": 90
+      "dynamic_renders": [
+        {
+          "type": "gtceu:fluid_area",
+          "block_light": 15,
+          "offset_face": -0.125,
+          "overwrite_light": true,
+          "sky_light": 15
+        }
+      ],
+      "machine": "gtceu:large_mixer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/gcym/reaction_safe_mixing_casing"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ba13036fdcf52c1020ada291"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/e5b26e44add34ed1b260b276"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        }
+      },
+      "type": "gtceu:machine",
+      "y": 90,
+      "z": 90
     },
     "facing=east,upwards_facing=up": {
-      "model": "gtceu:block/machine/large_mixer",
+      "dynamic_renders": [
+        {
+          "type": "gtceu:fluid_area",
+          "block_light": 15,
+          "offset_face": -0.125,
+          "overwrite_light": true,
+          "sky_light": 15
+        }
+      ],
+      "machine": "gtceu:large_mixer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/gcym/reaction_safe_mixing_casing"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ba13036fdcf52c1020ada291"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/e5b26e44add34ed1b260b276"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=east,upwards_facing=west": {
-      "model": "gtceu:block/machine/large_mixer"
+      "dynamic_renders": [
+        {
+          "type": "gtceu:fluid_area",
+          "block_light": 15,
+          "offset_face": -0.125,
+          "overwrite_light": true,
+          "sky_light": 15
+        }
+      ],
+      "machine": "gtceu:large_mixer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/gcym/reaction_safe_mixing_casing"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ba13036fdcf52c1020ada291"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/e5b26e44add34ed1b260b276"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=north,upwards_facing=down": {
-      "gtceu:z": 180,
-      "model": "gtceu:block/machine/large_mixer"
+      "dynamic_renders": [
+        {
+          "type": "gtceu:fluid_area",
+          "block_light": 15,
+          "offset_face": -0.125,
+          "overwrite_light": true,
+          "sky_light": 15
+        }
+      ],
+      "machine": "gtceu:large_mixer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/gcym/reaction_safe_mixing_casing"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ba13036fdcf52c1020ada291"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/e5b26e44add34ed1b260b276"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        }
+      },
+      "type": "gtceu:machine",
+      "z": 180
     },
     "facing=north,upwards_facing=east": {
-      "gtceu:z": 90,
-      "model": "gtceu:block/machine/large_mixer"
+      "dynamic_renders": [
+        {
+          "type": "gtceu:fluid_area",
+          "block_light": 15,
+          "offset_face": -0.125,
+          "overwrite_light": true,
+          "sky_light": 15
+        }
+      ],
+      "machine": "gtceu:large_mixer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/gcym/reaction_safe_mixing_casing"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ba13036fdcf52c1020ada291"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/e5b26e44add34ed1b260b276"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        }
+      },
+      "type": "gtceu:machine",
+      "z": 90
     },
     "facing=north,upwards_facing=north": {
-      "model": "gtceu:block/machine/large_mixer"
+      "dynamic_renders": [
+        {
+          "type": "gtceu:fluid_area",
+          "block_light": 15,
+          "offset_face": -0.125,
+          "overwrite_light": true,
+          "sky_light": 15
+        }
+      ],
+      "machine": "gtceu:large_mixer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/gcym/reaction_safe_mixing_casing"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ba13036fdcf52c1020ada291"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/e5b26e44add34ed1b260b276"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=north,upwards_facing=south": {
-      "model": "gtceu:block/machine/large_mixer"
+      "dynamic_renders": [
+        {
+          "type": "gtceu:fluid_area",
+          "block_light": 15,
+          "offset_face": -0.125,
+          "overwrite_light": true,
+          "sky_light": 15
+        }
+      ],
+      "machine": "gtceu:large_mixer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/gcym/reaction_safe_mixing_casing"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ba13036fdcf52c1020ada291"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/e5b26e44add34ed1b260b276"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=north,upwards_facing=up": {
-      "model": "gtceu:block/machine/large_mixer"
+      "dynamic_renders": [
+        {
+          "type": "gtceu:fluid_area",
+          "block_light": 15,
+          "offset_face": -0.125,
+          "overwrite_light": true,
+          "sky_light": 15
+        }
+      ],
+      "machine": "gtceu:large_mixer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/gcym/reaction_safe_mixing_casing"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ba13036fdcf52c1020ada291"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/e5b26e44add34ed1b260b276"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=north,upwards_facing=west": {
-      "gtceu:z": 270,
-      "model": "gtceu:block/machine/large_mixer"
+      "dynamic_renders": [
+        {
+          "type": "gtceu:fluid_area",
+          "block_light": 15,
+          "offset_face": -0.125,
+          "overwrite_light": true,
+          "sky_light": 15
+        }
+      ],
+      "machine": "gtceu:large_mixer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/gcym/reaction_safe_mixing_casing"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ba13036fdcf52c1020ada291"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/e5b26e44add34ed1b260b276"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        }
+      },
+      "type": "gtceu:machine",
+      "z": 270
     },
     "facing=south,upwards_facing=down": {
-      "gtceu:z": 180,
-      "model": "gtceu:block/machine/large_mixer",
-      "y": 180
+      "dynamic_renders": [
+        {
+          "type": "gtceu:fluid_area",
+          "block_light": 15,
+          "offset_face": -0.125,
+          "overwrite_light": true,
+          "sky_light": 15
+        }
+      ],
+      "machine": "gtceu:large_mixer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/gcym/reaction_safe_mixing_casing"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ba13036fdcf52c1020ada291"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/e5b26e44add34ed1b260b276"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        }
+      },
+      "type": "gtceu:machine",
+      "y": 180,
+      "z": 180
     },
     "facing=south,upwards_facing=east": {
-      "gtceu:z": 270,
-      "model": "gtceu:block/machine/large_mixer",
-      "y": 180
+      "dynamic_renders": [
+        {
+          "type": "gtceu:fluid_area",
+          "block_light": 15,
+          "offset_face": -0.125,
+          "overwrite_light": true,
+          "sky_light": 15
+        }
+      ],
+      "machine": "gtceu:large_mixer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/gcym/reaction_safe_mixing_casing"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ba13036fdcf52c1020ada291"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/e5b26e44add34ed1b260b276"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        }
+      },
+      "type": "gtceu:machine",
+      "y": 180,
+      "z": 270
     },
     "facing=south,upwards_facing=north": {
-      "model": "gtceu:block/machine/large_mixer"
+      "dynamic_renders": [
+        {
+          "type": "gtceu:fluid_area",
+          "block_light": 15,
+          "offset_face": -0.125,
+          "overwrite_light": true,
+          "sky_light": 15
+        }
+      ],
+      "machine": "gtceu:large_mixer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/gcym/reaction_safe_mixing_casing"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ba13036fdcf52c1020ada291"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/e5b26e44add34ed1b260b276"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south,upwards_facing=south": {
-      "model": "gtceu:block/machine/large_mixer"
+      "dynamic_renders": [
+        {
+          "type": "gtceu:fluid_area",
+          "block_light": 15,
+          "offset_face": -0.125,
+          "overwrite_light": true,
+          "sky_light": 15
+        }
+      ],
+      "machine": "gtceu:large_mixer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/gcym/reaction_safe_mixing_casing"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ba13036fdcf52c1020ada291"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/e5b26e44add34ed1b260b276"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south,upwards_facing=up": {
-      "model": "gtceu:block/machine/large_mixer",
+      "dynamic_renders": [
+        {
+          "type": "gtceu:fluid_area",
+          "block_light": 15,
+          "offset_face": -0.125,
+          "overwrite_light": true,
+          "sky_light": 15
+        }
+      ],
+      "machine": "gtceu:large_mixer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/gcym/reaction_safe_mixing_casing"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ba13036fdcf52c1020ada291"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/e5b26e44add34ed1b260b276"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=south,upwards_facing=west": {
-      "gtceu:z": 90,
-      "model": "gtceu:block/machine/large_mixer",
-      "y": 180
+      "dynamic_renders": [
+        {
+          "type": "gtceu:fluid_area",
+          "block_light": 15,
+          "offset_face": -0.125,
+          "overwrite_light": true,
+          "sky_light": 15
+        }
+      ],
+      "machine": "gtceu:large_mixer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/gcym/reaction_safe_mixing_casing"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ba13036fdcf52c1020ada291"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/e5b26e44add34ed1b260b276"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        }
+      },
+      "type": "gtceu:machine",
+      "y": 180,
+      "z": 90
     },
     "facing=up,upwards_facing=down": {
-      "model": "gtceu:block/machine/large_mixer"
+      "dynamic_renders": [
+        {
+          "type": "gtceu:fluid_area",
+          "block_light": 15,
+          "offset_face": -0.125,
+          "overwrite_light": true,
+          "sky_light": 15
+        }
+      ],
+      "machine": "gtceu:large_mixer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/gcym/reaction_safe_mixing_casing"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ba13036fdcf52c1020ada291"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/e5b26e44add34ed1b260b276"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=up,upwards_facing=east": {
-      "gtceu:z": 90,
-      "model": "gtceu:block/machine/large_mixer",
-      "x": 270
+      "dynamic_renders": [
+        {
+          "type": "gtceu:fluid_area",
+          "block_light": 15,
+          "offset_face": -0.125,
+          "overwrite_light": true,
+          "sky_light": 15
+        }
+      ],
+      "machine": "gtceu:large_mixer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/gcym/reaction_safe_mixing_casing"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ba13036fdcf52c1020ada291"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/e5b26e44add34ed1b260b276"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        }
+      },
+      "type": "gtceu:machine",
+      "x": 270,
+      "z": 90
     },
     "facing=up,upwards_facing=north": {
-      "gtceu:z": 180,
-      "model": "gtceu:block/machine/large_mixer",
-      "x": 270
+      "dynamic_renders": [
+        {
+          "type": "gtceu:fluid_area",
+          "block_light": 15,
+          "offset_face": -0.125,
+          "overwrite_light": true,
+          "sky_light": 15
+        }
+      ],
+      "machine": "gtceu:large_mixer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/gcym/reaction_safe_mixing_casing"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ba13036fdcf52c1020ada291"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/e5b26e44add34ed1b260b276"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        }
+      },
+      "type": "gtceu:machine",
+      "x": 270,
+      "z": 180
     },
     "facing=up,upwards_facing=south": {
-      "model": "gtceu:block/machine/large_mixer",
+      "dynamic_renders": [
+        {
+          "type": "gtceu:fluid_area",
+          "block_light": 15,
+          "offset_face": -0.125,
+          "overwrite_light": true,
+          "sky_light": 15
+        }
+      ],
+      "machine": "gtceu:large_mixer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/gcym/reaction_safe_mixing_casing"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ba13036fdcf52c1020ada291"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/e5b26e44add34ed1b260b276"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        }
+      },
+      "type": "gtceu:machine",
       "x": 270
     },
     "facing=up,upwards_facing=up": {
-      "model": "gtceu:block/machine/large_mixer"
+      "dynamic_renders": [
+        {
+          "type": "gtceu:fluid_area",
+          "block_light": 15,
+          "offset_face": -0.125,
+          "overwrite_light": true,
+          "sky_light": 15
+        }
+      ],
+      "machine": "gtceu:large_mixer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/gcym/reaction_safe_mixing_casing"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ba13036fdcf52c1020ada291"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/e5b26e44add34ed1b260b276"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=up,upwards_facing=west": {
-      "gtceu:z": 270,
-      "model": "gtceu:block/machine/large_mixer",
-      "x": 270
+      "dynamic_renders": [
+        {
+          "type": "gtceu:fluid_area",
+          "block_light": 15,
+          "offset_face": -0.125,
+          "overwrite_light": true,
+          "sky_light": 15
+        }
+      ],
+      "machine": "gtceu:large_mixer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/gcym/reaction_safe_mixing_casing"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ba13036fdcf52c1020ada291"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/e5b26e44add34ed1b260b276"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        }
+      },
+      "type": "gtceu:machine",
+      "x": 270,
+      "z": 270
     },
     "facing=west,upwards_facing=down": {
-      "gtceu:z": 180,
-      "model": "gtceu:block/machine/large_mixer",
-      "y": 270
+      "dynamic_renders": [
+        {
+          "type": "gtceu:fluid_area",
+          "block_light": 15,
+          "offset_face": -0.125,
+          "overwrite_light": true,
+          "sky_light": 15
+        }
+      ],
+      "machine": "gtceu:large_mixer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/gcym/reaction_safe_mixing_casing"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ba13036fdcf52c1020ada291"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/e5b26e44add34ed1b260b276"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        }
+      },
+      "type": "gtceu:machine",
+      "y": 270,
+      "z": 180
     },
     "facing=west,upwards_facing=east": {
-      "model": "gtceu:block/machine/large_mixer"
+      "dynamic_renders": [
+        {
+          "type": "gtceu:fluid_area",
+          "block_light": 15,
+          "offset_face": -0.125,
+          "overwrite_light": true,
+          "sky_light": 15
+        }
+      ],
+      "machine": "gtceu:large_mixer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/gcym/reaction_safe_mixing_casing"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ba13036fdcf52c1020ada291"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/e5b26e44add34ed1b260b276"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=west,upwards_facing=north": {
-      "gtceu:z": 90,
-      "model": "gtceu:block/machine/large_mixer",
-      "y": 270
+      "dynamic_renders": [
+        {
+          "type": "gtceu:fluid_area",
+          "block_light": 15,
+          "offset_face": -0.125,
+          "overwrite_light": true,
+          "sky_light": 15
+        }
+      ],
+      "machine": "gtceu:large_mixer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/gcym/reaction_safe_mixing_casing"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ba13036fdcf52c1020ada291"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/e5b26e44add34ed1b260b276"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        }
+      },
+      "type": "gtceu:machine",
+      "y": 270,
+      "z": 90
     },
     "facing=west,upwards_facing=south": {
-      "gtceu:z": 270,
-      "model": "gtceu:block/machine/large_mixer",
-      "y": 270
+      "dynamic_renders": [
+        {
+          "type": "gtceu:fluid_area",
+          "block_light": 15,
+          "offset_face": -0.125,
+          "overwrite_light": true,
+          "sky_light": 15
+        }
+      ],
+      "machine": "gtceu:large_mixer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/gcym/reaction_safe_mixing_casing"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ba13036fdcf52c1020ada291"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/e5b26e44add34ed1b260b276"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        }
+      },
+      "type": "gtceu:machine",
+      "y": 270,
+      "z": 270
     },
     "facing=west,upwards_facing=up": {
-      "model": "gtceu:block/machine/large_mixer",
+      "dynamic_renders": [
+        {
+          "type": "gtceu:fluid_area",
+          "block_light": 15,
+          "offset_face": -0.125,
+          "overwrite_light": true,
+          "sky_light": 15
+        }
+      ],
+      "machine": "gtceu:large_mixer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/gcym/reaction_safe_mixing_casing"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ba13036fdcf52c1020ada291"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/e5b26e44add34ed1b260b276"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     },
     "facing=west,upwards_facing=west": {
-      "model": "gtceu:block/machine/large_mixer"
+      "dynamic_renders": [
+        {
+          "type": "gtceu:fluid_area",
+          "block_light": 15,
+          "offset_face": -0.125,
+          "overwrite_light": true,
+          "sky_light": 15
+        }
+      ],
+      "machine": "gtceu:large_mixer",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/gcym/reaction_safe_mixing_casing"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ba13036fdcf52c1020ada291"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/e5b26e44add34ed1b260b276"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/920f71c53d5cfc2d1b00669e"
+        }
+      },
+      "type": "gtceu:machine"
     }
   }
 }

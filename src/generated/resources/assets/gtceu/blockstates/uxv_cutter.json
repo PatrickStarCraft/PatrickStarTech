@@ -1,18 +1,78 @@
 {
   "variants": {
     "facing=east": {
-      "model": "gtceu:block/machine/uxv_cutter",
+      "machine": "gtceu:uxv_cutter",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/4c3b7044ef4f038001ffa48c"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/4c3b7044ef4f038001ffa48c"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/9599bffbef6b4871149a8f2d"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/9599bffbef6b4871149a8f2d"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/uxv_cutter"
+      "machine": "gtceu:uxv_cutter",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/4c3b7044ef4f038001ffa48c"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/4c3b7044ef4f038001ffa48c"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/9599bffbef6b4871149a8f2d"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/9599bffbef6b4871149a8f2d"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/uxv_cutter",
+      "machine": "gtceu:uxv_cutter",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/4c3b7044ef4f038001ffa48c"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/4c3b7044ef4f038001ffa48c"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/9599bffbef6b4871149a8f2d"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/9599bffbef6b4871149a8f2d"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/uxv_cutter",
+      "machine": "gtceu:uxv_cutter",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/4c3b7044ef4f038001ffa48c"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/4c3b7044ef4f038001ffa48c"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/9599bffbef6b4871149a8f2d"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/9599bffbef6b4871149a8f2d"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

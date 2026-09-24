@@ -1,18 +1,78 @@
 {
   "variants": {
     "facing=east": {
-      "model": "gtceu:block/machine/luv_brewery",
+      "machine": "gtceu:luv_brewery",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/4d905a10dc4ff141fa42ca35"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/4d905a10dc4ff141fa42ca35"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/b3c46ca25c1a7ccdeea94da5"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/b3c46ca25c1a7ccdeea94da5"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/luv_brewery"
+      "machine": "gtceu:luv_brewery",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/4d905a10dc4ff141fa42ca35"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/4d905a10dc4ff141fa42ca35"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/b3c46ca25c1a7ccdeea94da5"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/b3c46ca25c1a7ccdeea94da5"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/luv_brewery",
+      "machine": "gtceu:luv_brewery",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/4d905a10dc4ff141fa42ca35"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/4d905a10dc4ff141fa42ca35"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/b3c46ca25c1a7ccdeea94da5"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/b3c46ca25c1a7ccdeea94da5"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/luv_brewery",
+      "machine": "gtceu:luv_brewery",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/4d905a10dc4ff141fa42ca35"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/4d905a10dc4ff141fa42ca35"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/b3c46ca25c1a7ccdeea94da5"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/b3c46ca25c1a7ccdeea94da5"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

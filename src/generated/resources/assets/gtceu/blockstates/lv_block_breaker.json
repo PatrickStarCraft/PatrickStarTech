@@ -1,18 +1,78 @@
 {
   "variants": {
     "facing=east": {
-      "model": "gtceu:block/machine/lv_block_breaker",
+      "machine": "gtceu:lv_block_breaker",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/5ee67e3092ac5b2c68b11891"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/5ee67e3092ac5b2c68b11891"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/fe431c4c6d77e4e6f4d76d5c"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/fe431c4c6d77e4e6f4d76d5c"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/lv_block_breaker"
+      "machine": "gtceu:lv_block_breaker",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/5ee67e3092ac5b2c68b11891"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/5ee67e3092ac5b2c68b11891"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/fe431c4c6d77e4e6f4d76d5c"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/fe431c4c6d77e4e6f4d76d5c"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/lv_block_breaker",
+      "machine": "gtceu:lv_block_breaker",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/5ee67e3092ac5b2c68b11891"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/5ee67e3092ac5b2c68b11891"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/fe431c4c6d77e4e6f4d76d5c"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/fe431c4c6d77e4e6f4d76d5c"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/lv_block_breaker",
+      "machine": "gtceu:lv_block_breaker",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/5ee67e3092ac5b2c68b11891"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/5ee67e3092ac5b2c68b11891"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/fe431c4c6d77e4e6f4d76d5c"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/fe431c4c6d77e4e6f4d76d5c"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

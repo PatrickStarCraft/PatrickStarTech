@@ -1,18 +1,78 @@
 {
   "variants": {
     "facing=east": {
-      "model": "gtceu:block/machine/iv_fluid_heater",
+      "machine": "gtceu:iv_fluid_heater",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ed7941265af50e98872beddf"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/ed7941265af50e98872beddf"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/042df787bbd6e95912a3039a"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/042df787bbd6e95912a3039a"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/iv_fluid_heater"
+      "machine": "gtceu:iv_fluid_heater",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ed7941265af50e98872beddf"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/ed7941265af50e98872beddf"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/042df787bbd6e95912a3039a"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/042df787bbd6e95912a3039a"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/iv_fluid_heater",
+      "machine": "gtceu:iv_fluid_heater",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ed7941265af50e98872beddf"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/ed7941265af50e98872beddf"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/042df787bbd6e95912a3039a"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/042df787bbd6e95912a3039a"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/iv_fluid_heater",
+      "machine": "gtceu:iv_fluid_heater",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/ed7941265af50e98872beddf"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/ed7941265af50e98872beddf"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/042df787bbd6e95912a3039a"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/042df787bbd6e95912a3039a"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

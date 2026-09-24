@@ -1,18 +1,78 @@
 {
   "variants": {
     "facing=east": {
-      "model": "gtceu:block/machine/lv_brewery",
+      "machine": "gtceu:lv_brewery",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/4033795aa353f9f8d4ec2f19"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/4033795aa353f9f8d4ec2f19"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/fb0cea8b763d85ece50af417"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/fb0cea8b763d85ece50af417"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/lv_brewery"
+      "machine": "gtceu:lv_brewery",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/4033795aa353f9f8d4ec2f19"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/4033795aa353f9f8d4ec2f19"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/fb0cea8b763d85ece50af417"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/fb0cea8b763d85ece50af417"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/lv_brewery",
+      "machine": "gtceu:lv_brewery",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/4033795aa353f9f8d4ec2f19"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/4033795aa353f9f8d4ec2f19"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/fb0cea8b763d85ece50af417"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/fb0cea8b763d85ece50af417"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/lv_brewery",
+      "machine": "gtceu:lv_brewery",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/4033795aa353f9f8d4ec2f19"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/4033795aa353f9f8d4ec2f19"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/fb0cea8b763d85ece50af417"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/fb0cea8b763d85ece50af417"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

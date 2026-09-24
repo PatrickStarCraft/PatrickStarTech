@@ -1,7 +1,13 @@
 {
   "variants": {
     "": {
-      "model": "gtceu:block/machine/wood_drum"
+      "machine": "gtceu:wood_drum",
+      "variants": {
+        "": {
+          "model": "gtceu:block/machine/template/drum/wooden_drum"
+        }
+      },
+      "type": "gtceu:machine"
     }
   }
 }

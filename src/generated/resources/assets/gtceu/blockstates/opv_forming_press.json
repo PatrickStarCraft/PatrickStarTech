@@ -1,18 +1,78 @@
 {
   "variants": {
     "facing=east": {
-      "model": "gtceu:block/machine/opv_forming_press",
+      "machine": "gtceu:opv_forming_press",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/1da62bf0411335b8e9176e5c"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/1da62bf0411335b8e9176e5c"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/9b8d361f8e5521b429d0297f"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/9b8d361f8e5521b429d0297f"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/opv_forming_press"
+      "machine": "gtceu:opv_forming_press",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/1da62bf0411335b8e9176e5c"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/1da62bf0411335b8e9176e5c"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/9b8d361f8e5521b429d0297f"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/9b8d361f8e5521b429d0297f"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/opv_forming_press",
+      "machine": "gtceu:opv_forming_press",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/1da62bf0411335b8e9176e5c"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/1da62bf0411335b8e9176e5c"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/9b8d361f8e5521b429d0297f"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/9b8d361f8e5521b429d0297f"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/opv_forming_press",
+      "machine": "gtceu:opv_forming_press",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/1da62bf0411335b8e9176e5c"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/1da62bf0411335b8e9176e5c"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/9b8d361f8e5521b429d0297f"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/9b8d361f8e5521b429d0297f"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

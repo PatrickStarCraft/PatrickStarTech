@@ -1,18 +1,78 @@
 {
   "variants": {
     "facing=east": {
-      "model": "gtceu:block/machine/lv_gas_collector",
+      "machine": "gtceu:lv_gas_collector",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/1f37bc84f1ca0dba07dbb44d"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/3662fa3045fd2fc2bf825a2e"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/444dbce822031bb0e25e1dd8"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/444dbce822031bb0e25e1dd8"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/lv_gas_collector"
+      "machine": "gtceu:lv_gas_collector",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/1f37bc84f1ca0dba07dbb44d"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/3662fa3045fd2fc2bf825a2e"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/444dbce822031bb0e25e1dd8"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/444dbce822031bb0e25e1dd8"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/lv_gas_collector",
+      "machine": "gtceu:lv_gas_collector",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/1f37bc84f1ca0dba07dbb44d"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/3662fa3045fd2fc2bf825a2e"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/444dbce822031bb0e25e1dd8"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/444dbce822031bb0e25e1dd8"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/lv_gas_collector",
+      "machine": "gtceu:lv_gas_collector",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/1f37bc84f1ca0dba07dbb44d"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/3662fa3045fd2fc2bf825a2e"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/444dbce822031bb0e25e1dd8"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/444dbce822031bb0e25e1dd8"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

@@ -1,18 +1,78 @@
 {
   "variants": {
     "facing=east": {
-      "model": "gtceu:block/machine/hv_compressor",
+      "machine": "gtceu:hv_compressor",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/5b4186db4b264ad8f1b4d37e"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/5b4186db4b264ad8f1b4d37e"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/ad287a603206a98247f0e8f2"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/ad287a603206a98247f0e8f2"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/hv_compressor"
+      "machine": "gtceu:hv_compressor",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/5b4186db4b264ad8f1b4d37e"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/5b4186db4b264ad8f1b4d37e"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/ad287a603206a98247f0e8f2"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/ad287a603206a98247f0e8f2"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/hv_compressor",
+      "machine": "gtceu:hv_compressor",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/5b4186db4b264ad8f1b4d37e"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/5b4186db4b264ad8f1b4d37e"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/ad287a603206a98247f0e8f2"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/ad287a603206a98247f0e8f2"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/hv_compressor",
+      "machine": "gtceu:hv_compressor",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/5b4186db4b264ad8f1b4d37e"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/5b4186db4b264ad8f1b4d37e"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/ad287a603206a98247f0e8f2"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/ad287a603206a98247f0e8f2"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

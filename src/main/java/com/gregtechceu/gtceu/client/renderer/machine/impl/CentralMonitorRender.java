@@ -7,7 +7,6 @@ import com.gregtechceu.gtceu.api.item.component.IMonitorModuleItem;
 import com.gregtechceu.gtceu.client.renderer.machine.DynamicRender;
 import com.gregtechceu.gtceu.client.renderer.machine.DynamicRenderSnapshot;
 import com.gregtechceu.gtceu.client.renderer.machine.DynamicRenderType;
-import com.gregtechceu.gtceu.client.renderer.monitor.IMonitorRenderSnapshotProvider;
 import com.gregtechceu.gtceu.client.renderer.monitor.IMonitorRenderer;
 import com.gregtechceu.gtceu.client.renderer.monitor.MonitorRenderSnapshot;
 import com.gregtechceu.gtceu.client.util.RenderUtil;
@@ -53,8 +52,7 @@ public class CentralMonitorRender extends DynamicRender<CentralMonitorMachine, C
             for (IItemComponent component : item.getComponents()) {
                 if (!(component instanceof IMonitorModuleItem module)) continue;
                 IMonitorRenderer renderer = module.getRenderer(stack, machine, group);
-                if (!(renderer instanceof IMonitorRenderSnapshotProvider provider)) continue;
-                MonitorRenderSnapshot snapshot = provider.extractRenderState(machine, group, partialTicks);
+                MonitorRenderSnapshot snapshot = renderer.extractRenderState(machine, group, partialTicks);
                 if (snapshot != null) renderers.add(snapshot);
             }
         }

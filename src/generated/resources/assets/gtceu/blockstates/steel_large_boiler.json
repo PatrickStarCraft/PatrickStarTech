@@ -1,18 +1,170 @@
 {
   "variants": {
     "facing=east": {
-      "model": "gtceu:block/machine/steel_large_boiler",
+      "dynamic_renders": [
+        {
+          "type": "gtceu:boiler_multi_parts",
+          "casing_block": {
+            "Name": "gtceu:solid_machine_casing"
+          },
+          "firebox_active": {
+            "Name": "gtceu:steel_firebox_casing",
+            "Properties": {
+              "active": "true"
+            }
+          },
+          "firebox_idle": {
+            "Name": "gtceu:steel_firebox_casing",
+            "Properties": {
+              "active": "false"
+            }
+          }
+        }
+      ],
+      "machine": "gtceu:steel_large_boiler",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_solid_steel"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/0a4198afa2e2e92edcf6faf0"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/107b3e71164bddd256b64d75"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/69193bc42a4f79f33642b9b7"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/69193bc42a4f79f33642b9b7"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/steel_large_boiler"
+      "dynamic_renders": [
+        {
+          "type": "gtceu:boiler_multi_parts",
+          "casing_block": {
+            "Name": "gtceu:solid_machine_casing"
+          },
+          "firebox_active": {
+            "Name": "gtceu:steel_firebox_casing",
+            "Properties": {
+              "active": "true"
+            }
+          },
+          "firebox_idle": {
+            "Name": "gtceu:steel_firebox_casing",
+            "Properties": {
+              "active": "false"
+            }
+          }
+        }
+      ],
+      "machine": "gtceu:steel_large_boiler",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_solid_steel"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/0a4198afa2e2e92edcf6faf0"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/107b3e71164bddd256b64d75"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/69193bc42a4f79f33642b9b7"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/69193bc42a4f79f33642b9b7"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/steel_large_boiler",
+      "dynamic_renders": [
+        {
+          "type": "gtceu:boiler_multi_parts",
+          "casing_block": {
+            "Name": "gtceu:solid_machine_casing"
+          },
+          "firebox_active": {
+            "Name": "gtceu:steel_firebox_casing",
+            "Properties": {
+              "active": "true"
+            }
+          },
+          "firebox_idle": {
+            "Name": "gtceu:steel_firebox_casing",
+            "Properties": {
+              "active": "false"
+            }
+          }
+        }
+      ],
+      "machine": "gtceu:steel_large_boiler",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_solid_steel"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/0a4198afa2e2e92edcf6faf0"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/107b3e71164bddd256b64d75"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/69193bc42a4f79f33642b9b7"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/69193bc42a4f79f33642b9b7"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/steel_large_boiler",
+      "dynamic_renders": [
+        {
+          "type": "gtceu:boiler_multi_parts",
+          "casing_block": {
+            "Name": "gtceu:solid_machine_casing"
+          },
+          "firebox_active": {
+            "Name": "gtceu:steel_firebox_casing",
+            "Properties": {
+              "active": "true"
+            }
+          },
+          "firebox_idle": {
+            "Name": "gtceu:steel_firebox_casing",
+            "Properties": {
+              "active": "false"
+            }
+          }
+        }
+      ],
+      "machine": "gtceu:steel_large_boiler",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_solid_steel"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/0a4198afa2e2e92edcf6faf0"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/107b3e71164bddd256b64d75"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/69193bc42a4f79f33642b9b7"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/69193bc42a4f79f33642b9b7"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

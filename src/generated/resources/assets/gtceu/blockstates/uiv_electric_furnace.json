@@ -1,18 +1,78 @@
 {
   "variants": {
     "facing=east": {
-      "model": "gtceu:block/machine/uiv_electric_furnace",
+      "machine": "gtceu:uiv_electric_furnace",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/09e7ddc9d5c507da732a4520"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/09e7ddc9d5c507da732a4520"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/f0e7c1af8935df2250d7c6e4"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/f0e7c1af8935df2250d7c6e4"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/uiv_electric_furnace"
+      "machine": "gtceu:uiv_electric_furnace",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/09e7ddc9d5c507da732a4520"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/09e7ddc9d5c507da732a4520"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/f0e7c1af8935df2250d7c6e4"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/f0e7c1af8935df2250d7c6e4"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/uiv_electric_furnace",
+      "machine": "gtceu:uiv_electric_furnace",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/09e7ddc9d5c507da732a4520"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/09e7ddc9d5c507da732a4520"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/f0e7c1af8935df2250d7c6e4"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/f0e7c1af8935df2250d7c6e4"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/uiv_electric_furnace",
+      "machine": "gtceu:uiv_electric_furnace",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/09e7ddc9d5c507da732a4520"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/09e7ddc9d5c507da732a4520"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/f0e7c1af8935df2250d7c6e4"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/f0e7c1af8935df2250d7c6e4"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

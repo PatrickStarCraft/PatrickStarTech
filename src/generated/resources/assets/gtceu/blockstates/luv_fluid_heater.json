@@ -1,18 +1,78 @@
 {
   "variants": {
     "facing=east": {
-      "model": "gtceu:block/machine/luv_fluid_heater",
+      "machine": "gtceu:luv_fluid_heater",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/92f91efa90232f0d2fc2567b"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/92f91efa90232f0d2fc2567b"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/981657f01ca933217908223e"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/981657f01ca933217908223e"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/luv_fluid_heater"
+      "machine": "gtceu:luv_fluid_heater",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/92f91efa90232f0d2fc2567b"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/92f91efa90232f0d2fc2567b"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/981657f01ca933217908223e"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/981657f01ca933217908223e"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/luv_fluid_heater",
+      "machine": "gtceu:luv_fluid_heater",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/92f91efa90232f0d2fc2567b"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/92f91efa90232f0d2fc2567b"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/981657f01ca933217908223e"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/981657f01ca933217908223e"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/luv_fluid_heater",
+      "machine": "gtceu:luv_fluid_heater",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/92f91efa90232f0d2fc2567b"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/92f91efa90232f0d2fc2567b"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/981657f01ca933217908223e"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/981657f01ca933217908223e"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

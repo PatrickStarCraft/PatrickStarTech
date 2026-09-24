@@ -1,18 +1,78 @@
 {
   "variants": {
     "facing=east": {
-      "model": "gtceu:block/machine/hv_arc_furnace",
+      "machine": "gtceu:hv_arc_furnace",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/795c91a5a3306b27024c156b"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/795c91a5a3306b27024c156b"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/6bd4c9e1bd70a7869dce55f7"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/6bd4c9e1bd70a7869dce55f7"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/hv_arc_furnace"
+      "machine": "gtceu:hv_arc_furnace",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/795c91a5a3306b27024c156b"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/795c91a5a3306b27024c156b"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/6bd4c9e1bd70a7869dce55f7"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/6bd4c9e1bd70a7869dce55f7"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/hv_arc_furnace",
+      "machine": "gtceu:hv_arc_furnace",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/795c91a5a3306b27024c156b"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/795c91a5a3306b27024c156b"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/6bd4c9e1bd70a7869dce55f7"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/6bd4c9e1bd70a7869dce55f7"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/hv_arc_furnace",
+      "machine": "gtceu:hv_arc_furnace",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/795c91a5a3306b27024c156b"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/795c91a5a3306b27024c156b"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/6bd4c9e1bd70a7869dce55f7"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/6bd4c9e1bd70a7869dce55f7"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

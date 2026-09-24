@@ -43,7 +43,6 @@ dependencies {
     compileOnly(forge.rhino)
 
     // Performance
-    compileOnly(forge.embeddium)
     compileOnly(forge.oculus)
     compileOnly(forge.modernfix)
 
@@ -82,7 +81,6 @@ dependencies {
     //localRuntime(forge.jei.forge.impl)
 
     // Client-only runtime mods //
-    clientLocalRuntime(forge.embeddium)
     clientLocalRuntime(forge.oculus)
     renderNurseCfg(libs.renderNurse)
 

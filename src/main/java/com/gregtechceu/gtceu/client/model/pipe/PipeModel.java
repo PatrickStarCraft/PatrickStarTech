@@ -128,6 +128,7 @@ public class PipeModel {
 
     /// Use {@link #getOrCreateBlockModel()} instead of referencing this field directly.
     private BlockModelBuilder blockModel;
+    protected PipeModelBuilder<BlockModelBuilder> pipeModelDefinition;
     /// Use {@link #getOrCreateItemModel()} instead of referencing this field directly.
     private ItemModelBuilder itemModel;
 
@@ -183,15 +184,13 @@ public class PipeModel {
     @ApiStatus.OverrideOnly
     protected BlockModelBuilder getOrCreateBlockModel() {
         if (this.blockModel == null) {
-            // spotless:off
-            this.blockModel = this.provider.models().getBuilder(this.blockId.toString())
-                    // make the "default" model be based on the center part's model
-                    .parent(this.getOrCreateCenterElement())
-                    .customLoader(PipeModelBuilder.begin(this.thickness, this.provider))
-                        .centerModels(this.getOrCreateCenterElement().getLocation())
-                        .connectionModels(this.getOrCreateConnectionElement().getLocation())
+            this.blockModel = new BlockModelBuilder(this.blockId, this.provider.getExistingFileHelper())
+                    .parent(this.getOrCreateCenterElement());
+            this.pipeModelDefinition = PipeModelBuilder.<BlockModelBuilder>begin(this.thickness, this.provider)
+                    .apply(this.blockModel, this.provider.getExistingFileHelper());
+            this.pipeModelDefinition.centerModels(this.getOrCreateCenterElement().getLocation())
+                    .connectionModels(this.getOrCreateConnectionElement().getLocation())
                     .end();
-            // spotless:on
         }
         return this.blockModel;
     }
@@ -259,12 +258,11 @@ public class PipeModel {
      */
     @ApiStatus.OverrideOnly
     public VariantBlockStateBuilder createBlockState() {
+        getOrCreateBlockModel();
         // spotless:off
         return this.provider.getVariantBuilder(this.getBlock())
                 .partialState()
-                    .modelForState()
-                        .modelFile(this.provider.models().getExistingFile(this.blockId))
-                    .addModel();
+                    .setInlineModel(this.pipeModelDefinition.toBlockStateModelJson());
         // spotless:on
     }
 

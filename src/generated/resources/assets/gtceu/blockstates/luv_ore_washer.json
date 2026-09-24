@@ -1,18 +1,78 @@
 {
   "variants": {
     "facing=east": {
-      "model": "gtceu:block/machine/luv_ore_washer",
+      "machine": "gtceu:luv_ore_washer",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/029774065fd676bf499b24e5"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/029774065fd676bf499b24e5"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/fc55b8c62c1303e5ac1a9268"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/fc55b8c62c1303e5ac1a9268"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/luv_ore_washer"
+      "machine": "gtceu:luv_ore_washer",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/029774065fd676bf499b24e5"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/029774065fd676bf499b24e5"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/fc55b8c62c1303e5ac1a9268"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/fc55b8c62c1303e5ac1a9268"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/luv_ore_washer",
+      "machine": "gtceu:luv_ore_washer",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/029774065fd676bf499b24e5"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/029774065fd676bf499b24e5"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/fc55b8c62c1303e5ac1a9268"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/fc55b8c62c1303e5ac1a9268"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/luv_ore_washer",
+      "machine": "gtceu:luv_ore_washer",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/029774065fd676bf499b24e5"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/029774065fd676bf499b24e5"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/fc55b8c62c1303e5ac1a9268"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/fc55b8c62c1303e5ac1a9268"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

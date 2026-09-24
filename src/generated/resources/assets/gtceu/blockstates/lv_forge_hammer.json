@@ -1,18 +1,78 @@
 {
   "variants": {
     "facing=east": {
-      "model": "gtceu:block/machine/lv_forge_hammer",
+      "machine": "gtceu:lv_forge_hammer",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/c4f297a5764a5bad59340cb3"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/c4f297a5764a5bad59340cb3"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/b9162250d3c9ff77d3c3aca7"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/b9162250d3c9ff77d3c3aca7"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/lv_forge_hammer"
+      "machine": "gtceu:lv_forge_hammer",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/c4f297a5764a5bad59340cb3"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/c4f297a5764a5bad59340cb3"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/b9162250d3c9ff77d3c3aca7"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/b9162250d3c9ff77d3c3aca7"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/lv_forge_hammer",
+      "machine": "gtceu:lv_forge_hammer",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/c4f297a5764a5bad59340cb3"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/c4f297a5764a5bad59340cb3"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/b9162250d3c9ff77d3c3aca7"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/b9162250d3c9ff77d3c3aca7"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/lv_forge_hammer",
+      "machine": "gtceu:lv_forge_hammer",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/c4f297a5764a5bad59340cb3"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/c4f297a5764a5bad59340cb3"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/b9162250d3c9ff77d3c3aca7"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/b9162250d3c9ff77d3c3aca7"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

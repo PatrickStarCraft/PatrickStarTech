@@ -1,18 +1,78 @@
 {
   "variants": {
     "facing=east": {
-      "model": "gtceu:block/machine/iv_extruder",
+      "machine": "gtceu:iv_extruder",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/981032faea2f8aa5d0f29fc7"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/05c81553de3e52d9cb60ea48"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/717274f69895307b1cde0cb7"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/717274f69895307b1cde0cb7"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/iv_extruder"
+      "machine": "gtceu:iv_extruder",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/981032faea2f8aa5d0f29fc7"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/05c81553de3e52d9cb60ea48"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/717274f69895307b1cde0cb7"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/717274f69895307b1cde0cb7"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/iv_extruder",
+      "machine": "gtceu:iv_extruder",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/981032faea2f8aa5d0f29fc7"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/05c81553de3e52d9cb60ea48"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/717274f69895307b1cde0cb7"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/717274f69895307b1cde0cb7"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/iv_extruder",
+      "machine": "gtceu:iv_extruder",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/981032faea2f8aa5d0f29fc7"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/05c81553de3e52d9cb60ea48"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/717274f69895307b1cde0cb7"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/717274f69895307b1cde0cb7"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

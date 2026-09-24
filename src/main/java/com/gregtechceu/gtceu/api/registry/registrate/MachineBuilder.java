@@ -842,19 +842,14 @@ public class MachineBuilder<DEFINITION extends MachineDefinition, MACHINE extend
             if (builder.model() == null && builder.blockModel() == null) return;
 
             final Identifier id = definition.getId();
-            // if generator is null, we're making the block models through GT
-            if (generator == null) {
-                // Fake a data provider for the GT model builders
-                var context = new DataGenContext<>(definition::getBlock, definition.getName(), id);
-                if (builder.blockModel() != null) {
-                    builder.blockModel().accept(context, RuntimeBlockstateProvider.INSTANCE);
-                } else {
-                    GTMachineModels.createMachineModel(builder.model())
-                            .accept(context, RuntimeBlockstateProvider.INSTANCE);
-                }
+            // The target blockstate model and item definition are generated together by the
+            // runtime provider. The legacy KubeJS generator only emits pre-26.2 item models.
+            var context = new DataGenContext<>(definition::getBlock, definition.getName(), id);
+            if (builder.blockModel() != null) {
+                builder.blockModel().accept(context, RuntimeBlockstateProvider.INSTANCE);
             } else {
-                generator.itemModel(id, gen -> gen.parent(id.withPrefix("block/machine/").toString()));
-                generator.json(id.withPrefix("items/"), GTModels.machineItemDefinition(id.withPrefix("item/")));
+                GTMachineModels.createMachineModel(builder.model())
+                        .accept(context, RuntimeBlockstateProvider.INSTANCE);
             }
         }
 

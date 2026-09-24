@@ -1,27 +1,237 @@
 {
   "variants": {
     "facing=down": {
-      "model": "gtceu:block/machine/uxv_rotor_holder",
+      "machine": "gtceu:uxv_rotor_holder",
+      "multipart": [
+        {
+          "apply": {
+            "model": "gtceu:block/machine_parts/6d95065ac07a6c7a50acc87c"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/machine/template/rotor_holder/overlay"
+          },
+          "when": {
+            "is_formed": "true"
+          }
+        }
+      ],
+      "replaceable_textures": [
+        "bottom",
+        "top",
+        "side"
+      ],
+      "variants": {
+        "emissive_rotor=false,has_rotor=true,is_formed=true,rotor_spinning=false": {
+          "model": "gtceu:block/machine/template/rotor_holder/rotor_idle"
+        },
+        "emissive_rotor=false,has_rotor=true,is_formed=true,rotor_spinning=true": {
+          "model": "gtceu:block/machine/template/rotor_holder/rotor_spinning"
+        },
+        "emissive_rotor=true,has_rotor=true,is_formed=true,rotor_spinning=false": {
+          "model": "gtceu:block/machine/template/rotor_holder/rotor_idle_emissive"
+        },
+        "emissive_rotor=true,has_rotor=true,is_formed=true,rotor_spinning=true": {
+          "model": "gtceu:block/machine/template/rotor_holder/rotor_spinning_emissive"
+        }
+      },
+      "type": "gtceu:machine",
       "x": 90
     },
     "facing=east": {
-      "model": "gtceu:block/machine/uxv_rotor_holder",
+      "machine": "gtceu:uxv_rotor_holder",
+      "multipart": [
+        {
+          "apply": {
+            "model": "gtceu:block/machine_parts/6d95065ac07a6c7a50acc87c"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/machine/template/rotor_holder/overlay"
+          },
+          "when": {
+            "is_formed": "true"
+          }
+        }
+      ],
+      "replaceable_textures": [
+        "bottom",
+        "top",
+        "side"
+      ],
+      "variants": {
+        "emissive_rotor=false,has_rotor=true,is_formed=true,rotor_spinning=false": {
+          "model": "gtceu:block/machine/template/rotor_holder/rotor_idle"
+        },
+        "emissive_rotor=false,has_rotor=true,is_formed=true,rotor_spinning=true": {
+          "model": "gtceu:block/machine/template/rotor_holder/rotor_spinning"
+        },
+        "emissive_rotor=true,has_rotor=true,is_formed=true,rotor_spinning=false": {
+          "model": "gtceu:block/machine/template/rotor_holder/rotor_idle_emissive"
+        },
+        "emissive_rotor=true,has_rotor=true,is_formed=true,rotor_spinning=true": {
+          "model": "gtceu:block/machine/template/rotor_holder/rotor_spinning_emissive"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/uxv_rotor_holder"
+      "machine": "gtceu:uxv_rotor_holder",
+      "multipart": [
+        {
+          "apply": {
+            "model": "gtceu:block/machine_parts/6d95065ac07a6c7a50acc87c"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/machine/template/rotor_holder/overlay"
+          },
+          "when": {
+            "is_formed": "true"
+          }
+        }
+      ],
+      "replaceable_textures": [
+        "bottom",
+        "top",
+        "side"
+      ],
+      "variants": {
+        "emissive_rotor=false,has_rotor=true,is_formed=true,rotor_spinning=false": {
+          "model": "gtceu:block/machine/template/rotor_holder/rotor_idle"
+        },
+        "emissive_rotor=false,has_rotor=true,is_formed=true,rotor_spinning=true": {
+          "model": "gtceu:block/machine/template/rotor_holder/rotor_spinning"
+        },
+        "emissive_rotor=true,has_rotor=true,is_formed=true,rotor_spinning=false": {
+          "model": "gtceu:block/machine/template/rotor_holder/rotor_idle_emissive"
+        },
+        "emissive_rotor=true,has_rotor=true,is_formed=true,rotor_spinning=true": {
+          "model": "gtceu:block/machine/template/rotor_holder/rotor_spinning_emissive"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/uxv_rotor_holder",
+      "machine": "gtceu:uxv_rotor_holder",
+      "multipart": [
+        {
+          "apply": {
+            "model": "gtceu:block/machine_parts/6d95065ac07a6c7a50acc87c"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/machine/template/rotor_holder/overlay"
+          },
+          "when": {
+            "is_formed": "true"
+          }
+        }
+      ],
+      "replaceable_textures": [
+        "bottom",
+        "top",
+        "side"
+      ],
+      "variants": {
+        "emissive_rotor=false,has_rotor=true,is_formed=true,rotor_spinning=false": {
+          "model": "gtceu:block/machine/template/rotor_holder/rotor_idle"
+        },
+        "emissive_rotor=false,has_rotor=true,is_formed=true,rotor_spinning=true": {
+          "model": "gtceu:block/machine/template/rotor_holder/rotor_spinning"
+        },
+        "emissive_rotor=true,has_rotor=true,is_formed=true,rotor_spinning=false": {
+          "model": "gtceu:block/machine/template/rotor_holder/rotor_idle_emissive"
+        },
+        "emissive_rotor=true,has_rotor=true,is_formed=true,rotor_spinning=true": {
+          "model": "gtceu:block/machine/template/rotor_holder/rotor_spinning_emissive"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=up": {
-      "gtceu:z": 180,
-      "model": "gtceu:block/machine/uxv_rotor_holder",
-      "x": 270
+      "machine": "gtceu:uxv_rotor_holder",
+      "multipart": [
+        {
+          "apply": {
+            "model": "gtceu:block/machine_parts/6d95065ac07a6c7a50acc87c"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/machine/template/rotor_holder/overlay"
+          },
+          "when": {
+            "is_formed": "true"
+          }
+        }
+      ],
+      "replaceable_textures": [
+        "bottom",
+        "top",
+        "side"
+      ],
+      "variants": {
+        "emissive_rotor=false,has_rotor=true,is_formed=true,rotor_spinning=false": {
+          "model": "gtceu:block/machine/template/rotor_holder/rotor_idle"
+        },
+        "emissive_rotor=false,has_rotor=true,is_formed=true,rotor_spinning=true": {
+          "model": "gtceu:block/machine/template/rotor_holder/rotor_spinning"
+        },
+        "emissive_rotor=true,has_rotor=true,is_formed=true,rotor_spinning=false": {
+          "model": "gtceu:block/machine/template/rotor_holder/rotor_idle_emissive"
+        },
+        "emissive_rotor=true,has_rotor=true,is_formed=true,rotor_spinning=true": {
+          "model": "gtceu:block/machine/template/rotor_holder/rotor_spinning_emissive"
+        }
+      },
+      "type": "gtceu:machine",
+      "x": 270,
+      "z": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/uxv_rotor_holder",
+      "machine": "gtceu:uxv_rotor_holder",
+      "multipart": [
+        {
+          "apply": {
+            "model": "gtceu:block/machine_parts/6d95065ac07a6c7a50acc87c"
+          }
+        },
+        {
+          "apply": {
+            "model": "gtceu:block/machine/template/rotor_holder/overlay"
+          },
+          "when": {
+            "is_formed": "true"
+          }
+        }
+      ],
+      "replaceable_textures": [
+        "bottom",
+        "top",
+        "side"
+      ],
+      "variants": {
+        "emissive_rotor=false,has_rotor=true,is_formed=true,rotor_spinning=false": {
+          "model": "gtceu:block/machine/template/rotor_holder/rotor_idle"
+        },
+        "emissive_rotor=false,has_rotor=true,is_formed=true,rotor_spinning=true": {
+          "model": "gtceu:block/machine/template/rotor_holder/rotor_spinning"
+        },
+        "emissive_rotor=true,has_rotor=true,is_formed=true,rotor_spinning=false": {
+          "model": "gtceu:block/machine/template/rotor_holder/rotor_idle_emissive"
+        },
+        "emissive_rotor=true,has_rotor=true,is_formed=true,rotor_spinning=true": {
+          "model": "gtceu:block/machine/template/rotor_holder/rotor_spinning_emissive"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

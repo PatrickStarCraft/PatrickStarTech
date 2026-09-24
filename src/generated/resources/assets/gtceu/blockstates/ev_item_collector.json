@@ -1,7 +1,22 @@
 {
   "variants": {
     "": {
-      "model": "gtceu:block/machine/ev_item_collector"
+      "machine": "gtceu:ev_item_collector",
+      "variants": {
+        "active=false,working_enabled=false": {
+          "model": "gtceu:block/machine_parts/ff0eaa1b5bef4bedb30cbe46"
+        },
+        "active=false,working_enabled=true": {
+          "model": "gtceu:block/machine_parts/ff0eaa1b5bef4bedb30cbe46"
+        },
+        "active=true,working_enabled=false": {
+          "model": "gtceu:block/machine_parts/ff0eaa1b5bef4bedb30cbe46"
+        },
+        "active=true,working_enabled=true": {
+          "model": "gtceu:block/machine_parts/ead938842e884b3926d3f4eb"
+        }
+      },
+      "type": "gtceu:machine"
     }
   }
 }

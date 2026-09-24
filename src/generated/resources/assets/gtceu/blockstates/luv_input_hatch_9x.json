@@ -1,27 +1,111 @@
 {
   "variants": {
     "facing=down": {
-      "model": "gtceu:block/machine/luv_input_hatch_9x",
+      "machine": "gtceu:luv_input_hatch_9x",
+      "replaceable_textures": [
+        "bottom",
+        "top",
+        "side"
+      ],
+      "variants": {
+        "is_painted=false": {
+          "model": "gtceu:block/machine_parts/43946867bfba9c169500690f"
+        },
+        "is_painted=true": {
+          "model": "gtceu:block/machine_parts/fb228692f9a00fd31a7b6444"
+        }
+      },
+      "type": "gtceu:machine",
       "x": 90
     },
     "facing=east": {
-      "model": "gtceu:block/machine/luv_input_hatch_9x",
+      "machine": "gtceu:luv_input_hatch_9x",
+      "replaceable_textures": [
+        "bottom",
+        "top",
+        "side"
+      ],
+      "variants": {
+        "is_painted=false": {
+          "model": "gtceu:block/machine_parts/43946867bfba9c169500690f"
+        },
+        "is_painted=true": {
+          "model": "gtceu:block/machine_parts/fb228692f9a00fd31a7b6444"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/luv_input_hatch_9x"
+      "machine": "gtceu:luv_input_hatch_9x",
+      "replaceable_textures": [
+        "bottom",
+        "top",
+        "side"
+      ],
+      "variants": {
+        "is_painted=false": {
+          "model": "gtceu:block/machine_parts/43946867bfba9c169500690f"
+        },
+        "is_painted=true": {
+          "model": "gtceu:block/machine_parts/fb228692f9a00fd31a7b6444"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/luv_input_hatch_9x",
+      "machine": "gtceu:luv_input_hatch_9x",
+      "replaceable_textures": [
+        "bottom",
+        "top",
+        "side"
+      ],
+      "variants": {
+        "is_painted=false": {
+          "model": "gtceu:block/machine_parts/43946867bfba9c169500690f"
+        },
+        "is_painted=true": {
+          "model": "gtceu:block/machine_parts/fb228692f9a00fd31a7b6444"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=up": {
-      "gtceu:z": 180,
-      "model": "gtceu:block/machine/luv_input_hatch_9x",
-      "x": 270
+      "machine": "gtceu:luv_input_hatch_9x",
+      "replaceable_textures": [
+        "bottom",
+        "top",
+        "side"
+      ],
+      "variants": {
+        "is_painted=false": {
+          "model": "gtceu:block/machine_parts/43946867bfba9c169500690f"
+        },
+        "is_painted=true": {
+          "model": "gtceu:block/machine_parts/fb228692f9a00fd31a7b6444"
+        }
+      },
+      "type": "gtceu:machine",
+      "x": 270,
+      "z": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/luv_input_hatch_9x",
+      "machine": "gtceu:luv_input_hatch_9x",
+      "replaceable_textures": [
+        "bottom",
+        "top",
+        "side"
+      ],
+      "variants": {
+        "is_painted=false": {
+          "model": "gtceu:block/machine_parts/43946867bfba9c169500690f"
+        },
+        "is_painted=true": {
+          "model": "gtceu:block/machine_parts/fb228692f9a00fd31a7b6444"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

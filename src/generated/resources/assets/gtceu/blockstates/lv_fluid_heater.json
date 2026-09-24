@@ -1,18 +1,78 @@
 {
   "variants": {
     "facing=east": {
-      "model": "gtceu:block/machine/lv_fluid_heater",
+      "machine": "gtceu:lv_fluid_heater",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/641cf5598948c4bed1337290"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/641cf5598948c4bed1337290"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/15a7359397f52f967c5931b2"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/15a7359397f52f967c5931b2"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/lv_fluid_heater"
+      "machine": "gtceu:lv_fluid_heater",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/641cf5598948c4bed1337290"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/641cf5598948c4bed1337290"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/15a7359397f52f967c5931b2"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/15a7359397f52f967c5931b2"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/lv_fluid_heater",
+      "machine": "gtceu:lv_fluid_heater",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/641cf5598948c4bed1337290"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/641cf5598948c4bed1337290"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/15a7359397f52f967c5931b2"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/15a7359397f52f967c5931b2"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/lv_fluid_heater",
+      "machine": "gtceu:lv_fluid_heater",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/641cf5598948c4bed1337290"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/641cf5598948c4bed1337290"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/15a7359397f52f967c5931b2"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/15a7359397f52f967c5931b2"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

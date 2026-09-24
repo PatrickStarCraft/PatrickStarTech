@@ -1,18 +1,78 @@
 {
   "variants": {
     "facing=east": {
-      "model": "gtceu:block/machine/lv_lathe",
+      "machine": "gtceu:lv_lathe",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/7df07e06675ebbda3a95e12a"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/7df07e06675ebbda3a95e12a"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/56bfce000a0cba87ac859948"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/56bfce000a0cba87ac859948"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/lv_lathe"
+      "machine": "gtceu:lv_lathe",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/7df07e06675ebbda3a95e12a"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/7df07e06675ebbda3a95e12a"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/56bfce000a0cba87ac859948"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/56bfce000a0cba87ac859948"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/lv_lathe",
+      "machine": "gtceu:lv_lathe",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/7df07e06675ebbda3a95e12a"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/7df07e06675ebbda3a95e12a"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/56bfce000a0cba87ac859948"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/56bfce000a0cba87ac859948"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/lv_lathe",
+      "machine": "gtceu:lv_lathe",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/7df07e06675ebbda3a95e12a"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/7df07e06675ebbda3a95e12a"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/56bfce000a0cba87ac859948"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/56bfce000a0cba87ac859948"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

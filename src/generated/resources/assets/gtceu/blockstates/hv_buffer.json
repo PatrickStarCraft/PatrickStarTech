@@ -1,7 +1,18 @@
 {
   "variants": {
     "": {
-      "model": "gtceu:block/machine/hv_buffer"
+      "machine": "gtceu:hv_buffer",
+      "replaceable_textures": [
+        "bottom",
+        "top",
+        "side"
+      ],
+      "variants": {
+        "": {
+          "model": "gtceu:block/machine_parts/5d82227f45e03e8d8c782013"
+        }
+      },
+      "type": "gtceu:machine"
     }
   }
 }

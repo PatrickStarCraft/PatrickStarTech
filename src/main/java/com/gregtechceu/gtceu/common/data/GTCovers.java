@@ -39,7 +39,7 @@ public class GTCovers {
     }
 
     public final static CoverDefinition FACADE = register("facade", FacadeCover::new,
-            () -> () -> FacadeCoverRenderer.INSTANCE);
+            () -> () -> new SimpleCoverRenderer(GTCEu.id("block/cover/cover_back_plate")));
 
     public final static CoverDefinition ITEM_FILTER = register("item_filter", ItemFilterCover::new);
     public final static CoverDefinition FLUID_FILTER = register("fluid_filter", FluidFilterCover::new);

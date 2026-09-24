@@ -1,18 +1,78 @@
 {
   "variants": {
     "facing=east": {
-      "model": "gtceu:block/machine/uev_centrifuge",
+      "machine": "gtceu:uev_centrifuge",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/c1315b3d212dc928260cff51"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/c1315b3d212dc928260cff51"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/6095ef0a5a7d270f8e37d585"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/6095ef0a5a7d270f8e37d585"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/uev_centrifuge"
+      "machine": "gtceu:uev_centrifuge",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/c1315b3d212dc928260cff51"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/c1315b3d212dc928260cff51"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/6095ef0a5a7d270f8e37d585"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/6095ef0a5a7d270f8e37d585"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/uev_centrifuge",
+      "machine": "gtceu:uev_centrifuge",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/c1315b3d212dc928260cff51"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/c1315b3d212dc928260cff51"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/6095ef0a5a7d270f8e37d585"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/6095ef0a5a7d270f8e37d585"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/uev_centrifuge",
+      "machine": "gtceu:uev_centrifuge",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/c1315b3d212dc928260cff51"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/c1315b3d212dc928260cff51"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/6095ef0a5a7d270f8e37d585"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/6095ef0a5a7d270f8e37d585"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

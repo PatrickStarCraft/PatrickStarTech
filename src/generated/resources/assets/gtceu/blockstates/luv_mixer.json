@@ -1,18 +1,78 @@
 {
   "variants": {
     "facing=east": {
-      "model": "gtceu:block/machine/luv_mixer",
+      "machine": "gtceu:luv_mixer",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/f624f7a944eee3d679629432"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/f624f7a944eee3d679629432"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/ccdf85cb7d215e26aaae731b"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/ccdf85cb7d215e26aaae731b"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/luv_mixer"
+      "machine": "gtceu:luv_mixer",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/f624f7a944eee3d679629432"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/f624f7a944eee3d679629432"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/ccdf85cb7d215e26aaae731b"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/ccdf85cb7d215e26aaae731b"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/luv_mixer",
+      "machine": "gtceu:luv_mixer",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/f624f7a944eee3d679629432"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/f624f7a944eee3d679629432"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/ccdf85cb7d215e26aaae731b"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/ccdf85cb7d215e26aaae731b"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/luv_mixer",
+      "machine": "gtceu:luv_mixer",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/f624f7a944eee3d679629432"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/f624f7a944eee3d679629432"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/ccdf85cb7d215e26aaae731b"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/ccdf85cb7d215e26aaae731b"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

@@ -1,18 +1,78 @@
 {
   "variants": {
     "facing=east": {
-      "model": "gtceu:block/machine/uev_fluid_heater",
+      "machine": "gtceu:uev_fluid_heater",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/51a98dce45d4483da0fe58b5"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/51a98dce45d4483da0fe58b5"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/a2caf95a2c2fa9b7f6c94528"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/a2caf95a2c2fa9b7f6c94528"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/uev_fluid_heater"
+      "machine": "gtceu:uev_fluid_heater",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/51a98dce45d4483da0fe58b5"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/51a98dce45d4483da0fe58b5"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/a2caf95a2c2fa9b7f6c94528"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/a2caf95a2c2fa9b7f6c94528"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/uev_fluid_heater",
+      "machine": "gtceu:uev_fluid_heater",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/51a98dce45d4483da0fe58b5"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/51a98dce45d4483da0fe58b5"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/a2caf95a2c2fa9b7f6c94528"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/a2caf95a2c2fa9b7f6c94528"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/uev_fluid_heater",
+      "machine": "gtceu:uev_fluid_heater",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/51a98dce45d4483da0fe58b5"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/51a98dce45d4483da0fe58b5"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/a2caf95a2c2fa9b7f6c94528"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/a2caf95a2c2fa9b7f6c94528"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

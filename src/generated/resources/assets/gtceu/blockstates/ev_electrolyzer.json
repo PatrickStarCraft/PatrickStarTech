@@ -1,18 +1,78 @@
 {
   "variants": {
     "facing=east": {
-      "model": "gtceu:block/machine/ev_electrolyzer",
+      "machine": "gtceu:ev_electrolyzer",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/bdf4ef4977afda7d584a8eda"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/bdf4ef4977afda7d584a8eda"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/c7b8df704ca24b6e058ccf7c"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/c7b8df704ca24b6e058ccf7c"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/ev_electrolyzer"
+      "machine": "gtceu:ev_electrolyzer",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/bdf4ef4977afda7d584a8eda"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/bdf4ef4977afda7d584a8eda"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/c7b8df704ca24b6e058ccf7c"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/c7b8df704ca24b6e058ccf7c"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/ev_electrolyzer",
+      "machine": "gtceu:ev_electrolyzer",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/bdf4ef4977afda7d584a8eda"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/bdf4ef4977afda7d584a8eda"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/c7b8df704ca24b6e058ccf7c"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/c7b8df704ca24b6e058ccf7c"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/ev_electrolyzer",
+      "machine": "gtceu:ev_electrolyzer",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/bdf4ef4977afda7d584a8eda"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/bdf4ef4977afda7d584a8eda"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/c7b8df704ca24b6e058ccf7c"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/c7b8df704ca24b6e058ccf7c"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

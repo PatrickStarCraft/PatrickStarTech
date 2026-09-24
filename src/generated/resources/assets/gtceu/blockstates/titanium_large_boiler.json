@@ -1,18 +1,170 @@
 {
   "variants": {
     "facing=east": {
-      "model": "gtceu:block/machine/titanium_large_boiler",
+      "dynamic_renders": [
+        {
+          "type": "gtceu:boiler_multi_parts",
+          "casing_block": {
+            "Name": "gtceu:stable_machine_casing"
+          },
+          "firebox_active": {
+            "Name": "gtceu:titanium_firebox_casing",
+            "Properties": {
+              "active": "true"
+            }
+          },
+          "firebox_idle": {
+            "Name": "gtceu:titanium_firebox_casing",
+            "Properties": {
+              "active": "false"
+            }
+          }
+        }
+      ],
+      "machine": "gtceu:titanium_large_boiler",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_stable_titanium"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/9b9ad4573b1f6ca29184edb0"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/43bff8a7b91388a1fd78995f"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/02f19566a8d3b8776a0fb557"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/02f19566a8d3b8776a0fb557"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/titanium_large_boiler"
+      "dynamic_renders": [
+        {
+          "type": "gtceu:boiler_multi_parts",
+          "casing_block": {
+            "Name": "gtceu:stable_machine_casing"
+          },
+          "firebox_active": {
+            "Name": "gtceu:titanium_firebox_casing",
+            "Properties": {
+              "active": "true"
+            }
+          },
+          "firebox_idle": {
+            "Name": "gtceu:titanium_firebox_casing",
+            "Properties": {
+              "active": "false"
+            }
+          }
+        }
+      ],
+      "machine": "gtceu:titanium_large_boiler",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_stable_titanium"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/9b9ad4573b1f6ca29184edb0"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/43bff8a7b91388a1fd78995f"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/02f19566a8d3b8776a0fb557"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/02f19566a8d3b8776a0fb557"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/titanium_large_boiler",
+      "dynamic_renders": [
+        {
+          "type": "gtceu:boiler_multi_parts",
+          "casing_block": {
+            "Name": "gtceu:stable_machine_casing"
+          },
+          "firebox_active": {
+            "Name": "gtceu:titanium_firebox_casing",
+            "Properties": {
+              "active": "true"
+            }
+          },
+          "firebox_idle": {
+            "Name": "gtceu:titanium_firebox_casing",
+            "Properties": {
+              "active": "false"
+            }
+          }
+        }
+      ],
+      "machine": "gtceu:titanium_large_boiler",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_stable_titanium"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/9b9ad4573b1f6ca29184edb0"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/43bff8a7b91388a1fd78995f"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/02f19566a8d3b8776a0fb557"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/02f19566a8d3b8776a0fb557"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/titanium_large_boiler",
+      "dynamic_renders": [
+        {
+          "type": "gtceu:boiler_multi_parts",
+          "casing_block": {
+            "Name": "gtceu:stable_machine_casing"
+          },
+          "firebox_active": {
+            "Name": "gtceu:titanium_firebox_casing",
+            "Properties": {
+              "active": "true"
+            }
+          },
+          "firebox_idle": {
+            "Name": "gtceu:titanium_firebox_casing",
+            "Properties": {
+              "active": "false"
+            }
+          }
+        }
+      ],
+      "machine": "gtceu:titanium_large_boiler",
+      "texture_overrides": {
+        "all": "gtceu:block/casings/solid/machine_casing_stable_titanium"
+      },
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/9b9ad4573b1f6ca29184edb0"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/43bff8a7b91388a1fd78995f"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/02f19566a8d3b8776a0fb557"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/02f19566a8d3b8776a0fb557"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

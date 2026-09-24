@@ -1,27 +1,93 @@
 {
   "variants": {
     "facing=down": {
-      "model": "gtceu:block/machine/uv_256a_laser_target_hatch",
+      "machine": "gtceu:uv_256a_laser_target_hatch",
+      "replaceable_textures": [
+        "bottom",
+        "top",
+        "side"
+      ],
+      "variants": {
+        "": {
+          "model": "gtceu:block/machine_parts/d732450afe906e0d9984404c"
+        }
+      },
+      "type": "gtceu:machine",
       "x": 90
     },
     "facing=east": {
-      "model": "gtceu:block/machine/uv_256a_laser_target_hatch",
+      "machine": "gtceu:uv_256a_laser_target_hatch",
+      "replaceable_textures": [
+        "bottom",
+        "top",
+        "side"
+      ],
+      "variants": {
+        "": {
+          "model": "gtceu:block/machine_parts/d732450afe906e0d9984404c"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/uv_256a_laser_target_hatch"
+      "machine": "gtceu:uv_256a_laser_target_hatch",
+      "replaceable_textures": [
+        "bottom",
+        "top",
+        "side"
+      ],
+      "variants": {
+        "": {
+          "model": "gtceu:block/machine_parts/d732450afe906e0d9984404c"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/uv_256a_laser_target_hatch",
+      "machine": "gtceu:uv_256a_laser_target_hatch",
+      "replaceable_textures": [
+        "bottom",
+        "top",
+        "side"
+      ],
+      "variants": {
+        "": {
+          "model": "gtceu:block/machine_parts/d732450afe906e0d9984404c"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=up": {
-      "gtceu:z": 180,
-      "model": "gtceu:block/machine/uv_256a_laser_target_hatch",
-      "x": 270
+      "machine": "gtceu:uv_256a_laser_target_hatch",
+      "replaceable_textures": [
+        "bottom",
+        "top",
+        "side"
+      ],
+      "variants": {
+        "": {
+          "model": "gtceu:block/machine_parts/d732450afe906e0d9984404c"
+        }
+      },
+      "type": "gtceu:machine",
+      "x": 270,
+      "z": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/uv_256a_laser_target_hatch",
+      "machine": "gtceu:uv_256a_laser_target_hatch",
+      "replaceable_textures": [
+        "bottom",
+        "top",
+        "side"
+      ],
+      "variants": {
+        "": {
+          "model": "gtceu:block/machine_parts/d732450afe906e0d9984404c"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

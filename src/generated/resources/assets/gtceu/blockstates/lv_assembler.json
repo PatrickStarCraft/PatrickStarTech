@@ -1,18 +1,78 @@
 {
   "variants": {
     "facing=east": {
-      "model": "gtceu:block/machine/lv_assembler",
+      "machine": "gtceu:lv_assembler",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/c9484944607ae442876314e3"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/e4ecc3f2b8bdc490fa37e9b3"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/7eb94cac496ef1fff2f32eaf"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/7eb94cac496ef1fff2f32eaf"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/lv_assembler"
+      "machine": "gtceu:lv_assembler",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/c9484944607ae442876314e3"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/e4ecc3f2b8bdc490fa37e9b3"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/7eb94cac496ef1fff2f32eaf"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/7eb94cac496ef1fff2f32eaf"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/lv_assembler",
+      "machine": "gtceu:lv_assembler",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/c9484944607ae442876314e3"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/e4ecc3f2b8bdc490fa37e9b3"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/7eb94cac496ef1fff2f32eaf"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/7eb94cac496ef1fff2f32eaf"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/lv_assembler",
+      "machine": "gtceu:lv_assembler",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/c9484944607ae442876314e3"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/e4ecc3f2b8bdc490fa37e9b3"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/7eb94cac496ef1fff2f32eaf"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/7eb94cac496ef1fff2f32eaf"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }

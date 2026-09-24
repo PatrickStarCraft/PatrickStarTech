@@ -11,7 +11,6 @@ import com.gregtechceu.gtceu.common.machine.multiblock.part.monitor.MonitorPartM
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.input.MouseButtonInfo;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
@@ -32,7 +31,7 @@ import com.mojang.datafixers.util.Pair;
 import org.joml.Vector2d;
 import org.lwjgl.glfw.GLFW;
 
-public class MonitorGuiRenderer implements IMonitorRenderer, IMonitorRenderSnapshotProvider {
+public class MonitorGuiRenderer implements IMonitorRenderer {
 
     private static final int RESOLUTION_COEF = 2;
 
@@ -191,12 +190,6 @@ public class MonitorGuiRenderer implements IMonitorRenderer, IMonitorRenderSnaps
      * shaderInstance.clear();
      * }
      */
-
-    @Override
-    public void render(CentralMonitorMachine machine, MonitorGroup group, float partialTick, PoseStack poseStack,
-                       MultiBufferSource buffer, int packedLight, int packedOverlay) {
-        this.updateMouseState(machine, group, partialTick);
-    }
 
     @Override
     public MonitorRenderSnapshot extractRenderState(CentralMonitorMachine machine, MonitorGroup group,

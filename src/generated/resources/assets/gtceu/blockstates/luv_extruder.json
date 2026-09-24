@@ -1,18 +1,78 @@
 {
   "variants": {
     "facing=east": {
-      "model": "gtceu:block/machine/luv_extruder",
+      "machine": "gtceu:luv_extruder",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/9191c7dbf56959fb62d6d8e2"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/7f55a0a03353017ba5c230ad"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/8e7ba7cbfcd7bb812a284801"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/8e7ba7cbfcd7bb812a284801"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 90
     },
     "facing=north": {
-      "model": "gtceu:block/machine/luv_extruder"
+      "machine": "gtceu:luv_extruder",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/9191c7dbf56959fb62d6d8e2"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/7f55a0a03353017ba5c230ad"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/8e7ba7cbfcd7bb812a284801"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/8e7ba7cbfcd7bb812a284801"
+        }
+      },
+      "type": "gtceu:machine"
     },
     "facing=south": {
-      "model": "gtceu:block/machine/luv_extruder",
+      "machine": "gtceu:luv_extruder",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/9191c7dbf56959fb62d6d8e2"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/7f55a0a03353017ba5c230ad"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/8e7ba7cbfcd7bb812a284801"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/8e7ba7cbfcd7bb812a284801"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 180
     },
     "facing=west": {
-      "model": "gtceu:block/machine/luv_extruder",
+      "machine": "gtceu:luv_extruder",
+      "variants": {
+        "recipe_logic_status=idle": {
+          "model": "gtceu:block/machine_parts/9191c7dbf56959fb62d6d8e2"
+        },
+        "recipe_logic_status=suspend": {
+          "model": "gtceu:block/machine_parts/7f55a0a03353017ba5c230ad"
+        },
+        "recipe_logic_status=waiting": {
+          "model": "gtceu:block/machine_parts/8e7ba7cbfcd7bb812a284801"
+        },
+        "recipe_logic_status=working": {
+          "model": "gtceu:block/machine_parts/8e7ba7cbfcd7bb812a284801"
+        }
+      },
+      "type": "gtceu:machine",
       "y": 270
     }
   }
