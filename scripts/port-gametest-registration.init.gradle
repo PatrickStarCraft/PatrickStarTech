@@ -1,0 +1,23 @@
+// Load one real GT GameTest callback through the configured NeoForge test run.
+// The rest of GT is intentionally excluded because its main source set is still mid-port.
+gradle.projectsEvaluated {
+    def project = gradle.rootProject
+    def gtRoot = project.projectDir.parentFile.parentFile
+    def testSourceSet = project.sourceSets.test
+
+    testSourceSet.java.srcDir(new File(gtRoot, 'src/test/java'))
+    testSourceSet.java.setIncludes([
+        'com/gregtechceu/gtceu/gametest/GTGameTestRegistration.java',
+        'com/gregtechceu/gtceu/gametest/example/ExampleTest.java'
+    ])
+    testSourceSet.resources.srcDir(new File(gtRoot, 'src/test/resources'))
+
+    // Make test-source classes visible to the mod scanner for this isolated run.
+    project.neoForge.mods.named(project.mod_id) {
+        sourceSet(testSourceSet)
+    }
+    project.neoForge.runs.named('gameTestServer') {
+        systemProperty('neoforge.enabledGameTestNamespaces', 'gtceu')
+        gameDirectory.set(project.file('run/gametest-port'))
+    }
+}

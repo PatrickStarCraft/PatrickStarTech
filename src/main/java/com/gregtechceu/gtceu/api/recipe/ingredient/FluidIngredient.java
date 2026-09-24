@@ -156,8 +156,9 @@ public class FluidIngredient implements Predicate<FluidStack> {
 
     @Override
     public int hashCode() {
-        int result = Arrays.hashCode(values);
-        result = 31 * result + Integer.hashCode(amount);
+        Value[] sortedValues = values.clone();
+        Arrays.sort(sortedValues, VALUE_COMPARATOR);
+        int result = Arrays.hashCode(sortedValues);
         result = 31 * result + Objects.hashCode(nbt);
         return result;
     }
@@ -300,7 +301,7 @@ public class FluidIngredient implements Predicate<FluidStack> {
                 TagKey<Fluid> tagKey = TagKey.create(Registries.FLUID, resourceLocation);
                 return FluidIngredient.fromValue(new TagValue(tagKey), amount, nbt);
             } else {
-                Fluid fluid = BuiltInRegistries.FLUID.getValue(Identifier.parse(value));
+                Fluid fluid = fluidFromId(value);
                 return FluidIngredient.fromValue(new FluidValue(fluid), amount, nbt);
             }
         } else {
@@ -321,7 +322,7 @@ public class FluidIngredient implements Predicate<FluidStack> {
             throw new JsonParseException("A fluid ingredient entry is either a tag or a fluid, not both");
         }
         if (json.has("fluid")) {
-            Fluid fluid = BuiltInRegistries.FLUID.getValue(Identifier.parse(GsonHelper.getAsString(json, "fluid")));
+            Fluid fluid = fluidFromId(GsonHelper.getAsString(json, "fluid"));
             return new FluidValue(fluid);
         }
         if (json.has("tag")) {
@@ -330,6 +331,12 @@ public class FluidIngredient implements Predicate<FluidStack> {
             return new TagValue(tagKey);
         }
         throw new JsonParseException("A fluid ingredient entry needs either a tag or a fluid");
+    }
+
+    private static Fluid fluidFromId(String id) {
+        Identifier identifier = Identifier.parse(id);
+        return BuiltInRegistries.FLUID.getOptional(identifier)
+                .orElseThrow(() -> new JsonParseException("Unknown fluid id in ingredient: " + identifier));
     }
 
     public interface Value {

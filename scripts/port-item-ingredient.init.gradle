@@ -1,0 +1,44 @@
+// Run the real target-version ranged item ingredient and stack-display helpers without the whole GT registry.
+gradle.projectsEvaluated {
+    def project = gradle.rootProject
+    def gtRoot = project.projectDir.parentFile.parentFile
+    def selectedProductionSources = project.fileTree(new File(gtRoot, 'src/main/java')) {
+        include 'com/gregtechceu/gtceu/api/recipe/ingredient/IntProviderIngredient.java'
+        include 'com/gregtechceu/gtceu/api/recipe/ingredient/IRangedIngredient.java'
+        include 'com/gregtechceu/gtceu/api/recipe/ingredient/SizedIngredient.java'
+        include 'com/gregtechceu/gtceu/api/recipe/ingredient/EmptyIngredient.java'
+        include 'com/gregtechceu/gtceu/api/recipe/ingredient/IngredientStacks.java'
+        include 'com/gregtechceu/gtceu/api/recipe/lookup/ingredient/AbstractMapIngredient.java'
+        include 'com/gregtechceu/gtceu/api/recipe/lookup/ingredient/MapIngredientFunction.java'
+        include 'com/gregtechceu/gtceu/api/recipe/lookup/ingredient/MapIngredientTypeManager.java'
+        include 'com/gregtechceu/gtceu/api/recipe/lookup/ingredient/item/CustomMapIngredient.java'
+        include 'com/gregtechceu/gtceu/api/recipe/lookup/ingredient/item/DataComponentItemStackMapIngredient.java'
+        include 'com/gregtechceu/gtceu/api/recipe/lookup/ingredient/item/ItemStackMapIngredient.java'
+        include 'com/gregtechceu/gtceu/api/recipe/lookup/ingredient/item/ItemTagMapIngredient.java'
+        include 'com/gregtechceu/gtceu/api/recipe/lookup/ingredient/item/IntersectionMapIngredient.java'
+        include 'com/gregtechceu/gtceu/utils/ItemStackHashStrategy.java'
+        include 'com/gregtechceu/gtceu/utils/IngredientEquality.java'
+        include 'com/gregtechceu/gtceu/data/recipe/builder/RecipeBuilderCodecs.java'
+    }
+    project.sourceSets.test.java.setSrcDirs([
+        new File(gtRoot, 'src/test/java'),
+        new File(gtRoot, 'scripts/port-item-ingredient-test-fixtures')
+    ])
+    project.sourceSets.test.java.setIncludes([
+        'com/gregtechceu/gtceu/GTCEu.java',
+        'com/gregtechceu/gtceu/common/data/GTRecipeCapabilities.java',
+        'com/gregtechceu/gtceu/api/GTValues.java',
+        'com/gregtechceu/gtceu/api/recipe/ingredient/IntCircuitIngredient.java',
+        'com/gregtechceu/gtceu/api/recipe/ingredient/NBTPredicateIngredient.java',
+        'com/gregtechceu/gtceu/api/recipe/ingredient/FluidContainerIngredient.java',
+        'com/gregtechceu/gtceu/api/data/chemical/ChemicalHelper.java',
+        'com/gregtechceu/gtceu/api/data/chemical/material/stack/MaterialEntry.java',
+        'com/gregtechceu/gtceu/api/data/tag/TagPrefix.java',
+        'com/gregtechceu/gtceu/api/capability/recipe/ItemRecipeCapability.java',
+        'com/gregtechceu/gtceu/api/capability/recipe/RecipeCapability.java',
+        'com/gregtechceu/gtceu/api/recipe/ingredient/IntProviderIngredientPortTest.java'
+    ])
+    project.tasks.named('compileTestJava') {
+        source(selectedProductionSources)
+    }
+}

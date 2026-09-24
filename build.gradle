@@ -90,6 +90,10 @@ tasks.withType(JavaCompile).configureEach {
     }
 }
 
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
+}
+
 lombok {
     version = "1.18.42"
 }

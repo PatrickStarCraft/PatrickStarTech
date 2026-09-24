@@ -1,0 +1,16 @@
+// Run the production magnet active-state persistence helper with actual Minecraft item components.
+gradle.projectsEvaluated {
+    def project = gradle.rootProject
+    def gtRoot = project.projectDir.parentFile.parentFile
+    def selectedProductionSources = project.fileTree(new File(gtRoot, 'src/main/java')) {
+        include 'com/gregtechceu/gtceu/api/item/data/ItemStackData.java'
+        include 'com/gregtechceu/gtceu/common/item/behavior/MagnetStateData.java'
+    }
+    project.sourceSets.test.java.setSrcDirs([new File(gtRoot, 'src/test/java')])
+    project.sourceSets.test.java.setIncludes([
+        'com/gregtechceu/gtceu/common/item/behavior/MagnetStateDataPortTest.java'
+    ])
+    project.tasks.named('compileTestJava') {
+        source(selectedProductionSources)
+    }
+}

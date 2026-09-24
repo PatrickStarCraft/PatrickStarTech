@@ -1,0 +1,29 @@
+// Exercise the production filtered fluid container against NeoForge's real ItemAccess and transaction APIs.
+gradle.projectsEvaluated {
+    def project = gradle.rootProject
+    def gtRoot = project.projectDir.parentFile.parentFile
+    def selectedProductionSources = project.fileTree(new File(gtRoot, 'src/main/java')) {
+        include 'com/gregtechceu/gtceu/api/misc/FilteredFluidResourceHandler.java'
+        include 'com/gregtechceu/gtceu/api/misc/ThermalFluidResourceHandler.java'
+        include 'com/gregtechceu/gtceu/api/capability/IThermalFluidHandlerItemStack.java'
+        include 'com/gregtechceu/gtceu/api/fluids/FluidConstants.java'
+        include 'com/gregtechceu/gtceu/api/fluids/FluidState.java'
+        include 'com/gregtechceu/gtceu/api/fluids/attribute/FluidAttribute.java'
+        include 'com/gregtechceu/gtceu/api/fluids/attribute/FluidAttributes.java'
+        include 'com/gregtechceu/gtceu/api/fluids/attribute/IAttributedFluid.java'
+    }
+    project.sourceSets.test.java.setSrcDirs([
+        new File(gtRoot, 'src/test/java'),
+        new File(gtRoot, 'scripts/port-fluid-storage-test-fixtures')
+    ])
+    project.sourceSets.test.java.setIncludes([
+        'com/gregtechceu/gtceu/GTCEu.java',
+        'com/gregtechceu/gtceu/common/data/GTDataComponents.java',
+        'com/gregtechceu/gtceu/data/recipe/CustomTags.java',
+        'com/gregtechceu/gtceu/api/misc/FilteredFluidResourceHandlerPortTest.java',
+        'com/gregtechceu/gtceu/api/misc/ThermalFluidResourceHandlerPortTest.java'
+    ])
+    project.tasks.named('compileTestJava') {
+        source(selectedProductionSources)
+    }
+}

@@ -10,6 +10,7 @@ import com.gregtechceu.gtceu.common.cover.data.BucketMode;
 import com.gregtechceu.gtceu.common.cover.data.VoidingMode;
 import com.gregtechceu.gtceu.common.mui.GTGuiTextures;
 import com.gregtechceu.gtceu.common.mui.GTMuiWidgets;
+import com.gregtechceu.gtceu.utils.EnumOrdinal;
 import com.gregtechceu.gtceu.utils.GTMath;
 
 import org.jspecify.annotations.NullMarked;
@@ -168,8 +169,8 @@ public class AdvancedFluidVoidingCover extends FluidVoidingCover {
 
     @Override
     public void pasteConfig(ServerPlayer player, CompoundTag tag) {
-        setVoidingMode(VoidingMode.values()[tag.getIntOr("voidingMode", 0)]);
-        setTransferBucketMode(BucketMode.values()[tag.getIntOr("voidBucketMode", 0)]);
+        setVoidingMode(EnumOrdinal.getOrDefault(VoidingMode.values(), tag.getIntOr("voidingMode", 0)));
+        setTransferBucketMode(EnumOrdinal.getOrDefault(BucketMode.values(), tag.getIntOr("voidBucketMode", 0)));
         setCurrentBucketModeTransferSize(tag.getIntOr("voidSize", 0));
         super.pasteConfig(player, tag);
     }

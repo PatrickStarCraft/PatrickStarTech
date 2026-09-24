@@ -2,49 +2,59 @@
 gradle.projectsEvaluated {
     def project = gradle.rootProject
     def gtRoot = project.projectDir.parentFile.parentFile
-    project.sourceSets.test.java.srcDir(new File(gtRoot, 'src/main/java'))
-    project.sourceSets.test.java.srcDir(new File(gtRoot, 'src/test/java'))
+    def selectedProductionSources = project.fileTree(new File(gtRoot, 'src/main/java')) {
+        include 'com/gregtechceu/gtceu/api/sync_system/NBTSerializable.java'
+        include 'com/gregtechceu/gtceu/api/sync_system/ValueIOPersistence.java'
+        include 'com/gregtechceu/gtceu/api/sync_system/CompoundTagSavedData.java'
+        include 'com/gregtechceu/gtceu/utils/data/TypedTagList.java'
+        include 'com/gregtechceu/gtceu/utils/data/StackPersistence.java'
+        include 'com/gregtechceu/gtceu/utils/data/ComponentJson.java'
+        include 'com/gregtechceu/gtceu/api/transfer/fluid/FluidHandlerList.java'
+        include 'com/gregtechceu/gtceu/api/transfer/item/CustomItemStackHandler.java'
+        include 'com/gregtechceu/gtceu/api/transfer/fluid/CustomFluidTank.java'
+        include 'com/gregtechceu/gtceu/api/transfer/fluid/IFluidHandlerModifiable.java'
+        include 'com/gregtechceu/gtceu/api/capability/recipe/IO.java'
+        include 'com/gregtechceu/gtceu/api/misc/IOFluidHandlerList.java'
+        include 'com/gregtechceu/gtceu/data/recipe/GeneratedRecipe.java'
+        include 'com/gregtechceu/gtceu/data/recipe/GeneratedRecipeOutput.java'
+        include 'com/gregtechceu/gtceu/data/recipe/builder/RecipeBuilderCodecs.java'
+        include 'com/gregtechceu/gtceu/data/recipe/builder/ShapedRecipeBuilder.java'
+        include 'com/gregtechceu/gtceu/data/recipe/builder/ShapelessRecipeBuilder.java'
+        include 'com/gregtechceu/gtceu/data/recipe/builder/SimpleCookingRecipeBuilder.java'
+        include 'com/gregtechceu/gtceu/data/recipe/builder/ShapedEnergyTransferRecipeBuilder.java'
+        include 'com/gregtechceu/gtceu/api/recipe/ShapedEnergyTransferRecipe.java'
+        include 'com/gregtechceu/gtceu/api/capability/ElectricItemCapabilities.java'
+        include 'com/gregtechceu/gtceu/api/capability/IElectricItem.java'
+        include 'com/gregtechceu/gtceu/api/item/data/ElectricItemData.java'
+        include 'com/gregtechceu/gtceu/api/item/data/ItemStackData.java'
+        include 'com/gregtechceu/gtceu/api/item/capability/ElectricItem.java'
+        include 'com/gregtechceu/gtceu/api/GTVoltages.java'
+        include 'com/gregtechceu/gtceu/api/recipe/StrictShapedRecipe.java'
+        include 'com/gregtechceu/gtceu/api/recipe/CraftingGridOrigin.java'
+        include 'com/gregtechceu/gtceu/api/recipe/RecipeIdAware.java'
+        include 'com/gregtechceu/gtceu/api/recipe/ResearchData.java'
+        include 'com/gregtechceu/gtceu/api/recipe/content/RecipeContentCodec.java'
+        include 'com/gregtechceu/gtceu/core/mixins/CraftingInputMixin.java'
+        include 'com/gregtechceu/gtceu/core/mixins/RecipeHolderMixin.java'
+        include 'com/gregtechceu/gtceu/core/mixins/PlaceRecipeHelperMixin.java'
+    }
+    project.sourceSets.test.java.setSrcDirs([
+        new File(gtRoot, 'src/test/java'),
+        new File(gtRoot, 'scripts/port-recipe-test-fixtures')
+    ])
     project.sourceSets.test.java.setIncludes([
         'brachy/**',
-        'com/gregtechceu/gtceu/api/sync_system/NBTSerializable.java',
-        'com/gregtechceu/gtceu/api/sync_system/ValueIOPersistence.java',
-        'com/gregtechceu/gtceu/api/sync_system/CompoundTagSavedData.java',
-        'com/gregtechceu/gtceu/utils/data/TypedTagList.java',
-        'com/gregtechceu/gtceu/utils/data/StackPersistence.java',
-        'com/gregtechceu/gtceu/utils/data/ComponentJson.java',
-        'com/gregtechceu/gtceu/api/transfer/fluid/FluidHandlerList.java',
-        'com/gregtechceu/gtceu/api/transfer/item/CustomItemStackHandler.java',
-        'com/gregtechceu/gtceu/api/transfer/fluid/CustomFluidTank.java',
-        'com/gregtechceu/gtceu/api/transfer/fluid/IFluidHandlerModifiable.java',
+        'com/gregtechceu/gtceu/GTCEu.java',
         'com/gregtechceu/gtceu/api/recipe/InventoryPersistencePortTest.java',
-        'com/gregtechceu/gtceu/data/recipe/GeneratedRecipe.java',
-        'com/gregtechceu/gtceu/data/recipe/GeneratedRecipeOutput.java',
-        'com/gregtechceu/gtceu/data/recipe/builder/RecipeBuilderCodecs.java',
-        'com/gregtechceu/gtceu/data/recipe/builder/ShapedRecipeBuilder.java',
-        'com/gregtechceu/gtceu/data/recipe/builder/ShapelessRecipeBuilder.java',
-        'com/gregtechceu/gtceu/data/recipe/builder/SimpleCookingRecipeBuilder.java',
-        'com/gregtechceu/gtceu/data/recipe/builder/ShapedEnergyTransferRecipeBuilder.java',
-        'com/gregtechceu/gtceu/api/recipe/ShapedEnergyTransferRecipe.java',
         'com/gregtechceu/gtceu/api/recipe/RecipeBuilderPortTest.java',
-        'com/gregtechceu/gtceu/api/capability/ElectricItemCapabilities.java',
-        'com/gregtechceu/gtceu/api/capability/IElectricItem.java',
-        'com/gregtechceu/gtceu/api/item/data/ElectricItemData.java',
-        'com/gregtechceu/gtceu/api/item/data/ItemStackData.java',
-        'com/gregtechceu/gtceu/api/item/capability/ElectricItem.java',
-        'com/gregtechceu/gtceu/api/GTVoltages.java',
         'com/gregtechceu/gtceu/api/recipe/GeneratedRecipePortTest.java',
-        'com/gregtechceu/gtceu/api/recipe/StrictShapedRecipe.java',
-        'com/gregtechceu/gtceu/api/recipe/CraftingGridOrigin.java',
-        'com/gregtechceu/gtceu/api/recipe/RecipeIdAware.java',
-        'com/gregtechceu/gtceu/api/recipe/ResearchData.java',
         'com/gregtechceu/gtceu/api/recipe/ResearchDataPortTest.java',
         'com/gregtechceu/gtceu/api/recipe/RecipeContentCodecPortTest.java',
-        'com/gregtechceu/gtceu/api/recipe/content/RecipeContentCodec.java',
-        'com/gregtechceu/gtceu/api/recipe/StrictShapedRecipePortTest.java',
-        'com/gregtechceu/gtceu/core/mixins/CraftingInputMixin.java',
-        'com/gregtechceu/gtceu/core/mixins/RecipeHolderMixin.java',
-        'com/gregtechceu/gtceu/core/mixins/PlaceRecipeHelperMixin.java'
+        'com/gregtechceu/gtceu/api/recipe/StrictShapedRecipePortTest.java'
     ])
+    project.tasks.named('compileTestJava') {
+        source(selectedProductionSources)
+    }
     project.sourceSets.test.resources.srcDir(new File(gtRoot, 'scripts/port-recipe-test-resources'))
     project.tasks.named('processResources') {
         inputs.property('gtRecipePortTests', true)

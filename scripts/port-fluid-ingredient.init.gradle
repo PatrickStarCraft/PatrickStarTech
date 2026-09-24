@@ -1,0 +1,32 @@
+// Compile the actual ranged fluid-ingredient serializer with only its optional KubeJS integration shimmed.
+gradle.projectsEvaluated {
+    def project = gradle.rootProject
+    def gtRoot = project.projectDir.parentFile.parentFile
+    def selectedProductionSources = project.fileTree(new File(gtRoot, 'src/main/java')) {
+        include 'com/gregtechceu/gtceu/api/transfer/fluid/FluidStackData.java'
+        include 'com/gregtechceu/gtceu/api/recipe/ingredient/FluidIngredient.java'
+        include 'com/gregtechceu/gtceu/api/recipe/ingredient/IRangedIngredient.java'
+        include 'com/gregtechceu/gtceu/api/recipe/ingredient/IntProviderFluidIngredient.java'
+        include 'com/gregtechceu/gtceu/api/recipe/lookup/ingredient/AbstractMapIngredient.java'
+        include 'com/gregtechceu/gtceu/api/recipe/lookup/ingredient/fluid/FluidStackMapIngredient.java'
+        include 'com/gregtechceu/gtceu/common/item/armor/JetpackFuelSelection.java'
+    }
+    project.sourceSets.test.java.setSrcDirs([
+        new File(gtRoot, 'src/test/java'),
+        new File(gtRoot, 'scripts/port-fluid-ingredient-fixtures')
+    ])
+    project.sourceSets.test.java.setIncludes([
+        'com/gregtechceu/gtceu/GTCEu.java',
+        'com/gregtechceu/gtceu/api/GTValues.java',
+        'com/gregtechceu/gtceu/integration/kjs/recipe/KJSHelpers.java',
+        'com/gregtechceu/gtceu/api/transfer/fluid/FluidStackData.java',
+        'com/gregtechceu/gtceu/api/recipe/ingredient/FluidIngredient.java',
+        'com/gregtechceu/gtceu/api/recipe/ingredient/IRangedIngredient.java',
+        'com/gregtechceu/gtceu/api/recipe/ingredient/IntProviderFluidIngredient.java',
+        'com/gregtechceu/gtceu/api/recipe/ingredient/IntProviderFluidIngredientPortTest.java',
+        'com/gregtechceu/gtceu/common/item/armor/JetpackFuelSelectionPortTest.java'
+    ])
+    project.tasks.named('compileTestJava') {
+        source(selectedProductionSources)
+    }
+}

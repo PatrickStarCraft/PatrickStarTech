@@ -1,0 +1,16 @@
+// Compile real quantum fluid storage with the configured NeoForge test loader.
+gradle.projectsEvaluated {
+    def project = gradle.rootProject
+    def gtRoot = project.projectDir.parentFile.parentFile
+    project.sourceSets.test.java.srcDir(new File(gtRoot, 'src/main/java'))
+    project.sourceSets.test.java.srcDir(new File(gtRoot, 'src/test/java'))
+    project.sourceSets.test.java.setIncludes([
+        'com/gregtechceu/gtceu/api/misc/QuantumFluidResourceHandler.java',
+        'com/gregtechceu/gtceu/api/sync_system/ValueIOPersistence.java',
+        'com/gregtechceu/gtceu/utils/GTMath.java',
+        'com/gregtechceu/gtceu/utils/math/**',
+        'com/gregtechceu/gtceu/utils/data/StackPersistence.java',
+        'com/gregtechceu/gtceu/api/item/data/ItemStackData.java',
+        'com/gregtechceu/gtceu/api/misc/QuantumFluidResourceHandlerPortTest.java'
+    ])
+}

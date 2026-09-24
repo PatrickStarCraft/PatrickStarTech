@@ -131,7 +131,12 @@ public final class QuantumFluidResourceHandler implements ResourceHandler<FluidR
         }
 
         CompoundTag root = customData.copyTag();
-        FluidStack fluid = StackPersistence.loadFluid(root.getCompoundOrEmpty(STORED_KEY));
+        var decodedFluid = StackPersistence.tryLoadFluid(root.getCompoundOrEmpty(STORED_KEY));
+        if (decodedFluid.isEmpty()) {
+            // Keep malformed bytes intact and expose no fluid until a successful explicit transfer overwrites them.
+            return StoredFluid.EMPTY;
+        }
+        FluidStack fluid = decodedFluid.get();
         long amount = root.getLongOr(STORED_AMOUNT_KEY, 0L);
         if (fluid.isEmpty() || amount <= 0L) {
             return StoredFluid.EMPTY;

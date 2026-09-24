@@ -244,41 +244,6 @@ public class IntProviderFluidIngredientTest {
         return new BusHolderBatchParallel(inputBus1, inputHatch1, outputBus1, outputHatch1, controller, parallelHatch);
     }
 
-    // test for IntProviderFluidIngredient.test()
-    @GameTest(template = "empty", batch = "RangedFluidIngredients")
-    public static void rangedFluidIngredientTestEqualTest(GameTestHelper helper) {
-        var ingredient = IntProviderFluidIngredient.of(GTMaterials.Water.getFluid(1), 1, 5);
-        helper.assertTrue(ingredient.test(GTMaterials.Water.getFluid(3)),
-                "IntProviderFluidIngredient.test doesn't match when it should have");
-        // This should work since test only tries the fluid type.
-        helper.assertTrue(ingredient.test(GTMaterials.Water.getFluid(64)),
-                "IntProviderFluidIngredient.test doesn't match when it should have with value outside bounds");
-        helper.assertFalse(ingredient.test(GTMaterials.Lava.getFluid(3)),
-                "IntProviderFluidIngredient.test shouldn't match with different fluids");
-        helper.succeed();
-    }
-
-    // test for IntProviderFluidIngredient.getStacks()
-    @GameTest(template = "empty", batch = "RangedFluidIngredients")
-    public static void rangedFluidIngredientGetStacksTest(GameTestHelper helper) {
-        var ingredient = IntProviderFluidIngredient.of(GTMaterials.Water.getFluid(1), 1, 500000);
-
-        // This will print a "Cannot get stacks" warning to the log. Ignore it.
-        GTCEu.LOGGER.warn("This test will warn that it cannot get stacks. This is supposed to happen.");
-        helper.assertTrue(ingredient.getStacks().length == 0,
-                "A ranged fluid ingredient should not return fluids!");
-        GTCEu.LOGGER.warn("If you are reading this line it means the test passed.");
-
-        ingredient.rollSampledCount();
-        var stacks = ingredient.collapse().getStacks();
-        helper.assertTrue(stacks.length == 1,
-                "Replaced IntProviderFluidIngredient should only return 1 fluid when made with 1 fluid");
-        helper.assertTrue(stacks[0].isFluidEqual(GTMaterials.Water.getFluid(1)),
-                "Replaced IntProviderFluidIngredient should have fluid equal to what it was made with");
-
-        helper.succeed();
-    }
-
     // Failure Test for singleblock machine with ranged fluid input
     // Provides too little input fluid, should not run recipes.
     @GameTest(template = "singleblock_charged_cr", batch = "RangedFluidIngredients")

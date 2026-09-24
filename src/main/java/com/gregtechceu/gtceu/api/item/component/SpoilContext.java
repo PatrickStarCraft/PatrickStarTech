@@ -43,6 +43,15 @@ public record SpoilContext(@Nullable Level level,
                            @Nullable CompoundTag itemHandlerData,
                            int slot) {
 
+    public SpoilContext {
+        itemHandlerData = itemHandlerData == null ? null : itemHandlerData.copy();
+    }
+
+    @Override
+    public @Nullable CompoundTag itemHandlerData() {
+        return itemHandlerData == null ? null : itemHandlerData.copy();
+    }
+
     /**
      * @return the {@link Level} used to determine time to calculate spoilage progress (using
      *         {@link Level#getGameTime()}).
@@ -106,7 +115,7 @@ public record SpoilContext(@Nullable Level level,
         if (entity != null) tag.putInt("entity", entity.getId());
         if (slot != -1) tag.putInt("slot", slot);
         if (itemHandlerSource != null) tag.putString("handlerSource", itemHandlerSource.getId().toString());
-        if (itemHandlerData != null) tag.put("handlerData", itemHandlerData);
+        if (itemHandlerData != null) tag.put("handlerData", itemHandlerData.copy());
         return tag;
     }
 

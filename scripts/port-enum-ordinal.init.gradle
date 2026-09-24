@@ -1,0 +1,15 @@
+// Exercise production persisted-enum ordinal handling with no GT registry or world initialization.
+gradle.projectsEvaluated {
+    def project = gradle.rootProject
+    def gtRoot = project.projectDir.parentFile.parentFile
+    def selectedProductionSources = project.fileTree(new File(gtRoot, 'src/main/java')) {
+        include 'com/gregtechceu/gtceu/utils/EnumOrdinal.java'
+    }
+    project.sourceSets.test.java.setSrcDirs([new File(gtRoot, 'src/test/java')])
+    project.sourceSets.test.java.setIncludes([
+        'com/gregtechceu/gtceu/utils/EnumOrdinalPortTest.java'
+    ])
+    project.tasks.named('compileTestJava') {
+        source(selectedProductionSources)
+    }
+}

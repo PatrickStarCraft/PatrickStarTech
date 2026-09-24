@@ -17,6 +17,7 @@ import com.gregtechceu.gtceu.api.sync_system.annotations.SaveField;
 import com.gregtechceu.gtceu.api.sync_system.annotations.SyncToClient;
 import com.gregtechceu.gtceu.common.mui.GTGuiTextures;
 import com.gregtechceu.gtceu.common.mui.GTMuiWidgets;
+import com.gregtechceu.gtceu.utils.EnumOrdinal;
 
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -222,8 +223,8 @@ public abstract class AbstractEnderLinkCover<T extends VirtualEntry> extends Cov
     @Override
     public void pasteConfig(ServerPlayer player, CompoundTag tag) {
         setColorStr(tag.getStringOr("colorStr", ""));
-        setPermission(Permissions.values()[tag.getIntOr("permission", 0)]);
-        setIo(IO.values()[tag.getIntOr("io", 0)]);
+        setPermission(EnumOrdinal.getOrDefault(Permissions.values(), tag.getIntOr("permission", 0)));
+        setIo(EnumOrdinal.getOrDefault(IO.values(), tag.getIntOr("io", 0)));
         super.pasteConfig(player, tag);
     }
 

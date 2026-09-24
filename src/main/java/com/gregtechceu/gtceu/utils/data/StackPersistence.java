@@ -8,6 +8,8 @@ import net.minecraft.nbt.NbtOps;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.fluids.FluidStack;
 
+import java.util.Optional;
+
 /** Component-preserving stack payloads for GT-owned saves, including oversized item counts. */
 public final class StackPersistence {
     private StackPersistence() {}
@@ -57,5 +59,14 @@ public final class StackPersistence {
 
     public static FluidStack loadFluid(CompoundTag tag, HolderLookup.Provider registries) {
         return FluidStack.OPTIONAL_CODEC.parse(registries.createSerializationContext(NbtOps.INSTANCE), tag).getOrThrow();
+    }
+
+    /** Decode untrusted item data without turning a malformed fluid payload into a caller crash. */
+    public static Optional<FluidStack> tryLoadFluid(CompoundTag tag) {
+        return tryLoadFluid(tag, ValueIOPersistence.builtInRegistries());
+    }
+
+    public static Optional<FluidStack> tryLoadFluid(CompoundTag tag, HolderLookup.Provider registries) {
+        return FluidStack.OPTIONAL_CODEC.parse(registries.createSerializationContext(NbtOps.INSTANCE), tag).result();
     }
 }

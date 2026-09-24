@@ -18,6 +18,7 @@ import com.gregtechceu.gtceu.common.cover.data.DistributionMode;
 import com.gregtechceu.gtceu.common.cover.data.ManualIOMode;
 import com.gregtechceu.gtceu.common.mui.GTMuiCoverUtil;
 import com.gregtechceu.gtceu.common.mui.GTMuiWidgets;
+import com.gregtechceu.gtceu.utils.EnumOrdinal;
 import com.gregtechceu.gtceu.utils.GTTransferUtils;
 import com.gregtechceu.gtceu.utils.GTUtil;
 import com.gregtechceu.gtceu.utils.ItemStackHashStrategy;
@@ -548,9 +549,9 @@ public class ConveyorCover extends CoverBehavior implements IIOCover, IMuiCover,
     @Override
     public void pasteConfig(ServerPlayer player, CompoundTag tag) {
         setTransferRate(tag.getIntOr("transferRate", 0));
-        setIo(IO.values()[tag.getIntOr("io", 0)]);
-        setDistributionMode(DistributionMode.values()[tag.getIntOr("distributionMode", 0)]);
-        setManualIOMode(ManualIOMode.values()[tag.getIntOr("manualIO", 0)]);
+        setIo(EnumOrdinal.getOrDefault(IO.values(), tag.getIntOr("io", 0)));
+        setDistributionMode(EnumOrdinal.getOrDefault(DistributionMode.values(), tag.getIntOr("distributionMode", 0)));
+        setManualIOMode(EnumOrdinal.getOrDefault(ManualIOMode.values(), tag.getIntOr("manualIO", 0)));
         filterHandler.setFilterItem(com.gregtechceu.gtceu.utils.data.StackPersistence.loadItem(tag.getCompoundOrEmpty("filter")));
         super.pasteConfig(player, tag);
     }

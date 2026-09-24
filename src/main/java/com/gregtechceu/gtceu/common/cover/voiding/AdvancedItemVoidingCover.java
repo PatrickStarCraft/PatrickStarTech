@@ -8,6 +8,7 @@ import com.gregtechceu.gtceu.api.sync_system.annotations.SyncToClient;
 import com.gregtechceu.gtceu.common.cover.data.VoidingMode;
 import com.gregtechceu.gtceu.common.mui.GTGuiTextures;
 import com.gregtechceu.gtceu.common.mui.GTMuiWidgets;
+import com.gregtechceu.gtceu.utils.EnumOrdinal;
 import com.gregtechceu.gtceu.utils.GTUtil;
 
 import org.jspecify.annotations.NullMarked;
@@ -153,7 +154,7 @@ public class AdvancedItemVoidingCover extends ItemVoidingCover {
 
     @Override
     public void pasteConfig(ServerPlayer player, CompoundTag tag) {
-        setVoidingMode(VoidingMode.values()[tag.getIntOr("voidingMode", 0)]);
+        setVoidingMode(EnumOrdinal.getOrDefault(VoidingMode.values(), tag.getIntOr("voidingMode", 0)));
         globalVoidingLimit = tag.getIntOr("voidSize", 0);
         super.pasteConfig(player, tag);
     }

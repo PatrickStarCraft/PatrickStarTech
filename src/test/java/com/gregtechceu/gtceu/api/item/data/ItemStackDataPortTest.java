@@ -51,6 +51,21 @@ class ItemStackDataPortTest {
     }
 
     @Test
+    void nullableReadsAreDetachedAndUpdatesPreserveNativeComponents() {
+        var stack = stack();
+        assertNull(ItemStackData.readNullable(stack));
+
+        stack.set(DataComponents.MAX_STACK_SIZE, 16);
+        ItemStackData.update(stack, data -> data.putInt("GT.Value", 7));
+        var nullableSnapshot = ItemStackData.readNullable(stack);
+        assertNotNull(nullableSnapshot);
+        nullableSnapshot.putInt("GT.Value", 99);
+
+        assertEquals(16, stack.get(DataComponents.MAX_STACK_SIZE));
+        assertEquals(7, ItemStackData.read(stack).getIntOr("GT.Value", 0));
+    }
+
+    @Test
     void mutationsAreIsolatedFromCopiesAndEscapedTags() {
         var original = stack();
         ItemStackData.updateCompound(original, "GT.PartStats", part -> part.putInt("Damage", 3));

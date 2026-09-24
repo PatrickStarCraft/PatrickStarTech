@@ -1,0 +1,24 @@
+// Execute the production plunger sink with NeoForge's real ItemAccess and transaction classes.
+gradle.projectsEvaluated {
+    def project = gradle.rootProject
+    def gtRoot = project.projectDir.parentFile.parentFile
+    def selectedProductionSources = project.fileTree(new File(gtRoot, 'src/main/java')) {
+        include 'com/gregtechceu/gtceu/common/item/tool/behavior/PlungerBehavior.java'
+        include 'com/gregtechceu/gtceu/api/item/component/forge/IComponentCapability.java'
+    }
+    project.sourceSets.test.java.setSrcDirs([
+        new File(gtRoot, 'src/test/java'),
+        new File(gtRoot, 'scripts/port-plunger-test-fixtures')
+    ])
+    project.sourceSets.test.java.setIncludes([
+        'com/gregtechceu/gtceu/api/capability/GTCapabilityHelper.java',
+        'com/gregtechceu/gtceu/api/item/tool/ToolHelper.java',
+        'com/gregtechceu/gtceu/api/item/tool/behavior/IToolBehavior.java',
+        'com/gregtechceu/gtceu/api/machine/MetaMachine.java',
+        'com/gregtechceu/gtceu/api/misc/forge/VoidFluidHandlerItemStack.java',
+        'com/gregtechceu/gtceu/common/item/tool/behavior/PlungerBehaviorPortTest.java'
+    ])
+    project.tasks.named('compileTestJava') {
+        source(selectedProductionSources)
+    }
+}

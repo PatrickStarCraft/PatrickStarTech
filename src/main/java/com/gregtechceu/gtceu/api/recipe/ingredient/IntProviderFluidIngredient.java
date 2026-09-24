@@ -196,13 +196,14 @@ public class IntProviderFluidIngredient extends FluidIngredient implements IRang
 
     public void toNetwork(FriendlyByteBuf buffer) {
         inner.toNetwork(buffer);
-        buffer.writeVarIntArray(new int[] { countProvider.minInclusive(), countProvider.maxInclusive() });
+        buffer.writeJsonWithCodec(IntProviders.CODEC, countProvider);
+        buffer.writeVarInt(sampledCount);
     }
 
     public static IntProviderFluidIngredient fromNetwork(FriendlyByteBuf buffer) {
         FluidIngredient inner = FluidIngredient.fromNetwork(buffer);
-        int[] range = buffer.readVarIntArray(2);
-        IntProvider provider = UniformInt.of(range[0], range[1]);
-        return new IntProviderFluidIngredient(inner, provider);
+        IntProvider provider = buffer.readLenientJsonWithCodec(IntProviders.CODEC);
+        int sampledCount = buffer.readVarInt();
+        return new IntProviderFluidIngredient(inner, provider, sampledCount);
     }
 }

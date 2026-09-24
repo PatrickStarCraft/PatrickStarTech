@@ -60,8 +60,10 @@ public class IOFluidHandlerList extends FluidHandlerList implements IFluidHandle
     public void setFluidInTank(int tank, FluidStack stack) {
         int index = 0;
         for (IFluidHandler handler : handlers) {
-            if (handler instanceof IFluidHandlerModifiable modifiable) {
-                if (tank - index < handler.getTanks()) modifiable.setFluidInTank(tank - index, stack);
+            if (tank >= index && tank - index < handler.getTanks()) {
+                if (handler instanceof IFluidHandlerModifiable modifiable) {
+                    modifiable.setFluidInTank(tank - index, stack);
+                }
                 return;
             }
             index += handler.getTanks();

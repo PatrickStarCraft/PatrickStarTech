@@ -11,7 +11,6 @@ import com.gregtechceu.gtceu.common.mui.widgets.prospector.ProspectorMapHandler;
 import com.gregtechceu.gtceu.config.ConfigHolder;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -53,16 +52,11 @@ public class ProspectorScannerBehavior implements IItemUIHolder, IInteractionIte
 
     @NotNull
     public ProspectorMode<?> getMode(ItemStack stack) {
-        if (stack.isEmpty()) {
-            return this.modes[0];
-        }
-        CompoundTag tag = com.gregtechceu.gtceu.api.item.data.ItemStackData.read(stack);
-        return this.modes[Math.floorMod(tag.getIntOr("Mode", 0), this.modes.length)];
+        return ScannerModeData.getMode(stack, this.modes);
     }
 
     public void setNextMode(ItemStack stack) {
-        com.gregtechceu.gtceu.api.item.data.ItemStackData.update(stack,
-                tag -> tag.putInt("Mode", Math.floorMod(tag.getIntOr("Mode", 0) + 1, this.modes.length)));
+        ScannerModeData.setNextMode(stack, this.modes.length);
     }
 
     public boolean drainEnergy(@NotNull ItemStack stack, boolean simulate) {
