@@ -7,18 +7,15 @@ import com.gregtechceu.gtceu.api.registry.GTRegistries;
 import net.minecraft.world.level.block.state.StateHolder;
 import net.minecraft.world.level.block.state.properties.Property;
 
-import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.MapCodec;
 
 public class MachineRenderState extends StateHolder<MachineDefinition, MachineRenderState> {
 
     public static final Codec<MachineRenderState> CODEC = codec(GTRegistries.MACHINES.codec(),
-            MachineDefinition::defaultRenderState).stable();
+            MachineDefinition::defaultRenderState, MachineDefinition::getStateDefinition).stable();
 
-    public MachineRenderState(MachineDefinition owner, ImmutableMap<Property<?>, Comparable<?>> values,
-                              MapCodec<MachineRenderState> propertiesCodec) {
-        super(owner, values, propertiesCodec);
+    public MachineRenderState(MachineDefinition owner, Property<?>[] propertyKeys, Comparable<?>[] propertyValues) {
+        super(owner, propertyKeys, propertyValues);
     }
 
     public MachineDefinition getDefinition() {

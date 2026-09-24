@@ -5,15 +5,16 @@ import com.gregtechceu.gtceu.client.renderer.GTRenderTypes;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.core.SectionPos;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.util.profiling.Profiler;
 import net.neoforged.api.distmarker.Dist;
-import net.minecraftforge.client.ForgeRenderTypes;
-import net.minecraftforge.client.event.RegisterNamedRenderTypesEvent;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.client.event.RenderFrameEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
-import net.minecraftforge.event.TickEvent;
 import net.neoforged.neoforge.event.level.ChunkEvent;
 import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -26,25 +27,30 @@ import lombok.experimental.UtilityClass;
 public class BloomEventListeners {
 
     @SubscribeEvent
-    public static void afterParticlesRendered(RenderLevelStageEvent event) {
-        if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_PARTICLES) return;
-
-        BloomRenderer.renderBloom(event.getCamera(), event.getPoseStack(), event.getFrustum(),
-                event.getProjectionMatrix(),
-                event.getPartialTick(), event.getLevelRenderer(), Minecraft.getInstance().getProfiler());
+    public static void afterLevelRendered(RenderLevelStageEvent.AfterLevel event) {
+        Minecraft minecraft = Minecraft.getInstance();
+        CameraRenderState camera = event.getLevelRenderState().cameraRenderState;
+        float partialTick = minecraft.getDeltaTracker().getGameTimeDeltaPartialTick(false);
+        BloomRenderer.renderBloom(minecraft.gameRenderer.mainCamera(), event.getPoseStack(), camera.cullFrustum,
+                camera.projectionMatrix, partialTick, event.getLevelRenderer(), Profiler.get());
     }
 
     @SubscribeEvent
-    public static void onRenderTick(TickEvent.RenderTickEvent event) {
-        if (event.phase != TickEvent.Phase.START || Minecraft.getInstance().level == null) return;
+    public static void onRenderTick(RenderFrameEvent.Pre event) {
+        if (Minecraft.getInstance().level == null) return;
         if (!BloomShaderManager.isBloomActive()) return;
 
-        BloomShaderManager.BLOOM_TARGET.clear(Minecraft.ON_OSX);
-        Minecraft.getInstance().getMainRenderTarget().bindWrite(false);
+        var bloomColor = BloomShaderManager.BLOOM_TARGET.getColorTexture();
+        if (bloomColor != null) {
+            var encoder = com.mojang.blaze3d.systems.RenderSystem.getDevice().createCommandEncoder();
+            encoder.clearColorTexture(bloomColor, new org.joml.Vector4f(0.0f, 0.0f, 0.0f, 0.0f));
+            var depth = BloomShaderManager.BLOOM_TARGET.getDepthTexture();
+            if (depth != null) encoder.clearDepthTexture(depth, 0.0F);
+        }
     }
 
     @SubscribeEvent
-    public static void onClientTick(TickEvent.ClientTickEvent event) {
+    public static void onClientTick(ClientTickEvent.Pre event) {
         BloomShaderManager.updateShaderAvailability(event);
     }
 
@@ -62,14 +68,13 @@ public class BloomEventListeners {
         if (!BloomShaderManager.isBloomActive()) return;
 
         ChunkAccess chunk = event.getChunk();
-        LevelAccessor level = chunk.getWorldForge();
-        if (level == null) return;
+        LevelAccessor level = event.getLevel();
 
         if (!BloomRenderer.SafeMode.enabled()) return;
 
         ChunkPos chunkPos = chunk.getPos();
-        int minSection = level.getMinSection(), maxSection = level.getMaxSection();
-        for (int y = minSection; y < maxSection; y++) {
+        int minSection = level.getMinSectionY(), maxSection = level.getMaxSectionY();
+        for (int y = minSection; y <= maxSection; y++) {
             BloomRenderer.SafeMode.invalidateSectionData(SectionPos.of(chunkPos.x(), y, chunkPos.z()));
         }
     }

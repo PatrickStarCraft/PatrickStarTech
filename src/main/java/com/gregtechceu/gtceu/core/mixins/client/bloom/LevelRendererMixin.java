@@ -14,9 +14,7 @@ public abstract class LevelRendererMixin {
 
     @Inject(method = "resize", at = @At("TAIL"))
     private void gtceu$resizeBloomChain(int width, int height, CallbackInfo ci) {
-        if (BloomShaderManager.BLOOM_CHAIN != null) {
-            BloomShaderManager.BLOOM_CHAIN.resize(width, height);
-        }
+        BloomShaderManager.resizeTargets(width, height);
     }
 
     @Inject(method = "graphicsChanged", at = @At(value = "HEAD"))

@@ -3,72 +3,83 @@ package com.gregtechceu.gtceu.client.renderer;
 import com.gregtechceu.gtceu.GTCEu;
 import com.gregtechceu.gtceu.client.mui.schema.MutableSchema;
 
-import net.minecraft.CrashReport;
-import net.minecraft.util.Util;
-import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.*;
-import net.minecraft.client.renderer.block.ModelBlockRenderer;
+import net.minecraft.client.color.block.BlockTintSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
+import net.minecraft.client.renderer.block.BlockModelRenderState;
+import net.minecraft.client.renderer.block.FluidModel;
+import net.minecraft.client.renderer.block.FluidRenderer;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
+import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.state.level.LevelRenderState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.resources.model.geometry.BakedQuad;
+import net.minecraft.client.color.block.BlockColors;
+import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.SectionPos;
+import net.minecraft.util.ARGB;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.util.RandomSource;
+import net.minecraft.util.context.ContextKey;
+import net.minecraft.world.level.CardinalLighting;
+import net.minecraft.world.level.ColorResolver;
+import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.lighting.LevelLightEngine;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
-import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.ExtractLevelRenderStateEvent;
+import net.neoforged.neoforge.client.event.AddClientReloadListenersEvent;
+import net.neoforged.neoforge.client.event.SubmitCustomGeometryEvent;
+import net.neoforged.neoforge.client.extensions.common.IClientBlockExtensions;
 import net.neoforged.neoforge.model.data.ModelData;
 
-import brachy.modularui.ModularUI;
 import brachy.modularui.drawable.schema.*;
 import brachy.modularui.integration.embeddium.SodiumCompat;
-import brachy.modularui.utils.FluidTextureType;
-import com.mojang.blaze3d.opengl.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
-import it.unimi.dsi.fastutil.objects.ObjectArraySet;
-import it.unimi.dsi.fastutil.objects.Reference2ObjectArrayMap;
-import it.unimi.dsi.fastutil.objects.Reference2ObjectLinkedOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ReferenceArraySet;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.joml.Matrix4f;
 
-import java.util.*;
-import java.util.concurrent.CancellationException;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Function;
+import org.jspecify.annotations.Nullable;
 
 @OnlyIn(Dist.CLIENT)
+@EventBusSubscriber(modid = GTCEu.MOD_ID, value = Dist.CLIENT)
 public class PatternPreviewRenderer {
 
     public static final PatternPreviewRenderer INSTANCE = new PatternPreviewRenderer();
 
-    private static final Map<RenderLevelStageEvent.Stage, RenderType> STAGE_RENDER_TYPES = Util
-            .make(new IdentityHashMap<>(), map -> {
-                for (RenderType renderType : RenderType.chunkBufferLayers()) {
-                    map.put(RenderLevelStageEvent.Stage.fromRenderType(renderType), renderType);
-                }
-            });
+    private static final ContextKey<PatternPreviewRenderData> RENDER_DATA =
+            new ContextKey<>(GTCEu.id("pattern_preview"));
+    private static final PatternPreviewRenderData EMPTY_RENDER_DATA =
+            new PatternPreviewRenderData(BlockPos.ZERO, List.of(), Map.of(), List.of(), Set.of());
 
     private @Nullable MutableSchema schema;
     private @Nullable RenderLevel renderLevel;
     private @Nullable BlockPos controllerPos;
     private final AtomicInteger timeout = new AtomicInteger(-1);
-
-    private RenderCompileTask lastRenderCompileTask = null;
-    private final ChunkBufferBuilderPack chunkBufferBuilders = new ChunkBufferBuilderPack();
-    private final AtomicReference<CompileStatus> compileStatus = new AtomicReference<>();
-    private final AtomicReference<RenderCompileResults> compiledRenderResult = new AtomicReference<>();
-    private boolean dirty = true;
+    private @Nullable PreviewGeometry previewGeometry;
+    private volatile boolean dirty = true;
 
     public void showPreview(BlockPos controllerPos, MutableSchema schema, RenderFilter renderFilter, int duration) {
         this.controllerPos = controllerPos;
@@ -113,217 +124,209 @@ public class PatternPreviewRenderer {
         }
     }
 
-    public void draw(PoseStack poseStack, MultiBufferSource.BufferSource bufferSource, Camera camera,
-                     RenderLevelStageEvent.Stage stage, float partialTick) {
-        if (timeout.get() <= 0) return;
-        if (this.schema == null || this.controllerPos == null) return;
-        if (!camera.isInitialized()) return;
-
-        RenderType renderType = STAGE_RENDER_TYPES.get(stage);
-        if (renderType == null && stage != RenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES) return;
-
-        poseStack.pushPose();
-        poseStack.translate(controllerPos.getX(), controllerPos.getY(), controllerPos.getZ());
-
-        Vec3 cameraPos = camera.position();
-        if (renderType != null) {
-            // render the appropriate chunk layer if renderType is a chunk render layer
-            renderBlocks(renderType, poseStack, cameraPos);
-        } else {
-            // render block entities if renderType==null
-            renderBlockEntities(poseStack, bufferSource, partialTick, cameraPos);
-        }
-
-        poseStack.popPose();
-    }
-
     public void notifyRecompile() {
         this.dirty = true;
     }
 
-    protected void cancelCompilation() {
-        if (this.lastRenderCompileTask != null) {
-            this.lastRenderCompileTask.cancel();
-            this.lastRenderCompileTask = null;
-        }
-    }
-
-    private boolean shouldDiscard(CompileStatus status) {
-        return status == CompileStatus.CANCELED;
-    }
-
-    /// only called from {@link #checkRecompile(Vec3) checkRecompile} when {@linkplain #compileStatus} is CANCELED
-    protected void recompile(final Vec3 cameraPos) {
-        cancelCompilation();
-
-        this.lastRenderCompileTask = new RenderCompileTask();
-        this.compileStatus.set(CompileStatus.COMPILING);
-
-        RenderCompileResults compileResults = new RenderCompileResults();
-        CompletableFuture.supplyAsync(
-                Util.wrapThreadWithTaskName("preview_chunk_rebuild",
-                        () -> this.lastRenderCompileTask.compileBlockBuffers(compileResults, cameraPos)),
-                Util.backgroundExecutor())
-                .thenCompose(Function.identity())
-                .whenComplete((result, error) -> {
-                    if (error != null) {
-                        Minecraft.getInstance().delayCrash(CrashReport.forThrowable(error, "Batching chunks"));
-                    } else {
-                        CompileStatus status = result.status;
-                        if (shouldDiscard(status)) {
-                            this.chunkBufferBuilders.discardAll();
-                        } else {
-                            this.chunkBufferBuilders.clearAll();
-                        }
-                        if (status == CompileStatus.SUCCESS) {
-                            if (this.compiledRenderResult.get() != null) {
-                                this.compiledRenderResult.get().clearBuffers();
-                            }
-                            this.compiledRenderResult.set(result);
-                        }
-                        this.compileStatus.set(status);
-                    }
-                });
+    @SubscribeEvent
+    public static void registerReloadListener(AddClientReloadListenersEvent event) {
+        event.addListener(GTCEu.id("pattern_preview"),
+                (ResourceManagerReloadListener) resourceManager -> INSTANCE.notifyRecompile());
     }
 
     public void dispose() {
-        cancelCompilation();
-        if (this.compiledRenderResult.get() != null) {
-            this.compiledRenderResult.get().clearBuffers();
-            this.compiledRenderResult.set(null);
-        }
-        this.chunkBufferBuilders.discardAll();
-        this.compileStatus.set(CompileStatus.CANCELED);
-
         this.schema = null;
+        this.renderLevel = null;
         this.controllerPos = null;
+        this.previewGeometry = null;
         this.timeout.set(-1);
 
         this.dirty = false;
     }
 
-    /// called each draw tick
-    private RenderCompileResults checkRecompile(Vec3 cameraPos) {
-        CompileStatus status = this.compileStatus.get();
-        RenderCompileResults results = this.compiledRenderResult.get();
-
-        // otherwise, check if we're dirty
-        // the only possible statuses are CANCELED or SUCCESS
-        if (status != CompileStatus.COMPILING && (status == CompileStatus.CANCELED || this.dirty)) {
-            this.dirty = false;
-            recompile(cameraPos);
+    @SubscribeEvent
+    public static void extractPreview(ExtractLevelRenderStateEvent event) {
+        PatternPreviewRenderer renderer = INSTANCE;
+        MutableSchema schema = renderer.schema;
+        RenderLevel renderLevel = renderer.renderLevel;
+        BlockPos controllerPos = renderer.controllerPos;
+        if (renderer.timeout.get() <= 0 || schema == null || renderLevel == null || controllerPos == null) {
+            event.getRenderState().setRenderData(RENDER_DATA, EMPTY_RENDER_DATA);
+            return;
         }
 
-        // if we're still compiling, send previous result
-        return results;
+        PreviewBlockAndTintGetter previewLevel = new PreviewBlockAndTintGetter(
+                renderLevel, event.getLevel(), controllerPos);
+        if (renderer.dirty || renderer.previewGeometry == null) {
+            renderer.previewGeometry = renderer.buildPreviewGeometry(schema, renderLevel, previewLevel);
+            renderer.dirty = false;
+        }
+
+        Vec3 cameraPos = event.getRenderState().cameraRenderState.pos;
+        Vec3 previewCameraPos = new Vec3(cameraPos.x - controllerPos.getX(),
+                cameraPos.y - controllerPos.getY(), cameraPos.z - controllerPos.getZ());
+        float partialTicks = event.getDeltaTracker().getGameTimeDeltaPartialTick(false);
+        List<PreviewBlockEntity> blockEntities = renderer.extractBlockEntities(schema, renderLevel,
+                previewCameraPos, partialTicks);
+        PreviewGeometry geometry = renderer.previewGeometry;
+        event.getRenderState().setRenderData(RENDER_DATA, new PatternPreviewRenderData(controllerPos,
+                geometry.blocks(), geometry.fluids(), blockEntities, geometry.activeFluidSprites()));
     }
 
-    protected void renderBlocks(RenderType renderType, PoseStack poseStack, Vec3 cameraPos) {
-        RenderCompileResults compileResults = checkRecompile(cameraPos);
-        if (compileResults == null) return;
+    @SubscribeEvent
+    public static void submitPreview(SubmitCustomGeometryEvent event) {
+        PatternPreviewRenderData renderData = event.getLevelRenderState().getRenderData(RENDER_DATA);
+        if (renderData == null || renderData.isEmpty()) return;
 
-        renderType.setupRenderState();
-        ModelBlockRenderer.enableCaching();
-
-        // set up shader uniforms
-        ShaderInstance shader = RenderSystem.getShader();
-        assert shader != null;
-
-        for (int i = 0; i < GlStateManager.TEXTURE_COUNT; ++i) {
-            int textureId = RenderSystem.getShaderTexture(i);
-            shader.setSampler("Sampler" + i, textureId);
+        Vec3 cameraPos = event.getLevelRenderState().cameraRenderState.pos;
+        BlockPos controllerPos = renderData.controllerPos();
+        PoseStack poseStack = event.getPoseStack();
+        SubmitNodeCollector collector = event.getSubmitNodeCollector();
+        if (!renderData.activeFluidSprites().isEmpty()) {
+            SodiumCompat.markSpritesAsActive(renderData.activeFluidSprites());
         }
 
-        if (shader.MODEL_VIEW_MATRIX != null) {
-            shader.MODEL_VIEW_MATRIX.set(poseStack.last().pose());
-        }
-        if (shader.PROJECTION_MATRIX != null) {
-            shader.PROJECTION_MATRIX.set(RenderSystem.getProjectionMatrix());
-        }
-        if (shader.INVERSE_VIEW_ROTATION_MATRIX != null) {
-            shader.INVERSE_VIEW_ROTATION_MATRIX.set(RenderSystem.getInverseViewRotationMatrix());
-        }
-        if (shader.COLOR_MODULATOR != null) {
-            shader.COLOR_MODULATOR.set(RenderSystem.getShaderColor());
-        }
-        if (shader.GLINT_ALPHA != null) {
-            shader.GLINT_ALPHA.set(RenderSystem.getShaderGlintAlpha());
-        }
-        if (shader.FOG_START != null) {
-            shader.FOG_START.set(RenderSystem.getShaderFogStart());
-        }
-        if (shader.FOG_END != null) {
-            shader.FOG_END.set(RenderSystem.getShaderFogEnd());
-        }
-        if (shader.FOG_COLOR != null) {
-            shader.FOG_COLOR.set(RenderSystem.getShaderFogColor());
-        }
-        if (shader.FOG_SHAPE != null) {
-            shader.FOG_SHAPE.set(RenderSystem.getShaderFogShape().getIndex());
-        }
-        if (shader.TEXTURE_MATRIX != null) {
-            shader.TEXTURE_MATRIX.set(RenderSystem.getTextureMatrix());
-        }
-        if (shader.GAME_TIME != null) {
-            shader.GAME_TIME.set(RenderSystem.getShaderGameTime());
-        }
-
-        if (shader.CHUNK_OFFSET != null) {
-            shader.CHUNK_OFFSET.set((float) -cameraPos.x, (float) -cameraPos.y, (float) -cameraPos.z);
-        }
-
-        RenderSystem.setupShaderLights(shader);
-        shader.apply();
-
-        // actually draw the chunk
-        if (!compileResults.isEmpty(renderType)) {
-            if (ModularUI.Mods.isSodiumLikeLoaded()) {
-                SodiumCompat.markSpritesAsActive(compileResults.activeFluidSprites);
-            }
-
-            VertexBuffer vertexBuffer = compileResults.getOrCreateChunkBuffers().get(renderType);
-            // check if the buffer is invalid in case someone breaks it
-            // noinspection ConstantValue
-            if (vertexBuffer.isInvalid() || vertexBuffer.getFormat() == null) return;
-
-            vertexBuffer.bind();
-            vertexBuffer.draw();
-        }
-
-        shader.clear();
-        VertexBuffer.unbind();
-        renderType.clearRenderState();
-    }
-
-    protected void renderBlockEntities(PoseStack poseStack, MultiBufferSource.BufferSource bufferSource,
-                                       float partialTick, Vec3 cameraPos) {
-        RenderCompileResults compileResults = checkRecompile(cameraPos);
-        if (compileResults == null) return;
-
-        for (BlockEntity blockEntity : compileResults.blockEntities) {
-            if (blockEntity == null) {
-                continue;
-            }
-            BlockPos pos = blockEntity.getBlockPos();
+        for (PreviewBlock block : renderData.blocks()) {
+            BlockPos pos = controllerPos.offset(block.pos());
             poseStack.pushPose();
             poseStack.translate(pos.getX() - cameraPos.x, pos.getY() - cameraPos.y, pos.getZ() - cameraPos.z);
-
-            Minecraft.getInstance().getBlockEntityRenderDispatcher()
-                    .render(blockEntity, partialTick, poseStack, bufferSource);
-
+            block.modelState().submitMultiLayer(poseStack, collector, block.lightCoords(),
+                    OverlayTexture.NO_OVERLAY, 0);
             poseStack.popPose();
         }
 
-        bufferSource.endBatch(RenderType.solid());
-        bufferSource.endBatch(RenderType.endPortal());
-        bufferSource.endBatch(RenderType.endGateway());
-        bufferSource.endBatch(Sheets.solidBlockSheet());
-        bufferSource.endBatch(Sheets.cutoutBlockSheet());
-        bufferSource.endBatch(Sheets.bedSheet());
-        bufferSource.endBatch(Sheets.shulkerBoxSheet());
-        bufferSource.endBatch(Sheets.signSheet());
-        bufferSource.endBatch(Sheets.hangingSignSheet());
-        bufferSource.endBatch(Sheets.chestSheet());
+        for (Map.Entry<ChunkSectionLayer, List<PreviewFluidVertex>> fluidLayer : renderData.fluids().entrySet()) {
+            if (fluidLayer.getValue().isEmpty()) continue;
+            poseStack.pushPose();
+            poseStack.translate(controllerPos.getX() - cameraPos.x,
+                    controllerPos.getY() - cameraPos.y, controllerPos.getZ() - cameraPos.z);
+            RenderType renderType = renderTypeFor(fluidLayer.getKey());
+            List<PreviewFluidVertex> vertices = fluidLayer.getValue();
+            collector.submitCustomGeometry(poseStack, renderType, (pose, buffer) -> {
+                for (PreviewFluidVertex vertex : vertices) {
+                    buffer.addVertex(pose.pose(), vertex.x(), vertex.y(), vertex.z())
+                            .setColor(vertex.color())
+                            .setUv(vertex.u(), vertex.v())
+                            .setUv1(vertex.overlayU(), vertex.overlayV())
+                            .setUv2(vertex.lightU(), vertex.lightV())
+                            .setNormal(pose, vertex.normalX(), vertex.normalY(), vertex.normalZ());
+                }
+            });
+            poseStack.popPose();
+        }
+
+        BlockEntityRenderDispatcher blockEntityDispatcher = Minecraft.getInstance().getBlockEntityRenderDispatcher();
+        for (PreviewBlockEntity blockEntity : renderData.blockEntities()) {
+            BlockPos pos = controllerPos.offset(blockEntity.pos());
+            poseStack.pushPose();
+            poseStack.translate(pos.getX() - cameraPos.x, pos.getY() - cameraPos.y, pos.getZ() - cameraPos.z);
+            blockEntityDispatcher.submit(blockEntity.state(), poseStack, collector,
+                    event.getLevelRenderState().cameraRenderState);
+            poseStack.popPose();
+        }
+    }
+
+    private PreviewGeometry buildPreviewGeometry(MutableSchema schema, RenderLevel renderLevel,
+                                                BlockAndTintGetter previewLevel) {
+        List<PreviewBlock> blocks = new ArrayList<>();
+        Map<ChunkSectionLayer, List<PreviewFluidVertex>> fluids = new EnumMap<>(ChunkSectionLayer.class);
+        Set<TextureAtlasSprite> activeFluidSprites = new HashSet<>();
+
+        Minecraft minecraft = Minecraft.getInstance();
+        BlockColors blockColors = minecraft.getBlockColors();
+        var modelSet = minecraft.getModelManager().getBlockStateModelSet();
+        var fluidModels = minecraft.getModelManager().getFluidStateModelSet();
+        FluidRenderer fluidRenderer = new FluidRenderer(fluidModels);
+        for (var blockEntry : schema) {
+            BlockPos pos = blockEntry.getKey();
+            BlockState blockState = renderLevel.getBlockState(pos);
+            if (blockState.isAir()) continue;
+
+            FluidState fluidState = blockState.getFluidState();
+            if (!fluidState.isEmpty()) {
+                FluidModel fluidModel = fluidModels.get(fluidState);
+                activeFluidSprites.add(fluidModel.stillMaterial().sprite());
+                activeFluidSprites.add(fluidModel.flowingMaterial().sprite());
+
+                int baseX = (pos.getX() >> 4) << 4;
+                int baseY = (pos.getY() >> 4) << 4;
+                int baseZ = (pos.getZ() >> 4) << 4;
+                Map<ChunkSectionLayer, PreviewFluidVertexConsumer> consumers = new EnumMap<>(ChunkSectionLayer.class);
+                fluidRenderer.tesselate(previewLevel, pos,
+                        layer -> consumers.computeIfAbsent(layer, key -> new PreviewFluidVertexConsumer(
+                                fluids.computeIfAbsent(key, ignored -> new ArrayList<>()), baseX, baseY, baseZ)),
+                        blockState, fluidState);
+                consumers.values().forEach(PreviewFluidVertexConsumer::finish);
+            }
+
+            if (blockState.getRenderShape() != RenderShape.INVISIBLE) {
+                BlockStateModel model = modelSet.get(blockState);
+                RandomSource random = RandomSource.create(blockState.getSeed(pos));
+                Vec3 offset = blockState.getOffset(pos);
+                Matrix4f transform = new Matrix4f()
+                        .translate(0.5F, 0.5F, 0.5F)
+                        .scale(0.8F, 0.8F, 0.8F)
+                        .translate(-0.5F, -0.5F, -0.5F)
+                        .translate((float) offset.x, (float) offset.y, (float) offset.z);
+                BlockModelRenderState modelState = new BlockModelRenderState();
+                List<BlockStateModelPart> parts = modelState.setupModel(transform,
+                        model.hasMaterialFlag(previewLevel, pos, blockState, BakedQuad.FLAG_TRANSLUCENT));
+                model.collectParts(previewLevel, pos, blockState, random, parts);
+
+                List<BlockTintSource> tintSources = blockColors.getTintSources(blockState);
+                if (tintSources.isEmpty()) {
+                    IClientBlockExtensions.of(blockState).collectDynamicTintValues(blockState, previewLevel,
+                            pos, modelState.tintLayers());
+                } else {
+                    for (BlockTintSource tintSource : tintSources) {
+                        modelState.tintLayers().add(tintSource.colorInWorld(blockState, previewLevel, pos));
+                    }
+                }
+
+                modelState.blockLightCoords = blockState.emissiveRendering()
+                        ? 15728880
+                        : LightCoordsUtil.pack(blockState.getLightEmission(previewLevel, pos), 0);
+                int lightCoords = LightCoordsUtil.max(LightCoordsUtil.getLightCoords(previewLevel, pos),
+                        modelState.blockLightCoords);
+                blocks.add(new PreviewBlock(pos, modelState, lightCoords));
+            }
+        }
+
+        Map<ChunkSectionLayer, List<PreviewFluidVertex>> frozenFluids = new EnumMap<>(ChunkSectionLayer.class);
+        fluids.forEach((layer, vertices) -> frozenFluids.put(layer, List.copyOf(vertices)));
+        return new PreviewGeometry(List.copyOf(blocks), Map.copyOf(frozenFluids), Set.copyOf(activeFluidSprites));
+    }
+
+    private List<PreviewBlockEntity> extractBlockEntities(MutableSchema schema, RenderLevel renderLevel,
+                                                         Vec3 cameraPos, float partialTicks) {
+        List<PreviewBlockEntity> renderStates = new ArrayList<>();
+        BlockEntityRenderDispatcher dispatcher = Minecraft.getInstance().getBlockEntityRenderDispatcher();
+        for (var blockEntry : schema) {
+            BlockPos pos = blockEntry.getKey();
+            if (renderLevel.getBlockState(pos).isAir()) continue;
+            BlockEntity blockEntity = renderLevel.getBlockEntity(pos);
+            if (blockEntity == null) continue;
+            PreviewBlockEntity renderState = extractBlockEntity(dispatcher, blockEntity, cameraPos, partialTicks);
+            if (renderState != null) renderStates.add(renderState);
+        }
+        return List.copyOf(renderStates);
+    }
+
+    private static <T extends BlockEntity, S extends BlockEntityRenderState> PreviewBlockEntity extractBlockEntity(
+            BlockEntityRenderDispatcher dispatcher, T blockEntity, Vec3 cameraPos, float partialTicks) {
+        BlockEntityRenderer<T, S> renderer = dispatcher.getRenderer(blockEntity);
+        if (renderer == null) return null;
+        S renderState = renderer.createRenderState();
+        renderer.extractRenderState(blockEntity, renderState, partialTicks, cameraPos, null);
+        return new PreviewBlockEntity(blockEntity.getBlockPos(), renderState);
+    }
+
+    private static RenderType renderTypeFor(ChunkSectionLayer layer) {
+        return switch (layer) {
+            case SOLID -> RenderTypes.solidMovingBlock();
+            case CUTOUT -> RenderTypes.cutoutMovingBlock();
+            case TRANSLUCENT -> RenderTypes.translucentMovingBlock();
+        };
     }
 
     @Override
@@ -338,199 +341,204 @@ public class PatternPreviewRenderer {
         return Objects.hashCode(this.schema);
     }
 
-    protected enum CompileStatus {
-        COMPILING,
-        SUCCESS,
-        CANCELED
-    }
+    private record PreviewGeometry(List<PreviewBlock> blocks,
+                                   Map<ChunkSectionLayer, List<PreviewFluidVertex>> fluids,
+                                   Set<TextureAtlasSprite> activeFluidSprites) {}
 
-    protected class RenderCompileTask {
+    private record PreviewBlock(BlockPos pos, BlockModelRenderState modelState, int lightCoords) {}
 
-        private final AtomicBoolean isCanceled = new AtomicBoolean(false);
+    private record PreviewBlockEntity(BlockPos pos, BlockEntityRenderState state) {}
 
-        public void cancel() {
-            this.isCanceled.set(true);
-        }
-
-        protected CompletableFuture<RenderCompileResults> compileBlockBuffers(RenderCompileResults compileResults,
-                                                                              Vec3 cameraPos) {
-            if (this.isCanceled.get()) {
-                return CompletableFuture.completedFuture(compileResults.withStatus(CompileStatus.CANCELED));
-            }
-            if (PatternPreviewRenderer.this.schema == null || PatternPreviewRenderer.this.renderLevel == null) {
-                return CompletableFuture.completedFuture(compileResults.withStatus(CompileStatus.CANCELED));
-            }
-            RenderLevel fakeLevel = PatternPreviewRenderer.this.renderLevel;
-
-            var blockRenderDispatcher = Minecraft.getInstance().getBlockRenderer();
-            ChunkBufferBuilderPack chunkBufferBuilders = PatternPreviewRenderer.this.chunkBufferBuilders;
-
-            RandomSource randomSource = RandomSource.create();
-            PoseStack poseStack = new PoseStack();
-            Set<RenderType> startedBuffers = new ReferenceArraySet<>(RenderType.chunkBufferLayers().size());
-
-            ModelBlockRenderer.enableCaching();
-            for (var blockEntry : PatternPreviewRenderer.this.schema) {
-                BlockPos pos = blockEntry.getKey();
-                BlockState blockState = fakeLevel.getBlockState(pos);
-                if (blockState.isAir()) continue;
-                FluidState fluidState = blockState.getFluidState();
-
-                if (blockState.hasBlockEntity()) {
-                    BlockEntity blockEntity = fakeLevel.getBlockEntity(pos);
-                    if (blockEntity != null) {
-                        compileResults.blockEntities.add(blockEntity);
-                    }
-                }
-
-                if (!fluidState.isEmpty()) {
-                    RenderType renderType = ItemBlockRenderTypes.getRenderLayer(fluidState);
-                    BufferBuilder builder = chunkBufferBuilders.builder(renderType);
-                    if (startedBuffers.add(renderType)) {
-                        if (builder.building()) {
-                            GTCEu.LOGGER.warn("Buffer is already building for RenderType: {}!", renderType);
-                            return CompletableFuture.completedFuture(compileResults.withStatus(CompileStatus.CANCELED));
-                        }
-                        builder.begin(renderType.mode(), renderType.format());
-                    }
-
-                    SectionPos sectionPos = SectionPos.of(pos);
-                    VertexConsumer vertexConsumer = new LiquidVertexConsumer(builder, sectionPos);
-                    blockRenderDispatcher.renderLiquid(pos, fakeLevel, vertexConsumer,
-                            blockState, fluidState);
-
-                    markFluidSpritesActive(compileResults, fluidState);
-                }
-
-                if (blockState.getRenderShape() != RenderShape.INVISIBLE) {
-                    BakedModel model = blockRenderDispatcher.getBlockModel(blockState);
-
-                    BlockEntity blockEntity = fakeLevel.getBlockEntity(pos);
-                    ModelData modelData = ModelData.EMPTY;
-                    if (blockEntity != null) {
-                        modelData = blockEntity.getModelData();
-                    }
-                    modelData = model.getModelData(fakeLevel, pos, blockState, modelData);
-
-                    randomSource.setSeed(blockState.getSeed(pos));
-
-                    for (RenderType renderType : model.getRenderTypes(blockState, randomSource, modelData)) {
-                        BufferBuilder builder = chunkBufferBuilders.builder(renderType);
-                        if (startedBuffers.add(renderType)) {
-                            builder.begin(renderType.mode(), renderType.format());
-                        }
-
-                        poseStack.pushPose();
-                        poseStack.translate(pos.getX(), pos.getY(), pos.getZ());
-
-                        // scale the rendered model down by a bit
-                        poseStack.translate(0.5f, 0.5f, 0.5f);
-                        poseStack.scale(0.8f, 0.8f, 0.8f);
-                        poseStack.translate(-0.5f, -0.5f, -0.5f);
-
-                        // disable culling as all sides will be visible (they're scaled down)
-                        blockRenderDispatcher.renderBatched(blockState, pos, fakeLevel, poseStack, builder, false,
-                                randomSource, modelData, renderType);
-                        poseStack.popPose();
-                    }
-                }
-            }
-
-            if (startedBuffers.contains(RenderType.translucent())) {
-                BufferBuilder bufferBuilder = chunkBufferBuilders.builder(RenderType.translucent());
-                if (!bufferBuilder.isCurrentBatchEmpty()) {
-                    bufferBuilder.setQuadSorting(
-                            VertexSorting.byDistance((float) cameraPos.x, (float) cameraPos.y, (float) cameraPos.z));
-                }
-            }
-
-            for (RenderType renderType : startedBuffers) {
-                BufferBuilder.RenderedBuffer renderedBuffer = chunkBufferBuilders.builder(renderType)
-                        .endOrDiscardIfEmpty();
-                if (renderedBuffer != null) {
-                    compileResults.renderedLayers.put(renderType, renderedBuffer);
-                }
-            }
-            ModelBlockRenderer.clearCache();
-
-            if (this.isCanceled.get()) {
-                compileResults.renderedLayers.values().forEach(BufferBuilder.RenderedBuffer::release);
-                return CompletableFuture.completedFuture(compileResults.withStatus(CompileStatus.CANCELED));
-            }
-
-            List<CompletableFuture<Void>> uploads = new ArrayList<>();
-            compileResults.renderedLayers.forEach((renderType, buffer) -> {
-                uploads.add(uploadChunkLayer(compileResults, buffer, renderType));
-                compileResults.hasBlocks.add(renderType);
-            });
-            return Util.sequenceFailFast(uploads).handle((result, error) -> {
-                if (error != null && !(error instanceof CancellationException) &&
-                        !(error instanceof InterruptedException)) {
-                    Minecraft.getInstance().delayCrash(CrashReport.forThrowable(error, "Rendering chunk"));
-                }
-                if (this.isCanceled.get()) {
-                    return compileResults.withStatus(CompileStatus.CANCELED);
-                } else {
-                    return compileResults.withStatus(CompileStatus.SUCCESS);
-                }
-            });
-        }
-
-        protected CompletableFuture<Void> uploadChunkLayer(RenderCompileResults results,
-                                                           BufferBuilder.RenderedBuffer builder,
-                                                           RenderType renderType) {
-            return CompletableFuture.runAsync(() -> {
-                VertexBuffer buffer = results.getOrCreateChunkBuffers().get(renderType);
-                if (!buffer.isInvalid()) {
-                    buffer.bind();
-                    buffer.upload(builder);
-                    VertexBuffer.unbind();
-                }
-            }, runnable -> RenderSystem.recordRenderCall(runnable::run));
-        }
-
-        protected static void markFluidSpritesActive(RenderCompileResults compileResults, FluidState fluidState) {
-            // For Sodium compatibility, ensure the sprites actually animate
-            // even if no block is on-screen that would cause them to otherwise.
-            compileResults.activeFluidSprites.add(FluidTextureType.STILL.map(fluidState));
-            compileResults.activeFluidSprites.add(FluidTextureType.FLOWING.map(fluidState));
+    private record PatternPreviewRenderData(BlockPos controllerPos, List<PreviewBlock> blocks,
+                                            Map<ChunkSectionLayer, List<PreviewFluidVertex>> fluids,
+                                            List<PreviewBlockEntity> blockEntities,
+                                            Set<TextureAtlasSprite> activeFluidSprites) {
+        private boolean isEmpty() {
+            return this.blocks.isEmpty() && this.fluids.isEmpty() && this.blockEntities.isEmpty();
         }
     }
 
-    protected static class RenderCompileResults {
+    private record PreviewFluidVertex(float x, float y, float z, int color, float u, float v,
+                                      int overlayU, int overlayV, int lightU, int lightV,
+                                      float normalX, float normalY, float normalZ) {}
 
-        protected CompileStatus status = CompileStatus.COMPILING;
-        protected final List<BlockEntity> blockEntities = new ArrayList<>();
-        protected final Map<RenderType, BufferBuilder.RenderedBuffer> renderedLayers = new Reference2ObjectArrayMap<>();
-        protected final Set<TextureAtlasSprite> activeFluidSprites = new HashSet<>();
-        protected final Set<RenderType> hasBlocks = new ObjectArraySet<>(RenderType.chunkBufferLayers().size());
-        private Map<RenderType, VertexBuffer> chunkBuffers;
+    private static final class PreviewBlockAndTintGetter implements BlockAndTintGetter {
+        private final RenderLevel previewLevel;
+        private final net.minecraft.client.multiplayer.ClientLevel clientLevel;
+        private final BlockPos controllerPos;
 
-        protected @NotNull Map<RenderType, VertexBuffer> getOrCreateChunkBuffers() {
-            if (this.chunkBuffers == null || this.chunkBuffers.isEmpty()) {
-                List<RenderType> chunkRenderTypes = RenderType.chunkBufferLayers();
-                this.chunkBuffers = new Reference2ObjectLinkedOpenHashMap<>();
-                for (RenderType type : chunkRenderTypes) {
-                    this.chunkBuffers.put(type, new VertexBuffer(VertexBuffer.Usage.STATIC));
-                }
-            }
-            return this.chunkBuffers;
+        private PreviewBlockAndTintGetter(RenderLevel previewLevel,
+                                          net.minecraft.client.multiplayer.ClientLevel clientLevel,
+                                          BlockPos controllerPos) {
+            this.previewLevel = previewLevel;
+            this.clientLevel = clientLevel;
+            this.controllerPos = controllerPos;
         }
 
-        protected void clearBuffers() {
-            if (this.chunkBuffers != null && !this.chunkBuffers.isEmpty()) {
-                this.chunkBuffers.values().forEach(VertexBuffer::close);
-                this.chunkBuffers.clear();
-            }
+        @Override
+        public CardinalLighting cardinalLighting() {
+            return this.clientLevel.cardinalLighting();
         }
 
-        public boolean isEmpty(RenderType renderType) {
-            return !this.hasBlocks.contains(renderType);
+        @Override
+        public LevelLightEngine getLightEngine() {
+            return this.clientLevel.getLightEngine();
         }
 
-        public RenderCompileResults withStatus(CompileStatus status) {
-            this.status = status;
+        @Override
+        public int getBlockTint(BlockPos pos, ColorResolver colorResolver) {
+            return this.clientLevel.getBlockTint(this.controllerPos.offset(pos), colorResolver);
+        }
+
+        @Override
+        public int getBrightness(LightLayer layer, BlockPos pos) {
+            return this.clientLevel.getBrightness(layer, this.controllerPos.offset(pos));
+        }
+
+        @Override
+        public int getRawBrightness(BlockPos pos, int darkening) {
+            return this.clientLevel.getRawBrightness(this.controllerPos.offset(pos), darkening);
+        }
+
+        @Override
+        public boolean canSeeSky(BlockPos pos) {
+            return this.clientLevel.canSeeSky(this.controllerPos.offset(pos));
+        }
+
+        @Override
+        public @Nullable BlockEntity getBlockEntity(BlockPos pos) {
+            return this.previewLevel.getBlockEntity(pos);
+        }
+
+        @Override
+        public BlockState getBlockState(BlockPos pos) {
+            return this.previewLevel.getBlockState(pos);
+        }
+
+        @Override
+        public FluidState getFluidState(BlockPos pos) {
+            return this.previewLevel.getFluidState(pos);
+        }
+
+        @Override
+        public int getHeight() {
+            return this.previewLevel.getHeight();
+        }
+
+        @Override
+        public int getMinY() {
+            return this.previewLevel.getMinY();
+        }
+
+        @Override
+        public int getMaxY() {
+            return this.previewLevel.getMaxY();
+        }
+
+        @Override
+        public ModelData getModelData(BlockPos pos) {
+            return this.previewLevel.getModelData(pos);
+        }
+    }
+
+    private static final class PreviewFluidVertexConsumer implements VertexConsumer {
+        private final List<PreviewFluidVertex> output;
+        private final int baseX;
+        private final int baseY;
+        private final int baseZ;
+        private boolean hasVertex;
+        private float x;
+        private float y;
+        private float z;
+        private int color = -1;
+        private float u;
+        private float v;
+        private int overlayU;
+        private int overlayV;
+        private int lightU;
+        private int lightV;
+        private float normalX;
+        private float normalY = 1.0F;
+        private float normalZ;
+
+        private PreviewFluidVertexConsumer(List<PreviewFluidVertex> output, int baseX, int baseY, int baseZ) {
+            this.output = output;
+            this.baseX = baseX;
+            this.baseY = baseY;
+            this.baseZ = baseZ;
+        }
+
+        @Override
+        public VertexConsumer addVertex(float x, float y, float z) {
+            this.finishCurrent();
+            this.x = x + this.baseX;
+            this.y = y + this.baseY;
+            this.z = z + this.baseZ;
+            this.color = -1;
+            this.u = this.v = 0.0F;
+            this.overlayU = this.overlayV = this.lightU = this.lightV = 0;
+            this.normalX = this.normalZ = 0.0F;
+            this.normalY = 1.0F;
+            this.hasVertex = true;
             return this;
+        }
+
+        @Override
+        public VertexConsumer setColor(int red, int green, int blue, int alpha) {
+            this.color = ARGB.color(alpha, red, green, blue);
+            return this;
+        }
+
+        @Override
+        public VertexConsumer setColor(int color) {
+            this.color = color;
+            return this;
+        }
+
+        @Override
+        public VertexConsumer setUv(float u, float v) {
+            this.u = u;
+            this.v = v;
+            return this;
+        }
+
+        @Override
+        public VertexConsumer setUv1(int u, int v) {
+            this.overlayU = u;
+            this.overlayV = v;
+            return this;
+        }
+
+        @Override
+        public VertexConsumer setUv2(int u, int v) {
+            this.lightU = u;
+            this.lightV = v;
+            return this;
+        }
+
+        @Override
+        public VertexConsumer setNormal(float x, float y, float z) {
+            this.normalX = x;
+            this.normalY = y;
+            this.normalZ = z;
+            return this;
+        }
+
+        @Override
+        public VertexConsumer setLineWidth(float width) {
+            return this;
+        }
+
+        private void finish() {
+            this.finishCurrent();
+        }
+
+        private void finishCurrent() {
+            if (!this.hasVertex) return;
+            this.output.add(new PreviewFluidVertex(this.x, this.y, this.z, this.color, this.u, this.v,
+                    this.overlayU, this.overlayV, this.lightU, this.lightV,
+                    this.normalX, this.normalY, this.normalZ));
+            this.hasVertex = false;
         }
     }
 }

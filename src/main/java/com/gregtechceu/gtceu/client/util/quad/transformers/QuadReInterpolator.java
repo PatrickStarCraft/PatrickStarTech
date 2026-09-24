@@ -21,11 +21,10 @@ import com.gregtechceu.gtceu.client.model.quad.MutableQuadView;
 import com.gregtechceu.gtceu.client.model.quad.QuadView;
 import com.gregtechceu.gtceu.client.model.quad.transform.QuadTransform;
 
-import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.core.Direction;
 
 /**
- * This transformer Re-Interpolates the Color, UV's and LightMaps. Use this after all transformations that translate
+ * This transformer re-interpolates color and UV coordinates. Use this after all transformations that translate
  * vertices in the pipeline.
  * <p>
  * This Transformation can only be used in the BakedPipeline.
@@ -39,7 +38,6 @@ public class QuadReInterpolator implements QuadTransform {
     private final int[] originalSpriteColor = new int[4];
     private final float[] originalSpriteU = new float[4];
     private final float[] originalSpriteV = new float[4];
-    private final int[] originalSpriteLightmap = new int[4];
 
     public QuadReInterpolator() {}
 
@@ -59,7 +57,6 @@ public class QuadReInterpolator implements QuadTransform {
             originalSpriteColor[v] = quad.color(v);
             originalSpriteU[v] = quad.u(v);
             originalSpriteV[v] = quad.v(v);
-            originalSpriteLightmap[v] = quad.lightmap(v);
         }
 
         // interpolationHelper.reset(
@@ -82,7 +79,6 @@ public class QuadReInterpolator implements QuadTransform {
             this.interpolationHelper.locate(x, y);
             interpolateColorFrom(quad, i);
             interpolateUVFrom(quad, i);
-            interpolateLightmapFrom(quad, i);
         }
         return true;
     }
@@ -131,36 +127,6 @@ public class QuadReInterpolator implements QuadTransform {
         p4 = originalSpriteV[3];
         float v = interpolationHelper.interpolate(p1, p2, p3, p4);
         quad.uv(vertexIndex, u, v);
-    }
-
-    /**
-     * Interpolates the new LightMap values for this Vertex using the others as a reference.
-     *
-     * @return The same Vertex.
-     */
-    public void interpolateLightmapFrom(MutableQuadView quad, int vertexIndex) {
-        int p1 = originalSpriteLightmap[0];
-        int p2 = originalSpriteLightmap[1];
-        int p3 = originalSpriteLightmap[2];
-        int p4 = originalSpriteLightmap[3];
-        if (p1 == p2 && p2 == p3 && p3 == p4) {
-            return; // Don't bother for uniformly lit quads
-        }
-
-        // Interpolate both lightmap components separately
-        int p1l = LightCoordsUtil.block(p1);
-        int p2l = LightCoordsUtil.block(p2);
-        int p3l = LightCoordsUtil.block(p3);
-        int p4l = LightCoordsUtil.block(p4);
-        int block = (int) interpolationHelper.interpolate(p1l, p2l, p3l, p4l);
-
-        p1l = LightCoordsUtil.sky(p1);
-        p2l = LightCoordsUtil.sky(p2);
-        p3l = LightCoordsUtil.sky(p3);
-        p4l = LightCoordsUtil.sky(p4);
-        int sky = (int) interpolationHelper.interpolate(p1l, p2l, p3l, p4l);
-
-        quad.lightmap(vertexIndex, block, sky);
     }
 
     /**

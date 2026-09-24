@@ -60,7 +60,8 @@ public interface IMachineRendererModel<T extends IMachineFeature> {
 
     default AABB getRenderBoundingBox(T machine) {
         BlockPos pos = machine.self().getBlockPos();
-        return new AABB(pos.offset(-1, 0, -1), pos.offset(2, 2, 2));
+        return new AABB(Vec3.atLowerCornerOf(pos.offset(-1, 0, -1)),
+                Vec3.atLowerCornerOf(pos.offset(2, 2, 2)));
     }
 
     default boolean isBlockEntityRenderer() {

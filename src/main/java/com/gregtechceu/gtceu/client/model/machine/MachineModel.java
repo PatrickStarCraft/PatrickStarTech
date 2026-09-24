@@ -9,6 +9,7 @@ import com.gregtechceu.gtceu.api.machine.multiblock.part.MultiblockPartMachine;
 import com.gregtechceu.gtceu.client.model.BaseBakedModel;
 import com.gregtechceu.gtceu.client.model.GTModelProperties;
 import com.gregtechceu.gtceu.client.model.IBlockEntityRendererBakedModel;
+import com.gregtechceu.gtceu.client.model.ManuallyConnectedTextureModel;
 import com.gregtechceu.gtceu.client.model.TextureOverrideModel;
 import com.gregtechceu.gtceu.client.model.ctm.CTMMeshBuilder;
 import com.gregtechceu.gtceu.client.model.machine.multipart.MultiPartBakedModel;
@@ -58,7 +59,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public final class MachineModel extends BaseBakedModel implements ICoverableRenderer,
+public final class MachineModel extends BaseBakedModel implements ICoverableRenderer, ManuallyConnectedTextureModel,
                                 IBlockEntityRendererBakedModel<MetaMachine> {
 
     public static final Identifier PIPE_OVERLAY = GTCEu.id("block/overlay/machine/overlay_pipe");

@@ -42,7 +42,7 @@ public class SimpleCoverRenderer implements ICoverRenderer {
                 emissiveSprite = atlas.getSprite(emissiveTexture);
             } else {
                 Identifier emissiveTex = texture.withSuffix("_emissive");
-                if (atlas.getTextureLocations().contains(emissiveTex)) {
+                if (atlas.getTextures().containsKey(emissiveTex)) {
                     emissiveSprite = atlas.getSprite(emissiveTex);
                 }
             }

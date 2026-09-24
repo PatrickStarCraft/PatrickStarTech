@@ -1,74 +1,96 @@
 {
-    "targets": [
-        "final",
-        "filter",
-        { "name": "swap_a2", "bilinear": true },
-        { "name": "swap_a4", "bilinear": true },
-        { "name": "swap_1",  "bilinear": true },
-        { "name": "swap_2",  "bilinear": true }
-    ],
-    "passes": [
-        {
-            "name": "gtceu:filter_bloom_color",
-            "intarget": "final",
-            "outtarget": "filter",
-            "auxtargets": [
-                { "id": "final:depth",          "name": "DiffuseDepthSampler" },
-                { "id": "minecraft:main:depth", "name": "MainDepthSampler" }
-            ]
-        },
-        {
-            "name": "blit",
-            "intarget": "filter",
-            "outtarget": "swap_a2"
-        },
-        {
-            "name": "gtceu:down_sampling",
-            "intarget": "swap_a2",
-            "outtarget": "swap_a4"
-        },
-        {
-            "name": "gtceu:down_sampling",
-            "intarget": "swap_a4",
-            "outtarget": "swap_1"
-        },
-        {
-            "name": "gtceu:down_sampling",
-            "intarget": "swap_1",
-            "outtarget": "swap_2"
-        },
-        {
-            "name": "gtceu:up_sampling",
-            "intarget": "swap_2",
-            "outtarget": "swap_1",
-            "auxtargets": [
-                { "id": "swap_a4", "name": "DownTexture" }
-            ]
-        },
-        {
-            "name": "gtceu:up_sampling",
-            "intarget": "swap_1",
-            "outtarget": "swap_2",
-            "auxtargets": [
-                { "id": "swap_a2", "name": "DownTexture" }
-            ]
-        },
-        {
-            "name": "gtceu:up_sampling",
-            "intarget": "swap_2",
-            "outtarget": "swap_1",
-            "auxtargets": [
-                { "id": "filter", "name": "DownTexture" }
-            ]
-        },
-        {
-            "name": "gtceu:unity_composite",
-            "intarget": "swap_1",
-            "outtarget": "final",
-            "auxtargets": [
-                { "id": "filter",         "name": "HighlightSampler" },
-                { "id": "minecraft:main", "name": "MainSampler" }
-            ]
-        }
-    ]
+  "targets": {
+    "gtceu:filter": {},
+    "gtceu:swap_a2": {},
+    "gtceu:swap_a4": {},
+    "gtceu:swap_1": {},
+    "gtceu:swap_2": {}
+  },
+  "passes": [
+    {
+      "vertex_shader": "minecraft:core/screenquad",
+      "fragment_shader": "gtceu:program/filter_bloom_color",
+      "inputs": [
+        { "sampler_name": "Diffuse", "target": "gtceu:bloom_source" },
+        { "sampler_name": "DiffuseDepth", "target": "gtceu:bloom_source", "use_depth_buffer": true },
+        { "sampler_name": "MainDepth", "target": "minecraft:main", "use_depth_buffer": true }
+      ],
+      "output": "gtceu:filter",
+      "uniforms": {
+        "BloomDepth": [
+          { "type": "float", "value": 0.05 },
+          { "type": "float", "value": 512.0 }
+        ]
+      }
+    },
+    {
+      "vertex_shader": "minecraft:core/screenquad",
+      "fragment_shader": "minecraft:core/blit_screen",
+      "inputs": [ { "sampler_name": "In", "target": "gtceu:filter" } ],
+      "output": "gtceu:swap_a2"
+    },
+    {
+      "vertex_shader": "minecraft:core/screenquad",
+      "fragment_shader": "gtceu:program/down_sampling",
+      "inputs": [ { "sampler_name": "Diffuse", "target": "gtceu:swap_a2", "bilinear": true } ],
+      "output": "gtceu:swap_a4"
+    },
+    {
+      "vertex_shader": "minecraft:core/screenquad",
+      "fragment_shader": "gtceu:program/down_sampling",
+      "inputs": [ { "sampler_name": "Diffuse", "target": "gtceu:swap_a4", "bilinear": true } ],
+      "output": "gtceu:swap_1"
+    },
+    {
+      "vertex_shader": "minecraft:core/screenquad",
+      "fragment_shader": "gtceu:program/down_sampling",
+      "inputs": [ { "sampler_name": "Diffuse", "target": "gtceu:swap_1", "bilinear": true } ],
+      "output": "gtceu:swap_2"
+    },
+    {
+      "vertex_shader": "minecraft:core/screenquad",
+      "fragment_shader": "gtceu:program/up_sampling",
+      "inputs": [
+        { "sampler_name": "Diffuse", "target": "gtceu:swap_2", "bilinear": true },
+        { "sampler_name": "DownTexture", "target": "gtceu:swap_a4", "bilinear": true }
+      ],
+      "output": "gtceu:swap_1"
+    },
+    {
+      "vertex_shader": "minecraft:core/screenquad",
+      "fragment_shader": "gtceu:program/up_sampling",
+      "inputs": [
+        { "sampler_name": "Diffuse", "target": "gtceu:swap_1", "bilinear": true },
+        { "sampler_name": "DownTexture", "target": "gtceu:swap_a2", "bilinear": true }
+      ],
+      "output": "gtceu:swap_2"
+    },
+    {
+      "vertex_shader": "minecraft:core/screenquad",
+      "fragment_shader": "gtceu:program/up_sampling",
+      "inputs": [
+        { "sampler_name": "Diffuse", "target": "gtceu:swap_2", "bilinear": true },
+        { "sampler_name": "DownTexture", "target": "gtceu:filter" }
+      ],
+      "output": "gtceu:swap_1"
+    },
+    {
+      "vertex_shader": "minecraft:core/screenquad",
+      "fragment_shader": "gtceu:program/unity_composite",
+      "inputs": [
+        { "sampler_name": "Diffuse", "target": "gtceu:swap_1", "bilinear": true },
+        { "sampler_name": "Highlight", "target": "gtceu:filter" },
+        { "sampler_name": "Main", "target": "minecraft:main" }
+      ],
+      "output": "gtceu:bloom_output",
+      "uniforms": {
+        "BloomSettings": [
+          { "type": "float", "value": 1.7 },
+          { "type": "float", "value": 0.1 },
+          { "type": "float", "value": 0.5 },
+          { "type": "float", "value": 0.2 }
+        ]
+      }
+    }
+  ]
 }

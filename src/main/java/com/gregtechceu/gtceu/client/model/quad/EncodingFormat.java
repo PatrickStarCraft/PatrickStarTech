@@ -19,7 +19,6 @@ import com.gregtechceu.gtceu.client.util.quad.GeometryHelper;
 
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
-import net.minecraftforge.client.model.IQuadTransformer;
 
 import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.Nullable;
@@ -27,22 +26,23 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 
 /**
- * Holds all the array offsets and bit-wise encoders/decoders for packing/unpacking quad data in an array of integers.
- * All of this is implementation-specific - that's why it isn't a "helper" class.
+ * Holds offsets for the private CPU-side mesh encoding and bit-wise quad metadata helpers.
+ * This encoding is not a Minecraft vertex format: target {@code BakedQuad}s store positions, UVs, colors, and normals
+ * in separate typed fields. Each CPU-side vertex stores position (3 floats), ARGB, UV (2 floats), and a packed normal
+ * (7 ints total).
  */
 @SuppressWarnings("PointlessArithmeticExpression")
 @UtilityClass
 public class EncodingFormat {
 
-    static final int VERTEX_X = IQuadTransformer.POSITION + 0;
-    static final int VERTEX_Y = IQuadTransformer.POSITION + 1;
-    static final int VERTEX_Z = IQuadTransformer.POSITION + 2;
-    static final int VERTEX_COLOR = IQuadTransformer.COLOR;
-    static final int VERTEX_U = IQuadTransformer.UV0 + 0;
-    static final int VERTEX_V = IQuadTransformer.UV0 + 1;
-    static final int VERTEX_LIGHTMAP = IQuadTransformer.UV2;
-    static final int VERTEX_NORMAL = IQuadTransformer.NORMAL;
-    public static final int VERTEX_STRIDE = IQuadTransformer.STRIDE;
+    static final int VERTEX_X = 0;
+    static final int VERTEX_Y = 1;
+    static final int VERTEX_Z = 2;
+    static final int VERTEX_COLOR = 3;
+    static final int VERTEX_U = 4;
+    static final int VERTEX_V = 5;
+    static final int VERTEX_NORMAL = 6;
+    public static final int VERTEX_STRIDE = 7;
 
     public static final int QUAD_STRIDE = VERTEX_STRIDE * 4;
 

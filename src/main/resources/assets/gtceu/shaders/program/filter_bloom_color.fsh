@@ -4,11 +4,10 @@ uniform sampler2D DiffuseSampler;
 uniform sampler2D DiffuseDepthSampler;
 uniform sampler2D MainDepthSampler;
 
-// these should be #defines, but adding those dynamically doesn't exist in vanilla MC until 26.1.
-// GameRenderer.PROJECTION_Z_NEAR
-uniform float DepthNear = 0.05;
-// GameRenderer#getDepthFar; 8 chunk render distance -> 8 * 16 * 4
-uniform float DepthFar = 512.0;
+layout(std140) uniform BloomDepth {
+    float DepthNear;
+    float DepthFar;
+};
 
 in vec2 texCoord;
 

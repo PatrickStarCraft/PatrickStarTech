@@ -28,7 +28,7 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.model.data.ModelData;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import lombok.Getter;
 import org.jetbrains.annotations.Nullable;
@@ -40,7 +40,7 @@ public class BoilerMultiPartRender extends DynamicRender<MultiblockControllerMac
                                    implements IControllerModelRenderer {
 
     // spotless:off
-    public static final Codec<BoilerMultiPartRender> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+    public static final MapCodec<BoilerMultiPartRender> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             BlockState.CODEC.fieldOf("firebox_idle").forGetter(BoilerMultiPartRender::getFireboxIdle),
             BlockState.CODEC.fieldOf("firebox_active").forGetter(BoilerMultiPartRender::getFireboxActive),
             BlockState.CODEC.fieldOf("casing_block").forGetter(BoilerMultiPartRender::getCasing)

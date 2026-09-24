@@ -1,5 +1,6 @@
 package com.gregtechceu.gtceu.client.renderer;
 
+import com.gregtechceu.gtceu.GTCEu;
 import com.gregtechceu.gtceu.api.blockentity.PipeBlockEntity;
 import com.gregtechceu.gtceu.api.capability.GTCapabilityHelper;
 import com.gregtechceu.gtceu.api.capability.ICoverable;
@@ -14,10 +15,12 @@ import com.gregtechceu.gtceu.common.item.behavior.CoverPlaceBehavior;
 import com.gregtechceu.gtceu.common.item.tool.rotation.CustomBlockRotations;
 import com.gregtechceu.gtceu.common.mui.GTGuiTextures;
 
-import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.LightCoordsUtil;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.state.level.BlockOutlineRenderState;
+import net.minecraft.client.renderer.state.level.LevelRenderState;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -30,9 +33,12 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.CustomBlockOutlineRenderer;
+import net.neoforged.neoforge.client.event.ExtractBlockOutlineRenderStateEvent;
 
 import brachy.modularui.drawable.UITexture;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -46,22 +52,24 @@ import java.util.function.Function;
 import static com.gregtechceu.gtceu.utils.GTMatrixUtils.*;
 
 @OnlyIn(Dist.CLIENT)
+@EventBusSubscriber(modid = GTCEu.MOD_ID, value = Dist.CLIENT)
 public class BlockHighlightRenderer {
 
-    public static void renderBlockHighlight(PoseStack poseStack, Camera camera, BlockHitResult target,
-                                            MultiBufferSource multiBufferSource, float partialTick) {
+    @SubscribeEvent
+    public static void extractBlockHighlight(ExtractBlockOutlineRenderStateEvent event) {
         var mc = Minecraft.getInstance();
-        var level = mc.level;
+        var level = event.getLevel();
         var player = mc.player;
-        if (level != null && player != null) {
+        if (player != null) {
             ItemStack held = player.getMainHandItem();
-            BlockPos blockPos = target.getBlockPos();
+            BlockPos blockPos = event.getBlockPos();
+            BlockHitResult target = event.getHitResult();
             Vector3fc blockCenter = net.minecraft.world.phys.Vec3.atCenterOf(blockPos).toVector3f();
+            GeometryBuilder geometry = new GeometryBuilder();
 
             Set<GTToolType> toolType = ToolHelper.getToolTypes(held);
             BlockEntity blockEntity = level.getBlockEntity(blockPos);
 
-            Vec3 cameraPos = camera.position();
             // draw tool grid highlight
             if ((!toolType.isEmpty()) || (held.isEmpty() && player.isShiftKeyDown())) {
                 IToolGridHighlight gridHighlight = null;
@@ -88,23 +96,18 @@ public class BlockHighlightRenderer {
                 if (gridHighlight == null) {
                     return;
                 }
-                BlockState state = level.getBlockState(blockPos);
-                poseStack.pushPose();
+                BlockState state = event.getBlockState();
                 if (gridHighlight.shouldRenderGrid(player, blockPos, state, held, toolType)) {
                     final IToolGridHighlight finalGridHighlight = gridHighlight;
-                    drawGridOverlays(poseStack, multiBufferSource, cameraPos, target,
+                    collectGridOverlays(geometry, target,
                             side -> finalGridHighlight.sideTips(player, blockPos, state, toolType, held, side));
                 } else {
                     Direction facing = target.getDirection();
                     var texture = gridHighlight.sideTips(player, blockPos, state, toolType, held, facing);
                     if (texture != null) {
-                        RenderSystem.disableDepthTest();
-                        RenderSystem.enableBlend();
-                        RenderSystem.defaultBlendFunc();
-
+                        PoseStack poseStack = new PoseStack();
                         poseStack.translate(facing.getStepX() * 0.01f, facing.getStepY() * 0.01f,
                                 facing.getStepZ() * 0.01f);
-                        poseStack.translate(-cameraPos.x(), -cameraPos.y(), -cameraPos.z());
 
                         RenderUtil.moveToFace(poseStack, blockCenter, facing);
                         if (facing.getAxis() == Direction.Axis.Y) {
@@ -115,14 +118,11 @@ public class BlockHighlightRenderer {
                         poseStack.scale(1f / 16, 1f / 16, 0);
                         poseStack.translate(-8, -8, 0);
 
-                        drawOverlayTexture(poseStack, multiBufferSource, texture, 0xffffffff,
+                        geometry.addOverlay(poseStack, texture, 0xffffffff,
                                 4, 4, 8, 8);
-
-                        RenderSystem.disableBlend();
-                        RenderSystem.enableDepthTest();
                     }
                 }
-                poseStack.popPose();
+                addCustomRenderer(event, geometry);
                 return;
             }
 
@@ -130,12 +130,8 @@ public class BlockHighlightRenderer {
             ICoverable coverable = GTCapabilityHelper.getCoverable(level, blockPos, target.getDirection());
             if (coverable != null && CoverPlaceBehavior.isCoverBehaviorItem(held, coverable::hasAnyCover,
                     coverDef -> ICoverable.canPlaceCover(coverDef, coverable))) {
-                poseStack.pushPose();
-
-                drawGridOverlays(poseStack, multiBufferSource, cameraPos, target,
+                collectGridOverlays(geometry, target,
                         side -> coverable.hasCover(side) ? null : GTGuiTextures.TOOL_ATTACH_COVER);
-
-                poseStack.popPose();
             }
 
             // draw pipe connection grid highlight
@@ -143,25 +139,16 @@ public class BlockHighlightRenderer {
                     null;
             if (pipeType instanceof IPipeType<?> type && blockEntity instanceof PipeBlockEntity<?, ?> pipeBlockEntity &&
                     pipeBlockEntity.getPipeType().type().equals(type.type())) {
-                poseStack.pushPose();
-
-                drawGridOverlays(poseStack, multiBufferSource, cameraPos, target,
+                collectGridOverlays(geometry, target,
                         side -> level.isEmptyBlock(blockPos.relative(side)) ?
                                 pipeBlockEntity.getPipeTexture(true) : null);
-
-                poseStack.popPose();
             }
+            addCustomRenderer(event, geometry);
         }
     }
 
-    private static float rColour;
-    private static float gColour;
-    private static float bColour;
-
-    private static void drawGridOverlays(PoseStack poseStack, MultiBufferSource bufferSource, Vec3 cameraPos,
-                                         BlockHitResult blockHitResult, Function<Direction, UITexture> texture) {
-        rColour = gColour = 0.2F + (float) Math.sin((System.currentTimeMillis() % (Mth.PI * 800)) / 800) / 2;
-        bColour = 1f;
+    private static void collectGridOverlays(GeometryBuilder geometry, BlockHitResult blockHitResult,
+                                            Function<Direction, UITexture> texture) {
         BlockPos blockPos = blockHitResult.getBlockPos();
         float minX = blockPos.getX();
         float maxX = blockPos.getX() + 1;
@@ -215,22 +202,14 @@ public class BlockHighlightRenderer {
         bottomLeft.add(cubeCenter);
         topLeft.add(cubeCenter);
 
-        poseStack.pushPose();
-        poseStack.translate(-cameraPos.x(), -cameraPos.y(), -cameraPos.z());
-
-        VertexConsumer buffer = bufferSource.getBuffer(RenderType.lines());
-        RenderSystem.lineWidth(3);
+        PoseStack poseStack = new PoseStack();
         PoseStack.Pose pose = poseStack.last();
         // straight top bottom lines
-        drawLine(pose, buffer, new Vector3f(topRight).sub(shiftX), new Vector3f(bottomRight).sub(shiftX));
-        drawLine(pose, buffer, new Vector3f(bottomLeft).add(shiftX), new Vector3f(topLeft).add(shiftX));
+        geometry.addLine(pose, new Vector3f(topRight).sub(shiftX), new Vector3f(bottomRight).sub(shiftX));
+        geometry.addLine(pose, new Vector3f(bottomLeft).add(shiftX), new Vector3f(topLeft).add(shiftX));
         // straight side to side lines
-        drawLine(pose, buffer, new Vector3f(topLeft).sub(shiftY), new Vector3f(topRight).sub(shiftY));
-        drawLine(pose, buffer, new Vector3f(bottomLeft).add(shiftY), new Vector3f(bottomRight).add(shiftY));
-
-        RenderSystem.disableDepthTest();
-        RenderSystem.enableBlend();
-        RenderSystem.defaultBlendFunc();
+        geometry.addLine(pose, new Vector3f(topLeft).sub(shiftY), new Vector3f(topRight).sub(shiftY));
+        geometry.addLine(pose, new Vector3f(bottomLeft).add(shiftY), new Vector3f(bottomRight).add(shiftY));
 
         poseStack.pushPose();
         poseStack.translate(front.getStepX() * 0.01f, front.getStepY() * 0.01f, front.getStepZ() * 0.01f);
@@ -245,70 +224,137 @@ public class BlockHighlightRenderer {
 
         if (leftBlocked != null) {
             int color = attachSide == left ? 0xffffffff : 0x44ffffff;
-            drawOverlayTextureWithMargin(poseStack, bufferSource, leftBlocked, color, 0, 6, MARGIN);
+            addOverlayTextureWithMargin(geometry, poseStack, leftBlocked, color, 0, 6, MARGIN);
         }
         if (topBlocked != null) {
             int color = attachSide == top ? 0xffffffff : 0x44ffffff;
-            drawOverlayTextureWithMargin(poseStack, bufferSource, topBlocked, color, 6, 12, MARGIN);
+            addOverlayTextureWithMargin(geometry, poseStack, topBlocked, color, 6, 12, MARGIN);
         }
         if (rightBlocked != null) {
             int color = attachSide == right ? 0xffffffff : 0x44ffffff;
-            drawOverlayTextureWithMargin(poseStack, bufferSource, rightBlocked, color, 12, 6, MARGIN);
+            addOverlayTextureWithMargin(geometry, poseStack, rightBlocked, color, 12, 6, MARGIN);
         }
         if (bottomBlocked != null) {
             int color = attachSide == bottom ? 0xffffffff : 0x44ffffff;
-            drawOverlayTextureWithMargin(poseStack, bufferSource, bottomBlocked, color, 6, 0, MARGIN);
+            addOverlayTextureWithMargin(geometry, poseStack, bottomBlocked, color, 6, 0, MARGIN);
         }
         if (frontBlocked != null) {
             int color = attachSide == front ? 0xffffffff : 0x44ffffff;
-            drawOverlayTextureWithMargin(poseStack, bufferSource, frontBlocked, color, 6, 6, MARGIN);
+            addOverlayTextureWithMargin(geometry, poseStack, frontBlocked, color, 6, 6, MARGIN);
         }
         if (backBlocked != null) {
             int color = attachSide == back ? 0xffffffff : 0x44ffffff;
-            drawOverlayTextureWithMargin(poseStack, bufferSource, backBlocked, color, 0, 0, MARGIN);
-            drawOverlayTextureWithMargin(poseStack, bufferSource, backBlocked, color, 12, 0, MARGIN);
-            drawOverlayTextureWithMargin(poseStack, bufferSource, backBlocked, color, 0, 12, MARGIN);
-            drawOverlayTextureWithMargin(poseStack, bufferSource, backBlocked, color, 12, 12, MARGIN);
+            addOverlayTextureWithMargin(geometry, poseStack, backBlocked, color, 0, 0, MARGIN);
+            addOverlayTextureWithMargin(geometry, poseStack, backBlocked, color, 12, 0, MARGIN);
+            addOverlayTextureWithMargin(geometry, poseStack, backBlocked, color, 0, 12, MARGIN);
+            addOverlayTextureWithMargin(geometry, poseStack, backBlocked, color, 12, 12, MARGIN);
         }
-        RenderSystem.disableBlend();
-        RenderSystem.enableDepthTest();
 
         poseStack.popPose();
-        poseStack.popPose();
     }
 
-    private static void drawLine(PoseStack.Pose pose, VertexConsumer buffer, Vector3fc from, Vector3fc to) {
-        Vector3f normal = from.sub(to, new Vector3f());
-
-        buffer.addVertex(pose.pose(), from.x(), from.y(), from.z())
-                .setColor(rColour, gColour, bColour, 1f)
-                .setNormal(pose, normal.x(), normal.y(), normal.z())
-                ;
-        buffer.addVertex(pose.pose(), to.x(), to.y(), to.z())
-                .setColor(rColour, gColour, bColour, 1f)
-                .setNormal(pose, normal.x(), normal.y(), normal.z())
-                ;
+    private static void addOverlayTextureWithMargin(GeometryBuilder geometry, PoseStack poseStack,
+                                                    UITexture texture, int color,
+                                                    float x, float y, float margin) {
+        geometry.addOverlay(poseStack, texture, color,
+                x + margin, y + margin, 4f - 2 * margin, 4f - 2 * margin);
     }
 
-    private static void drawOverlayTexture(PoseStack poseStack, MultiBufferSource bufferSource,
-                                           UITexture texture, int color,
-                                           float x, float y, float w, float h) {
-        VertexConsumer consumer = bufferSource.getBuffer(RenderType.text(texture.location));
-        var pose = poseStack.last().pose();
-        float u0 = texture.u0, v0 = texture.v0;
-        float u1 = texture.u1, v1 = texture.v1;
-        // spotless:off
-        consumer.addVertex(pose, x, y + h, 0).setColor(color).setUv(u0, v0 + v1).setLight(LightCoordsUtil.FULL_BRIGHT);
-        consumer.addVertex(pose, x + w, y + h, 0).setColor(color).setUv(u0 + u1, v0 + v1).setLight(LightCoordsUtil.FULL_BRIGHT);
-        consumer.addVertex(pose, x + w, y, 0).setColor(color).setUv(u0 + u1, v0).setLight(LightCoordsUtil.FULL_BRIGHT);
-        consumer.addVertex(pose, x, y, 0).setColor(color).setUv(u0, v0).setLight(LightCoordsUtil.FULL_BRIGHT);
-        // spotless:on
+    private static void addCustomRenderer(ExtractBlockOutlineRenderStateEvent event, GeometryBuilder geometry) {
+        HighlightGeometry snapshot = geometry.build();
+        if (!snapshot.isEmpty()) {
+            event.addCustomRenderer(new HighlightRenderer(snapshot));
+        }
     }
 
-    private static void drawOverlayTextureWithMargin(PoseStack poseStack, MultiBufferSource bufferSource,
-                                                     UITexture texture, int color,
-                                                     float x, float y, float m) {
-        drawOverlayTexture(poseStack, bufferSource, texture, color,
-                x + m, y + m, (float) 4 - 2 * m, (float) 4 - 2 * m);
+    private record HighlightRenderer(HighlightGeometry geometry) implements CustomBlockOutlineRenderer {
+        @Override
+        public boolean render(BlockOutlineRenderState renderState, SubmitNodeCollector collector,
+                              PoseStack poseStack, LevelRenderState levelRenderState) {
+            Vec3 camera = levelRenderState.cameraRenderState.pos;
+            if (!this.geometry.lines().isEmpty()) {
+                collector.submitCustomGeometry(poseStack, RenderTypes.lines(), (pose, buffer) -> {
+                    for (LineSegment line : this.geometry.lines()) {
+                        Vector3f normal = new Vector3f(line.fromX() - line.toX(), line.fromY() - line.toY(),
+                                line.fromZ() - line.toZ());
+                        buffer.addVertex(pose, (float) (line.fromX() - camera.x()),
+                                (float) (line.fromY() - camera.y()), (float) (line.fromZ() - camera.z()))
+                                .setColor(this.geometry.red(), this.geometry.green(), this.geometry.blue(), 1f)
+                                .setNormal(pose, normal).setLineWidth(3f);
+                        buffer.addVertex(pose, (float) (line.toX() - camera.x()),
+                                (float) (line.toY() - camera.y()), (float) (line.toZ() - camera.z()))
+                                .setColor(this.geometry.red(), this.geometry.green(), this.geometry.blue(), 1f)
+                                .setNormal(pose, normal).setLineWidth(3f);
+                    }
+                });
+            }
+            for (OverlayBatch overlay : this.geometry.overlays()) {
+                RenderType renderType = RenderTypes.textSeeThrough(overlay.texture());
+                collector.submitCustomGeometry(poseStack, renderType, (pose, buffer) -> {
+                    for (OverlayVertex vertex : overlay.vertices()) {
+                        buffer.addVertex(pose, (float) (vertex.x() - camera.x()),
+                                (float) (vertex.y() - camera.y()), (float) (vertex.z() - camera.z()))
+                                .setColor(vertex.color()).setUv(vertex.u(), vertex.v())
+                                .setLight(LightCoordsUtil.FULL_BRIGHT);
+                    }
+                });
+            }
+            return false;
+        }
+    }
+
+    private record HighlightGeometry(java.util.List<LineSegment> lines, java.util.List<OverlayBatch> overlays,
+                                     float red, float green, float blue) {
+        private boolean isEmpty() {
+            return this.lines.isEmpty() && this.overlays.isEmpty();
+        }
+    }
+
+    private record LineSegment(float fromX, float fromY, float fromZ, float toX, float toY, float toZ) {}
+
+    private record OverlayVertex(float x, float y, float z, float u, float v, int color) {}
+
+    private record OverlayBatch(net.minecraft.resources.Identifier texture, java.util.List<OverlayVertex> vertices) {}
+
+    private static final class GeometryBuilder {
+        private final java.util.List<LineSegment> lines = new java.util.ArrayList<>();
+        private final java.util.Map<net.minecraft.resources.Identifier, java.util.List<OverlayVertex>> overlays =
+                new java.util.LinkedHashMap<>();
+        private final float pulse = 0.2F + (float) Math.sin((System.currentTimeMillis() % (Mth.PI * 800)) / 800) / 2;
+
+        private void addLine(PoseStack.Pose pose, Vector3fc from, Vector3fc to) {
+            Vector3f transformedFrom = pose.pose().transformPosition(from.x(), from.y(), from.z(), new Vector3f());
+            Vector3f transformedTo = pose.pose().transformPosition(to.x(), to.y(), to.z(), new Vector3f());
+            this.lines.add(new LineSegment(transformedFrom.x(), transformedFrom.y(), transformedFrom.z(),
+                    transformedTo.x(), transformedTo.y(), transformedTo.z()));
+        }
+
+        private void addOverlay(PoseStack poseStack, UITexture texture, int color,
+                                float x, float y, float width, float height) {
+            float u0 = texture.u0;
+            float u1 = texture.u1;
+            float v0 = texture.v0;
+            float v1 = texture.v1;
+            java.util.List<OverlayVertex> vertices = this.overlays.computeIfAbsent(texture.location,
+                    unused -> new java.util.ArrayList<>());
+            // Keep the winding and UV orientation used by the original face overlays.
+            this.addOverlayVertex(vertices, poseStack, x, y + height, u0, v0 + v1, color);
+            this.addOverlayVertex(vertices, poseStack, x + width, y + height, u0 + u1, v0 + v1, color);
+            this.addOverlayVertex(vertices, poseStack, x + width, y, u0 + u1, v0, color);
+            this.addOverlayVertex(vertices, poseStack, x, y, u0, v0, color);
+        }
+
+        private void addOverlayVertex(java.util.List<OverlayVertex> vertices, PoseStack poseStack,
+                                     float x, float y, float u, float v, int color) {
+            Vector3f position = poseStack.last().pose().transformPosition(x, y, 0, new Vector3f());
+            vertices.add(new OverlayVertex(position.x(), position.y(), position.z(), u, v, color));
+        }
+
+        private HighlightGeometry build() {
+            java.util.List<OverlayBatch> batches = this.overlays.entrySet().stream()
+                    .map(entry -> new OverlayBatch(entry.getKey(), java.util.List.copyOf(entry.getValue())))
+                    .toList();
+            return new HighlightGeometry(java.util.List.copyOf(this.lines), batches, this.pulse, this.pulse, 1f);
+        }
     }
 }

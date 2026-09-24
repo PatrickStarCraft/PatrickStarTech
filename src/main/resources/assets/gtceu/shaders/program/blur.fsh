@@ -3,9 +3,16 @@
 #define PI 3.141592653
 
 uniform sampler2D DiffuseSampler;
-uniform vec2 BlurDir;
-uniform float Radius;
-uniform vec2 OutSize;
+
+layout(std140) uniform SamplerInfo {
+    vec2 OutSize;
+    vec2 DiffuseSize;
+};
+
+layout(std140) uniform BlurSettings {
+    vec2 BlurDir;
+    float Radius;
+};
 
 in vec2 texCoord;
 

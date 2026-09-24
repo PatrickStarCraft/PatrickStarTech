@@ -18,18 +18,16 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import lombok.RequiredArgsConstructor;
-import org.lwjgl.opengl.GL11;
 
 import static net.minecraft.util.ARGB.*;
 
 public class FusionRingRender extends DynamicRender<FusionReactorMachine, FusionRingRender> {
 
     // spotless:off
-    public static final Codec<FusionRingRender> CODEC = Codec.unit(FusionRingRender::new);
+    public static final MapCodec<FusionRingRender> CODEC = MapCodec.unit(FusionRingRender::new);
     public static final DynamicRenderType<FusionReactorMachine, FusionRingRender> TYPE = new DynamicRenderType<>(FusionRingRender.CODEC);
     // spotless:on
 
@@ -70,10 +68,6 @@ public class FusionRingRender extends DynamicRender<FusionReactorMachine, Fusion
     @OnlyIn(Dist.CLIENT)
     private void renderLightRing(FusionReactorMachine machine, float partialTicks,
                                  PoseStack stack, VertexConsumer buffer) {
-        RenderSystem.disableCull();
-        RenderSystem.disableDepthTest();
-        RenderSystem.depthFunc(GL11.GL_ALWAYS);
-
         float alpha = 1f;
         if (machine.recipeLogic.isWorking()) {
             machine.lastColor = machine.getColor();
@@ -82,9 +76,14 @@ public class FusionRingRender extends DynamicRender<FusionReactorMachine, Fusion
             alpha = machine.delta / FADEOUT;
             machine.lastColor = color(Mth.floor(alpha * 255), red(machine.lastColor), green(machine.lastColor),
                     blue(machine.lastColor));
-            machine.delta -= Minecraft.getInstance().getDeltaFrameTime();
+            machine.delta -= Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaTicks();
         }
 
+        renderLightRingGeometry(machine, partialTicks, stack, buffer, alpha);
+    }
+
+    private void renderLightRingGeometry(FusionReactorMachine machine, float partialTicks, PoseStack stack,
+                                         VertexConsumer buffer, float alpha) {
         final var lerpFactor = Math.abs((Math.abs(machine.getOffsetTimer() % 50) + partialTicks) - 25) / 25;
         var front = machine.getFrontFacing();
         var upwards = machine.getUpwardsFacing();
@@ -100,10 +99,6 @@ public class FusionRingRender extends DynamicRender<FusionReactorMachine, Fusion
                 back.getStepZ() * 7 + 0.5F,
                 6, 0.2F, 10, 20,
                 r, g, b, alpha, axis);
-
-        RenderSystem.enableCull();
-        RenderSystem.enableDepthTest();
-        RenderSystem.depthFunc(GL11.GL_LEQUAL);
     }
 
     @Override
@@ -140,10 +135,11 @@ public class FusionRingRender extends DynamicRender<FusionReactorMachine, Fusion
         @Override
         public void renderBloomEffect(PoseStack poseStack, BufferBuilder buffer, EffectRenderContext context) {
             BlockPos pos = machine.getBlockPos();
+            float alpha = machine.recipeLogic.isWorking() ? 1.0F : ((machine.lastColor >>> 24) & 0xFF) / 255.0F;
 
             poseStack.pushPose();
             poseStack.translate(pos.getX(), pos.getY(), pos.getZ());
-            FusionRingRender.this.renderLightRing(machine, context.partialTicks(), poseStack, buffer);
+            FusionRingRender.this.renderLightRingGeometry(machine, context.partialTicks(), poseStack, buffer, alpha);
             poseStack.popPose();
         }
 

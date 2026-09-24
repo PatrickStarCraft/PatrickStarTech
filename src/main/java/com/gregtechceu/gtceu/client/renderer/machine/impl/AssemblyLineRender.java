@@ -21,11 +21,11 @@ import net.neoforged.api.distmarker.OnlyIn;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 
 public class AssemblyLineRender extends DynamicRender<AssemblyLineMachine, AssemblyLineRender> {
 
-    public static final Codec<AssemblyLineRender> CODEC = Codec.unit(AssemblyLineRender::new);
+    public static final MapCodec<AssemblyLineRender> CODEC = MapCodec.unit(AssemblyLineRender::new);
     public static final DynamicRenderType<AssemblyLineMachine, AssemblyLineRender> TYPE = new DynamicRenderType<>(
             AssemblyLineRender.CODEC);
 

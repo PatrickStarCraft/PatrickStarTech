@@ -22,7 +22,7 @@ import net.minecraftforge.client.RenderTypeHelper;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import lombok.Getter;
 import org.jetbrains.annotations.Nullable;
@@ -37,7 +37,7 @@ public class FluidAreaRender extends DynamicRender<WorkableMultiblockMachine, Fl
 
     // spotless:off
     @SuppressWarnings("deprecation")
-    public static final Codec<FluidAreaRender> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+    public static final MapCodec<FluidAreaRender> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             FluidBlockRenderer.CODEC.forGetter(FluidAreaRender::getFluidBlockRenderer),
             BuiltInRegistries.FLUID.byNameCodec().optionalFieldOf("fixed_fluid").forGetter(FluidAreaRender::getFixedFluid),
             RelativeDirection.CODEC.listOf().optionalFieldOf("drawn_faces", DEFAULT_FACES).forGetter(FluidAreaRender::getDrawFaces)

@@ -2,29 +2,32 @@ package com.gregtechceu.gtceu.client.util;
 
 import com.gregtechceu.gtceu.GTCEu;
 import com.gregtechceu.gtceu.client.model.ctm.CTMBakedModel;
+import com.gregtechceu.gtceu.client.model.ManuallyConnectedTextureModel;
 import com.gregtechceu.gtceu.client.model.machine.MachineModel;
 import com.gregtechceu.gtceu.client.renderer.cover.ICoverableRenderer;
-import com.gregtechceu.gtceu.core.mixins.ReloadableResourceManagerAccessor;
 import com.gregtechceu.gtceu.integration.modernfix.GTModernFixIntegration;
 
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.model.*;
+import net.minecraft.client.resources.model.geometry.BakedQuad;
+import net.minecraft.client.resources.model.sprite.Material;
+import net.minecraft.core.Direction;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.api.distmarker.Dist;
+import net.neoforged.neoforge.client.event.AddClientReloadListenersEvent;
 import net.neoforged.neoforge.client.event.ModelEvent;
-import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
-import net.minecraftforge.client.event.TextureStitchEvent;
+import net.neoforged.neoforge.client.event.TextureAtlasStitchedEvent;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
-import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -46,7 +49,7 @@ public class ModelEventHelper {
     public static final Map<Identifier, TextureAtlasSprite> CTM_SPRITE_CACHE = new ConcurrentHashMap<>();
 
     private static final Multimap<Identifier, Material> SCRAPED_TEXTURES = HashMultimap.create();
-    private static final Object2BooleanMap<Identifier> WRAPPED_MODELS = new Object2BooleanOpenHashMap<>();
+    private static final Map<BlockStateModel, BlockStateModel> WRAPPED_MODELS = new IdentityHashMap<>();
 
     @ApiStatus.Internal
     public static void markTextureUsedForModel(Identifier modelLocation, Material material) {
@@ -68,21 +71,26 @@ public class ModelEventHelper {
     }
 
     public static void registerBakeEventListener(boolean removeOnReload,
-                                                 AssetEventListener.BakedModelReplacement listener) {
+                                                 AssetEventListener.BlockStateModelReplacement listener) {
         EVENT_LISTENERS.add(new EventListenerHolder<>(listener, removeOnReload));
     }
 
-    public static void registerAddModelsEventListener(boolean removeOnReload,
-                                                      AssetEventListener.RegisterAdditional listener) {
+    public static void registerStandaloneModelsEventListener(boolean removeOnReload,
+                                                             AssetEventListener.RegisterStandalone listener) {
         EVENT_LISTENERS.add(new EventListenerHolder<>(listener, removeOnReload));
+    }
+
+    @Deprecated
+    public static void registerAddModelsEventListener(boolean removeOnReload,
+                                                      AssetEventListener.RegisterStandalone listener) {
+        registerStandaloneModelsEventListener(removeOnReload, listener);
     }
 
     private static final AtomicInteger reloadCounter = new AtomicInteger(0);
 
     @SubscribeEvent(priority = EventPriority.HIGH)
-    public static void registerReloadListener(RegisterClientReloadListenersEvent event) {
-        ((ReloadableResourceManagerAccessor) Minecraft.getInstance().getResourceManager()).getListeners()
-                .add(0, (ResourceManagerReloadListener) resourceManager -> {
+    public static void registerReloadListener(AddClientReloadListenersEvent event) {
+        event.addListener(GTCEu.id("client_model_event_helper"), (ResourceManagerReloadListener) resourceManager -> {
                     if (reloadCounter.addAndGet(1) > 1) {
                         EVENT_LISTENERS.removeIf(EventListenerHolder::removeOnReload);
                     }
@@ -96,13 +104,13 @@ public class ModelEventHelper {
 
     @SuppressWarnings("unchecked")
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void onAtlasStitched(TextureStitchEvent.Post event) {
+    public static void onAtlasStitched(TextureAtlasStitchedEvent event) {
         for (var listener : EVENT_LISTENERS) {
             if (!(listener.listener instanceof AssetEventListener<?> assetEventListener)) continue;
 
             Class<?> eventClass = assetEventListener.eventClass();
             if (eventClass != null && eventClass.isInstance(event)) {
-                ((AssetEventListener<TextureStitchEvent.Post>) listener.listener).accept(event);
+                ((AssetEventListener<TextureAtlasStitchedEvent>) listener.listener).accept(event);
             }
         }
     }
@@ -112,14 +120,14 @@ public class ModelEventHelper {
         // don't process baked model replacement here if ModernFix is loaded & dynamic resources is enabled
         if (GTCEu.Mods.isModernFixLoaded() && GTModernFixIntegration.isDynamicResourcesEnabled()) return;
 
-        for (var entry : event.getModels().entrySet()) {
-            BakedModel model = entry.getValue();
+        Map<BlockState, BlockStateModel> models = event.getBakingResult().blockStateModels();
+        for (var entry : models.entrySet()) {
+            BlockStateModel model = entry.getValue();
 
             // process all model replacers
             for (var listener : EVENT_LISTENERS) {
-                if (!(listener.listener instanceof AssetEventListener.BakedModelReplacement modelReplacement)) continue;
-                model = modelReplacement.modifyBakedModel(entry.getKey(), model,
-                        event.getModelBakery().getModel(entry.getKey()), event.getModelBakery());
+                if (!(listener.listener instanceof AssetEventListener.BlockStateModelReplacement modelReplacement)) continue;
+                model = modelReplacement.modifyBlockStateModel(entry.getKey(), model);
             }
             entry.setValue(model);
         }
@@ -127,13 +135,13 @@ public class ModelEventHelper {
 
     @SuppressWarnings("unchecked")
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void onRegisterAdditional(ModelEvent.RegisterAdditional event) {
+    public static void onRegisterStandalone(ModelEvent.RegisterStandalone event) {
         for (var listener : EVENT_LISTENERS) {
             if (!(listener.listener instanceof AssetEventListener<?> assetEventListener)) continue;
 
             Class<?> eventClass = assetEventListener.eventClass();
             if (eventClass != null && eventClass.isInstance(event)) {
-                ((AssetEventListener<ModelEvent.RegisterAdditional>) listener.listener).accept(event);
+                ((AssetEventListener<ModelEvent.RegisterStandalone>) listener.listener).accept(event);
             }
         }
     }
@@ -146,7 +154,7 @@ public class ModelEventHelper {
             TextureAtlas atlas = event.getAtlas();
             // Cache all textures' CTM metadata
             // TODO lazy
-            for (Identifier location : atlas.getTextureLocations()) {
+            for (Identifier location : atlas.getTextures().keySet()) {
                 var sec = TextureMetadataHelper.getMetadataFromRelativeLocation(location);
                 sec.ifPresent(section -> {
                     if (section.connectionTexture() != null) {
@@ -161,69 +169,35 @@ public class ModelEventHelper {
         });
 
         // register CTM model wrapper
-        ModelEventHelper.registerBakeEventListener(false, (rl, baked, rootModel, modelBakery) -> {
-            if (baked.isCustomRenderer()) {
-                // Nothing we can add to builtin models
-                return baked;
-            }
-            // do not register automatic CTM for machine models, they handle it themselves
-            if (baked instanceof MachineModel) {
-                return baked;
-            }
+        ModelEventHelper.registerBakeEventListener(false, ModelEventHelper::wrapConnectedTextureModel);
+    }
 
-            if (!(rl instanceof ModelResourceLocation) || rootModel == null || baked instanceof CTMBakedModel<?>) {
-                return baked;
+    private static BlockStateModel wrapConnectedTextureModel(BlockState state, BlockStateModel model) {
+        return WRAPPED_MODELS.computeIfAbsent(model, candidate -> {
+            if (candidate instanceof ManuallyConnectedTextureModel || candidate instanceof CTMBakedModel<?>) {
+                return candidate;
             }
-            Deque<Identifier> dependencies = new ArrayDeque<>();
-            Set<Identifier> seenModels = new HashSet<>();
-            dependencies.push(rl);
-            seenModels.add(rl);
-
-            boolean shouldWrap = WRAPPED_MODELS.getOrDefault(rl, false);
-            if (WRAPPED_MODELS.containsKey(rl)) {
-                // shortcut if the model's already been checked
-                if (shouldWrap) return new CTMBakedModel<>(baked);
-                else return baked;
-            }
-            // Breadth-first loop through dependencies
-            // exiting as soon as a CTM texture is found, and skipping duplicates/cycles
-            PARENT_LOOP:
-            while (!shouldWrap && !dependencies.isEmpty()) {
-                Identifier dependencyName = dependencies.pop();
-                UnbakedModel unbaked;
-                try {
-                    unbaked = dependencyName == rl ? rootModel : modelBakery.getModel(dependencyName);
-                } catch (Exception e) {
-                    continue;
-                }
-                try {
-                    // have to copy because the set is updated during this loop
-                    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
-                    Set<Material> textures = new HashSet<>(SCRAPED_TEXTURES.get(dependencyName));
-                    for (Material tex : textures) {
-                        if (TextureMetadataHelper.getMetadata(tex).isPresent()) {
-                            // At least one texture has CTM metadata, so we should wrap this model
-                            shouldWrap = true;
-                            break PARENT_LOOP;
-                        }
-                    }
-                    // shouldWrap is always false here because of the `break` above
-                    for (Identifier newDep : unbaked.getDependencies()) {
-                        if (seenModels.add(newDep)) {
-                            dependencies.push(newDep);
-                        }
-                    }
-                } catch (Exception e) {
-                    GTCEu.LOGGER.error("Error loading dependency {} for model {}. Skipping...",
-                            dependencyName, rl, e);
-                }
-            }
-            ModelEventHelper.WRAPPED_MODELS.put(rl, shouldWrap);
-            if (shouldWrap) {
-                return new CTMBakedModel<>(baked);
-            }
-
-            return baked;
+            return hasConnectedTexture(candidate) ? new CTMBakedModel<>(candidate) : candidate;
         });
+    }
+
+    private static boolean hasConnectedTexture(BlockStateModel model) {
+        List<BlockStateModelPart> parts = new ArrayList<>();
+        model.collectParts(RandomSource.create(0L), parts);
+        for (BlockStateModelPart part : parts) {
+            if (hasConnectedTexture(part.getQuads(null))) return true;
+            for (Direction direction : Direction.values()) {
+                if (hasConnectedTexture(part.getQuads(direction))) return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean hasConnectedTexture(List<BakedQuad> quads) {
+        for (BakedQuad quad : quads) {
+            Identifier sprite = quad.materialInfo().sprite().contents().name();
+            if (CTM_SPRITE_CACHE.containsKey(sprite)) return true;
+        }
+        return false;
     }
 }

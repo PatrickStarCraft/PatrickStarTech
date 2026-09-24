@@ -2,86 +2,43 @@ package com.gregtechceu.gtceu.core.mixins.client;
 
 import com.gregtechceu.gtceu.common.item.armor.GTArmorItem;
 
-import net.minecraft.client.model.HumanoidModel;
-import net.minecraft.client.renderer.entity.RenderLayerParent;
-import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
-import net.minecraft.client.renderer.entity.layers.RenderLayer;
+import net.minecraft.client.renderer.entity.layers.EquipmentLayerRenderer;
+import net.minecraft.client.resources.model.EquipmentClientInfo;
 import net.minecraft.util.ARGB;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.ItemStack;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.ModifyArg;
 
-/// Have to do the ModifyArg calls separately, thanks forge.
-/// see [Connector#383](https://github.com/Sinytra/Connector/discussions/383) for an explanation.
-@Mixin(HumanoidArmorLayer.class)
-public abstract class HumanoidArmorLayerMixin<T extends LivingEntity, M extends HumanoidModel<T>,
-        A extends HumanoidModel<T>> extends RenderLayer<T, M> {
+@Mixin(EquipmentLayerRenderer.class)
+public abstract class HumanoidArmorLayerMixin {
 
-    public HumanoidArmorLayerMixin(RenderLayerParent<T, M> renderer) {
-        super(renderer);
+    @ModifyExpressionValue(
+            method = "renderLayers(Lnet/minecraft/client/resources/model/EquipmentClientInfo$LayerType;" +
+                    "Lnet/minecraft/resources/ResourceKey;Lnet/minecraft/client/model/Model;Ljava/lang/Object;" +
+                    "Lnet/minecraft/world/item/ItemStack;Lcom/mojang/blaze3d/vertex/PoseStack;" +
+                    "Lnet/minecraft/client/renderer/SubmitNodeCollector;ILnet/minecraft/resources/Identifier;II)V",
+            at = @At(value = "INVOKE", target =
+                    "Lnet/neoforged/neoforge/client/extensions/common/IClientItemExtensions;" +
+                            "getArmorLayerTintColor(Lnet/minecraft/world/item/ItemStack;" +
+                            "Lnet/minecraft/client/resources/model/EquipmentClientInfo$Layer;II)I"))
+    private int gtceu$blendMaterialArmorTint(int layerTint, @Local(argsOnly = true) ItemStack itemStack) {
+        Object item = itemStack.getItem();
+        if (layerTint == 0 || !GTArmorItem.class.isInstance(item)) {
+            return layerTint;
+        }
+
+        GTArmorItem armorItem = GTArmorItem.class.cast(item);
+        int materialColor = armorItem.material.getMaterialARGB();
+        int red = blendArmorChannel(ARGB.red(materialColor), ARGB.red(layerTint));
+        int green = blendArmorChannel(ARGB.green(materialColor), ARGB.green(layerTint));
+        int blue = blendArmorChannel(ARGB.blue(materialColor), ARGB.blue(layerTint));
+        return (layerTint & 0xFF000000) | red << 16 | green << 8 | blue;
     }
 
-    @ModifyArg(method = "renderArmorPiece",
-               at = @At(value = "INVOKE",
-                        target = "Lnet/minecraft/client/renderer/entity/layers/HumanoidArmorLayer;renderModel" +
-                                "(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/world/item/ArmorItem;Lnet/minecraft/client/model/Model;ZFFFLnet/minecraft/resources/Identifier;)V",
-                        remap = false),
-               index = 6)
-    private float gtceu$modifyArmorTintR(float oldR, @Local ArmorItem armorItem) {
-        if (armorItem instanceof GTArmorItem gtArmorItem) {
-            int argb = gtArmorItem.material.getMaterialARGB();
-            float r = ARGB.red(argb) / 255.0F;
-
-            if (oldR != 1.0f) {
-                return (r + oldR) / 2.0f;
-            } else {
-                return r;
-            }
-        }
-        return oldR;
-    }
-
-    @ModifyArg(method = "renderArmorPiece",
-               at = @At(value = "INVOKE",
-                        target = "Lnet/minecraft/client/renderer/entity/layers/HumanoidArmorLayer;renderModel" +
-                                "(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/world/item/ArmorItem;Lnet/minecraft/client/model/Model;ZFFFLnet/minecraft/resources/Identifier;)V",
-                        remap = false),
-               index = 7)
-    private float gtceu$modifyArmorTintsG(float oldG, @Local ArmorItem armorItem) {
-        if (armorItem instanceof GTArmorItem gtArmorItem) {
-            int argb = gtArmorItem.material.getMaterialARGB();
-            float g = ARGB.green(argb) / 255.0F;
-
-            if (oldG != 1.0f) {
-                return (g + oldG) / 2.0f;
-            } else {
-                return g;
-            }
-        }
-        return oldG;
-    }
-
-    @ModifyArg(method = "renderArmorPiece",
-               at = @At(value = "INVOKE",
-                        target = "Lnet/minecraft/client/renderer/entity/layers/HumanoidArmorLayer;renderModel" +
-                                "(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/world/item/ArmorItem;Lnet/minecraft/client/model/Model;ZFFFLnet/minecraft/resources/Identifier;)V",
-                        remap = false),
-               index = 8)
-    private float gtceu$modifyArmorTintsB(float oldB, @Local ArmorItem armorItem) {
-        if (armorItem instanceof GTArmorItem gtArmorItem) {
-            int argb = gtArmorItem.material.getMaterialARGB();
-            float b = ARGB.blue(argb) / 255.0F;
-
-            if (oldB != 1.0f) {
-                return (b + oldB) / 2.0f;
-            } else {
-                return b;
-            }
-        }
-        return oldB;
+    private static int blendArmorChannel(int material, int layer) {
+        return layer == 255 ? material : (material + layer) / 2;
     }
 }

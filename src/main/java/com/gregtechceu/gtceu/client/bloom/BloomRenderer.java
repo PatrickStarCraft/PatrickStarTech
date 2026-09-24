@@ -1,18 +1,20 @@
 package com.gregtechceu.gtceu.client.bloom;
 
+import com.gregtechceu.gtceu.GTCEu;
 import com.gregtechceu.gtceu.client.renderer.GTRenderTypes;
 import com.gregtechceu.gtceu.client.util.TextureMetadataHelper;
 import com.gregtechceu.gtceu.config.ConfigHolder;
 import com.gregtechceu.gtceu.core.config.GTEarlyConfig;
 import com.gregtechceu.gtceu.core.mixins.GTMixinPlugin;
+import com.gregtechceu.gtceu.core.mixins.client.bloom.GameRendererAccessor;
 import com.gregtechceu.gtceu.core.mixins.client.bloom.LevelRendererAccessor;
-import com.gregtechceu.gtceu.core.mixins.client.bloom.PostChainAccessor;
 import com.gregtechceu.gtceu.utils.ScopedValue;
 import com.gregtechceu.gtceu.utils.function.IntObjectConsumer;
 
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
+import net.minecraft.resources.Identifier;
 import net.minecraft.client.resources.model.geometry.BakedQuad;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.core.SectionPos;
@@ -22,6 +24,8 @@ import net.minecraftforge.client.ForgeHooksClient;
 
 import com.mojang.blaze3d.pipeline.RenderCall;
 import com.mojang.blaze3d.pipeline.RenderTarget;
+import com.mojang.blaze3d.framegraph.FrameGraphBuilder;
+import com.mojang.blaze3d.resource.ResourceHandle;
 import com.mojang.blaze3d.opengl.GlStateManager;
 import com.mojang.blaze3d.shaders.Uniform;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -34,6 +38,7 @@ import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 
 import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -61,12 +66,12 @@ public class BloomRenderer {
     static void renderBloom(Camera camera, PoseStack poseStack, Frustum frustum, Matrix4f projectionMatrix,
                             float partialTicks, LevelRenderer levelRenderer, ProfilerFiller profilerFiller) {
         if (!BloomShaderManager.isBloomActive()) return;
+        BloomShaderManager.refreshPostChainSettings();
+        if (!BloomShaderManager.isBloomActive()) return;
 
         Vec3 camPos = camera.position();
 
         profilerFiller.popPush("gtceu:bloom");
-        setupBloomShaderUniforms();
-
         GTRenderTypes.bloom().setupRenderState();
 
         renderSpecialBloom(camera, poseStack, frustum, partialTicks, profilerFiller);
@@ -130,57 +135,38 @@ public class BloomRenderer {
 
     static void processPostEffect(float partialTicks, ProfilerFiller profilerFiller) {
         Minecraft minecraft = Minecraft.getInstance();
-        RenderTarget mainTarget = minecraft.getMainRenderTarget();
+        RenderTarget mainTarget = minecraft.gameRenderer.mainRenderTarget();
+        RenderTarget bloomSource = BloomShaderManager.BLOOM_TARGET;
+        RenderTarget bloomOutput = BloomShaderManager.BLOOM_OUTPUT_TARGET;
 
         profilerFiller.push("processPostEffect");
+        try {
+            FrameGraphBuilder frame = new FrameGraphBuilder();
+            Map<Identifier, ResourceHandle<RenderTarget>> targets = new HashMap<>();
+            targets.put(PostChain.MAIN_TARGET_ID, frame.importExternal("minecraft:main", mainTarget));
+            Identifier sourceId = GTCEu.id("bloom_source");
+            Identifier outputId = GTCEu.id("bloom_output");
+            targets.put(sourceId, frame.importExternal("gtceu:bloom_source", bloomSource));
+            targets.put(outputId, frame.importExternal("gtceu:bloom_output", bloomOutput));
 
-        BloomShaderManager.BLOOM_CHAIN.process(partialTicks);
-
-        mainTarget.bindWrite(false);
-
-        RenderSystem.enableBlend();
-        RenderSystem.blendFunc(GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-
-        BLOOM_TARGET.blitToScreen(mainTarget.viewWidth, mainTarget.viewHeight, false);
-        BLOOM_TARGET.unbindRead();
-
-        RenderSystem.disableBlend();
-        RenderSystem.defaultBlendFunc();
-
-        profilerFiller.pop();
-    }
-
-    @ApiStatus.Internal
-    static void setupBloomShaderUniforms() {
-        final var config = ConfigHolder.INSTANCE.client.bloom;
-
-        // Forcefully insert config values to shader
-        modifyBloomPostShaders((index, shader) -> {
-            shader.safeGetUniform("DepthNear").set(GameRenderer.PROJECTION_Z_NEAR);
-            shader.safeGetUniform("DepthFar").set(Minecraft.getInstance().gameRenderer.getDepthFar());
-
-            // look for blur steps & change their blur strength to match the config
-            if (shader.getName().contains("blur")) {
-                if (index % 2 == 0) {
-                    shader.safeGetUniform("BlurDir").set(0.0f, config.step);
-                } else {
-                    shader.safeGetUniform("BlurDir").set(config.step, 0.0f);
+            PostChain.TargetBundle targetBundle = new PostChain.TargetBundle() {
+                @Override
+                public void replace(Identifier id, ResourceHandle<RenderTarget> handle) {
+                    if (!targets.containsKey(id)) throw new IllegalArgumentException("Unknown bloom target " + id);
+                    targets.put(id, handle);
                 }
-            }
 
-            shader.safeGetUniform("BloomStrength").set(config.strength);
-            shader.safeGetUniform("BaseBrightness").set(config.baseBrightness);
-            shader.safeGetUniform("MinBrightness").set(config.minBrightness);
-            shader.safeGetUniform("MaxBrightness").set(config.maxBrightness);
-        });
-    }
+                @Override
+                public @Nullable ResourceHandle<RenderTarget> get(Identifier id) {
+                    return targets.get(id);
+                }
+            };
 
-    static void modifyBloomPostShaders(IntObjectConsumer<EffectInstance> consumer) {
-        // Forcefully insert config values to shader
-        List<PostPass> passes = ((PostChainAccessor) BloomShaderManager.BLOOM_CHAIN).getPasses();
-        for (int i = 0; i < passes.size(); i++) {
-            PostPass pass = passes.get(i);
-            consumer.accept(i, pass.getEffect());
+            BloomShaderManager.BLOOM_CHAIN.addToFrame(frame, mainTarget.width, mainTarget.height, targetBundle);
+            frame.execute(((GameRendererAccessor) minecraft.gameRenderer).getResourcePool());
+            bloomOutput.blitAndBlendToTexture(mainTarget.getColorTextureView(), mainTarget.getDepthTextureView());
+        } finally {
+            profilerFiller.pop();
         }
     }
 

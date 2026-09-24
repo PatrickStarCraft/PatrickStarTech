@@ -1,24 +1,24 @@
 package com.gregtechceu.gtceu.client.particle;
 
 import com.gregtechceu.gtceu.client.bloom.EffectRenderContext;
-import com.gregtechceu.gtceu.client.bloom.IRenderSetup;
 import com.gregtechceu.gtceu.client.bloom.particle.GTBloomParticle;
+import com.gregtechceu.gtceu.client.renderer.GTRenderTypes;
 import com.gregtechceu.gtceu.client.util.RenderBufferHelper;
 import com.gregtechceu.gtceu.client.util.RenderUtil;
 import com.gregtechceu.gtceu.common.blockentity.CableBlockEntity;
 
-import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
-import com.mojang.blaze3d.opengl.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.*;
+import com.mojang.blaze3d.vertex.PoseStack;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author brachy84
@@ -221,87 +221,68 @@ public class GTOverheatParticle extends GTBloomParticle {
 
     @Override
     public boolean shouldRender(EffectRenderContext context) {
-        return this.shouldRenderBloomEffect(context);
+        return this.shouldRenderBloomParticle(context);
     }
 
-    @Override
-    public boolean shouldRenderBloomEffect(EffectRenderContext context) {
+    private boolean shouldRenderBloomParticle(EffectRenderContext context) {
         if (this.insulated) return false;
         return context.frustum().isVisible(pipeBounds);
     }
 
     @Override
-    public IRenderSetup getRenderSetup() {
-        return NO_BLOOM_SETUP;
+    public RenderType getRenderType(boolean writeDepth) {
+        return GTRenderTypes.particle(writeDepth);
     }
 
     @Override
-    protected IRenderSetup getBloomRenderSetup() {
-        return BLOOM_SETUP;
-    }
-
-    @Override
-    public void renderParticle(PoseStack poseStack, BufferBuilder buffer, EffectRenderContext context) {
-        renderBloomEffect(poseStack, buffer, context);
-    }
-
-    @Override
-    public void renderBloomEffect(PoseStack poseStack, BufferBuilder buffer, EffectRenderContext context) {
+    public void renderParticle(SubmitNodeCollector collector, PoseStack poseStack, RenderType renderType,
+                               EffectRenderContext context) {
         float red = ((color >> 16) & 0xFF) / 255f;
         float green = ((color >> 8) & 0xFF) / 255f;
         float blue = (color & 0xFF) / 255f;
+        List<ParticleBox> renderBoxes = snapshotPipeBoxes();
+        float particleAlpha = alpha;
 
         poseStack.pushPose();
         poseStack.translate(posX, posY, posZ);
-        pipeShape.forAllBoxes((x1, y1, z1, x2, y2, z2) -> {
-            RenderBufferHelper.renderColorCube(buffer, poseStack,
-                    (float) x1 - 0.001f, (float) y1 - 0.001f, (float) z1 - 0.001f,
-                    (float) x2 + 0.001f, (float) y2 + 0.001f, (float) z2 + 0.001f,
-                    red, green, blue, alpha, true);
+        collector.submitCustomGeometry(poseStack, renderType, (pose, buffer) -> {
+            for (ParticleBox box : renderBoxes) {
+                RenderBufferHelper.renderColorCube(buffer, pose,
+                        (float) box.minX, (float) box.minY, (float) box.minZ,
+                        (float) box.maxX, (float) box.maxY, (float) box.maxZ,
+                        red, green, blue, particleAlpha, true);
+            }
         });
         poseStack.popPose();
     }
 
-    private static final IRenderSetup NO_BLOOM_SETUP = new IRenderSetup() {
+    @Override
+    public void renderBloomParticle(SubmitNodeCollector collector, PoseStack poseStack, EffectRenderContext context) {
+        float red = ((color >> 16) & 0xFF) / 255f;
+        float green = ((color >> 8) & 0xFF) / 255f;
+        float blue = (color & 0xFF) / 255f;
+        List<ParticleBox> renderBoxes = snapshotPipeBoxes();
+        float particleAlpha = alpha;
 
-        @Override
-        @OnlyIn(Dist.CLIENT)
-        public void preDraw(BufferBuilder buffer) {
-            RenderSystem.enableBlend();
-            RenderSystem.blendFuncSeparate(
-                    GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA,
-                    GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-            RenderSystem.setShader(GameRenderer::getPositionColorShader);
-            RenderSystem.setShaderColor(1, 1, 1, 1);
+        poseStack.pushPose();
+        poseStack.translate(posX, posY, posZ);
+        collector.submitCustomGeometry(poseStack, GTRenderTypes.bloomParticle(), (pose, buffer) -> {
+            for (ParticleBox box : renderBoxes) {
+                RenderBufferHelper.renderColorCube(buffer, pose,
+                        (float) box.minX, (float) box.minY, (float) box.minZ,
+                        (float) box.maxX, (float) box.maxY, (float) box.maxZ,
+                        red, green, blue, particleAlpha, true);
+            }
+        });
+        poseStack.popPose();
+    }
 
-            buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-        }
+    private List<ParticleBox> snapshotPipeBoxes() {
+        List<ParticleBox> boxes = new ArrayList<>();
+        pipeShape.forAllBoxes((x1, y1, z1, x2, y2, z2) -> boxes.add(new ParticleBox(
+                x1 - 0.001, y1 - 0.001, z1 - 0.001, x2 + 0.001, y2 + 0.001, z2 + 0.001)));
+        return List.copyOf(boxes);
+    }
 
-        @Override
-        @OnlyIn(Dist.CLIENT)
-        public void postDraw(BufferBuilder buffer) {
-            BufferUploader.drawWithShader(buffer.end());
-            RenderSystem.disableBlend();
-            RenderSystem.defaultBlendFunc();
-        }
-    };
-
-    private static final IRenderSetup BLOOM_SETUP = new IRenderSetup() {
-
-        @Override
-        @OnlyIn(Dist.CLIENT)
-        public void preDraw(BufferBuilder buffer) {
-            RenderSystem.disableBlend();
-            RenderSystem.setShader(GameRenderer::getPositionColorShader);
-            RenderSystem.setShaderColor(1, 1, 1, 1);
-
-            buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-        }
-
-        @Override
-        @OnlyIn(Dist.CLIENT)
-        public void postDraw(BufferBuilder buffer) {
-            BufferUploader.drawWithShader(buffer.end());
-        }
-    };
+    private record ParticleBox(double minX, double minY, double minZ, double maxX, double maxY, double maxZ) {}
 }

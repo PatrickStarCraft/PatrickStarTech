@@ -2,6 +2,7 @@ package com.gregtechceu.gtceu.client.util;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -30,8 +31,8 @@ public class FakeBlockTintGetter implements BlockAndTintGetter {
     public BlockEntity blockEntity;
 
     @Override
-    public float getShade(Direction direction, boolean b) {
-        return parent.getShade(direction, b);
+    public CardinalLighting cardinalLighting() {
+        return parent.cardinalLighting();
     }
 
     @Override
@@ -80,23 +81,18 @@ public class FakeBlockTintGetter implements BlockAndTintGetter {
     }
 
     @Override
-    public int getMaxLightLevel() {
-        return parent.getMaxLightLevel();
-    }
-
-    @Override
     public int getHeight() {
         return parent.getHeight();
     }
 
     @Override
-    public int getMinBuildHeight() {
-        return parent.getMinBuildHeight();
+    public int getMinY() {
+        return parent.getMinY();
     }
 
     @Override
-    public int getMaxBuildHeight() {
-        return parent.getMaxBuildHeight();
+    public int getMaxY() {
+        return parent.getMaxY();
     }
 
     @Override
@@ -105,13 +101,13 @@ public class FakeBlockTintGetter implements BlockAndTintGetter {
     }
 
     @Override
-    public int getMinSection() {
-        return parent.getMinSection();
+    public int getMinSectionY() {
+        return parent.getMinSectionY();
     }
 
     @Override
-    public int getMaxSection() {
-        return parent.getMaxSection();
+    public int getMaxSectionY() {
+        return parent.getMaxSectionY();
     }
 
     @Override

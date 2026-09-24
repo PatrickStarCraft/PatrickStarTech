@@ -1,12 +1,12 @@
 package com.gregtechceu.gtceu.client.particle;
 
 import com.gregtechceu.gtceu.client.bloom.EffectRenderContext;
-import com.gregtechceu.gtceu.client.bloom.IRenderSetup;
 
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.rendertype.RenderType;
 
-import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
 import lombok.Getter;
 import org.jetbrains.annotations.Nullable;
@@ -14,8 +14,8 @@ import org.jetbrains.annotations.Nullable;
 /**
  * A custom particle implementation with framework for more advanced rendering capabilities.
  * <p/>
- * GTParticle instances are managed by {@link GTParticleManager}. GTParticle instances with same {@link IRenderSetup}s
- * will be drawn together as a batch.
+ * GTParticle instances are managed by {@link GTParticleManager}. Particles with the same target render type are
+ * submitted together through the level's custom-geometry collector.
  */
 public abstract class GTParticle {
 
@@ -94,22 +94,13 @@ public abstract class GTParticle {
      */
     protected void onExpired() {}
 
-    /**
-     * Render the particle. If this particle has non-null {@link #getRenderSetup()} associated, this method will be
-     * called between a {@link IRenderSetup#preDraw(BufferBuilder)} call and a
-     * {@link IRenderSetup#postDraw(BufferBuilder)} call.
-     *
-     * @param poseStack pose stack
-     * @param buffer    buffer builder
-     * @param context   render context
-     */
-    @OnlyIn(Dist.CLIENT)
-    public void renderParticle(PoseStack poseStack, BufferBuilder buffer, EffectRenderContext context) {}
-
-    /**
-     * @return Render setup for this particle, if exists
-     */
-    public @Nullable IRenderSetup getRenderSetup() {
+    /** Returns the pipeline for this particle's depth-write mode, or {@code null} when it has no geometry. */
+    public @Nullable RenderType getRenderType(boolean writeDepth) {
         return null;
     }
+
+    /** Submit the particle through the target level-render collector. */
+    @OnlyIn(Dist.CLIENT)
+    public void renderParticle(SubmitNodeCollector collector, PoseStack poseStack, RenderType renderType,
+                               EffectRenderContext context) {}
 }

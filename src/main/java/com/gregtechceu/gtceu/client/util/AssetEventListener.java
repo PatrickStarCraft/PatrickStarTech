@@ -1,11 +1,9 @@
 package com.gregtechceu.gtceu.client.util;
 
-import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.client.resources.model.ModelBakery;
-import net.minecraft.client.resources.model.UnbakedModel;
-import net.minecraft.resources.Identifier;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
+import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.client.event.ModelEvent;
-import net.minecraftforge.client.event.TextureStitchEvent;
+import net.neoforged.neoforge.client.event.TextureAtlasStitchedEvent;
 import net.neoforged.bus.api.Event;
 
 import org.jetbrains.annotations.Nullable;
@@ -20,29 +18,28 @@ public interface AssetEventListener<T extends Event> {
     }
 
     @FunctionalInterface
-    interface AtlasStitched extends AssetEventListener<TextureStitchEvent.Post> {
+    interface AtlasStitched extends AssetEventListener<TextureAtlasStitchedEvent> {
 
         @Override
         @Nullable
-        default Class<TextureStitchEvent.Post> eventClass() {
-            return TextureStitchEvent.Post.class;
+        default Class<TextureAtlasStitchedEvent> eventClass() {
+            return TextureAtlasStitchedEvent.class;
         }
     }
 
     @FunctionalInterface
-    interface BakedModelReplacement {
+    interface BlockStateModelReplacement {
 
-        BakedModel modifyBakedModel(Identifier modelLocation, BakedModel model,
-                                    @Nullable UnbakedModel rootModel, ModelBakery modelBakery);
+        BlockStateModel modifyBlockStateModel(BlockState state, BlockStateModel model);
     }
 
     @FunctionalInterface
-    interface RegisterAdditional extends AssetEventListener<ModelEvent.RegisterAdditional> {
+    interface RegisterStandalone extends AssetEventListener<ModelEvent.RegisterStandalone> {
 
         @Override
         @Nullable
-        default Class<ModelEvent.RegisterAdditional> eventClass() {
-            return ModelEvent.RegisterAdditional.class;
+        default Class<ModelEvent.RegisterStandalone> eventClass() {
+            return ModelEvent.RegisterStandalone.class;
         }
     }
 }

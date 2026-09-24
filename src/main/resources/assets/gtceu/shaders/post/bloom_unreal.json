@@ -1,157 +1,146 @@
 {
-    "targets": [
-        "final",
-        "filter",
-        { "name": "swap_b0", "bilinear": true },
-        { "name": "swap_b1", "bilinear": true },
-        { "name": "swap_b2", "bilinear": true },
-        { "name": "swap_b3", "bilinear": true },
-        { "name": "swap_b4", "bilinear": true }
-    ],
-    "passes": [
-        {
-            "name": "gtceu:filter_bloom_color",
-            "intarget": "final",
-            "outtarget": "filter",
-            "auxtargets": [
-                { "id": "final:depth",          "name": "DiffuseDepthSampler" },
-                { "id": "minecraft:main:depth", "name": "MainDepthSampler" }
-            ]
-        },
-        {
-            "name": "gtceu:blur",
-            "intarget": "filter",
-            "outtarget": "swap_b0",
-            "uniforms": [
-                {
-                    "name": "BlurDir",
-                    "values": [ 1.0, 0.0 ]
-                },
-                {
-                    "name": "Radius",
-                    "values": [3]
-                }
-            ]
-        },
-        {
-            "name": "gtceu:blur",
-            "intarget": "swap_b0",
-            "outtarget": "swap_b1",
-            "uniforms": [
-                {
-                    "name": "BlurDir",
-                    "values": [ 0.0, 1.0 ]
-                },
-                {
-                    "name": "Radius",
-                    "values": [3]
-                }
-            ]
-        },
-        {
-            "name": "gtceu:blur",
-            "intarget": "swap_b1",
-            "outtarget": "swap_b0",
-            "uniforms": [
-                {
-                    "name": "BlurDir",
-                    "values": [ 1.0, 0.0 ]
-                },
-                {
-                    "name": "Radius",
-                    "values": [5]
-                }
-            ]
-        },
-        {
-            "name": "gtceu:blur",
-            "intarget": "swap_b0",
-            "outtarget": "swap_b2",
-            "uniforms": [
-                {
-                    "name": "BlurDir",
-                    "values": [ 0.0, 1.0 ]
-                },
-                {
-                    "name": "Radius",
-                    "values": [5]
-                }
-            ]
-        },
-        {
-            "name": "gtceu:blur",
-            "intarget": "swap_b2",
-            "outtarget": "swap_b0",
-            "uniforms": [
-                {
-                    "name": "BlurDir",
-                    "values": [ 1.0, 0.0 ]
-                },
-                {
-                    "name": "Radius",
-                    "values": [7]
-                }
-            ]
-        },
-        {
-            "name": "gtceu:blur",
-            "intarget": "swap_b0",
-            "outtarget": "swap_b3",
-            "uniforms": [
-                {
-                    "name": "BlurDir",
-                    "values": [ 0.0, 1.0 ]
-                },
-                {
-                    "name": "Radius",
-                    "values": [7]
-                }
-            ]
-        },
-        {
-            "name": "gtceu:blur",
-            "intarget": "swap_b3",
-            "outtarget": "swap_b0",
-            "uniforms": [
-                {
-                    "name": "BlurDir",
-                    "values": [ 1.0, 0.0 ]
-                },
-                {
-                    "name": "Radius",
-                    "values": [9]
-                }
-            ]
-        },
-        {
-            "name": "gtceu:blur",
-            "intarget": "swap_b0",
-            "outtarget": "swap_b4",
-            "uniforms": [
-                {
-                    "name": "BlurDir",
-                    "values": [ 0.0, 1.0 ]
-                },
-                {
-                    "name": "Radius",
-                    "values": [9]
-                }
-            ]
-        },
-        {
-            "name": "gtceu:unreal_composite",
-            "intarget": "minecraft:main",
-            "outtarget": "final",
-            "auxtargets": [
-                { "id": "filter",  "name": "HighlightSampler" },
-                { "id": "swap_b1", "name": "BlurTexture1" },
-                { "id": "swap_b2", "name": "BlurTexture2" },
-                { "id": "swap_b3", "name": "BlurTexture3" },
-                { "id": "swap_b4", "name": "BlurTexture4" }
-            ],
-            "uniforms": [
-                { "name": "BloomRadius", "values": [1.0] }
-            ]
-        }
-    ]
+  "targets": {
+    "gtceu:filter": {},
+    "gtceu:swap_b0": {},
+    "gtceu:swap_b1": {},
+    "gtceu:swap_b2": {},
+    "gtceu:swap_b3": {},
+    "gtceu:swap_b4": {}
+  },
+  "passes": [
+    {
+      "vertex_shader": "minecraft:core/screenquad",
+      "fragment_shader": "gtceu:program/filter_bloom_color",
+      "inputs": [
+        { "sampler_name": "Diffuse", "target": "gtceu:bloom_source" },
+        { "sampler_name": "DiffuseDepth", "target": "gtceu:bloom_source", "use_depth_buffer": true },
+        { "sampler_name": "MainDepth", "target": "minecraft:main", "use_depth_buffer": true }
+      ],
+      "output": "gtceu:filter",
+      "uniforms": {
+        "BloomDepth": [
+          { "type": "float", "value": 0.05 },
+          { "type": "float", "value": 512.0 }
+        ]
+      }
+    },
+    {
+      "vertex_shader": "minecraft:core/screenquad",
+      "fragment_shader": "gtceu:program/blur",
+      "inputs": [ { "sampler_name": "Diffuse", "target": "gtceu:filter" } ],
+      "output": "gtceu:swap_b0",
+      "uniforms": {
+        "BlurSettings": [
+          { "type": "vec2", "value": [ 1.0, 0.0 ] },
+          { "type": "float", "value": 3.0 }
+        ]
+      }
+    },
+    {
+      "vertex_shader": "minecraft:core/screenquad",
+      "fragment_shader": "gtceu:program/blur",
+      "inputs": [ { "sampler_name": "Diffuse", "target": "gtceu:swap_b0", "bilinear": true } ],
+      "output": "gtceu:swap_b1",
+      "uniforms": {
+        "BlurSettings": [
+          { "type": "vec2", "value": [ 0.0, 1.0 ] },
+          { "type": "float", "value": 3.0 }
+        ]
+      }
+    },
+    {
+      "vertex_shader": "minecraft:core/screenquad",
+      "fragment_shader": "gtceu:program/blur",
+      "inputs": [ { "sampler_name": "Diffuse", "target": "gtceu:swap_b1", "bilinear": true } ],
+      "output": "gtceu:swap_b0",
+      "uniforms": {
+        "BlurSettings": [
+          { "type": "vec2", "value": [ 1.0, 0.0 ] },
+          { "type": "float", "value": 5.0 }
+        ]
+      }
+    },
+    {
+      "vertex_shader": "minecraft:core/screenquad",
+      "fragment_shader": "gtceu:program/blur",
+      "inputs": [ { "sampler_name": "Diffuse", "target": "gtceu:swap_b0", "bilinear": true } ],
+      "output": "gtceu:swap_b2",
+      "uniforms": {
+        "BlurSettings": [
+          { "type": "vec2", "value": [ 0.0, 1.0 ] },
+          { "type": "float", "value": 5.0 }
+        ]
+      }
+    },
+    {
+      "vertex_shader": "minecraft:core/screenquad",
+      "fragment_shader": "gtceu:program/blur",
+      "inputs": [ { "sampler_name": "Diffuse", "target": "gtceu:swap_b2", "bilinear": true } ],
+      "output": "gtceu:swap_b0",
+      "uniforms": {
+        "BlurSettings": [
+          { "type": "vec2", "value": [ 1.0, 0.0 ] },
+          { "type": "float", "value": 7.0 }
+        ]
+      }
+    },
+    {
+      "vertex_shader": "minecraft:core/screenquad",
+      "fragment_shader": "gtceu:program/blur",
+      "inputs": [ { "sampler_name": "Diffuse", "target": "gtceu:swap_b0", "bilinear": true } ],
+      "output": "gtceu:swap_b3",
+      "uniforms": {
+        "BlurSettings": [
+          { "type": "vec2", "value": [ 0.0, 1.0 ] },
+          { "type": "float", "value": 7.0 }
+        ]
+      }
+    },
+    {
+      "vertex_shader": "minecraft:core/screenquad",
+      "fragment_shader": "gtceu:program/blur",
+      "inputs": [ { "sampler_name": "Diffuse", "target": "gtceu:swap_b3", "bilinear": true } ],
+      "output": "gtceu:swap_b0",
+      "uniforms": {
+        "BlurSettings": [
+          { "type": "vec2", "value": [ 1.0, 0.0 ] },
+          { "type": "float", "value": 9.0 }
+        ]
+      }
+    },
+    {
+      "vertex_shader": "minecraft:core/screenquad",
+      "fragment_shader": "gtceu:program/blur",
+      "inputs": [ { "sampler_name": "Diffuse", "target": "gtceu:swap_b0", "bilinear": true } ],
+      "output": "gtceu:swap_b4",
+      "uniforms": {
+        "BlurSettings": [
+          { "type": "vec2", "value": [ 0.0, 1.0 ] },
+          { "type": "float", "value": 9.0 }
+        ]
+      }
+    },
+    {
+      "vertex_shader": "minecraft:core/screenquad",
+      "fragment_shader": "gtceu:program/unreal_composite",
+      "inputs": [
+        { "sampler_name": "Diffuse", "target": "minecraft:main" },
+        { "sampler_name": "Highlight", "target": "gtceu:filter" },
+        { "sampler_name": "BlurTexture1", "target": "gtceu:swap_b1", "bilinear": true },
+        { "sampler_name": "BlurTexture2", "target": "gtceu:swap_b2", "bilinear": true },
+        { "sampler_name": "BlurTexture3", "target": "gtceu:swap_b3", "bilinear": true },
+        { "sampler_name": "BlurTexture4", "target": "gtceu:swap_b4", "bilinear": true }
+      ],
+      "output": "gtceu:bloom_output",
+      "uniforms": {
+        "BloomSettings": [
+          { "type": "float", "value": 1.0 },
+          { "type": "float", "value": 1.7 },
+          { "type": "float", "value": 0.1 },
+          { "type": "float", "value": 0.5 },
+          { "type": "float", "value": 0.2 }
+        ]
+      }
+    }
+  ]
 }

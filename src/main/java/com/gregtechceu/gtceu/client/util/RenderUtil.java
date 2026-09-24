@@ -5,7 +5,6 @@ import com.gregtechceu.gtceu.api.capability.recipe.ItemRecipeCapability;
 import com.gregtechceu.gtceu.api.recipe.GTRecipe;
 import com.gregtechceu.gtceu.api.recipe.content.Content;
 import com.gregtechceu.gtceu.api.recipe.ingredient.FluidIngredient;
-import com.gregtechceu.gtceu.core.mixins.client.GuiGraphicsAccessor;
 import com.gregtechceu.gtceu.utils.GTMatrixUtils;
 import com.gregtechceu.gtceu.utils.GTUtil;
 import com.gregtechceu.gtceu.utils.ResearchManager;
@@ -18,6 +17,7 @@ import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
+import net.minecraft.client.renderer.block.FluidModel;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -25,6 +25,7 @@ import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
@@ -36,8 +37,8 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
-import net.neoforged.neoforge.model.data.ModelData;
 import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.model.data.ModelData;
 
 import brachy.modularui.drawable.GuiDraw;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
@@ -48,7 +49,6 @@ import org.joml.*;
 
 import java.lang.Math;
 import java.util.*;
-import java.util.function.BiFunction;
 
 import static net.minecraft.util.ARGB.*;
 
@@ -57,37 +57,19 @@ public class RenderUtil {
 
     public enum FluidTextureType {
 
-        STILL((fluidTypeExtensions, fluidStack) -> {
-            if (!fluidStack.isEmpty()) return fluidTypeExtensions.getStillTexture(fluidStack);
-            else return fluidTypeExtensions.getStillTexture();
-        }),
-        FLOWING((fluidTypeExtensions, fluidStack) -> {
-            if (!fluidStack.isEmpty()) return fluidTypeExtensions.getFlowingTexture(fluidStack);
-            else return fluidTypeExtensions.getFlowingTexture();
-        }),
-        OVERLAY((fluidTypeExtensions, fluidStack) -> {
-            if (!fluidStack.isEmpty()) return fluidTypeExtensions.getOverlayTexture(fluidStack);
-            else return fluidTypeExtensions.getOverlayTexture();
-        });
+        STILL,
+        FLOWING,
+        OVERLAY;
 
-        private static final Identifier WATER_STILL = Identifier.withDefaultNamespace("block/water_still");
-
-        private final BiFunction<IClientFluidTypeExtensions, FluidStack, Identifier> mapper;
-
-        FluidTextureType(BiFunction<IClientFluidTypeExtensions, FluidStack, Identifier> mapper) {
-            this.mapper = mapper;
-        }
-
-        public TextureAtlasSprite map(IClientFluidTypeExtensions fluidTypeExtensions) {
-            return map(fluidTypeExtensions, FluidStack.EMPTY);
-        }
-
-        public TextureAtlasSprite map(IClientFluidTypeExtensions fluidTypeExtensions, FluidStack fluidStack) {
-            Identifier texture = mapper.apply(fluidTypeExtensions, fluidStack);
-            if (texture == null) texture = STILL.mapper.apply(fluidTypeExtensions, fluidStack);
-            if (texture == null) texture = WATER_STILL;
-
-            return Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(texture);
+        public TextureAtlasSprite map(Fluid fluid) {
+            FluidModel model = Minecraft.getInstance().getModelManager().getFluidStateModelSet()
+                    .get(fluid.defaultFluidState());
+            return switch (this) {
+                case STILL -> model.stillMaterial().sprite();
+                case FLOWING -> model.flowingMaterial().sprite();
+                case OVERLAY -> model.overlayMaterial() != null ? model.overlayMaterial().sprite() :
+                        model.stillMaterial().sprite();
+            };
         }
     }
 
@@ -133,7 +115,8 @@ public class RenderUtil {
         if (level == null) level = Minecraft.getInstance().level;
         if (level == null) return 0;
 
-        return LevelRenderer.getLightColor(level, fluid.defaultFluidState().createLegacyBlock(), pos);
+        return LightCoordsUtil.getLightCoords(LightCoordsUtil.BrightnessGetter.DEFAULT, level,
+                fluid.defaultFluidState().createLegacyBlock(), pos);
     }
 
     public static void vertex(PoseStack.Pose pose, VertexConsumer vertexConsumer,
@@ -220,51 +203,21 @@ public class RenderUtil {
     }
 
     /**
-     * Fills a rectangle with a gradient color from colorFrom to colorTo at the specified z-level using the given render
-     * type and coordinates as the boundaries.
-     *
-     * @param y2         the y-coordinate of the second corner of the rectangle.
-     * @param x2         the x-coordinate of the second corner of the rectangle.
-     * @param y1         the y-coordinate of the first corner of the rectangle.
-     * @param x1         the x-coordinate of the first corner of the rectangle.
-     * @param renderType the render type to use.
-     * @param z          the z-level of the rectangle.
-     * @param colorTo    the ending color of the gradient.
-     * @param colorFrom  the starting color of the gradient.
+     * Fills a GUI rectangle with a left-to-right color gradient. GUI render states use strata for ordering instead of
+     * vertex z values; rotating the target's top-to-bottom gradient keeps the original horizontal color direction.
      */
-    public static void fillHorizontalGradient(GuiGraphicsExtractor graphics, RenderType renderType, int x1, int y1, int x2,
-                                              int y2, int colorFrom, int colorTo, int z) {
-        VertexConsumer vertexconsumer = graphics.bufferSource().getBuffer(renderType);
-        fillHorizontalGradient(graphics, vertexconsumer, x1, y1, x2, y2, z, colorFrom, colorTo);
-        ((GuiGraphicsAccessor) graphics).callFlushIfUnmanaged();
-    }
-
-    /**
-     * The core `fillGradient` method.
-     * <p>
-     * Fills a rectangle with a gradient color from colorFrom to colorTo at the specified z-level using the given render
-     * type and coordinates as the boundaries.
-     *
-     * @param consumer  the {@linkplain VertexConsumer} object for drawing the vertices on screen.
-     * @param x1        the x-coordinate of the first corner of the rectangle.
-     * @param y1        the y-coordinate of the first corner of the rectangle.
-     * @param x2        the x-coordinate of the second corner of the rectangle.
-     * @param y2        the y-coordinate of the second corner of the rectangle.
-     * @param z         the z-level of the rectangle.
-     * @param colorFrom the starting color of the gradient.
-     * @param colorTo   the ending color of the gradient.
-     */
-    private static void fillHorizontalGradient(GuiGraphicsExtractor graphics, VertexConsumer consumer,
-                                               float x1, float y1, float x2, float y2, float z,
-                                               int colorFrom, int colorTo) {
-        int a1 = alpha(colorFrom), r1 = red(colorFrom), g1 = green(colorFrom), b1 = blue(colorFrom);
-        int a2 = alpha(colorTo), r2 = red(colorTo), g2 = green(colorTo), b2 = blue(colorTo);
-
-        Matrix4f pose = graphics.pose().last().pose();
-        consumer.addVertex(pose, x1, y1, z).setColor(r1, g1, b1, a1);
-        consumer.addVertex(pose, x1, y2, z).setColor(r1, g1, b1, a1);
-        consumer.addVertex(pose, x2, y2, z).setColor(r2, g2, b2, a2);
-        consumer.addVertex(pose, x2, y1, z).setColor(r2, g2, b2, a2);
+    public static void fillHorizontalGradient(GuiGraphicsExtractor graphics, int x1, int y1, int x2, int y2,
+                                              int colorFrom, int colorTo) {
+        graphics.nextStratum();
+        Matrix3x2fStack pose = graphics.pose();
+        pose.pushMatrix();
+        try {
+            pose.translate(x1, y2);
+            pose.rotate(-Mth.HALF_PI);
+            graphics.fillGradient(0, 0, y2 - y1, x2 - x1, colorFrom, colorTo);
+        } finally {
+            pose.popMatrix();
+        }
     }
 
     /**
@@ -361,7 +314,7 @@ public class RenderUtil {
     public static boolean renderResearchItemContent(GuiGraphicsExtractor graphics, Operation<Void> originalMethod,
                                                     @Nullable LivingEntity entity, @Nullable Level level,
                                                     ItemStack stack, int x, int y, int z, int seed) {
-        if (!Screen.hasShiftDown()) return false;
+        if (!Minecraft.getInstance().hasShiftDown()) return false;
 
         ResearchManager.ResearchItem researchData = ResearchManager.readResearchId(stack);
         if (researchData == null) return false;

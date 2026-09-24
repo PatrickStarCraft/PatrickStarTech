@@ -15,14 +15,19 @@
  */
 package com.gregtechceu.gtceu.client.model.quad;
 
+import com.gregtechceu.gtceu.core.util.extensions.BakedQuadExt;
 import com.gregtechceu.gtceu.client.util.quad.GeometryHelper;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.geom.builders.UVPair;
 import net.minecraft.client.resources.model.geometry.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.core.Direction;
-import net.minecraftforge.client.model.QuadTransformers;
+import net.neoforged.neoforge.client.model.quad.BakedColors;
+import net.neoforged.neoforge.client.model.quad.BakedNormals;
+import com.mojang.blaze3d.platform.Transparency;
 
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -73,6 +78,10 @@ public class QuadView {
     @Getter
     protected int tintIndex;
 
+    /** Target material metadata is kept beside CPU mesh vertices, not encoded as a GPU vertex layout. */
+    protected @Nullable BakedQuad.MaterialInfo materialInfo;
+    protected @Nullable String textureKey;
+
     protected long headerFlags = 0;
     /**
      * Size and where it comes from will vary in subtypes. But in all cases quad is fully encoded to array.
@@ -90,9 +99,16 @@ public class QuadView {
      * Use when subtype is "attached" to a pre-existing array. Sets data reference and index and decodes state from
      * array.
      */
-    final void load(int[] data, int baseIndex) {
+    final void load(int[] data, int baseIndex, Mesh.Metadata metadata) {
         this.data = data;
         this.baseIndex = baseIndex;
+        this.headerFlags = metadata.headerFlags();
+        this.nominalFace = metadata.nominalFace();
+        this.shade = metadata.shade();
+        this.ambientOcclusion = metadata.ambientOcclusion();
+        this.tintIndex = metadata.tintIndex();
+        this.materialInfo = metadata.materialInfo();
+        this.textureKey = metadata.textureKey();
         load();
     }
 
@@ -101,9 +117,8 @@ public class QuadView {
      */
     public final void load() {
         isGeometryInvalid = false;
-        nominalFace = lightFace();
 
-        // face normal isn't encoded
+        // The derived normal is cheap to recover; target material and face metadata are loaded beside the packed data.
         GeometryHelper.computeFaceNormal(faceNormal, this);
     }
 
@@ -175,7 +190,11 @@ public class QuadView {
         quad.nominalFace = this.nominalFace;
         quad.isGeometryInvalid = false;
         quad.shade(this.shade);
+        quad.ambientOcclusion(this.ambientOcclusion);
+        quad.tintIndex(this.tintIndex);
         quad.headerFlags = this.headerFlags;
+        quad.materialInfo = null;
+        quad.textureKey = null;
     }
 
     /**
@@ -336,13 +355,6 @@ public class QuadView {
     }
 
     /**
-     * Minimum block brightness. Zero if not set.
-     */
-    public int lightmap(int vertexIndex) {
-        return data[baseIndex + vertexIndex * VERTEX_STRIDE + VERTEX_LIGHTMAP];
-    }
-
-    /**
      * Retrieve horizontal texture coordinates.
      */
     public float u(int vertexIndex) {
@@ -356,43 +368,37 @@ public class QuadView {
         return Float.intBitsToFloat(data[baseIndex + vertexIndex * VERTEX_STRIDE + VERTEX_V]);
     }
 
-    /**
-     * Reads baked vertex data and outputs standard {@link BakedQuad#getVertices() baked quad vertex data} in the given
-     * array and location.
-     *
-     * @param target      Target array for the baked quad data.
-     *
-     * @param targetIndex Starting position in target array - array must have at least 28 elements available at this
-     *                    index.
-     */
-    public final void toVanilla(int[] target, int targetIndex) {
-        System.arraycopy(data, baseIndex, target, targetIndex, QUAD_STRIDE);
-
-        int colorIndex = EncodingFormat.VERTEX_COLOR;
-        for (int i = 0; i < 4; i++) {
-            target[colorIndex] = QuadTransformers.toABGR(target[colorIndex]);
-            colorIndex += VERTEX_STRIDE;
-        }
-    }
-
-    /**
-     * Generates a new BakedQuad instance with texture coordinates and colors from the given sprite.
-     *
-     * @param sprite {@link MutableQuadView} does not serialize sprites so the sprite must be provided by the caller.
-     *
-     * @return A new baked quad instance with the closest-available appearance supported by vanilla features. Will
-     *         retain emissive light maps, for example, but the standard Minecraft renderer will not use them.
-     */
+    /** Generates an immutable target-version quad using the separate position, UV, color and normal fields. */
     public BakedQuad toBakedQuad(TextureAtlasSprite sprite) {
-        int[] vertexData = new int[QUAD_STRIDE];
-        toVanilla(vertexData, 0);
-        return new BakedQuad(vertexData, tintIndex(), lightFace(), sprite, shade());
+        BakedQuad.MaterialInfo outputMaterial;
+        if (materialInfo != null) {
+            outputMaterial = new BakedQuad.MaterialInfo(sprite, materialInfo.layer(), materialInfo.itemRenderType(),
+                    tintIndex(), shade(), materialInfo.lightEmission(), ambientOcclusion());
+        } else {
+            Transparency transparency = sprite.contents().computeTransparency(0.0F, 0.0F, 1.0F, 1.0F);
+            outputMaterial = BakedQuad.MaterialInfo.of(new Material.Baked(sprite, false), transparency,
+                    tintIndex(), shade(), 0, ambientOcclusion());
+        }
+
+        BakedNormals normals = hasVertexNormals() ? BakedNormals.of(
+                hasNormal(0) ? data[normalIndex(0)] : 0,
+                hasNormal(1) ? data[normalIndex(1)] : 0,
+                hasNormal(2) ? data[normalIndex(2)] : 0,
+                hasNormal(3) ? data[normalIndex(3)] : 0) : BakedNormals.UNSPECIFIED;
+        BakedColors colors = BakedColors.of(color(0), color(1), color(2), color(3));
+
+        BakedQuad quad = new BakedQuad(
+                copyPos(0), copyPos(1), copyPos(2), copyPos(3),
+                UVPair.pack(u(0), v(0)), UVPair.pack(u(1), v(1)),
+                UVPair.pack(u(2), v(2)), UVPair.pack(u(3), v(3)),
+                lightFace(), outputMaterial, normals, colors);
+        return textureKey == null ? quad : ((BakedQuadExt) (Object) quad).gtceu$setTextureKey(textureKey);
     }
 
     @SuppressWarnings("deprecation")
     public BakedQuad toBlockBakedQuad() {
-        var finder = SpriteFinder.get(Minecraft.getInstance().getModelManager()
-                .getAtlas(TextureAtlas.LOCATION_BLOCKS));
+        var finder = SpriteFinder.get(Minecraft.getInstance().getAtlasManager()
+                .getAtlasOrThrow(TextureAtlas.LOCATION_BLOCKS));
         return toBakedQuad(finder.find(this));
     }
 }

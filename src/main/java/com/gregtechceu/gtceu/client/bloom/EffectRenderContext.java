@@ -3,6 +3,7 @@ package com.gregtechceu.gtceu.client.bloom;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.culling.Frustum;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
@@ -27,7 +28,7 @@ public final class EffectRenderContext {
     }
 
     @Getter
-    private Frustum frustum = new Frustum(Minecraft.getInstance().levelRenderer.getFrustum());
+    private Frustum frustum = new CameraRenderState().cullFrustum;
 
     private @Nullable Entity renderViewEntity;
     @Getter
@@ -45,14 +46,15 @@ public final class EffectRenderContext {
     @Getter
     private float rotationXZ;
 
-    public EffectRenderContext update(Camera camera, Frustum frustum, float partialTicks) {
-        this.renderViewEntity = camera.getEntity();
-        this.camPos = camera.position();
+    public EffectRenderContext update(CameraRenderState camera, Frustum frustum, float partialTicks,
+                                      @Nullable Entity renderViewEntity) {
+        this.renderViewEntity = renderViewEntity;
+        this.camPos = camera.pos;
         this.partialTicks = partialTicks;
 
         float i = Minecraft.getInstance().options.getCameraType().isFirstPerson() ? 1 : -1;
-        float pitch = camera.getYRot();
-        float yaw = camera.getXRot();
+        float pitch = camera.xRot;
+        float yaw = camera.yRot;
 
         this.rotationX = Mth.cos(yaw * Mth.DEG_TO_RAD) * i;
         this.rotationZ = Mth.sin(yaw * Mth.DEG_TO_RAD) * i;
@@ -63,6 +65,15 @@ public final class EffectRenderContext {
         this.frustum = frustum;
 
         return this;
+    }
+
+    public EffectRenderContext update(Camera camera, Frustum frustum, float partialTicks) {
+        CameraRenderState state = new CameraRenderState();
+        state.pos = camera.position();
+        state.xRot = camera.xRot();
+        state.yRot = camera.yRot();
+        state.cullFrustum = frustum;
+        return update(state, frustum, partialTicks, camera.entity());
     }
 
     /**

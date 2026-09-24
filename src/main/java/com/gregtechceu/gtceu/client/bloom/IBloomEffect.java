@@ -1,10 +1,11 @@
 package com.gregtechceu.gtceu.client.bloom;
 
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
-import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 /**
@@ -20,12 +21,13 @@ public interface IBloomEffect {
      * @param context render context
      */
     @OnlyIn(Dist.CLIENT)
-    void renderBloomEffect(PoseStack poseStack, BufferBuilder buffer, EffectRenderContext context);
+    void submitBloomEffect(PoseStack poseStack, SubmitNodeCollector collector, RenderType renderType,
+                           EffectRenderContext context);
 
     /**
      * @param context render context
      * @return if this effect should be rendered; returning {@code false} skips calling
-     *         {@link #renderBloomEffect(PoseStack, BufferBuilder, EffectRenderContext)}.
+     *         {@link #submitBloomEffect(PoseStack, SubmitNodeCollector, RenderType, EffectRenderContext)}.
      */
     @OnlyIn(Dist.CLIENT)
     default boolean shouldRenderBloomEffect(EffectRenderContext context) {

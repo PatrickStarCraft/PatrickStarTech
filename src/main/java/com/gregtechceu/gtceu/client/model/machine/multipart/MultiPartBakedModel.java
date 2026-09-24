@@ -5,7 +5,6 @@ import com.gregtechceu.gtceu.api.machine.MetaMachine;
 import com.gregtechceu.gtceu.client.model.GTModelProperties;
 import com.gregtechceu.gtceu.client.model.machine.MachineRenderState;
 
-import net.minecraft.util.Util;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.resources.model.geometry.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
@@ -24,7 +23,6 @@ import net.neoforged.neoforge.model.data.ModelData;
 import net.minecraftforge.client.model.data.MultipartModelData;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import org.apache.commons.lang3.tuple.Pair;
@@ -51,8 +49,7 @@ public class MultiPartBakedModel implements IDynamicBakedModel {
     protected final ItemTransforms transforms;
     @Getter
     protected final ItemOverrides overrides;
-    private final Map<MachineRenderState, BitSet> selectorCache = new Object2ObjectOpenCustomHashMap<>(
-            Util.identityStrategy());
+    private final Map<MachineRenderState, BitSet> selectorCache = new IdentityHashMap<>();
     private final BakedModel defaultModel;
 
     @SuppressWarnings("deprecation")

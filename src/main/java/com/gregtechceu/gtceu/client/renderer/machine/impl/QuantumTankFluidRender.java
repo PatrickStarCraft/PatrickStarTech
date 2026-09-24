@@ -23,7 +23,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 
 import java.util.EnumSet;
 
@@ -35,7 +35,7 @@ import static com.gregtechceu.gtceu.common.machine.storage.QuantumTankMachine.TA
 public class QuantumTankFluidRender extends DynamicRender<QuantumTankMachine, QuantumTankFluidRender> {
 
     // spotless:off
-    public static final Codec<QuantumTankFluidRender> CODEC = Codec.unit(QuantumTankFluidRender::new);
+    public static final MapCodec<QuantumTankFluidRender> CODEC = MapCodec.unit(QuantumTankFluidRender::new);
     public static final DynamicRenderType<QuantumTankMachine, QuantumTankFluidRender> TYPE = new DynamicRenderType<>(QuantumTankFluidRender.CODEC);
     // spotless:on
 
@@ -96,7 +96,7 @@ public class QuantumTankFluidRender extends DynamicRender<QuantumTankMachine, Qu
         if (fluid.isEmpty()) return;
 
         var ext = IClientFluidTypeExtensions.of(fluid.getFluid());
-        var fluidSprite = RenderUtil.FluidTextureType.STILL.map(ext, fluid);
+        var fluidSprite = RenderUtil.FluidTextureType.STILL.map(fluid.getFluid());
 
         EnumSet<Direction> sidesToRender = EnumSet.of(frontFacing);
         VertexConsumer builder = buffer.getBuffer(Sheets.translucentCullBlockSheet());

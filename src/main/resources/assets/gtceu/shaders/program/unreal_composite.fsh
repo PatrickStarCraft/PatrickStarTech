@@ -2,15 +2,28 @@
 
 uniform sampler2D DiffuseSampler;
 uniform sampler2D HighlightSampler;
-uniform sampler2D BlurTexture1;
-uniform sampler2D BlurTexture2;
-uniform sampler2D BlurTexture3;
-uniform sampler2D BlurTexture4;
-uniform float BloomRadius;
-uniform float BloomStrength;
-uniform float BaseBrightness;
-uniform float MaxBrightness;
-uniform float MinBrightness;
+uniform sampler2D BlurTexture1Sampler;
+uniform sampler2D BlurTexture2Sampler;
+uniform sampler2D BlurTexture3Sampler;
+uniform sampler2D BlurTexture4Sampler;
+
+layout(std140) uniform SamplerInfo {
+    vec2 OutSize;
+    vec2 MainSize;
+    vec2 HighlightSize;
+    vec2 BlurTexture1Size;
+    vec2 BlurTexture2Size;
+    vec2 BlurTexture3Size;
+    vec2 BlurTexture4Size;
+};
+
+layout(std140) uniform BloomSettings {
+    float BloomRadius;
+    float BloomStrength;
+    float BaseBrightness;
+    float MaxBrightness;
+    float MinBrightness;
+};
 
 in vec2 texCoord;
 out vec4 fragColor;
@@ -48,10 +61,10 @@ vec3 jodieReinhard2Tonemap(const vec3 color) {
 
 void main() {
     vec4 bloom = BloomStrength * (
-    lerpBloomFactor(1.0) * texture(BlurTexture1, texCoord) +
-    lerpBloomFactor(0.8) * texture(BlurTexture2, texCoord) +
-    lerpBloomFactor(0.6) * texture(BlurTexture3, texCoord) +
-    lerpBloomFactor(0.4) * texture(BlurTexture4, texCoord));
+    lerpBloomFactor(1.0) * texture(BlurTexture1Sampler, texCoord) +
+    lerpBloomFactor(0.8) * texture(BlurTexture2Sampler, texCoord) +
+    lerpBloomFactor(0.6) * texture(BlurTexture3Sampler, texCoord) +
+    lerpBloomFactor(0.4) * texture(BlurTexture4Sampler, texCoord));
     bloom.rgb = jodieReinhardTonemap(bloom.rgb);
 
     vec4 background = texture(DiffuseSampler, texCoord);
@@ -62,5 +75,5 @@ void main() {
     float max = max(background.r, max(background.g, background.b));
     float backgroundBrightness = (max + min) / 2.0;
 
-    fragColor = vec4(background.rgb + bloom.rgb * (MinBrightness + BaseBrightness + (1.0 - backgroundBrightness) * (MaxBrightness - MinBrightness)), bloom.a);
+    fragColor = vec4(background.rgb + bloom.rgb * (MinBrightness + BaseBrightness + (1.0 - backgroundBrightness) * (MaxBrightness - MinBrightness)), 1.0);
 }

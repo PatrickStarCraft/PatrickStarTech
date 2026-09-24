@@ -1,8 +1,13 @@
 #version 150
 
 uniform sampler2D DiffuseSampler;
-uniform sampler2D DownTexture;
-uniform vec2 OutSize;
+uniform sampler2D DownTextureSampler;
+
+layout(std140) uniform SamplerInfo {
+    vec2 OutSize;
+    vec2 DiffuseSize;
+    vec2 DownTextureSize;
+};
 
 in vec2 texCoord;
 
@@ -40,7 +45,7 @@ void main() {
     vec4 colorSum = average(center, left, right, up, down, true);
     colorSum += average(center, tl, tr, bl, br, false);
 
-    colorSum = (colorSum / 16.0 + texture(DownTexture, texCoord)) * 0.8;
+    colorSum = (colorSum / 16.0 + texture(DownTextureSampler, texCoord)) * 0.8;
 
     fragColor = clamp(colorSum, 0.0, 1.0);
 }

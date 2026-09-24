@@ -2,59 +2,66 @@ package com.gregtechceu.gtceu.client.renderer.entity;
 
 import com.gregtechceu.gtceu.common.entity.GTExplosiveEntity;
 
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.block.BlockRenderDispatcher;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.block.BlockModelRenderState;
+import net.minecraft.client.renderer.block.BlockModelResolver;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.TntMinecartRenderer;
-import net.minecraft.resources.Identifier;
-import net.minecraft.util.Mth;
-import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.client.renderer.entity.TntRenderer;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import org.jetbrains.annotations.NotNull;
 
 @OnlyIn(Dist.CLIENT)
-public class GTExplosiveRenderer<T extends GTExplosiveEntity> extends EntityRenderer<T> {
+public class GTExplosiveRenderer<T extends GTExplosiveEntity> extends EntityRenderer<T, GTExplosiveRenderer.ExplosiveRenderState> {
 
-    private final BlockRenderDispatcher blockRenderer;
+    private final BlockModelResolver blockModelResolver;
 
     public GTExplosiveRenderer(EntityRendererProvider.Context context) {
         super(context);
         this.shadowRadius = 0.5F;
-        this.blockRenderer = context.getBlockRenderDispatcher();
+        this.blockModelResolver = context.getBlockModelResolver();
     }
 
     @Override
-    public void render(@NotNull T entity, float entityYaw, float partialTicks, PoseStack poseStack,
-                       @NotNull MultiBufferSource buffer, int packedLight) {
+    public ExplosiveRenderState createRenderState() {
+        return new ExplosiveRenderState();
+    }
+
+    @Override
+    public void extractRenderState(T entity, ExplosiveRenderState state, float partialTicks) {
+        super.extractRenderState(entity, state, partialTicks);
+        state.fuseRemainingInTicks = entity.getFuse() - partialTicks + 1.0F;
+        this.blockModelResolver.update(state.blockState, entity.getExplosiveState(), TntRenderer.BLOCK_DISPLAY_CONTEXT);
+    }
+
+    @Override
+    public void submit(ExplosiveRenderState state, PoseStack poseStack, SubmitNodeCollector collector,
+                       CameraRenderState camera) {
         poseStack.pushPose();
         poseStack.translate(0.0F, 0.5F, 0.0F);
-        int fuseTime = entity.getFuse();
-        if ((float) fuseTime - partialTicks + 1.0F < 10.0F) {
-            float size = 1.0F - ((float) fuseTime - partialTicks + 1.0F) / 10.0F;
-            size = Mth.clamp(size, 0.0F, 1.0F);
-            size *= size;
-            size *= size;
-            float scale = 1.0F + size * 0.3F;
+        float fuse = state.fuseRemainingInTicks;
+        if (fuse < 10.0F) {
+            float scale = 1.0F + TntRenderer.getSwellAmount(fuse);
             poseStack.scale(scale, scale, scale);
         }
 
         poseStack.mulPose(Axis.YP.rotationDegrees(-90.0F));
         poseStack.translate(-0.5F, -0.5F, 0.5F);
         poseStack.mulPose(Axis.YP.rotationDegrees(90.0F));
-        TntMinecartRenderer.renderWhiteSolidBlock(this.blockRenderer, entity.getExplosiveState(), poseStack, buffer,
-                packedLight, fuseTime / 5 % 2 == 0);
+        TntMinecartRenderer.submitWhiteSolidBlock(state.blockState, poseStack, collector, state.lightCoords,
+                TntRenderer.isLit(fuse), state.outlineColor);
         poseStack.popPose();
-        super.render(entity, entityYaw, partialTicks, poseStack, buffer, packedLight);
+        super.submit(state, poseStack, collector, camera);
     }
 
-    @NotNull
-    @Override
-    public Identifier getTextureLocation(@NotNull T entity) {
-        return TextureAtlas.LOCATION_BLOCKS;
+    public static final class ExplosiveRenderState extends EntityRenderState {
+        public float fuseRemainingInTicks;
+        public final BlockModelRenderState blockState = new BlockModelRenderState();
     }
 }

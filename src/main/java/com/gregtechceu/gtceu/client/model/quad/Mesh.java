@@ -3,10 +3,13 @@ package com.gregtechceu.gtceu.client.model.quad;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.model.geometry.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.core.Direction;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A bundle of one or more {@link QuadView} instances encoded by the renderer.
@@ -26,9 +29,11 @@ public class Mesh {
     private static final ThreadLocal<QuadView> POOL = ThreadLocal.withInitial(QuadView::new);
 
     final int[] data;
+    private final Metadata[] metadata;
 
-    Mesh(int[] data) {
+    Mesh(int[] data, Metadata[] metadata) {
         this.data = data;
+        this.metadata = metadata;
     }
 
     public int[] data() {
@@ -46,18 +51,22 @@ public class Mesh {
     void forEach(Consumer<QuadView> consumer, QuadView cursor) {
         final int limit = data.length;
         int index = 0;
+        int quadIndex = 0;
 
         while (index < limit) {
-            cursor.load(data, index);
+            cursor.load(data, index, metadata[quadIndex++]);
             consumer.accept(cursor);
             index += EncodingFormat.QUAD_STRIDE;
         }
     }
 
+    record Metadata(long headerFlags, @Nullable Direction nominalFace, boolean shade, boolean ambientOcclusion,
+                    int tintIndex, @Nullable BakedQuad.MaterialInfo materialInfo, @Nullable String textureKey) {}
+
     @SuppressWarnings("deprecation")
     public List<BakedQuad> toBlockBakedQuads() {
-        SpriteFinder finder = SpriteFinder.get(Minecraft.getInstance().getModelManager()
-                .getAtlas(TextureAtlas.LOCATION_BLOCKS));
+        SpriteFinder finder = SpriteFinder.get(Minecraft.getInstance().getAtlasManager()
+                .getAtlasOrThrow(TextureAtlas.LOCATION_BLOCKS));
 
         List<BakedQuad> result = new ArrayList<>();
         forEach(qv -> result.add(qv.toBakedQuad(finder.find(qv))));
@@ -66,8 +75,8 @@ public class Mesh {
 
     @SuppressWarnings("deprecation")
     public void asBlockBakedQuads(Consumer<BakedQuad> consumer) {
-        SpriteFinder finder = SpriteFinder.get(Minecraft.getInstance().getModelManager()
-                .getAtlas(TextureAtlas.LOCATION_BLOCKS));
+        SpriteFinder finder = SpriteFinder.get(Minecraft.getInstance().getAtlasManager()
+                .getAtlasOrThrow(TextureAtlas.LOCATION_BLOCKS));
 
         forEach(qv -> consumer.accept(qv.toBakedQuad(finder.find(qv))));
     }

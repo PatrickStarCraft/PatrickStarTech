@@ -15,15 +15,16 @@
  */
 package com.gregtechceu.gtceu.client.model.quad;
 
+import com.gregtechceu.gtceu.core.util.extensions.BakedQuadExt;
 import com.gregtechceu.gtceu.client.util.TextureHelper;
 import com.gregtechceu.gtceu.client.util.quad.GeometryHelper;
 
-import net.minecraft.util.LightCoordsUtil;
+import net.minecraft.client.model.geom.builders.UVPair;
 import net.minecraft.client.resources.model.geometry.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
-import net.minecraftforge.client.model.QuadTransformers;
+import net.neoforged.neoforge.client.model.quad.BakedNormals;
 
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2fc;
@@ -132,8 +133,13 @@ public abstract class MutableQuadView extends QuadView {
 
     public void clear() {
         System.arraycopy(EMPTY, 0, data, baseIndex, QUAD_STRIDE);
+        headerFlags = 0;
         isGeometryInvalid = true;
         nominalFace = null;
+        shade = true;
+        ambientOcclusion = true;
+        materialInfo = null;
+        textureKey = null;
         tintIndex(-1);
         cullFace(null);
     }
@@ -254,37 +260,6 @@ public abstract class MutableQuadView extends QuadView {
         return this;
     }
 
-    /**
-     * Accept vanilla lightmap values.
-     * Input values will override lightmap values computed from world state if input values are higher.
-     */
-    public MutableQuadView lightmap(int vertexIndex, int lightmap) {
-        data[baseIndex + vertexIndex * VERTEX_STRIDE + VERTEX_LIGHTMAP] = lightmap;
-        return this;
-    }
-
-    /**
-     * Accept vanilla lightmap values.
-     * Input values will override lightmap values computed from world state if input values are higher.
-     */
-    public MutableQuadView lightmap(int vertexIndex, int block, int sky) {
-        data[baseIndex + vertexIndex * VERTEX_STRIDE + VERTEX_LIGHTMAP] = LightCoordsUtil.pack(block, sky);
-        return this;
-    }
-
-    /**
-     * Convenience: set lightmap for all vertices at once.
-     *
-     * @see #lightmap(int, int)
-     */
-    public MutableQuadView lightmap(int b0, int b1, int b2, int b3) {
-        lightmap(0, b0);
-        lightmap(1, b1);
-        lightmap(2, b2);
-        lightmap(3, b3);
-        return this;
-    }
-
     protected void normalFlags(int flags) {
         headerFlags = EncodingFormat.normalFlags(headerFlags, flags);
     }
@@ -398,47 +373,33 @@ public abstract class MutableQuadView extends QuadView {
         return this;
     }
 
-    /**
-     * Enables bulk vertex data transfer using the standard Minecraft vertex formats. Only the
-     * {@link BakedQuad#getVertices() quad vertex data} is copied. This method should be performant whenever caller's
-     * vertex representation makes it feasible.
-     *
-     * <p>
-     * Use {@link #fromVanilla(BakedQuad, Direction) the other overload} which has better encapsulation
-     * unless you have a specific reason to use this one.
-     *
-     * <p>
-     * Calling this method does not emit the quad.
-     */
-    public final MutableQuadView fromVanilla(int[] quadData, int startIndex) {
+    /** Loads the target immutable quad into the private CPU-side mesh representation. */
+    public final MutableQuadView fromVanilla(BakedQuad quad, @Nullable Direction cullFace) {
         clear();
-        System.arraycopy(quadData, startIndex, this.data, this.baseIndex, QUAD_STRIDE);
-        this.isGeometryInvalid = true;
+        this.materialInfo = quad.materialInfo();
+        this.textureKey = ((BakedQuadExt) (Object) quad).gtceu$getTextureKey();
+        cullFace(cullFace);
+        nominalFace(quad.direction());
+        tintIndex(quad.materialInfo().tintIndex());
+        shade(quad.materialInfo().shade());
+        ambientOcclusion(quad.materialInfo().ambientOcclusion());
 
-        int colorIndex = baseIndex + VERTEX_COLOR;
+        for (int vertex = 0; vertex < BakedQuad.VERTEX_COUNT; vertex++) {
+            var position = quad.position(vertex);
+            pos(vertex, position.x(), position.y(), position.z());
+            long packedUv = quad.packedUV(vertex);
+            uv(vertex, UVPair.unpackU(packedUv), UVPair.unpackV(packedUv));
+            color(vertex, quad.bakedColors().color(vertex));
 
-        for (int i = 0; i < 4; i++) {
-            this.data[colorIndex] = QuadTransformers.toABGR(this.data[colorIndex]);
-            colorIndex += VERTEX_STRIDE;
+            int packedNormal = quad.bakedNormals().normal(vertex);
+            if (!BakedNormals.isUnspecified(packedNormal)) {
+                normalFlags(normalFlags() | (1 << vertex));
+                data[baseIndex + vertex * VERTEX_STRIDE + VERTEX_NORMAL] = packedNormal;
+            }
         }
 
-        return this;
-    }
-
-    /**
-     * Enables bulk vertex data transfer using the standard Minecraft quad format.
-     *
-     * <p>
-     * Calling this method does not emit the quad.
-     */
-    public final MutableQuadView fromVanilla(BakedQuad quad, @Nullable Direction cullFace) {
-        fromVanilla(quad.getVertices(), 0);
-        headerFlags = EncodingFormat.cullFace(0, cullFace);
-
-        nominalFace(quad.getDirection());
-        tintIndex(quad.getTintIndex());
-        shade(quad.isShade());
-        ambientOcclusion(quad.hasAmbientOcclusion());
+        // 26.2 derives block/sky lighting at submission and stores only material emission on the quad.
+        isGeometryInvalid = true;
 
         return this;
     }

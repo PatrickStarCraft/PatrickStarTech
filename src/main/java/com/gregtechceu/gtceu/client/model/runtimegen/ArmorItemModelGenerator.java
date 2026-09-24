@@ -85,9 +85,10 @@ public class ArmorItemModelGenerator {
         model.addProperty("type", "minecraft:model");
         model.addProperty("model", modelId);
 
-        if (item instanceof GTArmorItem armor) {
+        if (GTArmorItem.class.isInstance(item)) {
+            GTArmorItem armor = GTArmorItem.class.cast(item);
             JsonObject tint = new JsonObject();
-            if (item instanceof GTDyeableArmorItem) {
+            if (GTDyeableArmorItem.class.isInstance(item)) {
                 tint.addProperty("type", "minecraft:dye");
                 tint.addProperty("default", armor.material.getLayerARGB(0));
             } else {

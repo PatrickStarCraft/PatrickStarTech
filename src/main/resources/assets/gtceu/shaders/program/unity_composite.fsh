@@ -3,10 +3,20 @@
 uniform sampler2D DiffuseSampler;
 uniform sampler2D HighlightSampler;
 uniform sampler2D MainSampler;
-uniform float BloomStrength;
-uniform float BaseBrightness;
-uniform float MaxBrightness;
-uniform float MinBrightness;
+
+layout(std140) uniform SamplerInfo {
+    vec2 OutSize;
+    vec2 DiffuseSize;
+    vec2 HighlightSize;
+    vec2 MainSize;
+};
+
+layout(std140) uniform BloomSettings {
+    float BloomStrength;
+    float BaseBrightness;
+    float MaxBrightness;
+    float MinBrightness;
+};
 
 in vec2 texCoord;
 out vec4 fragColor;
@@ -22,5 +32,7 @@ void main() {
     float max = max(background.r, max(background.g, background.b));
     float backgroundBrightness = (max + min) / 2.0;
 
-    fragColor = vec4(background.rgb + bloom.rgb * (MinBrightness + BaseBrightness + (1.0 - backgroundBrightness) * (MaxBrightness - MinBrightness)), bloom.a);
+    // Copy-back uses the target entity-outline blit pipeline, whose color blend is alpha-based.
+    // The former GL path replaced the main color with a one/zero blend, so keep this output opaque.
+    fragColor = vec4(background.rgb + bloom.rgb * (MinBrightness + BaseBrightness + (1.0 - backgroundBrightness) * (MaxBrightness - MinBrightness)), 1.0);
 }

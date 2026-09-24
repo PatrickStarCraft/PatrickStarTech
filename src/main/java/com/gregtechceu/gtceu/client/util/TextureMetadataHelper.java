@@ -2,7 +2,6 @@ package com.gregtechceu.gtceu.client.util;
 
 import com.gregtechceu.gtceu.GTCEu;
 import com.gregtechceu.gtceu.client.model.ctm.GTTextureMetadata;
-import com.gregtechceu.gtceu.client.util.quad.transformers.GTQuadTransformers;
 import com.gregtechceu.gtceu.config.ConfigHolder;
 import com.gregtechceu.gtceu.utils.TriState;
 
@@ -44,7 +43,7 @@ public class TextureMetadataHelper {
     }
 
     public static Optional<GTTextureMetadata> getMetadata(Material material) {
-        return getMetadata(spriteToAbsolute(material.texture()));
+        return getMetadata(spriteToAbsolute(material.sprite()));
     }
 
     public static Optional<GTTextureMetadata> getMetadataFromRelativeLocation(Identifier relativeLocation) {
@@ -62,7 +61,7 @@ public class TextureMetadataHelper {
     }
 
     public static boolean hasBloom(BakedQuad quad, int[] ambientPackedLights) {
-        var metadata = getMetadata(quad.getSprite());
+        var metadata = getMetadata(quad.materialInfo().sprite());
         if (metadata.isPresent()) {
             TriState bloomValue = metadata.get().bloom();
             if (bloomValue == TriState.TRUE) return true;
@@ -80,16 +79,13 @@ public class TextureMetadataHelper {
     }
 
     public static boolean isEmissive(BakedQuad quad, int[] ambientPackedLights) {
-        int[] quadPackedLights = GTQuadTransformers.getPackedLights(quad);
+        int quadEmission = quad.materialInfo().lightEmission();
 
         for (int i = 0; i < 4; i++) {
-            int quadLight = quadPackedLights[i];
-            int qBlock = LightCoordsUtil.block(quadLight), qSky = LightCoordsUtil.sky(quadLight);
-
             int ambientLight = ambientPackedLights[i];
             int aBlock = LightCoordsUtil.block(ambientLight), aSky = LightCoordsUtil.sky(ambientLight);
 
-            if (qBlock > aBlock || qSky > aSky) {
+            if (quadEmission > aBlock || quadEmission > aSky) {
                 return true;
             }
         }

@@ -7,21 +7,19 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.client.IItemDecorator;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.access.ItemAccess;
+import net.neoforged.neoforge.transfer.fluid.FluidResource;
 
 import brachy.modularui.drawable.GuiDraw;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.Range;
 
-import java.util.Optional;
-
 /**
- * An Item Decorator to render including fluid icons for items with {@link ForgeCapabilities#FLUID_HANDLER_ITEM}.
+ * An Item Decorator to render fluid icons for items with {@link Capabilities.Fluid#ITEM}.
  * <p>
  * The fluid type count can be up to 4, set by {@link #setMaxRenderCount(int)}, 1 by default.
  *
@@ -80,25 +78,28 @@ public class GTTankItemFluidPreview implements IItemDecorator {
 
     @Override
     public boolean render(GuiGraphicsExtractor guiGraphics, Font font, ItemStack itemStack, int x, int y) {
+        if (itemStack.isEmpty()) {
+            return false;
+        }
         if (isRequireShiftKeyDown() && !GTUtil.isShiftDown()) {
             return false;
         }
 
-        Optional<IFluidHandlerItem> optional = itemStack.getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM)
-                .resolve();
-        if (optional.isEmpty()) {
+        ResourceHandler<FluidResource> fluidHandler = ItemAccess.forStack(itemStack).getCapability(Capabilities.Fluid.ITEM);
+        if (fluidHandler == null) {
             return false;
         }
 
         if (isRenderOnTopOfItem()) {
-            RenderSystem.disableDepthTest();
+            guiGraphics.nextStratum();
         }
 
-        IFluidHandlerItem fluidHandler = optional.get();
-        for (int index = 0, renderedCount = 0; index < fluidHandler.getTanks() &&
+        for (int index = 0, renderedCount = 0; index < fluidHandler.size() &&
                 renderedCount < getMaxRenderCount(); index++) {
-            FluidStack fluidInTank = fluidHandler.getFluidInTank(index);
-            if (!fluidInTank.isEmpty()) {
+            FluidResource resource = fluidHandler.getResource(index);
+            int amount = fluidHandler.getAmountAsInt(index);
+            if (!resource.isEmpty() && amount > 0) {
+                FluidStack fluidInTank = resource.toStack(amount);
                 GuiDraw.drawFluidTexture(
                         guiGraphics,
                         fluidInTank,

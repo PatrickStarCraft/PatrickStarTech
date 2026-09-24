@@ -3,13 +3,13 @@ package com.gregtechceu.gtceu.client.renderer.block;
 import com.gregtechceu.gtceu.client.util.RenderUtil;
 import com.gregtechceu.gtceu.utils.GTUtil;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.world.level.lighting.LightEngine;
 import net.minecraft.world.level.material.Fluid;
-import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -34,6 +34,12 @@ public class FluidBlockRenderer {
     @Getter
     private final Properties properties;
 
+    private static int getFluidTintColor(Fluid fluid) {
+        var fluidState = fluid.defaultFluidState();
+        var tintSource = Minecraft.getInstance().getModelManager().getFluidStateModelSet().get(fluidState).fluidTintSource();
+        return tintSource == null ? -1 : tintSource.color(fluidState);
+    }
+
     protected FluidBlockRenderer(Properties properties) {
         this.properties = properties;
     }
@@ -57,10 +63,9 @@ public class FluidBlockRenderer {
     public void drawBlocks(Set<BlockPos> offsets, PoseStack poseStack, VertexConsumer consumer,
                            Fluid fluid, RenderUtil.FluidTextureType texture,
                            int combinedOverlay, int combinedLight) {
-        var fluidClientInfo = IClientFluidTypeExtensions.of(fluid);
-        var sprite = texture.map(fluidClientInfo);
+        var sprite = texture.map(fluid);
         float u0 = sprite.getU0(), v0 = sprite.getV0(), u1 = sprite.getU1(), v1 = sprite.getV1();
-        int color = fluidClientInfo.getTintColor();
+        int color = getFluidTintColor(fluid);
 
         for (var pos : offsets) {
             poseStack.pushPose();
@@ -93,10 +98,9 @@ public class FluidBlockRenderer {
                           PoseStack poseStack, VertexConsumer consumer,
                           Fluid fluid, RenderUtil.FluidTextureType texture,
                           int combinedOverlay, BlockPos origin, @Nullable BlockAndTintGetter level) {
-        var fluidClientInfo = IClientFluidTypeExtensions.of(fluid);
-        var sprite = texture.map(fluidClientInfo);
+        var sprite = texture.map(fluid);
         float u0 = sprite.getU0(), v0 = sprite.getV0(), u1 = sprite.getU1(), v1 = sprite.getV1();
-        int color = fluidClientInfo.getTintColor();
+        int color = getFluidTintColor(fluid);
         Vector3fc normal = getNormal(face);
         Vector3f[] vertices = transformVertices(getVertices(face), face);
 
@@ -112,10 +116,9 @@ public class FluidBlockRenderer {
 
     public void drawPlane(Direction face, Collection<BlockPos> offsets, PoseStack poseStack, VertexConsumer consumer,
                           Fluid fluid, RenderUtil.FluidTextureType texture, int combinedOverlay, int combinedLight) {
-        var fluidClientInfo = IClientFluidTypeExtensions.of(fluid);
-        var sprite = texture.map(fluidClientInfo);
+        var sprite = texture.map(fluid);
         float u0 = sprite.getU0(), v0 = sprite.getV0(), u1 = sprite.getU1(), v1 = sprite.getV1();
-        int color = fluidClientInfo.getTintColor();
+        int color = getFluidTintColor(fluid);
         Vector3fc normal = getNormal(face);
         Vector3f[] vertices = transformVertices(getVertices(face), face);
 
@@ -131,10 +134,9 @@ public class FluidBlockRenderer {
     public void drawFace(Direction face, PoseStack.Pose pose, VertexConsumer consumer,
                          Fluid fluid, RenderUtil.FluidTextureType texture,
                          int combinedOverlay, int combinedLight) {
-        var fluidClientInfo = IClientFluidTypeExtensions.of(fluid);
-        var sprite = texture.map(fluidClientInfo);
+        var sprite = texture.map(fluid);
         float u0 = sprite.getU0(), v0 = sprite.getV0(), u1 = sprite.getU1(), v1 = sprite.getV1();
-        int color = fluidClientInfo.getTintColor();
+        int color = getFluidTintColor(fluid);
         Vector3fc normal = getNormal(face);
         Vector3f[] vertices = transformVertices(getVertices(face), face);
 

@@ -1,8 +1,11 @@
 #version 150
 
 uniform sampler2D DiffuseSampler;
-uniform vec2 OutSize;
-uniform vec2 InSize;
+
+layout(std140) uniform SamplerInfo {
+    vec2 OutSize;
+    vec2 InSize;
+};
 
 in vec2 texCoord;
 

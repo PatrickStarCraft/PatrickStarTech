@@ -37,7 +37,7 @@ public class CTMMeshBuilder {
         var emitter = meshBuilder.getEmitter();
 
         for (BakedQuad originalQuad : base) {
-            TextureAtlasSprite originalSprite = originalQuad.getSprite();
+            TextureAtlasSprite originalSprite = originalQuad.materialInfo().sprite();
 
             TextureAtlasSprite connectionSprite = CTM_SPRITE_CACHE.get(originalSprite.contents().name());
             if (connectionSprite == null) {

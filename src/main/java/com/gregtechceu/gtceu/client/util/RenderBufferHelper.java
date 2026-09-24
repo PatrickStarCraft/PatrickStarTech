@@ -5,11 +5,12 @@ import com.gregtechceu.gtceu.utils.GTMatrixUtils;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -107,12 +108,12 @@ public class RenderBufferHelper {
         }
     }
 
-    public static void renderInWorldText(MultiBufferSource multiBuf, PoseStack stack, Camera camera, String text,
+    public static void renderInWorldText(SubmitNodeCollector collector, PoseStack stack, Camera camera, String text,
                                          int colorARGB, Vec3 pos) {
-        renderInWorldText(multiBuf, stack, camera, text, 0.030F, colorARGB, pos);
+        renderInWorldText(collector, stack, camera, text, 0.030F, colorARGB, pos);
     }
 
-    public static void renderInWorldText(MultiBufferSource multiBuf, PoseStack stack, Camera camera, String text,
+    public static void renderInWorldText(SubmitNodeCollector collector, PoseStack stack, Camera camera, String text,
                                          float scale, int colorARGB, Vec3 pos) {
         Font fontRender = Minecraft.getInstance().font;
         Vec3 c = pos.subtract(camera.position());
@@ -121,9 +122,8 @@ public class RenderBufferHelper {
         stack.translate(c.x, c.y, c.z);
         stack.mulPose(camera.rotation());
         stack.scale(-scale, -scale, scale);
-        Matrix4f mat = stack.last().pose();
-        fontRender.drawInBatch(text, -stringMiddle, 0.0F, colorARGB, false, mat, multiBuf, Font.DisplayMode.SEE_THROUGH,
-                0, 15728880);
+        collector.submitText(stack, -stringMiddle, 0.0F, fontRender.split(net.minecraft.network.chat.Component.literal(text), Integer.MAX_VALUE).getFirst(),
+                false, Font.DisplayMode.SEE_THROUGH, LightCoordsUtil.FULL_BRIGHT, colorARGB, 0, 0);
         stack.popPose();
     }
 
@@ -151,6 +151,27 @@ public class RenderBufferHelper {
         renderSide(buf, stack, topLeft, topLeft2, bottomLeft, bottomLeft2, colorARGB);
         renderSide(buf, stack, topRight2, topLeft2, topRight, topLeft, colorARGB);
         renderSide(buf, stack, bottomLeft2, bottomRight2, bottomLeft, bottomRight, colorARGB);
+    }
+
+    private static void renderLine(VertexConsumer buf, PoseStack.Pose pose, Vec3 from, Vec3 to, double thickness,
+                                   int colorARGB) {
+        Vec3 law = getFirstPerpendicular(from, to).scale(thickness);
+        Vec3 law2 = getSecondPerpendicular(from, to).scale(thickness);
+        Vec3 topRight = from.add(law2);
+        Vec3 bottomRight = from.subtract(law);
+        Vec3 bottomLeft = from.subtract(law2);
+        Vec3 topLeft = from.add(law);
+        Vec3 topRight2 = to.add(law2);
+        Vec3 bottomRight2 = to.subtract(law);
+        Vec3 bottomLeft2 = to.subtract(law2);
+        Vec3 topLeft2 = to.add(law);
+
+        renderSide(buf, pose, topRight, topLeft, bottomRight, bottomLeft, colorARGB);
+        renderSide(buf, pose, topRight2, topRight, bottomRight2, bottomRight, colorARGB);
+        renderSide(buf, pose, topLeft2, topRight2, bottomLeft2, bottomRight2, colorARGB);
+        renderSide(buf, pose, topLeft, topLeft2, bottomLeft, bottomLeft2, colorARGB);
+        renderSide(buf, pose, topRight2, topLeft2, topRight, topLeft, colorARGB);
+        renderSide(buf, pose, bottomLeft2, bottomRight2, bottomLeft, bottomRight, colorARGB);
     }
 
     public static void renderCube(VertexConsumer buf, PoseStack stack, BlockPos pos, float size, int colorARGB) {
@@ -220,9 +241,51 @@ public class RenderBufferHelper {
         renderLine(buf, pose, bot01, top01, thickness, colorARGB);
     }
 
+    /** Emits the same thick box edges from an immutable pose captured by deferred render submission. */
+    public static void renderAABBOutline(VertexConsumer buf, PoseStack.Pose pose, AABB aabb, double thickness,
+                                         int colorARGB) {
+        double minX = aabb.minX;
+        double minY = aabb.minY;
+        double minZ = aabb.minZ;
+        double maxX = aabb.maxX;
+        double maxY = aabb.maxY;
+        double maxZ = aabb.maxZ;
+
+        Vec3 bot00 = new Vec3(minX, minY, minZ);
+        Vec3 bot10 = new Vec3(maxX, minY, minZ);
+        Vec3 bot11 = new Vec3(maxX, minY, maxZ);
+        Vec3 bot01 = new Vec3(minX, minY, maxZ);
+        Vec3 top00 = new Vec3(minX, maxY, minZ);
+        Vec3 top10 = new Vec3(maxX, maxY, minZ);
+        Vec3 top11 = new Vec3(maxX, maxY, maxZ);
+        Vec3 top01 = new Vec3(minX, maxY, maxZ);
+
+        renderLine(buf, pose, bot00, bot10, thickness, colorARGB);
+        renderLine(buf, pose, bot10, bot11, thickness, colorARGB);
+        renderLine(buf, pose, bot11, bot01, thickness, colorARGB);
+        renderLine(buf, pose, bot01, bot00, thickness, colorARGB);
+        renderLine(buf, pose, top00, top10, thickness, colorARGB);
+        renderLine(buf, pose, top10, top11, thickness, colorARGB);
+        renderLine(buf, pose, top11, top01, thickness, colorARGB);
+        renderLine(buf, pose, top01, top00, thickness, colorARGB);
+        renderLine(buf, pose, bot00, top00, thickness, colorARGB);
+        renderLine(buf, pose, bot10, top10, thickness, colorARGB);
+        renderLine(buf, pose, bot11, top11, thickness, colorARGB);
+        renderLine(buf, pose, bot01, top01, thickness, colorARGB);
+    }
+
     private static void renderSide(VertexConsumer buf, PoseStack pose, Vec3 tr, Vec3 tl, Vec3 br, Vec3 bl,
                                    int colorARGB) {
         Matrix4f mat = pose.last().pose();
+        buf.addVertex(mat, (float) tr.x, (float) tr.y, (float) tr.z).setColor(colorARGB);
+        buf.addVertex(mat, (float) br.x, (float) br.y, (float) br.z).setColor(colorARGB);
+        buf.addVertex(mat, (float) bl.x, (float) bl.y, (float) bl.z).setColor(colorARGB);
+        buf.addVertex(mat, (float) tl.x, (float) tl.y, (float) tl.z).setColor(colorARGB);
+    }
+
+    private static void renderSide(VertexConsumer buf, PoseStack.Pose pose, Vec3 tr, Vec3 tl, Vec3 br, Vec3 bl,
+                                   int colorARGB) {
+        Matrix4f mat = pose.pose();
         buf.addVertex(mat, (float) tr.x, (float) tr.y, (float) tr.z).setColor(colorARGB);
         buf.addVertex(mat, (float) br.x, (float) br.y, (float) br.z).setColor(colorARGB);
         buf.addVertex(mat, (float) bl.x, (float) bl.y, (float) bl.z).setColor(colorARGB);
@@ -297,7 +360,16 @@ public class RenderBufferHelper {
                                        float maxX, float maxY, float maxZ,
                                        float red, float green, float blue, float a,
                                        boolean shade) {
-        Matrix4f pose = poseStack.last().pose();
+        renderColorCube(buffer, poseStack.last(), minX, minY, minZ, maxX, maxY, maxZ,
+                red, green, blue, a, shade);
+    }
+
+    public static void renderColorCube(VertexConsumer buffer, PoseStack.Pose poseStackPose,
+                                       float minX, float minY, float minZ,
+                                       float maxX, float maxY, float maxZ,
+                                       float red, float green, float blue, float a,
+                                       boolean shade) {
+        Matrix4f pose = poseStackPose.pose();
         float r = red, g = green, b = blue;
 
         if (shade) {

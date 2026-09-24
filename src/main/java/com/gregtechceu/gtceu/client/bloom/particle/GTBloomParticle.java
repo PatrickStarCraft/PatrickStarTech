@@ -1,18 +1,19 @@
 package com.gregtechceu.gtceu.client.bloom.particle;
 
-import com.gregtechceu.gtceu.client.bloom.BloomHandler;
-import com.gregtechceu.gtceu.client.bloom.IBloomEffect;
-import com.gregtechceu.gtceu.client.bloom.IRenderSetup;
+import com.gregtechceu.gtceu.client.bloom.EffectRenderContext;
 import com.gregtechceu.gtceu.client.particle.GTParticle;
 
-import org.jetbrains.annotations.Nullable;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 
-public abstract class GTBloomParticle extends GTParticle implements IBloomEffect {
+import com.mojang.blaze3d.vertex.PoseStack;
+
+public abstract class GTBloomParticle extends GTParticle {
 
     public GTBloomParticle(double posX, double posY, double posZ) {
         super(posX, posY, posZ);
-        BloomHandler.registerBloomRender(getBloomRenderSetup(), this, this);
     }
 
-    protected abstract @Nullable IRenderSetup getBloomRenderSetup();
+    /** Submit this particle's emissive geometry into the bloom target for the current frame. */
+    public abstract void renderBloomParticle(SubmitNodeCollector collector, PoseStack poseStack,
+                                             EffectRenderContext context);
 }

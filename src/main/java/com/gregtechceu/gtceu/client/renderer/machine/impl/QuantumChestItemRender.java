@@ -24,7 +24,7 @@ import net.neoforged.api.distmarker.OnlyIn;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Quaternionf;
 
@@ -33,7 +33,7 @@ import static com.gregtechceu.gtceu.utils.GTMatrixUtils.*;
 public class QuantumChestItemRender extends DynamicRender<QuantumChestMachine, QuantumChestItemRender> {
 
     // spotless:off
-    public static final Codec<QuantumChestItemRender> CODEC = Codec.unit(QuantumChestItemRender::new);
+    public static final MapCodec<QuantumChestItemRender> CODEC = MapCodec.unit(QuantumChestItemRender::new);
     public static final DynamicRenderType<QuantumChestMachine, QuantumChestItemRender> TYPE = new DynamicRenderType<>(QuantumChestItemRender.CODEC);
     // spotless:on
 

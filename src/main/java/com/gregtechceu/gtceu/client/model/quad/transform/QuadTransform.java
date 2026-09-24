@@ -3,10 +3,11 @@ package com.gregtechceu.gtceu.client.model.quad.transform;
 import com.gregtechceu.gtceu.client.model.quad.MutableQuadView;
 
 import net.minecraft.client.resources.model.geometry.BakedQuad;
-import net.minecraftforge.client.model.IQuadTransformer;
+
+import org.jetbrains.annotations.Nullable;
 
 @FunctionalInterface
-public interface QuadTransform extends IQuadTransformer {
+public interface QuadTransform {
 
     /**
      * Return false to filter out quads from rendering. When more than one transform is in effect, returning false
@@ -14,10 +15,17 @@ public interface QuadTransform extends IQuadTransformer {
      */
     boolean transform(MutableQuadView quad);
 
-    @Override
-    default void processInPlace(BakedQuad quad) {
-        MutableQuadView quadView = MutableQuadView.getInstance().fromVanilla(quad.getVertices(), 0);
-        this.transform(quadView);
-        quadView.toVanilla(quad.getVertices(), 0);
+    /**
+     * Applies this transform to an immutable target quad, returning a new quad or null when the transform filters it.
+     */
+    default @Nullable BakedQuad applyTo(BakedQuad quad) {
+        MutableQuadView view = MutableQuadView.getInstance().fromVanilla(quad, null);
+        if (!this.transform(view)) {
+            view.clear();
+            return null;
+        }
+        BakedQuad transformed = view.toBakedQuad(quad.materialInfo().sprite());
+        view.clear();
+        return transformed;
     }
 }

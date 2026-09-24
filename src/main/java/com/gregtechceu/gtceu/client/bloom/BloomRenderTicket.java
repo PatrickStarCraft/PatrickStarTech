@@ -1,6 +1,7 @@
 package com.gregtechceu.gtceu.client.bloom;
 
 import net.minecraft.world.level.Level;
+import net.minecraft.client.renderer.rendertype.RenderType;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -12,7 +13,7 @@ public final class BloomRenderTicket {
 
     public static final BloomRenderTicket INVALID = new BloomRenderTicket();
 
-    final @Nullable IRenderSetup renderSetup;
+    final RenderType renderType;
     final IBloomEffect render;
     final @Nullable Predicate<BloomRenderTicket> validityChecker;
     final @Nullable Supplier<@Nullable Level> worldContext;
@@ -20,14 +21,14 @@ public final class BloomRenderTicket {
     private boolean invalidated;
 
     private BloomRenderTicket() {
-        this(null, (p, b, c) -> {}, null, null);
+        this(GTRenderTypes.bloom(), (p, c, r, context) -> {}, null, null);
         this.invalidated = true;
     }
 
-    BloomRenderTicket(@Nullable IRenderSetup renderSetup, IBloomEffect render,
+    BloomRenderTicket(RenderType renderType, IBloomEffect render,
                       @Nullable Predicate<BloomRenderTicket> validityChecker,
                       @Nullable Supplier<@Nullable Level> worldContext) {
-        this.renderSetup = renderSetup;
+        this.renderType = Objects.requireNonNull(renderType, "renderType == null");
         this.render = Objects.requireNonNull(render, "render == null");
         this.validityChecker = validityChecker;
         this.worldContext = worldContext;

@@ -15,6 +15,9 @@
  */
 package com.gregtechceu.gtceu.client.model.quad;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Similar in purpose to {@link com.mojang.blaze3d.vertex.BufferBuilder} but simpler and not tied to NIO
  * or any other specific implementation, plus designed to handle both static and dynamic building.
@@ -32,6 +35,7 @@ public class MeshBuilder {
 
     private int[] data = new int[256];
     private final Maker maker = new Maker();
+    private final List<Mesh.Metadata> metadata = new ArrayList<>();
     private int index = 0;
     private int limit = data.length;
 
@@ -52,9 +56,11 @@ public class MeshBuilder {
     public Mesh build() {
         final int[] packed = new int[index];
         System.arraycopy(data, 0, packed, 0, index);
+        Mesh mesh = new Mesh(packed, metadata.toArray(Mesh.Metadata[]::new));
+        metadata.clear();
         index = 0;
         maker.begin(data, index);
-        return new Mesh(packed);
+        return mesh;
     }
 
     public MutableQuadView getEmitter() {
@@ -73,6 +79,8 @@ public class MeshBuilder {
         public Maker emit() {
             computeGeometry();
             populateMissingNormals();
+            metadata.add(new Mesh.Metadata(headerFlags, nominalFace, shade, ambientOcclusion, tintIndex,
+                    materialInfo, textureKey));
             index += EncodingFormat.QUAD_STRIDE;
             ensureCapacity();
             baseIndex = index;

@@ -1,25 +1,24 @@
 package com.gregtechceu.gtceu.client.model.quad;
 
-import net.minecraft.client.renderer.FaceInfo;
-import net.minecraft.client.renderer.block.model.*;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import com.mojang.blaze3d.platform.Transparency;
+import com.mojang.math.Quadrant;
+
+import com.gregtechceu.gtceu.core.util.extensions.BakedQuadExt;
+
 import net.minecraft.client.renderer.block.dispatch.BlockModelRotation;
 import net.minecraft.client.renderer.block.dispatch.ModelState;
-import net.minecraft.core.BlockMath;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.model.ModelBaker;
+import net.minecraft.client.resources.model.cuboid.CuboidFace;
+import net.minecraft.client.resources.model.cuboid.FaceBakery;
+import net.minecraft.client.resources.model.geometry.BakedQuad;
+import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.core.Direction;
-import net.minecraft.util.Mth;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.client.ForgeHooksClient;
-import net.minecraftforge.client.model.ForgeFaceData;
-import net.minecraftforge.client.model.QuadTransformers;
+import net.neoforged.neoforge.client.model.ExtraFaceData;
 
-import com.mojang.math.Transformation;
-import org.jetbrains.annotations.Nullable;
-import org.joml.*;
-
-import java.lang.Math;
-
-import static net.minecraft.client.resources.model.cuboid.FaceBakery.calculateFacing;
+import org.joml.Vector3f;
+import org.joml.Vector3fc;
 
 public class StaticFaceBakery {
 
@@ -30,25 +29,35 @@ public class StaticFaceBakery {
     public static final AABB AUTO_OUTPUT_OVERLAY = BLOCK.inflate(0.008);
     public static final AABB COVER_OVERLAY = BLOCK.inflate(0.002);
 
-    private static final int VERTEX_INT_SIZE = 8;
-    private static final float RESCALE_22_5 = 1.0F / (float) Math.cos((float) (Math.PI / 8)) - 1.0F;
-    private static final float RESCALE_45 = 1.0F / (float) Math.cos((float) (Math.PI / 4)) - 1.0F;
-    private static final int VERTEX_COUNT = 4;
-    private static final int POSITION_INDEX = 0;
-    private static final int COLOR_INDEX = 3;
-    private static final int UV_INDEX = 4;
+    /**
+     * This standalone helper is used outside the model-baking lifecycle. It
+     * delegates vertex and material construction to the 26.2 bakery without
+     * retaining a model baker or its reload-scoped interner.
+     */
+    private static final ModelBaker.Interner INTERNER = new ModelBaker.Interner() {
+        @Override
+        public Vector3fc vector(Vector3fc vector) {
+            return vector;
+        }
+
+        @Override
+        public BakedQuad.MaterialInfo materialInfo(BakedQuad.MaterialInfo material) {
+            return material;
+        }
+    };
 
     /**
-     * bake a quad of specific face.
-     * 
-     * @param cube       cube model
+     * Bake a quad for one cube face.
+     *
+     * @param cube       cube bounds in block coordinates
      * @param face       face of the quad
      * @param sprite     texture
-     * @param rotation   additional rotation
-     * @param tintIndex  tint color index
-     * @param emissivity emissivity
-     * @param cull       whether cull the face
-     * @param shade      whether shade the face
+     * @param cubeUV     derive UV coordinates from cube dimensions
+     * @param rotation   model transform
+     * @param tintIndex  color tint index
+     * @param emissivity light emission from 0 to 15
+     * @param cull       whether this face can be culled
+     * @param shade      whether this face is shaded
      */
     public static BakedQuad bakeFace(AABB cube, Direction face, TextureAtlasSprite sprite, boolean cubeUV,
                                      ModelState rotation, int tintIndex, int emissivity, boolean cull, boolean shade) {
@@ -68,15 +77,7 @@ public class StaticFaceBakery {
             uv = new float[] { 0.0F, 0.0F, 16.0F, 16.0F };
         }
 
-        return bakeQuad(posFrom, posTo,
-                new BlockElementFace(cull ? face : null, tintIndex, sprite.contents().name().toString(),
-                        new BlockFaceUV(uv, 0)),
-                sprite,
-                face,
-                rotation,
-                null,
-                shade,
-                emissivity);
+        return bakeQuad(posFrom, posTo, uv, sprite, face, rotation, tintIndex, emissivity, cull, shade);
     }
 
     public static BakedQuad bakeFace(AABB cube, Direction face, TextureAtlasSprite sprite, ModelState rotation,
@@ -103,256 +104,34 @@ public class StaticFaceBakery {
     }
 
     public static BakedQuad bakeFace(Direction face, TextureAtlasSprite sprite) {
-        return bakeFace(face, sprite, BlockModelRotation.X0_Y0);
+        return bakeFace(face, sprite, BlockModelRotation.IDENTITY);
     }
 
     public static BakedQuad bakeFace(AABB cube, Direction face, TextureAtlasSprite sprite, boolean cubeUV) {
-        return bakeFace(cube, face, sprite, cubeUV, BlockModelRotation.X0_Y0, -1, 0, true, true);
+        return bakeFace(cube, face, sprite, cubeUV, BlockModelRotation.IDENTITY, -1, 0, true, true);
     }
 
     public static BakedQuad bakeFace(AABB cube, Direction face, TextureAtlasSprite sprite) {
         return bakeFace(cube, face, sprite, false);
     }
 
-    public static BakedQuad bakeQuad(Vector3f posFrom, Vector3f posTo,
-                                     BlockElementFace face, TextureAtlasSprite sprite, Direction facing,
-                                     ModelState transform, @Nullable BlockElementRotation partRotation,
-                                     boolean shade, int emissivity) {
-        BlockFaceUV uvs = face.uv;
-        if (transform.isUvLocked()) {
-            uvs = recomputeUVs(face.uv, facing, transform.getRotation());
-        }
+    private static BakedQuad bakeQuad(Vector3fc from, Vector3fc to, float[] uv, TextureAtlasSprite sprite,
+                                      Direction facing, ModelState modelState, int tintIndex, int emissivity,
+                                      boolean cull, boolean shade) {
+        CuboidFace.UVs faceUvs = new CuboidFace.UVs(uv[0], uv[1], uv[2], uv[3]);
+        CuboidFace face = new CuboidFace(cull ? facing : null, tintIndex,
+                sprite.contents().name().toString(), faceUvs, Quadrant.parseJson(0));
+        Material.Baked material = new Material.Baked(sprite, false);
+        Transparency transparency = sprite.contents().computeTransparency(
+                Math.min(faceUvs.minU(), faceUvs.maxU()) / 16.0F,
+                Math.min(faceUvs.minV(), faceUvs.maxV()) / 16.0F,
+                Math.max(faceUvs.minU(), faceUvs.maxU()) / 16.0F,
+                Math.max(faceUvs.minV(), faceUvs.maxV()) / 16.0F);
+        BakedQuad.MaterialInfo materialInfo = BakedQuad.MaterialInfo.of(
+                material, transparency, tintIndex, shade, emissivity, true);
 
-        float[] originalUVs = new float[uvs.uvs.length];
-        System.arraycopy(uvs.uvs, 0, originalUVs, 0, originalUVs.length);
-
-        float shrinkRatio = sprite.uvShrinkRatio();
-        float uMiddle = (uvs.uvs[0] * 2 + uvs.uvs[2] * 2) / VERTEX_COUNT;
-        float vMiddle = (uvs.uvs[1] * 2 + uvs.uvs[3] * 2) / VERTEX_COUNT;
-        uvs.uvs[0] = Mth.lerp(shrinkRatio, uvs.uvs[0], uMiddle);
-        uvs.uvs[2] = Mth.lerp(shrinkRatio, uvs.uvs[2], uMiddle);
-        uvs.uvs[1] = Mth.lerp(shrinkRatio, uvs.uvs[1], vMiddle);
-        uvs.uvs[3] = Mth.lerp(shrinkRatio, uvs.uvs[3], vMiddle);
-
-        int[] vertices = makeVertices(uvs, sprite, facing,
-                setupShape(posFrom, posTo), transform.getRotation(), partRotation, shade);
-        Direction direction = calculateFacing(vertices);
-        System.arraycopy(originalUVs, 0, uvs.uvs, 0, originalUVs.length);
-        if (partRotation == null) {
-            recalculateWinding(vertices, direction);
-        }
-
-        ForgeHooksClient.fillNormal(vertices, direction);
-        ForgeFaceData data = face.getFaceData();
-        BakedQuad quad = new BakedQuad(vertices, face.tintIndex, direction, sprite, shade, data.ambientOcclusion());
-        if (!ForgeFaceData.DEFAULT.equals(data)) {
-            QuadTransformers.applyingLightmap(data.blockLight(), data.skyLight()).processInPlace(quad);
-            QuadTransformers.applyingColor(data.color()).processInPlace(quad);
-        }
-        if (emissivity > 0) {
-            QuadTransformers.settingEmissivity(emissivity).processInPlace(quad);
-        }
-
-        return quad.gtceu$setTextureKey(face.texture);
-    }
-
-    public static BlockFaceUV recomputeUVs(BlockFaceUV uv, Direction facing, Transformation modelRotation) {
-        Matrix4f uvLock = BlockMath
-                .getUVLockTransform(modelRotation, facing, () -> "Unable to resolve UVLock for model").getMatrix();
-        float maybeUMin = uv.getU(uv.getReverseIndex(0));
-        float maybeVMin = uv.getV(uv.getReverseIndex(0));
-        Vector4f lockedUVMin = uvLock.transform(new Vector4f(maybeUMin / 16.0F, maybeVMin / 16.0F, 0.0F, 1.0F));
-        float uMinScaled = 16.0F * lockedUVMin.x();
-        float vMinScaled = 16.0F * lockedUVMin.y();
-        float maybeUMax = uv.getU(uv.getReverseIndex(2));
-        float maybeVMax = uv.getV(uv.getReverseIndex(2));
-        Vector4f lockedUVMax = uvLock.transform(new Vector4f(maybeUMax / 16.0F, maybeVMax / 16.0F, 0.0F, 1.0F));
-        float uMaxScaled = 16.0F * lockedUVMax.x();
-        float vMaxScaled = 16.0F * lockedUVMax.y();
-        float uMin;
-        float uMax;
-        if (Math.signum(maybeUMax - maybeUMin) == Math.signum(uMaxScaled - uMinScaled)) {
-            uMin = uMinScaled;
-            uMax = uMaxScaled;
-        } else {
-            uMin = uMaxScaled;
-            uMax = uMinScaled;
-        }
-
-        float vMin;
-        float vMax;
-        if (Math.signum(maybeVMax - maybeVMin) == Math.signum(vMaxScaled - vMinScaled)) {
-            vMin = vMinScaled;
-            vMax = vMaxScaled;
-        } else {
-            vMin = vMaxScaled;
-            vMax = vMinScaled;
-        }
-
-        float rotation = (float) Math.toRadians(uv.rotation);
-        Matrix3f uvMat3 = new Matrix3f(uvLock);
-        Vector3f rotVector = uvMat3.transform(new Vector3f(Mth.cos(rotation), Mth.sin(rotation), 0.0F));
-        int rotationDegrees = Math.floorMod(
-                -((int) Math.round(Math.toDegrees(Math.atan2(rotVector.y(), rotVector.x())) / 90.0)) * 90,
-                360);
-        return new BlockFaceUV(new float[] { uMin, vMin, uMax, vMax }, rotationDegrees);
-    }
-
-    private static int[] makeVertices(BlockFaceUV uvs, TextureAtlasSprite sprite,
-                                      Direction orientation, float[] shape,
-                                      Transformation rotation, @Nullable BlockElementRotation partRotation,
-                                      boolean shade) {
-        int[] vert = new int[32];
-        for (int i = 0; i < 4; ++i) {
-            bakeVertex(vert, i, orientation, uvs, sprite, shape, rotation, partRotation, shade);
-        }
-        return vert;
-    }
-
-    private static void bakeVertex(int[] vertexData, int vertexIndex, Direction facing,
-                                   BlockFaceUV blockFaceUV, TextureAtlasSprite sprite, float[] shape,
-                                   Transformation rotation, @Nullable BlockElementRotation partRotation,
-                                   boolean shade) {
-        FaceInfo.VertexInfo vertexInfo = FaceInfo.fromFacing(facing).getVertexInfo(vertexIndex);
-        Vector3f face = new Vector3f(shape[vertexInfo.xFace().ordinal()], shape[vertexInfo.yFace().ordinal()], shape[vertexInfo.zFace().ordinal()]);
-        applyElementRotation(face, partRotation);
-        applyModelRotation(face, rotation);
-        fillVertex(vertexData, vertexIndex, face, sprite, blockFaceUV);
-    }
-
-    private static void fillVertex(int[] vertexData, int vertexIndex, Vector3f face,
-                                   TextureAtlasSprite sprite, BlockFaceUV blockFaceUV) {
-        int i = vertexIndex * VERTEX_INT_SIZE;
-        vertexData[i + POSITION_INDEX] = Float.floatToRawIntBits(face.x());
-        vertexData[i + POSITION_INDEX + 1] = Float.floatToRawIntBits(face.y());
-        vertexData[i + POSITION_INDEX + 2] = Float.floatToRawIntBits(face.z());
-        vertexData[i + COLOR_INDEX] = 0xffffffff;
-        vertexData[i + UV_INDEX] = Float.floatToRawIntBits(
-                sprite.getU(blockFaceUV.getU(vertexIndex) * 0.999 + blockFaceUV.getU((vertexIndex + 2) % 4) * 0.001));
-        vertexData[i + UV_INDEX + 1] = Float.floatToRawIntBits(
-                sprite.getV(blockFaceUV.getV(vertexIndex) * 0.999 + blockFaceUV.getV((vertexIndex + 2) % 4) * 0.001));
-    }
-
-    private static float[] setupShape(Vector3f min, Vector3f max) {
-        float[] shape = new float[Direction.values().length];
-        shape[FaceInfo.Extent.MIN_X.ordinal()] = min.x() / 16.0F;
-        shape[FaceInfo.Extent.MIN_Y.ordinal()] = min.y() / 16.0F;
-        shape[FaceInfo.Extent.MIN_Z.ordinal()] = min.z() / 16.0F;
-        shape[FaceInfo.Extent.MAX_X.ordinal()] = max.x() / 16.0F;
-        shape[FaceInfo.Extent.MAX_Y.ordinal()] = max.y() / 16.0F;
-        shape[FaceInfo.Extent.MAX_Z.ordinal()] = max.z() / 16.0F;
-        return shape;
-    }
-
-    private static void applyElementRotation(Vector3f vec, @Nullable BlockElementRotation partRotation) {
-        if (partRotation != null) {
-            Vector3f axis;
-            Vector3f scale;
-            switch (partRotation.axis()) {
-                case X -> {
-                    axis = new Vector3f(1.0F, 0.0F, 0.0F);
-                    scale = new Vector3f(0.0F, 1.0F, 1.0F);
-                }
-                case Y -> {
-                    axis = new Vector3f(0.0F, 1.0F, 0.0F);
-                    scale = new Vector3f(1.0F, 0.0F, 1.0F);
-                }
-                case Z -> {
-                    axis = new Vector3f(0.0F, 0.0F, 1.0F);
-                    scale = new Vector3f(1.0F, 1.0F, 0.0F);
-                }
-                default -> throw new IllegalArgumentException("There are only 3 axes");
-            }
-
-            Quaternionf rotation = new Quaternionf()
-                    .rotationAxis(partRotation.angle() * (float) (Math.PI / 180.0), axis);
-            if (partRotation.rescale()) {
-                if (Math.abs(partRotation.angle()) == 22.5F) {
-                    scale.mul(RESCALE_22_5);
-                } else {
-                    scale.mul(RESCALE_45);
-                }
-                scale.add(1.0F, 1.0F, 1.0F);
-            } else {
-                scale.set(1.0F, 1.0F, 1.0F);
-            }
-
-            rotateVertexBy(vec, new Vector3f(partRotation.origin()), new Matrix4f().rotation(rotation), scale);
-        }
-    }
-
-    public static void applyModelRotation(Vector3f pos, Transformation transform) {
-        if (transform != Transformation.identity()) {
-            rotateVertexBy(pos, new Vector3f(0.5F, 0.5F, 0.5F), transform.getMatrix(), new Vector3f(1.0F, 1.0F, 1.0F));
-        }
-    }
-
-    private static void rotateVertexBy(Vector3f pos, Vector3f origin, Matrix4f transform, Vector3f scale) {
-        Vector4f transformed = new Vector4f(pos.x() - origin.x(), pos.y() - origin.y(), pos.z() - origin.z(), 1.0F)
-                .mul(transform);
-        transformed.mul(new Vector4f(scale, 1.0F));
-        pos.set(transformed.x() + origin.x(), transformed.y() + origin.y(), transformed.z() + origin.z());
-    }
-
-    private static void recalculateWinding(int[] vertices, Direction direction) {
-        int[] verticesCopy = new int[vertices.length];
-        System.arraycopy(vertices, 0, verticesCopy, 0, vertices.length);
-        float[] shape = new float[Direction.values().length];
-        shape[FaceInfo.Extent.MIN_X.ordinal()] = 999.0F;
-        shape[FaceInfo.Extent.MIN_Y.ordinal()] = 999.0F;
-        shape[FaceInfo.Extent.MIN_Z.ordinal()] = 999.0F;
-        shape[FaceInfo.Extent.MAX_X.ordinal()] = -999.0F;
-        shape[FaceInfo.Extent.MAX_Y.ordinal()] = -999.0F;
-        shape[FaceInfo.Extent.MAX_Z.ordinal()] = -999.0F;
-
-        for (int i = 0; i < 4; ++i) {
-            int element = 8 * i;
-            float x = Float.intBitsToFloat(verticesCopy[element]);
-            float y = Float.intBitsToFloat(verticesCopy[element + 1]);
-            float z = Float.intBitsToFloat(verticesCopy[element + 2]);
-            if (x < shape[FaceInfo.Extent.MIN_X.ordinal()]) {
-                shape[FaceInfo.Extent.MIN_X.ordinal()] = x;
-            }
-            if (y < shape[FaceInfo.Extent.MIN_Y.ordinal()]) {
-                shape[FaceInfo.Extent.MIN_Y.ordinal()] = y;
-            }
-            if (z < shape[FaceInfo.Extent.MIN_Z.ordinal()]) {
-                shape[FaceInfo.Extent.MIN_Z.ordinal()] = z;
-            }
-            if (x > shape[FaceInfo.Extent.MAX_X.ordinal()]) {
-                shape[FaceInfo.Extent.MAX_X.ordinal()] = x;
-            }
-            if (y > shape[FaceInfo.Extent.MAX_Y.ordinal()]) {
-                shape[FaceInfo.Extent.MAX_Y.ordinal()] = y;
-            }
-            if (z > shape[FaceInfo.Extent.MAX_Z.ordinal()]) {
-                shape[FaceInfo.Extent.MAX_Z.ordinal()] = z;
-            }
-        }
-
-        FaceInfo faceInfo = FaceInfo.fromFacing(direction);
-
-        for (int vert1 = 0; vert1 < 4; ++vert1) {
-            int e1 = vert1 * VERTEX_INT_SIZE;
-            FaceInfo.VertexInfo vertexInfo = faceInfo.getVertexInfo(vert1);
-            float x1 = shape[vertexInfo.xFace().ordinal()];
-            float y1 = shape[vertexInfo.yFace().ordinal()];
-            float z1 = shape[vertexInfo.zFace().ordinal()];
-            vertices[e1 + POSITION_INDEX] = Float.floatToRawIntBits(x1);
-            vertices[e1 + POSITION_INDEX + 1] = Float.floatToRawIntBits(y1);
-            vertices[e1 + POSITION_INDEX + 2] = Float.floatToRawIntBits(z1);
-
-            for (int vert2 = 0; vert2 < 4; ++vert2) {
-                int e2 = vert2 * VERTEX_INT_SIZE;
-                float x2 = Float.intBitsToFloat(verticesCopy[e2 + POSITION_INDEX]);
-                float y2 = Float.intBitsToFloat(verticesCopy[e2 + POSITION_INDEX + 1]);
-                float z2 = Float.intBitsToFloat(verticesCopy[e2 + POSITION_INDEX + 2]);
-
-                if (Mth.equal(x1, x2) && Mth.equal(y1, y2) && Mth.equal(z1, z2)) {
-                    vertices[e1 + UV_INDEX] = verticesCopy[e2 + UV_INDEX];
-                    vertices[e1 + UV_INDEX + 1] = verticesCopy[e2 + UV_INDEX + 1];
-                }
-            }
-        }
+        BakedQuad quad = FaceBakery.bakeQuad(INTERNER, from, to, faceUvs, face.rotation(), materialInfo,
+                facing, modelState, null, ExtraFaceData.DEFAULT);
+        return ((BakedQuadExt) (Object) quad).gtceu$setTextureKey(face.texture());
     }
 }

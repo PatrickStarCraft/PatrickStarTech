@@ -7,7 +7,6 @@ import com.gregtechceu.gtceu.client.util.RenderUtil;
 import com.gregtechceu.gtceu.core.mixins.client.GuiGraphicsAccessor;
 
 import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.ARGB;
 import net.minecraft.world.item.ItemStack;
@@ -40,7 +39,7 @@ public final class ToolChargeBarRenderer {
 
         int x = xPosition + 2;
         int y = yPosition + 13 - offset;
-        RenderUtil.fillHorizontalGradient(graphics, RenderType.gui(), x, y, x + level, y + 1, left, right, 190);
+        RenderUtil.fillHorizontalGradient(graphics, x, y, x + level, y + 1, left, right);
         // graphics.fill(RenderType.guiOverlay(), x + BAR_W, y, x + BAR_W - level, y - 1, colorBG);
 
         GuiDraw.drawRect(graphics, x, y, 13, shadow ? 2 : 1, colorShadow);
