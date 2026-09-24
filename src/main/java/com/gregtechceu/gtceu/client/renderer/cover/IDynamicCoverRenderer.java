@@ -9,6 +9,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 
 public interface IDynamicCoverRenderer {
 
+    DynamicCoverRenderSnapshot extractRenderState(MetaMachine machine, Direction face, float partialTick);
+
     void render(MetaMachine machine, Direction face, float partialTick, PoseStack poseStack, MultiBufferSource buffer,
                 int packedLight, int packedOverlay);
 }

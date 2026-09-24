@@ -33,6 +33,11 @@ public class IOCoverRenderer implements ICoverRenderer {
             GTCEu.id("block/cover/pump_inverted"),
             null, null);
 
+    private final @Nullable Identifier overlayTexture;
+    private final @Nullable Identifier invertedOverlayTexture;
+    private final @Nullable Identifier emissiveOverlayTexture;
+    private final @Nullable Identifier invertedEmissiveOverlayTexture;
+
     @OnlyIn(Dist.CLIENT)
     protected TextureAtlasSprite overlaySprite = null;
     @OnlyIn(Dist.CLIENT)
@@ -46,6 +51,10 @@ public class IOCoverRenderer implements ICoverRenderer {
                            @Nullable Identifier invertedOverlay,
                            @Nullable Identifier emissiveOverlay,
                            @Nullable Identifier invertedEmissiveOverlay) {
+        this.overlayTexture = overlay;
+        this.invertedOverlayTexture = invertedOverlay;
+        this.emissiveOverlayTexture = emissiveOverlay;
+        this.invertedEmissiveOverlayTexture = invertedEmissiveOverlay;
         ModelEventHelper.registerAtlasStitchedEventListener(false, TextureAtlas.LOCATION_BLOCKS, event -> {
             var atlas = event.getAtlas();
 
@@ -62,6 +71,22 @@ public class IOCoverRenderer implements ICoverRenderer {
                 invertedEmissiveOverlaySprite = atlas.getSprite(invertedEmissiveOverlay);
             }
         });
+    }
+
+    public @Nullable Identifier overlayTexture() {
+        return this.overlayTexture;
+    }
+
+    public @Nullable Identifier invertedOverlayTexture() {
+        return this.invertedOverlayTexture;
+    }
+
+    public @Nullable Identifier emissiveOverlayTexture() {
+        return this.emissiveOverlayTexture;
+    }
+
+    public @Nullable Identifier invertedEmissiveOverlayTexture() {
+        return this.invertedEmissiveOverlayTexture;
     }
 
     @Override

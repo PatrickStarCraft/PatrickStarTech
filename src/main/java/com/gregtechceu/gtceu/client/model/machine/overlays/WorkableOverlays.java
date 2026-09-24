@@ -4,6 +4,7 @@ import com.gregtechceu.gtceu.api.machine.trait.recipe.RecipeLogic.Status;
 import com.gregtechceu.gtceu.api.registry.registrate.provider.GTBlockstateProvider;
 import com.gregtechceu.gtceu.common.data.models.GTMachineModels;
 import com.gregtechceu.gtceu.common.data.models.GTModels;
+import com.gregtechceu.gtceu.data.model.builder.ModelFileHelper;
 import com.gregtechceu.gtceu.utils.data.RuntimeExistingFileHelper;
 
 import org.jspecify.annotations.NullMarked;
@@ -11,7 +12,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.Identifier;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.minecraftforge.common.data.ExistingFileHelper;
 
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
@@ -25,7 +25,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @NullMarked
 public class WorkableOverlays {
 
-    public static WorkableOverlays get(Identifier textureDir, ExistingFileHelper fileHelper) {
+    public static WorkableOverlays get(Identifier textureDir, ModelFileHelper fileHelper) {
         if (fileHelper instanceof RuntimeExistingFileHelper runtimeFileHelper) {
             // if fileHelper is an instance of RuntimeExistingFileHelper, we have to enable its existence checking.
             // the AutoCloseable warning is suppressed here because there's no clean way to

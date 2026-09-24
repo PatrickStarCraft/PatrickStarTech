@@ -6,22 +6,24 @@ import com.gregtechceu.gtceu.api.multiblock.util.RelativeDirection;
 import com.gregtechceu.gtceu.api.recipe.GTRecipe;
 import com.gregtechceu.gtceu.client.renderer.GTRenderTypes;
 import com.gregtechceu.gtceu.client.renderer.machine.DynamicRender;
+import com.gregtechceu.gtceu.client.renderer.machine.DynamicRenderSnapshot;
 import com.gregtechceu.gtceu.client.renderer.machine.DynamicRenderType;
 import com.gregtechceu.gtceu.client.util.RenderBufferHelper;
 import com.gregtechceu.gtceu.common.machine.multiblock.electric.AssemblyLineMachine;
 import com.gregtechceu.gtceu.config.ConfigHolder;
 
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.serialization.MapCodec;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class AssemblyLineRender extends DynamicRender<AssemblyLineMachine, AssemblyLineRender> {
 
@@ -42,15 +44,10 @@ public class AssemblyLineRender extends DynamicRender<AssemblyLineMachine, Assem
     }
 
     @Override
-    public void render(AssemblyLineMachine machine, float partialTick, PoseStack poseStack, MultiBufferSource buffer,
-                       int packedLight, int packedOverlay) {
-        renderLines(machine, partialTick, poseStack, buffer.getBuffer(GTRenderTypes.assemblyLine()));
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    private void renderLines(AssemblyLineMachine machine, float partialTick, PoseStack stack, VertexConsumer buffer) {
+    public DynamicRenderSnapshot extractRenderState(AssemblyLineMachine machine, float partialTicks) {
         GTRecipe recipe = machine.getRecipeLogic().getLastUnrolledRecipe();
-        if (recipe == null) return;
+        if (recipe == null) return new AssemblyLineSnapshot(List.of());
+
         int asslineColor = Long.decode(ConfigHolder.INSTANCE.client.renderer.assemblyLineLaser).intValue();
         float progress = machine.getProgress() / (float) machine.getMaxProgress();
         int recipeInputs = Math.max(
@@ -61,29 +58,48 @@ public class AssemblyLineRender extends DynamicRender<AssemblyLineMachine, Assem
                 machine.isFlipped());
         Direction back = RelativeDirection.BACK.getRelativeFacing(machine.getFrontFacing(), machine.getUpwardsFacing(),
                 machine.isFlipped());
-        Direction right = RelativeDirection.RIGHT.getRelativeFacing(machine.getFrontFacing(),
-                machine.getUpwardsFacing(), machine.isFlipped());
+        Direction right = RelativeDirection.RIGHT.getRelativeFacing(machine.getFrontFacing(), machine.getUpwardsFacing(),
+                machine.isFlipped());
 
+        List<Line> lines = new ArrayList<>();
         BlockPos.MutableBlockPos pos = BlockPos.ZERO.offset(down.getUnitVec3i()).mutable();
+        int opaqueColor = asslineColor | 0xff000000;
         for (int i = 0; i < (int) progress; i++) {
-            renderLineInternal(buffer, stack, pos, down, asslineColor | 0xff000000);
+            appendLine(lines, pos, down, opaqueColor);
             pos.move(back.getUnitVec3i().multiply(2));
-
-            renderLineInternal(buffer, stack, pos, down, asslineColor | 0xff000000);
+            appendLine(lines, pos, down, opaqueColor);
             pos.move(back.getOpposite().getUnitVec3i().multiply(2)).move(right.getUnitVec3i());
         }
-        renderLineInternal(buffer, stack, pos, down,
-                (asslineColor | (int) ((progress - (int) (progress)) * 255.f) << 24));
-
+        int partialColor = asslineColor | ((int) ((progress - (int) progress) * 255.0F) << 24);
+        appendLine(lines, pos, down, partialColor);
         pos.move(back.getUnitVec3i().multiply(2));
-        renderLineInternal(buffer, stack, pos, down,
-                (asslineColor | (int) ((progress - (int) (progress)) * 255.f) << 24));
+        appendLine(lines, pos, down, partialColor);
+        return new AssemblyLineSnapshot(List.copyOf(lines));
     }
 
-    public void renderLineInternal(VertexConsumer buffer, PoseStack stack, BlockPos pos, Direction down, int color) {
-        var top = Vec3.atBottomCenterOf(pos.offset(down.getOpposite().getUnitVec3i()));
-        var bottom = Vec3.atBottomCenterOf(pos);
-        RenderBufferHelper.renderLine(buffer, stack, bottom, top, 0.03, color);
+    @Override
+    public void submitRenderState(DynamicRenderSnapshot state, PoseStack poseStack, SubmitNodeCollector collector,
+                                 CameraRenderState camera) {
+        if (!(state instanceof AssemblyLineSnapshot snapshot) || snapshot.lines().isEmpty()) return;
+        collector.submitCustomGeometry(poseStack, GTRenderTypes.assemblyLine(), (pose, buffer) -> {
+            for (Line line : snapshot.lines()) {
+                RenderBufferHelper.renderLine(buffer, pose, line.from(), line.to(), 0.03, line.color());
+            }
+        });
+    }
+
+    private static void appendLine(List<Line> lines, BlockPos pos, Direction down, int color) {
+        Vec3 top = Vec3.atBottomCenterOf(pos.offset(down.getOpposite().getUnitVec3i()));
+        Vec3 bottom = Vec3.atBottomCenterOf(pos);
+        lines.add(new Line(bottom, top, color));
+    }
+
+    private record Line(Vec3 from, Vec3 to, int color) {}
+
+    private record AssemblyLineSnapshot(List<Line> lines) implements DynamicRenderSnapshot {
+        private AssemblyLineSnapshot {
+            lines = List.copyOf(lines);
+        }
     }
 
     @Override

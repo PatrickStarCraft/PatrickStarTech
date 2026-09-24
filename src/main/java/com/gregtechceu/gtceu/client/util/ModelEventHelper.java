@@ -2,6 +2,7 @@ package com.gregtechceu.gtceu.client.util;
 
 import com.gregtechceu.gtceu.GTCEu;
 import com.gregtechceu.gtceu.client.model.ctm.CTMBakedModel;
+import com.gregtechceu.gtceu.client.model.ctm.CTMModelPartSource;
 import com.gregtechceu.gtceu.client.model.ManuallyConnectedTextureModel;
 import com.gregtechceu.gtceu.client.model.machine.MachineModel;
 import com.gregtechceu.gtceu.client.renderer.cover.ICoverableRenderer;
@@ -183,7 +184,11 @@ public class ModelEventHelper {
 
     private static boolean hasConnectedTexture(BlockStateModel model) {
         List<BlockStateModelPart> parts = new ArrayList<>();
-        model.collectParts(RandomSource.create(0L), parts);
+        if (model instanceof CTMModelPartSource source) {
+            source.collectConnectedTextureCandidates(RandomSource.create(0L), parts);
+        } else {
+            model.collectParts(RandomSource.create(0L), parts);
+        }
         for (BlockStateModelPart part : parts) {
             if (hasConnectedTexture(part.getQuads(null))) return true;
             for (Direction direction : Direction.values()) {

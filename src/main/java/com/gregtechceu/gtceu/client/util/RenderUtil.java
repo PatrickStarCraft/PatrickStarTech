@@ -17,6 +17,7 @@ import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.block.FluidModel;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlas;
@@ -29,7 +30,7 @@ import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.client.renderer.block.BlockAndTintGetter;
+import net.minecraft.world.level.BlockAndLightGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
@@ -111,7 +112,7 @@ public class RenderUtil {
         return DIRECTION_NORMAL_MAP.get(direction);
     }
 
-    public static int getFluidLight(Fluid fluid, BlockPos pos, @Nullable BlockAndTintGetter level) {
+    public static int getFluidLight(Fluid fluid, BlockPos pos, @Nullable BlockAndLightGetter level) {
         if (level == null) level = Minecraft.getInstance().level;
         if (level == null) return 0;
 

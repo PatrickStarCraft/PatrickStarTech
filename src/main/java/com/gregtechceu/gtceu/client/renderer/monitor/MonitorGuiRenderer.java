@@ -7,23 +7,24 @@ import com.gregtechceu.gtceu.common.machine.multiblock.electric.CentralMonitorMa
 import com.gregtechceu.gtceu.common.machine.multiblock.electric.monitor.MonitorGroup;
 import com.gregtechceu.gtceu.common.machine.multiblock.part.monitor.AdvancedMonitorPartMachine;
 import com.gregtechceu.gtceu.common.machine.multiblock.part.monitor.MonitorPartMachine;
-import com.gregtechceu.gtceu.utils.GTUtil;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.input.MouseButtonInfo;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
-import net.minecraftforge.common.ForgeMod;
 import net.neoforged.neoforge.common.NeoForge;
 
 import brachy.modularui.api.MCHelper;
 import brachy.modularui.factory.GuiManager;
 import brachy.modularui.factory.PosGuiData;
 import brachy.modularui.screen.*;
+import com.mojang.blaze3d.GpuFormat;
 import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.pipeline.TextureTarget;
 import com.mojang.blaze3d.vertex.*;
@@ -31,7 +32,7 @@ import com.mojang.datafixers.util.Pair;
 import org.joml.Vector2d;
 import org.lwjgl.glfw.GLFW;
 
-public class MonitorGuiRenderer implements IMonitorRenderer {
+public class MonitorGuiRenderer implements IMonitorRenderer, IMonitorRenderSnapshotProvider {
 
     private static final int RESOLUTION_COEF = 2;
 
@@ -41,7 +42,8 @@ public class MonitorGuiRenderer implements IMonitorRenderer {
     private int mouseX = -1, mouseY = -1;
     private final Level targetLevel;
     private final BlockPos targetPos;
-    private final RenderTarget renderTarget = new TextureTarget(width, height, true, Minecraft.ON_OSX);
+    private final RenderTarget renderTarget = new TextureTarget("gtceu_monitor_gui", width, height, true, false,
+            GpuFormat.RGBA8_UNORM);
 
     public MonitorGuiRenderer(Pair<Level, BlockPos> target) {
         NeoForge.EVENT_BUS.register(this);
@@ -193,13 +195,22 @@ public class MonitorGuiRenderer implements IMonitorRenderer {
     @Override
     public void render(CentralMonitorMachine machine, MonitorGroup group, float partialTick, PoseStack poseStack,
                        MultiBufferSource buffer, int packedLight, int packedOverlay) {
+        this.updateMouseState(machine, group, partialTick);
+    }
+
+    @Override
+    public MonitorRenderSnapshot extractRenderState(CentralMonitorMachine machine, MonitorGroup group,
+                                                    float partialTick) {
+        this.updateMouseState(machine, group, partialTick);
+        return null;
+    }
+
+    private void updateMouseState(CentralMonitorMachine machine, MonitorGroup group, float partialTick) {
         if (screen == null || group.isEmpty()) return;
         BlockPos rel = group.getRow(0, machine::toRelative).get(0);
-        BlockPos size = GTUtil.getLast(group.getRow(-1, machine::toRelative))
-                .offset(-rel.getX() + 1, -rel.getY() + 1, -rel.getZ() + 1);
-        poseStack.translate(rel.getX(), rel.getY(), rel.getZ());
         Player player = MCHelper.getPlayer();
-        HitResult hit = player.pick(player.getAttributeValue(ForgeMod.BLOCK_REACH.get()), partialTick, false);
+        if (player == null) return;
+        HitResult hit = player.pick(player.getAttributeValue(Attributes.BLOCK_INTERACTION_RANGE), partialTick, false);
         double mouseX = -1, mouseY = -1;
         if (hit instanceof BlockHitResult blockHit) {
             BlockPos pos = blockHit.getBlockPos();
@@ -212,7 +223,10 @@ public class MonitorGuiRenderer implements IMonitorRenderer {
                         mouseX <= width && mouseY <= height) {
                     if (advancedMonitor.isClickedThisFrame()) {
                         this.screen.mousePressed(GLFW.GLFW_MOUSE_BUTTON_LEFT);
-                        this.vanillaScreen.mouseClicked(mouseX * 256, mouseY * 256, GLFW.GLFW_MOUSE_BUTTON_LEFT);
+                        this.vanillaScreen.mouseClicked(
+                                new MouseButtonEvent(mouseX * 256, mouseY * 256,
+                                        new MouseButtonInfo(GLFW.GLFW_MOUSE_BUTTON_LEFT, 0)),
+                                false);
                         advancedMonitor.setClickedThisFrame(false);
                     }
                 }

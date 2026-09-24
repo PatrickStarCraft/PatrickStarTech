@@ -2,42 +2,34 @@ package com.gregtechceu.gtceu.client.renderer.machine.impl;
 
 import com.gregtechceu.gtceu.api.block.property.GTBlockStateProperties;
 import com.gregtechceu.gtceu.api.machine.multiblock.MultiblockControllerMachine;
-import com.gregtechceu.gtceu.api.machine.multiblock.part.MultiblockPartMachine;
-import com.gregtechceu.gtceu.api.machine.trait.recipe.RecipeLogic;
 import com.gregtechceu.gtceu.api.multiblock.util.RelativeDirection;
-import com.gregtechceu.gtceu.client.model.machine.IControllerModelRenderer;
+import com.gregtechceu.gtceu.client.model.machine.ControllerPartModel;
+import com.gregtechceu.gtceu.client.model.machine.ControllerPartRenderState;
 import com.gregtechceu.gtceu.client.renderer.machine.DynamicRender;
 import com.gregtechceu.gtceu.client.renderer.machine.DynamicRenderType;
-import com.gregtechceu.gtceu.client.util.RenderUtil;
 import com.gregtechceu.gtceu.common.block.BoilerFireboxType;
 import com.gregtechceu.gtceu.common.data.GTBlocks;
 
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.rendertype.RenderType;
-import net.minecraft.client.resources.model.geometry.BakedQuad;
-import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
+import net.minecraft.client.renderer.block.BlockStateModelSet;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
-import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.model.data.ModelData;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import lombok.Getter;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.function.Supplier;
 
 public class BoilerMultiPartRender extends DynamicRender<MultiblockControllerMachine, BoilerMultiPartRender>
-                                   implements IControllerModelRenderer {
+                                   implements ControllerPartModel {
 
     // spotless:off
     public static final MapCodec<BoilerMultiPartRender> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
@@ -52,9 +44,6 @@ public class BoilerMultiPartRender extends DynamicRender<MultiblockControllerMac
     private final BlockState fireboxIdle, fireboxActive;
     @Getter
     private final BlockState casing;
-
-    private BakedModel fireboxIdleModel, fireboxActiveModel;
-    private BakedModel casingModel;
 
     public BoilerMultiPartRender(BoilerFireboxType fireboxType, Supplier<? extends Block> casingBlock) {
         this(GTBlocks.ALL_FIREBOXES.get(fireboxType).getDefaultState(),
@@ -74,11 +63,6 @@ public class BoilerMultiPartRender extends DynamicRender<MultiblockControllerMac
     }
 
     @Override
-    public void render(MultiblockControllerMachine machine, float partialTick, PoseStack poseStack,
-                       MultiBufferSource buffer,
-                       int packedLight, int packedOverlay) {}
-
-    @Override
     public boolean shouldRender(MultiblockControllerMachine machine, Vec3 cameraPos) {
         return false;
     }
@@ -88,58 +72,26 @@ public class BoilerMultiPartRender extends DynamicRender<MultiblockControllerMac
         return false;
     }
 
-    @SuppressWarnings("DataFlowIssue")
     @Override
-    @OnlyIn(Dist.CLIENT)
-    public void renderPartModel(List<BakedQuad> quads, MultiblockControllerMachine controller,
-                                MultiblockPartMachine part,
-                                Direction frontFacing, @Nullable Direction side, RandomSource rand,
-                                ModelData modelData, @Nullable RenderType renderType) {
-        if (this.fireboxIdleModel == null) {
-            this.fireboxIdleModel = RenderUtil.getModelForState(fireboxIdle);
-        }
-        if (this.fireboxActiveModel == null) {
-            this.fireboxActiveModel = RenderUtil.getModelForState(fireboxActive);
-        }
-        if (this.casingModel == null) {
-            this.casingModel = RenderUtil.getModelForState(casing);
-        }
+    public PartModelResult collectPartModel(ControllerPartRenderState controller, BlockStateModelSet modelSet,
+                                            BlockAndTintGetter level, BlockPos partPos, BlockState partState,
+                                            RandomSource random) {
+        Direction relativeDown = RelativeDirection.DOWN.getRelativeFacing(controller.frontFacing(),
+                controller.upwardsFacing(), controller.flipped());
+        int belowController = controller.controllerPos().relative(relativeDown).get(relativeDown.getAxis());
+        int partCoordinate = partPos.get(relativeDown.getAxis());
+        BlockState selectedState = belowController == partCoordinate
+                ? (controller.active() ? this.fireboxActive : this.fireboxIdle)
+                : this.casing;
 
-        BlockPos partPos = part.getBlockPos();
-
-        BlockPos controllerPos = controller.getBlockPos();
-        Direction multiFront = controller.getFrontFacing();
-        Direction multiUpward = controller.getUpwardsFacing();
-        boolean flipped = controller.isFlipped();
-        Direction relativeDown = RelativeDirection.DOWN.getRelativeFacing(multiFront, multiUpward, flipped);
-
-        int belowControllerY = controllerPos.relative(relativeDown).get(relativeDown.getAxis());
-        int partY = partPos.get(relativeDown.getAxis());
-        if (belowControllerY == partY) {
-            // firebox
-
-            var recipeLogic = controller.getTrait(RecipeLogic.class);
-
-            if (recipeLogic != null && recipeLogic.isWorking()) {
-                emitQuads(quads, fireboxActiveModel, controller.getLevel(), partPos, fireboxActive,
-                        side, rand, modelData, renderType);
-            } else {
-                emitQuads(quads, fireboxIdleModel, controller.getLevel(), partPos, fireboxIdle,
-                        side, rand, modelData, renderType);
-            }
-        } else {
-            // Not exactly one below the controller, so not a firebox
-            emitQuads(quads, casingModel, controller.getLevel(), partPos, casing,
-                    side, rand, modelData, renderType);
-        }
+        BlockStateModel model = modelSet.get(selectedState);
+        long seed = random.nextLong();
+        List<BlockStateModelPart> parts = new java.util.ArrayList<>();
+        model.collectParts(level, partPos, selectedState, RandomSource.create(seed), parts);
+        Object childGeometryKey = model.createGeometryKey(level, partPos, selectedState, RandomSource.create(seed));
+        return new PartModelResult(parts, new BoilerGeometryKey(selectedState, childGeometryKey));
     }
 
-    private static void emitQuads(List<BakedQuad> quads, @Nullable BakedModel model,
-                                  BlockAndTintGetter level, BlockPos pos, BlockState state,
-                                  @Nullable Direction side, RandomSource rand,
-                                  ModelData modelData, @Nullable RenderType renderType) {
-        if (model == null) return;
-        modelData = model.getModelData(level, pos, state, modelData);
-        quads.addAll(model.getQuads(state, side, rand, modelData, renderType));
-    }
+    private record BoilerGeometryKey(BlockState selectedState, Object childGeometryKey) {}
+
 }

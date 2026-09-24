@@ -7,8 +7,8 @@ import com.gregtechceu.gtceu.api.machine.trait.recipe.RecipeLogic;
 import com.gregtechceu.gtceu.api.recipe.GTRecipe;
 import com.gregtechceu.gtceu.api.recipe.content.Content;
 import com.gregtechceu.gtceu.client.renderer.machine.DynamicRender;
+import com.gregtechceu.gtceu.client.renderer.machine.DynamicRenderSnapshot;
 import com.gregtechceu.gtceu.client.renderer.machine.DynamicRenderType;
-import com.gregtechceu.gtceu.client.util.RenderUtil;
 import com.gregtechceu.gtceu.config.ConfigHolder;
 import com.gregtechceu.gtceu.core.mixins.GrowingPlantBlockAccessor;
 import com.gregtechceu.gtceu.core.mixins.client.StemBlockAccessorMixin;
@@ -16,13 +16,23 @@ import com.gregtechceu.gtceu.data.recipe.CustomTags;
 import com.gregtechceu.gtceu.utils.GTMath;
 import com.gregtechceu.gtceu.utils.memoization.GTMemoizer;
 
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.color.block.BlockTintSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.block.BlockModelRenderState;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.resources.model.geometry.BakedQuad;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.ExtraCodecs;
+import net.minecraft.util.RandomSource;
 import net.minecraft.util.Mth;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -33,6 +43,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.*;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.phys.AABB;
+import net.neoforged.neoforge.client.extensions.common.IClientBlockExtensions;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.serialization.Codec;
@@ -42,6 +53,8 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import lombok.Getter;
 import org.apache.commons.lang3.function.TriFunction;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
@@ -107,92 +120,111 @@ public class GrowingPlantRender extends DynamicRender<IRecipeLogicMachine, Growi
     }
 
     @Override
-    public void render(IRecipeLogicMachine rlm, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource,
-                       int packedLight, int packedOverlay) {
-        if (!ConfigHolder.INSTANCE.client.renderer.renderGrowingPlants) return;
-        if (!rlm.isActive()) return;
-        final RecipeLogic recipeLogic = rlm.getRecipeLogic();
+    public DynamicRenderSnapshot extractRenderState(IRecipeLogicMachine recipeMachine, float partialTicks) {
+        if (!ConfigHolder.INSTANCE.client.renderer.renderGrowingPlants || !recipeMachine.isActive()) {
+            return new GrowingPlantSnapshot(List.of());
+        }
 
-        Optional<Block> currentBlock = this.growingBlock
+        RecipeLogic recipeLogic = recipeMachine.getRecipeLogic();
+        Optional<Block> growingBlock = this.growingBlock
                 .or(() -> Optional.ofNullable(recipeLogic.getLastUnrolledRecipe()).flatMap(this::findGrowing));
-        if (currentBlock.isEmpty()) return;
-        Block growing = currentBlock.get();
-        BlockState state = growing.defaultBlockState();
+        if (growingBlock.isEmpty()) return new GrowingPlantSnapshot(List.of());
 
-        double progress = recipeLogic.getProgressPercent();
+        Block growing = growingBlock.get();
         GrowthMode mode = this.growthMode.orElseGet(() -> getGrowthModeForBlock(growing));
-
-        // a couple of special case replacements in case of small mistakes in manual configuration
         if (this.growthMode.isPresent() && !mode.predicate().test(growing)) {
-            if (mode == GrowthMode.GROWING_PLANT && GrowthMode.DOUBLE_TRANSLATE.predicate.test(growing)) {
+            if (mode == GrowthMode.GROWING_PLANT && GrowthMode.DOUBLE_TRANSLATE.predicate().test(growing)) {
                 mode = GrowthMode.DOUBLE_TRANSLATE;
             }
             if (mode == GrowthMode.AGE_4 && GrowthMode.PICKLES.predicate().test(growing)) {
-                // special case the pickles property to work if using age_4
                 mode = GrowthMode.PICKLES;
             } else if (mode == GrowthMode.AGE_4 && GrowthMode.FLOWER_AMOUNT.predicate().test(growing)) {
-                // special case the flower amount property to work if using age_4
                 mode = GrowthMode.FLOWER_AMOUNT;
             } else if (mode == GrowthMode.AGE_7 && GrowthMode.STEM.predicate().test(growing)) {
-                // special case stem plants to show stems
                 mode = GrowthMode.STEM;
             } else {
-                // generic incompatibility, use default mode
                 mode = GrowthMode.SCALE;
             }
         }
+        if (mode == GrowthMode.NONE) return new GrowingPlantSnapshot(List.of());
 
-        MetaMachine machine = rlm.self();
+        MetaMachine machine = recipeMachine.self();
         Level level = machine.getLevel();
-        if (!(level instanceof BlockAndTintGetter tintGetter)) return;
+        if (!(level instanceof BlockAndTintGetter tintGetter)) return new GrowingPlantSnapshot(List.of());
+
+        double progress = recipeLogic.getProgressPercent();
         BlockPos machinePos = machine.getBlockPos();
+        BlockState initialState = growing.defaultBlockState();
+        Collection<StateWithOffset> states = mode.renderFunction().configureState(initialState, progress);
+        List<PlantBlockRenderState> renderedPlants = new ArrayList<>();
+        var modelSet = Minecraft.getInstance().getModelManager().getBlockStateModelSet();
 
-        var statesToDraw = mode.renderFunction().configureState(state, progress);
-
-        for (Vector3fc offset : this.getOffsets()) {
-            poseStack.pushPose();
-
+        for (Vector3fc offset : this.offsets) {
             Vector3f rotated = new Vector3f(offset);
             rotated.rotateX(-Mth.HALF_PI);
             machine.getFrontFacing().getRotation().transform(rotated);
-            poseStack.translate(rotated.x(), rotated.y() + EPSILON, rotated.z());
-
             BlockPos pos = machinePos.offset(BlockPos.containing(rotated.x(), rotated.y(), rotated.z()));
-            for (StateWithOffset toDraw : statesToDraw) {
-                poseStack.pushPose();
-                Vector3fc translation = toDraw.offset;
-                poseStack.translate(translation.x(), translation.y(), translation.z());
 
-                mode.renderFunction().renderGrowingBlock(tintGetter, pos, rotated, toDraw.state,
-                        progress, bufferSource, poseStack);
+            for (StateWithOffset stateWithOffset : states) {
+                BlockState blockState = stateWithOffset.state();
+                if (blockState.getRenderShape() == RenderShape.INVISIBLE) continue;
 
-                poseStack.popPose();
+                PoseStack localTransform = new PoseStack();
+                localTransform.translate(rotated.x(), rotated.y() + EPSILON, rotated.z());
+                Vector3fc translation = stateWithOffset.offset();
+                localTransform.translate(translation.x(), translation.y(), translation.z());
+                if (mode == GrowthMode.SCALE) {
+                    localTransform.last().pose().scaleAround((float) progress, 0.5f, 0.0f, 0.5f);
+                    localTransform.last().normal().scale((float) progress);
+                } else if (mode == GrowthMode.GROWING_PLANT) {
+                    Quaternionf growthRotation = ((GrowingPlantBlockAccessor) blockState.getBlock())
+                            .gtceu$getGrowthDirection().getRotation();
+                    localTransform.rotateAround(growthRotation, 0.5f, 0.5f, 0.5f);
+                }
+
+                BlockStateModel model = modelSet.get(blockState);
+                BlockModelRenderState modelState = new BlockModelRenderState();
+                List<BlockStateModelPart> parts = modelState.setupModel(
+                        new Matrix4f(localTransform.last().pose()),
+                        model.hasMaterialFlag(tintGetter, pos, blockState, BakedQuad.FLAG_TRANSLUCENT));
+                model.collectParts(tintGetter, pos, blockState, RandomSource.create(blockState.getSeed(pos)), parts);
+
+                List<BlockTintSource> tintSources = Minecraft.getInstance().getBlockColors().getTintSources(blockState);
+                if (tintSources.isEmpty()) {
+                    IClientBlockExtensions.of(blockState).collectDynamicTintValues(blockState, tintGetter, pos,
+                            modelState.tintLayers());
+                } else {
+                    for (BlockTintSource tintSource : tintSources) {
+                        modelState.tintLayers().add(tintSource.colorInWorld(blockState, tintGetter, pos));
+                    }
+                }
+
+                modelState.blockLightCoords = blockState.emissiveRendering()
+                        ? LightCoordsUtil.FULL_BRIGHT
+                        : LightCoordsUtil.pack(blockState.getLightEmission(tintGetter, pos), 0);
+                int packedLight = LightCoordsUtil.max(LightCoordsUtil.getLightCoords(tintGetter, pos),
+                        modelState.blockLightCoords);
+                renderedPlants.add(new PlantBlockRenderState(modelState, packedLight));
             }
+        }
+        return new GrowingPlantSnapshot(List.copyOf(renderedPlants));
+    }
 
-            poseStack.popPose();
+    @Override
+    public void submitRenderState(DynamicRenderSnapshot state, PoseStack poseStack, SubmitNodeCollector collector,
+                                 CameraRenderState camera) {
+        if (!(state instanceof GrowingPlantSnapshot snapshot)) return;
+        for (PlantBlockRenderState plant : snapshot.plants()) {
+            plant.modelState().submitMultiLayer(poseStack, collector, plant.packedLight(),
+                    OverlayTexture.NO_OVERLAY, 0);
         }
     }
 
-    public void drawBlocks(BlockAndTintGetter level, BlockPos machinePos, Direction frontFacing,
-                           double progress, GrowthMode mode, BlockState state,
-                           PoseStack poseStack, MultiBufferSource bufferSource) {
-        for (final Vector3fc offset : getOffsets()) {
-            poseStack.pushPose();
+    private record PlantBlockRenderState(BlockModelRenderState modelState, int packedLight) {}
 
-            Vector3f rotated = new Vector3f(offset);
-            rotated.rotateX(-Mth.HALF_PI);
-            frontFacing.getRotation().transform(rotated);
-            poseStack.translate(rotated.x(), rotated.y(), rotated.z());
-
-            poseStack.translate(0, 1 + EPSILON, 0);
-            poseStack.translate(0.0, (progress * 2) % (1 + EPSILON) - 1, 0.0);
-            if (mode == GrowthMode.GROWING_PLANT && state.getBlock() instanceof GrowingPlantBlock gp) {
-                poseStack.last().pose().rotateAround(
-                        ((GrowingPlantBlockAccessor) gp).gtceu$getGrowthDirection().getRotation(), 0.5f, 0.5f, 0.5f);
-            }
-            RenderUtil.drawBlock(level, machinePos, state, bufferSource, poseStack);
-
-            poseStack.popPose();
+    private record GrowingPlantSnapshot(List<PlantBlockRenderState> plants) implements DynamicRenderSnapshot {
+        private GrowingPlantSnapshot {
+            plants = List.copyOf(plants);
         }
     }
 
@@ -327,28 +359,18 @@ public class GrowingPlantRender extends DynamicRender<IRecipeLogicMachine, Growi
     @FunctionalInterface
     public interface RenderFunction {
 
-        void renderGrowingBlock(BlockAndTintGetter level, BlockPos pos, Vector3f offset, BlockState state,
-                                double progress, MultiBufferSource bufferSource, PoseStack poseStack);
+        Collection<StateWithOffset> configureState(BlockState state, double progress);
 
-        default Collection<StateWithOffset> configureState(BlockState state, double progress) {
-            return Collections.singleton(new StateWithOffset(state));
-        }
+        RenderFunction NO_OP = (state, progress) -> Collections.singleton(new StateWithOffset(state));
 
-        RenderFunction NO_OP = (level, pos, offset, state, progress, bufferSource, poseStack) -> {};
+        RenderFunction SCALE = (state, progress) -> Collections.singleton(new StateWithOffset(state));
 
-        RenderFunction SCALE = (level, pos, offset, state, progress, bufferSource, poseStack) -> {
-            poseStack.last().pose().scaleAround((float) progress, 0.5f, 0.0f, 0.5f);
-            poseStack.last().normal().scale((float) progress);
-
-            RenderUtil.drawBlock(level, pos, state, bufferSource, poseStack);
-        };
-
-        RenderFunction.ConfigureOnly TRANSLATE = (state, progress) -> {
+        RenderFunction TRANSLATE = (state, progress) -> {
             Vector3fc translation = new Vector3f(0, (float) (progress - 1), 0);
             return Collections.singleton(new StateWithOffset(state, translation));
         };
 
-        RenderFunction.ConfigureOnly DOUBLE_BLOCK = (state, progress) -> {
+        RenderFunction DOUBLE_BLOCK = (state, progress) -> {
             Vector3fc translation = new Vector3f(0, (float) (progress * 2 - 1), 0);
 
             if (progress > 0.5) {
@@ -375,15 +397,6 @@ public class GrowingPlantRender extends DynamicRender<IRecipeLogicMachine, Growi
         };
 
         RenderFunction GROWING_PLANT = new RenderFunction() {
-
-            @Override
-            public void renderGrowingBlock(BlockAndTintGetter level, BlockPos pos, Vector3f offset, BlockState state,
-                                           double progress, MultiBufferSource bufferSource, PoseStack poseStack) {
-                GrowingPlantBlockAccessor accessor = (GrowingPlantBlockAccessor) state.getBlock();
-                poseStack.rotateAround(accessor.gtceu$getGrowthDirection().getRotation(), 0.5f, 0.5f, 0.5f);
-
-                RenderUtil.drawBlock(level, pos, state, bufferSource, poseStack);
-            }
 
             @Override
             public Collection<StateWithOffset> configureState(BlockState state, double progress) {
@@ -429,7 +442,7 @@ public class GrowingPlantRender extends DynamicRender<IRecipeLogicMachine, Growi
             }
         };
 
-        RenderFunction.ConfigureOnly STEM = (state, progress) -> {
+        RenderFunction STEM = (state, progress) -> {
             final StemBlock block = (StemBlock) state.getBlock();
             final int growthStage = GTMath.lerpInt(progress, 0, StemBlock.MAX_AGE + 2);
             if (growthStage > StemBlock.MAX_AGE) {
@@ -442,7 +455,7 @@ public class GrowingPlantRender extends DynamicRender<IRecipeLogicMachine, Growi
             return List.of(new StateWithOffset(state));
         };
 
-        TriFunction<IntegerProperty, OptionalInt, OptionalInt, ConfigureOnly> PROPERTY_FUNCTION_CACHE = GTMemoizer
+        TriFunction<IntegerProperty, OptionalInt, OptionalInt, RenderFunction> PROPERTY_FUNCTION_CACHE = GTMemoizer
                 .memoize((property, setMin, setMax) -> {
                     final int presumedMinValue = property.getPossibleValues().getFirst();
                     final int presumedMaxValue = property.getPossibleValues().getLast();
@@ -476,22 +489,8 @@ public class GrowingPlantRender extends DynamicRender<IRecipeLogicMachine, Growi
                     };
                 });
 
-        static RenderFunction.ConfigureOnly byIntegerProperty(IntegerProperty property, OptionalInt min,
-                                                              OptionalInt max) {
+        static RenderFunction byIntegerProperty(IntegerProperty property, OptionalInt min, OptionalInt max) {
             return PROPERTY_FUNCTION_CACHE.apply(property, min, max);
-        }
-
-        @FunctionalInterface
-        interface ConfigureOnly extends RenderFunction {
-
-            @Override
-            default void renderGrowingBlock(BlockAndTintGetter level, BlockPos pos, Vector3f offset, BlockState state,
-                                            double progress, MultiBufferSource bufferSource, PoseStack poseStack) {
-                RenderUtil.drawBlock(level, pos, state, bufferSource, poseStack);
-            }
-
-            @Override
-            Collection<StateWithOffset> configureState(BlockState state, double progress);
         }
     }
 

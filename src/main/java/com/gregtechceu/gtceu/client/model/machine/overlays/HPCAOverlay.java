@@ -3,11 +3,11 @@ package com.gregtechceu.gtceu.client.model.machine.overlays;
 import com.gregtechceu.gtceu.api.machine.trait.recipe.RecipeLogic.Status;
 import com.gregtechceu.gtceu.api.registry.registrate.provider.GTBlockstateProvider;
 import com.gregtechceu.gtceu.common.data.models.GTModels;
+import com.gregtechceu.gtceu.data.model.builder.ModelFileHelper;
 import com.gregtechceu.gtceu.utils.data.RuntimeExistingFileHelper;
 
 import org.jspecify.annotations.NullMarked;
 import net.minecraft.resources.Identifier;
-import net.minecraftforge.common.data.ExistingFileHelper;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,7 +23,7 @@ public class HPCAOverlay {
 
     // spotless:off
     public static HPCAOverlay get(Identifier normalSprite, Identifier damagedSprite,
-                                  ExistingFileHelper fileHelper) {
+                                  ModelFileHelper fileHelper) {
         if (fileHelper instanceof RuntimeExistingFileHelper runtimeFileHelper) {
             // if fileHelper is an instance of RuntimeExistingFileHelper, we have to enable its existence checking.
             // the AutoCloseable warning is suppressed here because there's no clean way to

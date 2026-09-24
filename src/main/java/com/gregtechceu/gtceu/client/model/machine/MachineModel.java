@@ -60,7 +60,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public final class MachineModel extends BaseBakedModel implements ICoverableRenderer, ManuallyConnectedTextureModel,
-                                IBlockEntityRendererBakedModel<MetaMachine> {
+                                IBlockEntityRendererBakedModel<MetaMachine>, MachineRenderModelOwner {
 
     public static final Identifier PIPE_OVERLAY = GTCEu.id("block/overlay/machine/overlay_pipe");
     public static final Identifier FLUID_OUTPUT_OVERLAY = GTCEu.id("block/overlay/machine/overlay_fluid_output");

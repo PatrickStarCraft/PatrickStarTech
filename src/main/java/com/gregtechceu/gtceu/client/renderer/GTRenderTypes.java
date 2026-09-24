@@ -47,6 +47,18 @@ public final class GTRenderTypes {
             .withDepthStencilState(Optional.empty())
             .build();
 
+    private static final RenderPipeline BLOOM_LIGHT_RING_PIPELINE = RenderPipeline.builder(RenderPipelines.GLOBALS_SNIPPET)
+            .withLocation(GTCEu.id("pipeline/bloom_light_ring"))
+            .withBindGroupLayout(BindGroupLayouts.MATRICES_PROJECTION)
+            .withVertexShader("core/position_color")
+            .withFragmentShader("core/position_color")
+            .withVertexBinding(0, DefaultVertexFormat.POSITION_COLOR)
+            .withPrimitiveTopology(PrimitiveTopology.TRIANGLE_STRIP)
+            .withCull(false)
+            .withColorTargetState(new ColorTargetState(BlendFunction.TRANSLUCENT))
+            .withDepthStencilState(Optional.empty())
+            .build();
+
     private static final RenderPipeline BLOOM_PIPELINE = RenderPipeline.builder(RenderPipelines.BLOCK_SNIPPET)
             .withLocation(GTCEu.id("pipeline/bloom"))
             .withVertexShader(GTCEu.id("rendertype_bloom"))
@@ -86,12 +98,15 @@ public final class GTRenderTypes {
             PrimitiveTopology.TRIANGLE_STRIP, RenderPipelines.GUI_TEXTURED_SNIPPET, Optional.of(DepthStencilState.DEFAULT));
 
     private static final List<RenderPipeline> PIPELINES = List.of(
-            LIGHT_RING_PIPELINE, BLOOM_PIPELINE, ENTITY_BLOOM_PIPELINE, MONITOR_PIPELINE, ASSEMBLY_LINE_PIPELINE,
+            LIGHT_RING_PIPELINE, BLOOM_LIGHT_RING_PIPELINE, BLOOM_PIPELINE, ENTITY_BLOOM_PIPELINE, MONITOR_PIPELINE,
+            ASSEMBLY_LINE_PIPELINE,
             PARTICLE_PIPELINE, PARTICLE_NO_DEPTH_WRITE_PIPELINE, BLOOM_PARTICLE_PIPELINE, HIGHLIGHT_PIPELINE,
             GUI_TRIANGLE_STRIP_PIPELINE, GUI_TRIANGLE_FAN_PIPELINE, GUI_OVERLAY_TRIANGLE_FAN_PIPELINE,
             GUI_TEXTURE_TRIANGLE_STRIP_PIPELINE);
 
     private static final RenderType LIGHT_RING = create("light_ring", RenderSetup.builder(LIGHT_RING_PIPELINE).createRenderSetup());
+    private static final RenderType BLOOM_LIGHT_RING = create("bloom_light_ring", RenderSetup.builder(BLOOM_LIGHT_RING_PIPELINE)
+            .setOutputTarget(BLOOM_TARGET).createRenderSetup());
     private static final RenderType BLOOM = create("bloom", RenderSetup.builder(BLOOM_PIPELINE)
             .withTexture("Sampler0", TextureAtlas.LOCATION_BLOCKS)
             .useLightmap()
@@ -174,6 +189,10 @@ public final class GTRenderTypes {
 
     public static RenderType lightRing() {
         return LIGHT_RING;
+    }
+
+    public static RenderType bloomLightRing() {
+        return BLOOM_LIGHT_RING;
     }
 
 
