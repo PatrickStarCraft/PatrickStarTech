@@ -1,35 +1,42 @@
 package com.gregtechceu.gtceu.api.capability;
 
-import net.minecraft.core.Direction;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.neoforged.neoforge.common.util.LazyOptional;
+import com.gregtechceu.gtceu.api.item.component.forge.IComponentCapability;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import net.minecraft.world.item.Item;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.access.ItemAccess;
+import net.neoforged.neoforge.transfer.fluid.FluidResource;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class CombinedCapabilityProvider implements ICapabilityProvider {
+/** Registers the first fluid handler supplied by an item's components with NeoForge's item capability. */
+public final class CombinedCapabilityProvider {
 
-    private final ICapabilityProvider[] providers;
+    private CombinedCapabilityProvider() {}
 
-    public CombinedCapabilityProvider(ICapabilityProvider... providers) {
-        this.providers = providers;
-    }
-
-    public CombinedCapabilityProvider(List<ICapabilityProvider> providers) {
-        this.providers = providers.toArray(new ICapabilityProvider[0]);
-    }
-
-    @Override
-    public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> capability, @Nullable Direction facing) {
-        for (ICapabilityProvider provider : providers) {
-            LazyOptional<T> cap = provider.getCapability(capability, facing);
-            if (cap.isPresent()) {
-                return cap;
+    public static void registerFluidItem(RegisterCapabilitiesEvent event, Item item, Iterable<?> components) {
+        List<IComponentCapability> providers = new ArrayList<>();
+        for (Object component : components) {
+            if (component instanceof IComponentCapability provider) {
+                providers.add(provider);
             }
         }
-        return LazyOptional.empty();
+        if (providers.isEmpty() || event.isItemRegistered(Capabilities.Fluid.ITEM, item)) {
+            return;
+        }
+
+        event.registerItem(Capabilities.Fluid.ITEM, (stack, access) -> {
+            ItemAccess oneByOne = access.oneByOne();
+            for (IComponentCapability provider : providers) {
+                ResourceHandler<FluidResource> handler = provider.createFluidHandler(oneByOne);
+                if (handler != null) {
+                    return handler;
+                }
+            }
+            return null;
+        }, item);
     }
 }

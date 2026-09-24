@@ -12,15 +12,15 @@ import com.gregtechceu.gtceu.integration.recipeviewer.widgets.OreProcessingRecip
 
 import net.minecraft.network.chat.Component;
 
-import brachy.modularui.integration.jei.recipe.ModularUIJeiCategory;
+import brachy.modularui.integration.jei.recipe.ModularUIRecipeCategory;
 import mezz.jei.api.constants.VanillaTypes;
-import mezz.jei.api.forge.ForgeTypes;
+import mezz.jei.api.neoforge.NeoForgeTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.helpers.IJeiHelpers;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
-import mezz.jei.api.recipe.RecipeType;
+import mezz.jei.api.recipe.types.IRecipeType;
 import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
 
@@ -28,9 +28,9 @@ import static com.gregtechceu.gtceu.api.data.tag.TagPrefix.rawOre;
 import static com.gregtechceu.gtceu.common.data.GTMachines.*;
 import static com.gregtechceu.gtceu.common.data.GTMaterials.Iron;
 
-public class GTOreProcessingJeiCategory extends ModularUIJeiCategory<Material> {
+public class GTOreProcessingJeiCategory extends ModularUIRecipeCategory<Material> {
 
-    public final static RecipeType<Material> RECIPE_TYPE = new RecipeType<>(
+    public final static IRecipeType<Material> RECIPE_TYPE = IRecipeType.create(
             GTCEu.id("ore_processing_diagram"), Material.class);
     private final IDrawable icon;
 
@@ -57,35 +57,39 @@ public class GTOreProcessingJeiCategory extends ModularUIJeiCategory<Material> {
     }
 
     @Override
-    public RecipeType<Material> getRecipeType() {
+    public IRecipeType<Material> getRecipeType() {
         return RECIPE_TYPE;
     }
 
     @Override
-    public int getMaxWidth() {
+    public int getWidth() {
         return 180;
     }
 
     @Override
-    public int getMaxHeight() {
+    public int getHeight() {
         return 180;
     }
 
     @Override
-    public void setupRecipeIngredients(IRecipeLayoutBuilder builder, Material material, IFocusGroup focuses) {
+    public void setRecipe(IRecipeLayoutBuilder builder, Material material, IFocusGroup focuses) {
+        super.setRecipe(builder, material, focuses);
         GTOreByProduct byproducts = new GTOreByProduct(material);
 
         byproducts.getItemOutputs().forEach(
-                stack -> builder.addSlot(RecipeIngredientRole.OUTPUT).addIngredient(VanillaTypes.ITEM_STACK, stack));
+                stack -> builder.addInvisibleIngredients(RecipeIngredientRole.OUTPUT)
+                        .addIngredient(VanillaTypes.ITEM_STACK, stack));
 
         var items = byproducts.getItemInputs();
         var fluids = byproducts.getFluidInputs();
 
         items.forEach(list -> list.getStacks().forEach(
-                stack -> builder.addSlot(RecipeIngredientRole.INPUT).addIngredient(VanillaTypes.ITEM_STACK, stack)));
+                stack -> builder.addInvisibleIngredients(RecipeIngredientRole.INPUT)
+                        .addIngredient(VanillaTypes.ITEM_STACK, stack)));
 
         fluids.forEach(list -> list.getStacks().forEach(
-                stack -> builder.addSlot(RecipeIngredientRole.INPUT).addIngredient(ForgeTypes.FLUID_STACK, stack)));
+                stack -> builder.addInvisibleIngredients(RecipeIngredientRole.INPUT)
+                        .addIngredient(NeoForgeTypes.FLUID_STACK, stack)));
     }
 
     @Override

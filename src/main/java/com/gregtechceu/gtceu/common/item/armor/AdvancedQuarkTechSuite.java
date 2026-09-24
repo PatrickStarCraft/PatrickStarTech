@@ -10,7 +10,6 @@ import com.gregtechceu.gtceu.core.IFireImmuneEntity;
 import com.gregtechceu.gtceu.utils.input.SyncedKeyMappings;
 
 import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.core.NonNullList;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -26,17 +25,17 @@ import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
-import com.mojang.datafixers.util.Pair;
-import it.unimi.dsi.fastutil.ints.IntList;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Iterator;
 import java.util.List;
+import java.util.function.Supplier;
 
 public class AdvancedQuarkTechSuite extends QuarkTechSuite implements IJetpack {
 
     // A replacement for checking the current world time, to get around the gamerule that stops it
     private long timer = 0L;
-    private List<Pair<NonNullList<ItemStack>, IntList>> inventoryIndexMap;
+    private List<Supplier<ItemStack>> chargeableSlots;
 
     public AdvancedQuarkTechSuite(int energyPerUse, long capacity, int tier) {
         super(ArmorType.CHESTPLATE, energyPerUse, capacity, tier);
@@ -112,41 +111,33 @@ public class AdvancedQuarkTechSuite extends QuarkTechSuite implements IJetpack {
         if (canShare && !world.isClientSide()) {
             // Check for new things to charge every 5 seconds
             if (timer % 100 == 0)
-                inventoryIndexMap = ArmorUtils.getChargeableItem(player, cont.getTier());
+                chargeableSlots = ArmorUtils.getChargeableItem(player, cont.getTier());
 
-            if (inventoryIndexMap != null && !inventoryIndexMap.isEmpty()) {
-                // Charge all inventory slots
-                for (int i = 0; i < inventoryIndexMap.size(); i++) {
-                    Pair<NonNullList<ItemStack>, IntList> inventoryMap = inventoryIndexMap.get(i);
-                    var inventoryIterator = inventoryMap.getSecond().iterator();
-                    while (inventoryIterator.hasNext()) {
-                        int slot = inventoryIterator.nextInt();
-                        IElectricItem chargable = GTCapabilityHelper.getElectricItem(inventoryMap.getFirst().get(slot));
+            if (chargeableSlots != null && !chargeableSlots.isEmpty()) {
+                Iterator<Supplier<ItemStack>> slots = chargeableSlots.iterator();
+                while (slots.hasNext()) {
+                    IElectricItem chargable = GTCapabilityHelper.getElectricItem(slots.next().get());
 
-                        // Safety check the null, it should not actually happen. Also don't try and charge itself
-                        if (chargable == null || chargable == cont) {
-                            inventoryIterator.remove();
-                            continue;
-                        }
-
-                        long attemptedChargeAmount = chargable.getTransferLimit() * 10;
-
-                        // Accounts for tick differences when charging items
-                        if (chargable.getCharge() < chargable.getMaxCharge() && cont.canUse(attemptedChargeAmount) &&
-                                timer % 10 == 0) {
-                            long delta = chargable.charge(attemptedChargeAmount, cont.getTier(), true, false);
-                            if (delta > 0) {
-                                cont.discharge(delta, cont.getTier(), true, false, false);
-                            }
-                            if (chargable.getCharge() == chargable.getMaxCharge()) {
-                                inventoryIterator.remove();
-                            }
-                            player.inventoryMenu.sendAllDataToRemote();
-                        }
+                    // Don't retain replaced/non-electric slots or try to charge this armor itself.
+                    if (chargable == null || chargable == cont) {
+                        slots.remove();
+                        continue;
                     }
 
-                    if (inventoryMap.getSecond().isEmpty())
-                        inventoryIndexMap.remove(inventoryMap);
+                    long attemptedChargeAmount = chargable.getTransferLimit() * 10;
+
+                    // Accounts for tick differences when charging items
+                    if (chargable.getCharge() < chargable.getMaxCharge() && cont.canUse(attemptedChargeAmount) &&
+                            timer % 10 == 0) {
+                        long delta = chargable.charge(attemptedChargeAmount, cont.getTier(), true, false);
+                        if (delta > 0) {
+                            cont.discharge(delta, cont.getTier(), true, false, false);
+                        }
+                        if (chargable.getCharge() == chargable.getMaxCharge()) {
+                            slots.remove();
+                        }
+                        player.inventoryMenu.sendAllDataToRemote();
+                    }
                 }
             }
         }

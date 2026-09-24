@@ -8,8 +8,10 @@ import com.gregtechceu.gtceu.api.item.component.IItemLifeCycle;
 import com.gregtechceu.gtceu.api.item.data.ElectricItemData;
 
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.Item;
@@ -50,7 +52,7 @@ public class ToggleEnergyConsumerBehavior implements IInteractionItem, IItemLife
     }
 
     @Override
-    public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
+    public void inventoryTick(ItemStack stack, ServerLevel level, Entity entity, @Nullable EquipmentSlot slot) {
         IElectricItem electricItem = GTCapabilityHelper.getElectricItem(stack);
         if (isItemActive(stack) && electricItem != null) {
             boolean shouldRemainActive = drainActivationEnergy(electricItem, false);

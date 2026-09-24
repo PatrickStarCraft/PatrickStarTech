@@ -4,24 +4,25 @@ import org.jspecify.annotations.NullMarked;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.client.renderer.block.BlockAndTintGetter;
+import net.minecraft.world.item.component.CustomData;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.level.BlockAndLightGetter;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.storage.loot.LootParams;
-import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.level.redstone.Orientation;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -90,7 +91,7 @@ public class LampBlock extends Block {
         tag.putBoolean(LampBlock.TAG_BLOOM, (i & LampBlock.BLOOM_FLAG) != 0);
         tag.putBoolean(LampBlock.TAG_LIGHT, (i & LampBlock.LIGHT_FLAG) != 0);
         ItemStack stack = new ItemStack(this);
-        stack.setTag(tag);
+        CustomData.set(DataComponents.CUSTOM_DATA, stack, tag);
         return stack;
     }
 
@@ -112,7 +113,7 @@ public class LampBlock extends Block {
     }
 
     @Override
-    public BlockState getAppearance(BlockState state, BlockAndTintGetter level, BlockPos pos, Direction side,
+    public BlockState getAppearance(BlockState state, BlockAndLightGetter level, BlockPos pos, Direction side,
                                     @Nullable BlockState queryState, @Nullable BlockPos queryPos) {
         return state.getBlock().defaultBlockState();
     }
@@ -125,7 +126,8 @@ public class LampBlock extends Block {
 
     @Override
     @SuppressWarnings("deprecation")
-    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos neighborPos,
+    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock,
+                                @Nullable Orientation orientation,
                                 boolean movedByPiston) {
         if (!level.isClientSide()) {
             update(state, level, pos);
@@ -139,23 +141,11 @@ public class LampBlock extends Block {
     }
 
     @Override
-    public ItemStack getCloneItemStack(BlockState state, HitResult target,
-                                       BlockGetter level, BlockPos pos, Player player) {
-        ItemStack stack = super.getCloneItemStack(state, target, level, pos, player);
-        net.minecraft.world.item.component.CustomData.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA, stack, getTagFromState(state));
+    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state, boolean includeData,
+                                       Player player) {
+        ItemStack stack = super.getCloneItemStack(level, pos, state, includeData, player);
+        CustomData.set(DataComponents.CUSTOM_DATA, stack, getTagFromState(state));
         return stack;
-    }
-
-    @Override
-    public void appendHoverText(ItemStack stack, @Nullable BlockGetter level, List<Component> tooltip,
-                                TooltipFlag flag) {
-        if (stack.has(net.minecraft.core.component.DataComponents.CUSTOM_DATA)) {
-            var tag = com.gregtechceu.gtceu.api.item.data.ItemStackData.read(stack);
-
-            if (isInverted(tag)) tooltip.add(Component.translatable("block.gtceu.lamp.tooltip.inverted"));
-            if (!isBloomEnabled(tag)) tooltip.add(Component.translatable("block.gtceu.lamp.tooltip.no_bloom"));
-            if (!isLightEnabled(tag)) tooltip.add(Component.translatable("block.gtceu.lamp.tooltip.no_light"));
-        }
     }
 
     @Override

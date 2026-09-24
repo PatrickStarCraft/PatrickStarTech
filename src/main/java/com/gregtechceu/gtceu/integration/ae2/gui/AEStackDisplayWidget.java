@@ -4,7 +4,10 @@ import com.gregtechceu.gtceu.common.mui.GTGuiTextures;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
@@ -18,6 +21,7 @@ import brachy.modularui.widget.Widget;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * 18x18 display widget for a single AE2 GenericStack. Reads from a shared mutable list
@@ -53,7 +57,11 @@ public class AEStackDisplayWidget extends Widget<AEStackDisplayWidget> {
         if (stack == null) return;
 
         if (stack.what() instanceof AEItemKey itemKey) {
-            graphics.renderItem(itemKey.toStack(1), 1, 1);
+            ItemStack displayStack = new ItemStack(itemKey.getItem());
+            if (itemKey.hasTag()) {
+                displayStack.set(DataComponents.CUSTOM_DATA, CustomData.of(itemKey.getTag()));
+            }
+            graphics.item(displayStack, 1, 1);
         } else if (stack.what() instanceof AEFluidKey) {
             AEGuiHelper.drawFluid(graphics, stack, 1, 1);
         }
@@ -68,11 +76,12 @@ public class AEStackDisplayWidget extends Widget<AEStackDisplayWidget> {
             if (stack == null) return;
 
             AEGuiHelper.drawSelectionOverlay(context.getGraphics(), 1, 1, 16, 16);
-            context.getGraphics().renderComponentTooltip(
+            context.getGraphics().setTooltipForNextFrame(
                     Minecraft.getInstance().font,
                     List.of(stack.what().getDisplayName(),
                             Component.literal("x" + AEGuiHelper.formatAmountFull(stack.amount()))
                                     .withStyle(ChatFormatting.GRAY)),
+                    Optional.empty(),
                     context.getAbsMouseX(), context.getAbsMouseY());
         }
     }

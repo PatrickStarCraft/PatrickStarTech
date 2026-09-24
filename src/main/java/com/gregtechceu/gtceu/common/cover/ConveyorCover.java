@@ -24,6 +24,7 @@ import com.gregtechceu.gtceu.utils.ItemStackHashStrategy;
 
 import org.jspecify.annotations.NullMarked;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -172,7 +173,8 @@ public class ConveyorCover extends CoverBehavior implements IIOCover, IMuiCover,
     //////////////////////////////////////
 
     @Override
-    public void onNeighborChanged(Block block, BlockPos fromPos, boolean isMoving) {
+    public void onNeighborChanged(Block block, @Nullable BlockPos fromPos, @Nullable Orientation orientation,
+                                  boolean isMoving) {
         subscriptionHandler.updateSubscription();
     }
 

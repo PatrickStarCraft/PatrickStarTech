@@ -4,6 +4,7 @@ import com.gregtechceu.gtceu.api.item.tool.aoe.AoESymmetrical;
 import com.gregtechceu.gtceu.api.item.tool.behavior.IToolBehavior;
 
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -95,7 +96,7 @@ public interface IGTToolDefinition {
 
     boolean canApplyEnchantment(ItemStack stack, Enchantment enchantment);
 
-    Object2IntMap<Enchantment> getDefaultEnchantments(ItemStack stack);
+    Object2IntMap<ResourceKey<Enchantment>> getDefaultEnchantments(ItemStack stack);
 
     /**
      * Misc

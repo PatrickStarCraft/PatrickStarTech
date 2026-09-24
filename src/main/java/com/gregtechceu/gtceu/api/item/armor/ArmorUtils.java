@@ -9,11 +9,12 @@ import com.gregtechceu.gtceu.utils.ItemStackHashStrategy;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.core.NonNullList;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.InteractionResult;
@@ -22,18 +23,16 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.minecraftforge.event.ForgeEventFactory;
+import net.neoforged.neoforge.event.EventHooks;
 
-import com.mojang.datafixers.util.Pair;
-import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntIntPair;
-import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenCustomHashMap;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
 
@@ -62,52 +61,31 @@ public class ArmorUtils {
      * @param tier of charger
      * @return Map of the inventory and a list of the index of a chargable item
      */
-    public static List<Pair<NonNullList<ItemStack>, IntList>> getChargeableItem(Player player, int tier) {
-        List<Pair<NonNullList<ItemStack>, IntList>> inventorySlotMap = new ArrayList<>();
+    public static List<Supplier<ItemStack>> getChargeableItem(Player player, int tier) {
+        List<Supplier<ItemStack>> chargeableSlots = new ArrayList<>();
 
-        IntList openMainSlots = new IntArrayList();
-        for (int i = 0; i < player.getInventory().getNonEquipmentItems().size(); i++) {
-            ItemStack current = player.getInventory().getNonEquipmentItems().get(i);
+        var inventory = player.getInventory().getNonEquipmentItems();
+        for (int i = 0; i < inventory.size(); i++) {
+            int slot = i;
+            ItemStack current = inventory.get(slot);
             IElectricItem item = GTCapabilityHelper.getElectricItem(current);
             if (item == null) continue;
 
             if (isPossibleToCharge(current) && item.getTier() <= tier) {
-                openMainSlots.add(i);
+                chargeableSlots.add(() -> player.getInventory().getNonEquipmentItems().get(slot));
             }
         }
 
-        if (!openMainSlots.isEmpty()) {
-            inventorySlotMap.add(Pair.of(player.getInventory().getNonEquipmentItems(), openMainSlots));
-        }
-
-        IntList openArmorSlots = new IntArrayList();
-        for (int i = 0; i < player.getInventory().armor.size(); i++) {
-            ItemStack current = player.getInventory().armor.get(i);
+        for (EquipmentSlot slot : List.of(EquipmentSlot.FEET, EquipmentSlot.LEGS, EquipmentSlot.CHEST,
+                EquipmentSlot.HEAD, EquipmentSlot.OFFHAND)) {
+            ItemStack current = player.getItemBySlot(slot);
             IElectricItem item = GTCapabilityHelper.getElectricItem(current);
-            if (item == null) {
-                continue;
-            }
-
-            if (isPossibleToCharge(current) && item.getTier() <= tier) {
-                openArmorSlots.add(i);
+            if (item != null && isPossibleToCharge(current) && item.getTier() <= tier) {
+                chargeableSlots.add(() -> player.getItemBySlot(slot));
             }
         }
 
-        if (!openArmorSlots.isEmpty()) {
-            inventorySlotMap.add(Pair.of(player.getInventory().armor, openArmorSlots));
-        }
-
-        ItemStack offHand = player.getInventory().offhand.get(0);
-        IElectricItem offHandItem = GTCapabilityHelper.getElectricItem(offHand);
-        if (offHandItem == null) {
-            return inventorySlotMap;
-        }
-
-        if (isPossibleToCharge(offHand) && offHandItem.getTier() <= tier) {
-            inventorySlotMap.add(Pair.of(player.getInventory().offhand, new IntArrayList(new int[] { 0 })));
-        }
-
-        return inventorySlotMap;
+        return chargeableSlots;
     }
 
     /**
@@ -154,13 +132,9 @@ public class ArmorUtils {
      * @return result of eating food
      */
     public static InteractionResult eat(Player player, ItemStack food) {
-        if (!food.isEdible()) {
-            return InteractionResult.FAIL;
-        }
-
-        FoodProperties foodItem = food.getFoodProperties(player);
+        FoodProperties foodItem = food.get(DataComponents.FOOD);
         if (foodItem != null && player.getFoodData().needsFood()) {
-            ItemStack result = ForgeEventFactory.onItemUseFinish(player, food.copy(), player.getUseItemRemainingTicks(),
+            ItemStack result = EventHooks.onItemUseFinish(player, food.copy(), player.getUseItemRemainingTicks(),
                     food.finishUsingItem(player.level(), player));
             return InteractionResult.SUCCESS.heldItemTransformedTo(result);
         } else {
@@ -227,7 +201,7 @@ public class ArmorUtils {
         public void draw(GuiGraphicsExtractor poseStack) {
             for (int i = 0; i < stringAmount; i++) {
                 IntIntPair coords = this.getStringCoord(i);
-                poseStack.drawString(mc.font, stringList.get(i), coords.firstInt(), coords.secondInt(), 0xFFFFFF,
+                poseStack.text(mc.font, stringList.get(i), coords.firstInt(), coords.secondInt(), 0xFFFFFF,
                         false);
             }
         }

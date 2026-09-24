@@ -21,6 +21,7 @@ import net.minecraft.world.entity.animal.golem.IronGolem;
 import net.minecraft.world.entity.monster.spider.Spider;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.ItemAbility;
 import net.neoforged.neoforge.common.ItemAbilities;
@@ -40,13 +41,19 @@ public class GTToolType {
     @Getter
     private static final Map<String, GTToolType> types = new HashMap<>();
 
+    private static final ItemAbility SWORD_DIG = ItemAbility.get("sword_dig");
+    private static final ItemAbility PICKAXE_DIG = ItemAbility.get("pickaxe_dig");
+    private static final ItemAbility SHOVEL_DIG = ItemAbility.get("shovel_dig");
+    private static final ItemAbility AXE_DIG = ItemAbility.get("axe_dig");
+    private static final ItemAbility HOE_DIG = ItemAbility.get("hoe_dig");
+
     public static final GTToolType SWORD = GTToolType.builder("sword")
             .toolTag(ToolItemTagType.MATCH, ItemTags.SWORDS)
             .harvestTag(BlockTags.SWORD_EFFICIENT)
             .toolStats(b -> b.attacking().attackDamage(3.0F).attackSpeed(-2.4F))
             .constructor(GTSwordItem::new)
             .toolClassNames("sword")
-            .defaultActions(ItemAbilities.DEFAULT_SWORD_ACTIONS)
+            .defaultActions(SWORD_DIG, ItemAbilities.SWORD_SWEEP)
             .materialAmount(2 * GTValues.M)
             .build();
     public static final GTToolType PICKAXE = GTToolType.builder("pickaxe")
@@ -56,7 +63,7 @@ public class GTToolType {
             .toolStats(b -> b.blockBreaking().attackDamage(1.0F).attackSpeed(-2.8F)
                     .behaviors(TorchPlaceBehavior.INSTANCE))
             .toolClassNames("pickaxe")
-            .defaultActions(ItemAbilities.DEFAULT_PICKAXE_ACTIONS)
+            .defaultActions(PICKAXE_DIG)
             .materialAmount(3 * GTValues.M)
             .build();
     public static final GTToolType SHOVEL = GTToolType.builder("shovel")
@@ -66,7 +73,7 @@ public class GTToolType {
                     .behaviors(GrassPathBehavior.INSTANCE, DouseCampfireBehavior.INSTANCE))
             .constructor(GTShovelItem::new)
             .toolClassNames("shovel")
-            .defaultActions(ItemAbilities.SHOVEL_DIG)
+            .defaultActions(SHOVEL_DIG)
             .materialAmount(GTValues.M)
             .build();
     public static final GTToolType AXE = GTToolType.builder("axe")
@@ -80,7 +87,7 @@ public class GTToolType {
             .constructor(GTAxeItem::new)
             .toolClassNames("axe")
             .materialAmount(3 * GTValues.M)
-            .defaultActions(ItemAbilities.AXE_DIG)
+            .defaultActions(AXE_DIG)
             .build();
     public static final GTToolType HOE = GTToolType.builder("hoe")
             .toolTag(ToolItemTagType.MATCH, ItemTags.HOES)
@@ -88,7 +95,7 @@ public class GTToolType {
             .toolStats(b -> b.cannotAttack().attackSpeed(-1.0F).behaviors(HoeGroundBehavior.INSTANCE))
             .constructor(GTHoeItem::new)
             .toolClassNames("hoe")
-            .defaultActions(ItemAbilities.HOE_DIG)
+            .defaultActions(HOE_DIG)
             .materialAmount(2 * GTValues.M)
             .build();
 
@@ -100,7 +107,7 @@ public class GTToolType {
                     .durabilityMultiplier(3.0F)
                     .behaviors(AOEConfigUIBehavior.INSTANCE, TorchPlaceBehavior.INSTANCE))
             .toolClasses(GTToolType.PICKAXE)
-            .defaultActions(ItemAbilities.DEFAULT_PICKAXE_ACTIONS)
+            .defaultActions(PICKAXE_DIG)
             .materialAmount(6 * GTValues.M)
             .build();
     public static final GTToolType SPADE = GTToolType.builder("spade")
@@ -113,7 +120,7 @@ public class GTToolType {
                             DouseCampfireBehavior.INSTANCE))
             .constructor(GTShovelItem::new)
             .toolClasses(GTToolType.SHOVEL)
-            .defaultActions(ItemAbilities.SHOVEL_DIG)
+            .defaultActions(SHOVEL_DIG)
             .materialAmount(3 * GTValues.M)
             .build();
     public static final GTToolType SCYTHE = GTToolType.builder("scythe")
@@ -127,7 +134,7 @@ public class GTToolType {
             .constructor(GTHoeItem::new)
             .toolClassNames("scythe")
             .toolClasses(GTToolType.HOE)
-            .defaultActions(ItemAbilities.HOE_DIG)
+            .defaultActions(HOE_DIG)
             .materialAmount(3 * GTValues.M)
             .build();
 
@@ -154,7 +161,7 @@ public class GTToolType {
             .sound(GTSoundEntries.FORGE_HAMMER)
             .symbol('h')
             .toolClasses(GTToolType.PICKAXE)
-            .defaultActions(ItemAbilities.DEFAULT_PICKAXE_ACTIONS)
+            .defaultActions(PICKAXE_DIG)
             .defaultActions(GTToolActions.DEFAULT_HAMMER_ACTIONS)
             .materialAmount(6 * GTValues.M)
             .build();
@@ -247,7 +254,7 @@ public class GTToolType {
     public static final GTToolType BUTCHERY_KNIFE = GTToolType.builder("butchery_knife")
             .toolTag(ToolItemTagType.MATCH, CustomTags.BUTCHERY_KNIVES)
             .toolStats(b -> b.attacking().attackDamage(1.5F).attackSpeed(-1.3F)
-                    .defaultEnchantment(Enchantments.MOB_LOOTING, 3))
+                    .defaultEnchantment(Enchantments.LOOTING, 3))
             .constructor(GTSwordItem::new)
             .materialAmount(4 * GTValues.M)
             .build();
@@ -377,7 +384,7 @@ public class GTToolType {
             .sound(GTSoundEntries.CHAINSAW_TOOL, true)
             .electric(GTValues.LV)
             .toolClasses(GTToolType.AXE)
-            .defaultActions(ItemAbilities.AXE_DIG, ItemAbilities.SWORD_DIG, ItemAbilities.HOE_DIG,
+            .defaultActions(AXE_DIG, SWORD_DIG, HOE_DIG,
                     GTToolActions.SAW_DIG)
             .build();
     public static final GTToolType CHAINSAW_HV = GTToolType.builder("hv_chainsaw")
@@ -396,7 +403,7 @@ public class GTToolType {
             .sound(GTSoundEntries.CHAINSAW_TOOL, true)
             .electric(GTValues.HV)
             .toolClasses(GTToolType.AXE)
-            .defaultActions(ItemAbilities.AXE_DIG, ItemAbilities.SWORD_DIG, ItemAbilities.HOE_DIG,
+            .defaultActions(AXE_DIG, SWORD_DIG, HOE_DIG,
                     GTToolActions.SAW_DIG)
             .build();
     public static final GTToolType CHAINSAW_IV = GTToolType.builder("iv_chainsaw")
@@ -415,7 +422,7 @@ public class GTToolType {
             .sound(GTSoundEntries.CHAINSAW_TOOL, true)
             .electric(GTValues.IV)
             .toolClasses(GTToolType.AXE)
-            .defaultActions(ItemAbilities.AXE_DIG, ItemAbilities.SWORD_DIG, ItemAbilities.HOE_DIG,
+            .defaultActions(AXE_DIG, SWORD_DIG, HOE_DIG,
                     GTToolActions.SAW_DIG)
             .build();
     public static final GTToolType WRENCH_LV = GTToolType.builder("lv_wrench")

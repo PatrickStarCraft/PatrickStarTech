@@ -18,6 +18,7 @@ import com.gregtechceu.gtceu.integration.recipeviewer.jei.subtype.PotionFluidSub
 
 import org.jspecify.annotations.NullMarked;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.alchemy.Potion;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -25,9 +26,9 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import lombok.Getter;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
-import mezz.jei.api.forge.ForgeTypes;
 import mezz.jei.api.helpers.IJeiHelpers;
 import mezz.jei.api.helpers.IPlatformFluidHelper;
+import mezz.jei.api.neoforge.NeoForgeTypes;
 import mezz.jei.api.registration.*;
 import mezz.jei.api.runtime.IJeiRuntime;
 
@@ -112,8 +113,9 @@ public class GTJEIPlugin implements IModPlugin {
     @Override
     public void registerItemSubtypes(ISubtypeRegistration registration) {
         if (GTCEu.Mods.isEMILoaded()) return;
-        registration.useNbtForSubtypes(GTItems.PROGRAMMED_CIRCUIT.asItem());
-        registration.useNbtForSubtypes(GTItems.TURBINE_ROTOR.asItem());
+        registration.registerFromDataComponentTypes(GTItems.PROGRAMMED_CIRCUIT.asItem(), DataComponents.CUSTOM_DATA);
+        registration.registerFromDataComponentTypes(GTItems.TURBINE_ROTOR.asItem(),
+                DataComponents.CUSTOM_DATA, DataComponents.DAMAGE);
     }
 
     @Override
@@ -122,8 +124,8 @@ public class GTJEIPlugin implements IModPlugin {
         if (GTCEu.Mods.isEMILoaded()) return;
         PotionFluidSubtypeInterpreter interpreter = new PotionFluidSubtypeInterpreter();
         PotionFluid potionFluid = GTFluids.POTION.get();
-        registration.registerSubtypeInterpreter(ForgeTypes.FLUID_STACK, potionFluid.getSource(), interpreter);
-        registration.registerSubtypeInterpreter(ForgeTypes.FLUID_STACK, potionFluid.getFlowing(), interpreter);
+        registration.registerSubtypeInterpreter(NeoForgeTypes.FLUID_STACK, potionFluid.getSource(), interpreter);
+        registration.registerSubtypeInterpreter(NeoForgeTypes.FLUID_STACK, potionFluid.getFlowing(), interpreter);
     }
 
     @Override
@@ -134,6 +136,6 @@ public class GTJEIPlugin implements IModPlugin {
             FluidStack potionFluid = PotionFluid.of(1000, potion);
             potionFluids.add(potionFluid);
         }
-        registration.addExtraIngredients(ForgeTypes.FLUID_STACK, potionFluids);
+        registration.addExtraIngredients(NeoForgeTypes.FLUID_STACK, potionFluids);
     }
 }

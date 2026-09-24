@@ -4,25 +4,28 @@ import com.gregtechceu.gtceu.GTCEu;
 import com.gregtechceu.gtceu.api.addon.AddonFinder;
 import com.gregtechceu.gtceu.api.addon.IGTAddon;
 import com.gregtechceu.gtceu.config.ConfigHolder;
+import com.gregtechceu.gtceu.data.model.builder.BlockModelBuilder;
+import com.gregtechceu.gtceu.data.model.builder.ItemModelBuilder;
+import com.gregtechceu.gtceu.data.model.builder.ModelBuilder;
 
 import org.jspecify.annotations.NullMarked;
 import net.minecraft.SharedConstants;
+import net.minecraft.client.data.models.blockstates.BlockModelDefinitionGenerator;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModelDispatcher;
 import net.minecraft.client.renderer.texture.atlas.SpriteSource;
 import net.minecraft.client.renderer.texture.atlas.SpriteSources;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.data.models.blockstates.BlockStateGenerator;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.FileToIdConverter;
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.packs.PackLocationInfo;
 import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.PackType;
-import net.minecraft.server.packs.metadata.MetadataSectionSerializer;
+import net.minecraft.server.packs.metadata.MetadataSectionType;
 import net.minecraft.server.packs.metadata.pack.PackMetadataSection;
+import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.server.packs.resources.IoSupplier;
-import net.minecraftforge.client.model.generators.BlockModelBuilder;
-import net.minecraftforge.client.model.generators.ItemModelBuilder;
-import net.minecraftforge.client.model.generators.ModelBuilder;
-
+import net.minecraft.util.InclusiveRange;
 import com.google.common.collect.Sets;
 import com.google.gson.JsonElement;
 import com.mojang.serialization.JsonOps;
@@ -143,8 +146,13 @@ public class GTDynamicResourcePack implements PackResources {
         addBlockState(loc, generator.get());
     }
 
-    public static void addBlockState(BlockStateGenerator generator) {
-        addBlockState(BuiltInRegistries.BLOCK.getKey(generator.getBlock()), generator.get());
+    public static void addBlockState(BlockModelDefinitionGenerator generator) {
+        JsonElement definition = BlockStateModelDispatcher.CODEC.encodeStart(JsonOps.INSTANCE, generator.create())
+                .getOrThrow(error -> {
+                    GTCEu.LOGGER.error("Failed to encode dynamic blockstate for {}: {}", generator.block(), error);
+                    return new IllegalStateException(error);
+                });
+        addBlockState(BuiltInRegistries.BLOCK.getKey(generator.block()), definition);
     }
 
     public static void addAtlasSpriteSource(Identifier atlasLoc, SpriteSource source) {
@@ -228,10 +236,10 @@ public class GTDynamicResourcePack implements PackResources {
     @SuppressWarnings("unchecked")
     @Nullable
     @Override
-    public <T> T getMetadataSection(MetadataSectionSerializer<T> metaReader) {
-        if (metaReader == PackMetadataSection.TYPE) {
+    public <T> T getMetadataSection(MetadataSectionType<T> metaReader) {
+        if (metaReader == PackMetadataSection.CLIENT_TYPE) {
             return (T) new PackMetadataSection(Component.literal("GTCEu dynamic assets"),
-                    SharedConstants.getCurrentVersion().getPackVersion(PackType.CLIENT_RESOURCES));
+                    new InclusiveRange<>(SharedConstants.getCurrentVersion().packVersion(PackType.CLIENT_RESOURCES)));
         }
         return null;
     }
@@ -239,6 +247,12 @@ public class GTDynamicResourcePack implements PackResources {
     @Override
     public String packId() {
         return this.name;
+    }
+
+    @Override
+    public PackLocationInfo location() {
+        return new PackLocationInfo(this.name, Component.literal(this.name), PackSource.BUILT_IN,
+                java.util.Optional.empty());
     }
 
     public boolean isBuiltin() {

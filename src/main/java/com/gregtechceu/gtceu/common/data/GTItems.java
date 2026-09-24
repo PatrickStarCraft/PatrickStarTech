@@ -19,7 +19,6 @@ import com.gregtechceu.gtceu.api.item.TagPrefixItem;
 import com.gregtechceu.gtceu.api.item.armor.ArmorComponentItem;
 import com.gregtechceu.gtceu.api.item.component.*;
 import com.gregtechceu.gtceu.api.item.component.prospector.ProspectorMode;
-import com.gregtechceu.gtceu.api.item.tool.MaterialToolTier;
 import com.gregtechceu.gtceu.api.registry.registrate.provider.GTBlockstateProvider;
 import com.gregtechceu.gtceu.common.cover.ConveyorCover;
 import com.gregtechceu.gtceu.common.cover.PumpCover;
@@ -64,7 +63,6 @@ import net.minecraft.world.level.material.Fluids;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.common.Tags;
-import net.minecraftforge.common.TierSortingRegistry;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.SimpleFluidContent;
 import net.neoforged.neoforge.fluids.FluidType;
@@ -2657,13 +2655,6 @@ public class GTItems {
         return item -> item.attachComponents(components);
     }
 
-    @SuppressWarnings("RedundantCast")
-    public static void registerToolTier(MaterialToolTier tier, Identifier id, Collection<Identifier> before,
-                                        Collection<Identifier> after) {
-        TierSortingRegistry.registerTier(tier, id, Arrays.asList((Object[]) before.toArray(Identifier[]::new)),
-                Arrays.asList((Object[]) after.toArray(Identifier[]::new)));
-    }
-
     private static Component itemRateTooltip(int tier) {
         var itemsPerSecond = ConveyorCover.CONVEYOR_SCALING.applyAsInt(tier);
         return itemsPerSecond > 64 ?
@@ -2675,10 +2666,6 @@ public class GTItems {
         var mbPerTick = PumpCover.PUMP_SCALING.applyAsInt(tier);
         return Component.translatable("gtceu.universal.tooltip.fluid_transfer_rate",
                 FormattingUtil.formatNumbers(mbPerTick));
-    }
-
-    public static Identifier getTierName(Tier tier) {
-        return TierSortingRegistry.getName(tier);
     }
 
     @NotNull

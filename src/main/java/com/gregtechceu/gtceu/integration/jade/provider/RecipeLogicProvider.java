@@ -77,10 +77,10 @@ public class RecipeLogicProvider extends MachineTraitProvider<RecipeLogic, Compo
     protected void addTooltip(CompoundTag capData, ITooltip tooltip, Player player, BlockAccessor block,
                               BlockEntity blockEntity, IPluginConfig config) {
         if (capData.getBooleanOr("Working", false)) {
-            var recipeInfo = capData.getCompound("Recipe");
+            var recipeInfo = capData.getCompoundOrEmpty("Recipe");
             if (!recipeInfo.isEmpty()) {
-                var EUt = recipeInfo.getLong("EUt");
-                var isInput = recipeInfo.getBoolean("isInput");
+                var EUt = recipeInfo.getLongOr("EUt", 0L);
+                var isInput = recipeInfo.getBooleanOr("isInput", false);
                 boolean isSteam = false;
 
                 if (EUt > 0) {
@@ -98,7 +98,7 @@ public class RecipeLogicProvider extends MachineTraitProvider<RecipeLogic, Compo
                         text = Component.translatable("gtceu.jade.fluid_use", FormattingUtil.formatNumbers(EUt))
                                 .withStyle(ChatFormatting.GREEN);
                     } else {
-                        var voltage = recipeInfo.getLong("voltage");
+                        var voltage = recipeInfo.getLongOr("voltage", 0L);
                         var tier = GTUtil.getTierByVoltage(voltage);
                         float minAmperage = (float) EUt / voltage;
 
@@ -129,7 +129,7 @@ public class RecipeLogicProvider extends MachineTraitProvider<RecipeLogic, Compo
                         tooltip.add(Component.translatable("gtceu.top.energy_consumption").append(" ").append(text));
                     } else {
                         tooltip.add(Component.translatable("gtceu.top.energy_production").append(" ").append(text));
-                        long generatorPower = recipeInfo.getLong("generatorPower");
+                        long generatorPower = recipeInfo.getLongOr("generatorPower", 0L);
                         if (generatorPower > 0 && generatorPower < EUt) {
                             tooltip.add(Component.translatable("gtceu.jade.generator.too_small")
                                     .withStyle(ChatFormatting.RED));

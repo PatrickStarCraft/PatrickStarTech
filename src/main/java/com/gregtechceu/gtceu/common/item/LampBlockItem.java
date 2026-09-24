@@ -2,12 +2,18 @@ package com.gregtechceu.gtceu.common.item;
 
 import com.gregtechceu.gtceu.client.renderer.item.LampItemRenderer;
 import com.gregtechceu.gtceu.common.block.LampBlock;
+import com.gregtechceu.gtceu.api.item.data.ItemStackData;
 
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item.TooltipContext;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
@@ -43,13 +49,25 @@ public class LampBlockItem extends BlockItem {
     }
 
     public BlockState getStateFromStack(ItemStack stack, BlockState baseState) {
-        if (com.gregtechceu.gtceu.api.item.data.ItemStackData.readNullable(stack) == null || !stack.is(this)) {
+        if (ItemStackData.readNullable(stack) == null || !stack.is(this)) {
             return baseState;
         }
-        var tag = com.gregtechceu.gtceu.api.item.data.ItemStackData.read(stack);
+        var tag = ItemStackData.read(stack);
         return baseState.setValue(LampBlock.INVERTED, isInverted(tag))
                 .setValue(LampBlock.BLOOM, isBloomEnabled(tag))
                 .setValue(LampBlock.LIGHT, isLightEnabled(tag));
+    }
+
+    @Override
+    public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay display,
+                                Consumer<Component> tooltip, TooltipFlag flag) {
+        super.appendHoverText(stack, context, display, tooltip, flag);
+        if (stack.has(DataComponents.CUSTOM_DATA)) {
+            var tag = ItemStackData.read(stack);
+            if (isInverted(tag)) tooltip.accept(Component.translatable("block.gtceu.lamp.tooltip.inverted"));
+            if (!isBloomEnabled(tag)) tooltip.accept(Component.translatable("block.gtceu.lamp.tooltip.no_bloom"));
+            if (!isLightEnabled(tag)) tooltip.accept(Component.translatable("block.gtceu.lamp.tooltip.no_light"));
+        }
     }
 
     public void fillItemCategory(CreativeModeTab category, NonNullList<ItemStack> items) {

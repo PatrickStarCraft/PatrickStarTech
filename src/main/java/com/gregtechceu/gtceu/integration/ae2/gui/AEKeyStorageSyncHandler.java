@@ -2,7 +2,7 @@ package com.gregtechceu.gtceu.integration.ae2.gui;
 
 import com.gregtechceu.gtceu.integration.ae2.utils.KeyStorage;
 
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 
 import appeng.api.stacks.AEKey;
 import appeng.api.stacks.GenericStack;
@@ -28,7 +28,7 @@ import java.util.Set;
  * triggers DynamicLinkedSyncHandler to rebuild the Grid with the correct widget count.
  */
 @SuppressWarnings("unchecked")
-public class AEKeyStorageSyncHandler extends ValueSyncHandler<List<GenericStack>, AEKeyStorageSyncHandler> {
+public class AEKeyStorageSyncHandler extends ValueSyncHandler<RegistryFriendlyByteBuf, List<GenericStack>, AEKeyStorageSyncHandler> {
 
     private static final Comparator<GenericStack> BY_AMOUNT_DESC = (a, b) -> Long.compare(b.amount(), a.amount());
 
@@ -110,7 +110,7 @@ public class AEKeyStorageSyncHandler extends ValueSyncHandler<List<GenericStack>
     }
 
     @Override
-    public void write(FriendlyByteBuf buffer) {
+    public void write(RegistryFriendlyByteBuf buffer) {
         buffer.writeVarInt(value.size());
         for (GenericStack stack : value) {
             GenericStack.writeBuffer(stack, buffer);
@@ -118,7 +118,7 @@ public class AEKeyStorageSyncHandler extends ValueSyncHandler<List<GenericStack>
     }
 
     @Override
-    public void read(FriendlyByteBuf buffer) {
+    public void read(RegistryFriendlyByteBuf buffer) {
         int size = buffer.readVarInt();
 
         List<GenericStack> incoming = new ArrayList<>(size);

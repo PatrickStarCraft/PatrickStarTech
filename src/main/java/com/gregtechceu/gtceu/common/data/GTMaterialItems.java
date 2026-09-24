@@ -17,6 +17,8 @@ import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.equipment.ArmorType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.level.ItemLike;
 
 import com.google.common.collect.ArrayTable;
@@ -91,7 +93,7 @@ public class GTMaterialItems {
                 .setData(ProviderType.LANG, NonNullBiConsumer.noop())
                 .transform(GTItems.unificationItem(tagPrefix, material))
                 .properties(p -> p.stacksTo(tagPrefix.maxStackSize()))
-                .model(NonNullBiConsumer.noop())
+                .model(() -> NonNullBiConsumer.noop())
                 .onRegister(GTItems::cauldronInteraction)
                 .register());
     }
@@ -115,13 +117,26 @@ public class GTMaterialItems {
     @SuppressWarnings("unchecked")
     private static void generateTool(Material material, GTToolType toolType, GTRegistrate registrate) {
         var tier = material.getToolTier();
-        TOOL_ITEMS.put(material, toolType, (ItemProviderEntry<Item, ? extends Item>) (ItemProviderEntry<?, ?>) registrate
-                .item(toolType.idFormat.formatted(tier.material.getName()),
+        var toolItem = registrate.item(toolType.idFormat.formatted(tier.material.getName()),
                         p -> toolType.constructor.apply(toolType, tier, material,
                                 toolType.toolDefinition, p).asItem())
-                .properties(p -> p.craftRemainder(Items.AIR))
+                .properties(p -> p.craftRemainder(Items.AIR).enchantable(material.getProperty(PropertyKey.TOOL)
+                        .getEnchantability()))
+                .tag(ItemTags.VANISHING_ENCHANTABLE);
+        if (!material.getProperty(PropertyKey.TOOL).isUnbreakable()) {
+            toolItem.tag(ItemTags.DURABILITY_ENCHANTABLE);
+        }
+        if (toolType.toolDefinition.isSuitableForBlockBreak(ItemStack.EMPTY)) {
+            toolItem.tag(ItemTags.MINING_ENCHANTABLE, ItemTags.MINING_LOOT_ENCHANTABLE);
+        }
+        if (toolType.toolDefinition.isSuitableForAttacking(ItemStack.EMPTY)) {
+            toolItem.tag(ItemTags.MELEE_WEAPON_ENCHANTABLE, ItemTags.WEAPON_ENCHANTABLE,
+                    ItemTags.SHARP_WEAPON_ENCHANTABLE, ItemTags.FIRE_ASPECT_ENCHANTABLE,
+                    ItemTags.SWEEPING_ENCHANTABLE);
+        }
+        TOOL_ITEMS.put(material, toolType, (ItemProviderEntry<Item, ? extends Item>) (ItemProviderEntry<?, ?>) toolItem
                 .setData(ProviderType.LANG, NonNullBiConsumer.noop())
-                .model(NonNullBiConsumer.noop())
+                .model(() -> NonNullBiConsumer.noop())
                 .color(() -> IGTTool::tintColor)
                 .register());
     }
@@ -146,7 +161,7 @@ public class GTMaterialItems {
                             p -> new GTDyeableArmorItem(property.getArmorMaterial(), type, p,
                                     material, property))
                     .setData(ProviderType.LANG, NonNullBiConsumer.noop())
-                    .model(NonNullBiConsumer.noop())
+                    .model(() -> NonNullBiConsumer.noop())
                     .color(() -> GTArmorItem::tintColor)
                     .register());
         } else {
@@ -155,7 +170,7 @@ public class GTMaterialItems {
                             p -> new GTArmorItem(property.getArmorMaterial(), type, p,
                                     material, property))
                     .setData(ProviderType.LANG, NonNullBiConsumer.noop())
-                    .model(NonNullBiConsumer.noop())
+                    .model(() -> NonNullBiConsumer.noop())
                     .color(() -> GTArmorItem::tintColor)
                     .register());
         }

@@ -25,6 +25,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.redstone.Orientation;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
 
 import brachy.modularui.drawable.UITexture;
@@ -122,7 +123,15 @@ public abstract class CoverBehavior implements ISyncManaged, IToolGridHighlight,
      */
     public void onRemoved() {}
 
-    public void onNeighborChanged(Block block, BlockPos fromPos, boolean isMoving) {}
+    public void onNeighborChanged(Block block, BlockPos fromPos, boolean isMoving) {
+        onNeighborChanged(block, fromPos, null, isMoving);
+    }
+
+    /**
+     * Called for a block neighbor update. The engine may supply an orientation without the source position.
+     */
+    public void onNeighborChanged(Block block, @Nullable BlockPos fromPos, @Nullable Orientation orientation,
+                                  boolean isMoving) {}
 
     public void setRedstoneSignalOutput(int redstoneSignalOutput) {
         if (this.redstoneSignalOutput == redstoneSignalOutput) return;

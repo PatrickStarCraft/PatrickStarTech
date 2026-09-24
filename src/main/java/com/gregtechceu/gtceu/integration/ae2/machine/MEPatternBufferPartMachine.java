@@ -34,6 +34,7 @@ import com.gregtechceu.gtceu.utils.ItemStackHashStrategy;
 
 import org.jspecify.annotations.NullMarked;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -44,6 +45,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.material.Fluid;
 import com.gregtechceu.gtceu.api.sync_system.NBTSerializable;
@@ -868,7 +870,8 @@ public class MEPatternBufferPartMachine extends MEBusPartMachine
             } else {
                 return new PatternContainerGroup(
                         AEItemKey.of(GTAEMachines.ME_PATTERN_BUFFER.getItem()),
-                        GTAEMachines.ME_PATTERN_BUFFER.get().getDefinition().getItem().getDescription(),
+                        Component.translatable(
+                                GTAEMachines.ME_PATTERN_BUFFER.get().getDefinition().getItem().getDescriptionId()),
                         Collections.emptyList());
             }
         }
@@ -882,8 +885,9 @@ public class MEPatternBufferPartMachine extends MEBusPartMachine
 
     @Override
     public InteractionResult onDataStickShiftUse(Player player, ItemStack dataStick) {
-        dataStick.getOrCreateTag().putIntArray("pos",
-                new int[] { getBlockPos().getX(), getBlockPos().getY(), getBlockPos().getZ() });
+        CustomData.update(DataComponents.CUSTOM_DATA, dataStick,
+                tag -> tag.putIntArray("pos",
+                        new int[] { getBlockPos().getX(), getBlockPos().getY(), getBlockPos().getZ() }));
         return InteractionResult.SUCCESS;
     }
 

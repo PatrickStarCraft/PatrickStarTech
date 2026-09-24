@@ -50,6 +50,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.storage.loot.LootParams;
@@ -110,12 +111,13 @@ public abstract class PipeBlock<PipeType extends Enum<PipeType> & IPipeType<Node
     }
 
     @Override
-    public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level,
-                                  BlockPos pos, BlockPos neighborPos) {
+    public BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess ticks, BlockPos pos,
+                                  Direction direction, BlockPos neighborPos, BlockState neighborState,
+                                  RandomSource random) {
         if (state.getValue(BlockStateProperties.WATERLOGGED)) {
-            level.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
+            ticks.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
         }
-        return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
+        return super.updateShape(state, level, ticks, pos, direction, neighborPos, neighborState, random);
     }
 
     @Override
@@ -260,34 +262,25 @@ public abstract class PipeBlock<PipeType extends Enum<PipeType> & IPipeType<Node
     }
 
     @Override
-    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, BlockPos fromPos,
-                                boolean isMoving) {
+    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block,
+                                @Nullable Orientation orientation, boolean movedByPiston) {
         if (level.isClientSide()) return;
+
+        // The 26.2 callback no longer provides the changed neighbor's position. Recalculate all pipe sides in the
+        // scheduled server tick, where their current states and block entities can be inspected safely.
+        level.scheduleTick(pos, this, 1);
         IPipeNode<PipeType, NodeDataType> pipeTile = getPipeTile(level, pos);
         if (pipeTile != null) {
-            Direction facing = GTUtil.getFacingToNeighbor(pos, fromPos);
-            if (facing == null) return;
-            if (!ConfigHolder.INSTANCE.machines.gt6StylePipesCables) {
-                boolean open = pipeTile.isConnected(facing);
-                boolean canConnect = pipeTile.getCoverContainer().getCoverAtSide(facing) != null ||
-                        this.canConnect(pipeTile, facing);
-                if (!open && canConnect && state.getBlock() != block)
-                    pipeTile.setConnection(facing, true, false);
-                if (open && !canConnect)
-                    pipeTile.setConnection(facing, false, false);
-                updateActiveNodeStatus(level, pos, pipeTile);
-            }
-            pipeTile.getCoverContainer().onNeighborChanged(block, fromPos, isMoving);
+            pipeTile.getCoverContainer().onNeighborChanged(block, null, orientation, movedByPiston);
         }
     }
 
     @Override
-    public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pIsMoving) {
-        if (pState.hasBlockEntity() && !pState.is(pNewState.getBlock())) {
-            pLevel.removeBlockEntity(pPos);
-            if (pLevel instanceof ServerLevel serverLevel) {
-                getWorldPipeNet(serverLevel).removeNode(pPos);
-            }
+    protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos,
+                                               boolean movedByPiston) {
+        if (state.hasBlockEntity()) {
+            // LevelChunk removes the block entity itself when the block type changes.
+            getWorldPipeNet(level).removeNode(pos);
         }
     }
 
@@ -307,6 +300,21 @@ public abstract class PipeBlock<PipeType extends Enum<PipeType> & IPipeType<Node
     public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
         IPipeNode<PipeType, NodeDataType> pipeTile = getPipeTile(level, pos);
         if (pipeTile != null) {
+            if (!ConfigHolder.INSTANCE.machines.gt6StylePipesCables) {
+                for (Direction facing : GTUtil.DIRECTIONS) {
+                    boolean open = pipeTile.isConnected(facing);
+                    boolean canConnect = pipeTile.getCoverContainer().getCoverAtSide(facing) != null ||
+                            this.canConnect(pipeTile, facing);
+                    BlockState neighborState = level.getBlockState(pos.relative(facing));
+                    if (!open && canConnect && state.getBlock() != neighborState.getBlock()) {
+                        pipeTile.setConnection(facing, true, false);
+                    } else if (open && !canConnect) {
+                        pipeTile.setConnection(facing, false, false);
+                    }
+                }
+                updateActiveNodeStatus(level, pos, pipeTile);
+            }
+
             int activeConnections = pipeTile.getConnections();
             boolean isActiveNode = activeConnections != 0;
             getWorldPipeNet(level).addNode(pos, createRawData(state, null), 0, activeConnections, isActiveNode);
@@ -315,9 +323,8 @@ public abstract class PipeBlock<PipeType extends Enum<PipeType> & IPipeType<Node
     }
 
     @Override
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand,
-                                 BlockHitResult hit) {
-        ItemStack itemStack = player.getItemInHand(hand);
+    public InteractionResult useItemOn(ItemStack itemStack, BlockState state, Level level, BlockPos pos, Player player,
+                                       InteractionHand hand, BlockHitResult hit) {
         BlockEntity entity = level.getBlockEntity(pos);
 
         PipeBlockEntity<?, ?> pipeBlockEntity = null;

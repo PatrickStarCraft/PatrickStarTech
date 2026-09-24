@@ -11,6 +11,7 @@ import org.jspecify.annotations.NullMarked;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.NonNullList;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -20,7 +21,9 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemInstance;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.ItemUseAnimation;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
@@ -263,32 +266,32 @@ public class ComponentItem extends Item implements IComponentItem, IItemUIHolder
     }
 
     @Override
-    public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
+    public void inventoryTick(ItemStack stack, ServerLevel level, Entity entity, @Nullable EquipmentSlot slot) {
         for (IItemComponent component : components) {
             if (component instanceof IItemLifeCycle lifeCycle) {
-                lifeCycle.inventoryTick(stack, level, entity, slotId, isSelected);
+                lifeCycle.inventoryTick(stack, level, entity, slot);
             }
         }
     }
 
     @Override
-    public ItemStack getCraftingRemainingItem(ItemStack itemStack) {
-        for (IItemComponent component : components) {
-            if (component instanceof IRecipeRemainder recipeRemainder) {
-                return recipeRemainder.getRecipeRemained(itemStack);
-            }
+    public @Nullable ItemStackTemplate getCraftingRemainder(ItemInstance instance) {
+        ItemStack workingStack;
+        if (instance instanceof ItemStack itemStack) {
+            workingStack = itemStack.copy();
+        } else if (instance instanceof ItemStackTemplate template) {
+            workingStack = template.create();
+        } else {
+            workingStack = new ItemStack(instance.typeHolder(), instance.count());
         }
-        return super.getCraftingRemainingItem(itemStack);
-    }
 
-    @Override
-    public boolean hasCraftingRemainingItem(ItemStack stack) {
         for (IItemComponent component : components) {
             if (component instanceof IRecipeRemainder recipeRemainder) {
-                return recipeRemainder.getRecipeRemained(stack) != ItemStack.EMPTY;
+                ItemStack remainder = recipeRemainder.getRecipeRemained(workingStack);
+                return remainder.isEmpty() ? null : ItemStackTemplate.fromStack(remainder);
             }
         }
-        return super.hasCraftingRemainingItem(stack);
+        return super.getCraftingRemainder();
     }
 
     @Override

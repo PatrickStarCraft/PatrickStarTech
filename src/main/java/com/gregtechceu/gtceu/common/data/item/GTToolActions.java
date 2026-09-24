@@ -118,6 +118,14 @@ public class GTToolActions {
      */
     public static final ItemAbility INTERACT_WITH_COVER = ItemAbility.get("interact_with_cover");
 
+    // These mining-action identifiers were part of the former Forge ItemAbilities API.
+    // NeoForge 26.2 no longer defines them; preserve their names for GT tools and callers.
+    public static final ItemAbility AXE_DIG = ItemAbility.get("axe_dig");
+    public static final ItemAbility HOE_DIG = ItemAbility.get("hoe_dig");
+    public static final ItemAbility PICKAXE_DIG = ItemAbility.get("pickaxe_dig");
+    public static final ItemAbility SHOVEL_DIG = ItemAbility.get("shovel_dig");
+    public static final ItemAbility SWORD_DIG = ItemAbility.get("sword_dig");
+
     // spotless:off
     public static final Set<ItemAbility> WRENCH_CONFIGURE_ACTIONS = of(WRENCH_CONFIGURE_ALL, WRENCH_CONFIGURE_ITEMS, WRENCH_CONFIGURE_FLUIDS);
     public static final Set<ItemAbility> DEFAULT_WRENCH_ACTIONS = of(WRENCH_CONFIGURE_ACTIONS, WRENCH_ROTATE, WRENCH_DIG, WRENCH_DISMANTLE, WRENCH_CONNECT);
@@ -128,15 +136,18 @@ public class GTToolActions {
     public static final Set<ItemAbility> DEFAULT_HAMMER_ACTIONS = of(HAMMER_DIG, HAMMER_MUTE);
     public static final Set<ItemAbility> DEFAULT_CROWBAR_ACTIONS = of(CROWBAR_DIG, CROWBAR_ROTATE, CROWBAR_REMOVE_COVER);
     public static final Set<ItemAbility> DEFAULT_SCREWDRIVER_ACTIONS = of(SCREWDRIVER_CONFIGURE, INTERACT_WITH_COVER);
-    public static final Set<ItemAbility> DEFAULT_DRILL_ACTIONS = of(ItemAbilities.DEFAULT_PICKAXE_ACTIONS, ItemAbilities.SHOVEL_DIG, ItemAbilities.HOE_DIG);
-
-    public static final Set<ItemAbility> DEFAULT_SHOVEL_ACTIONS = of(ItemAbilities.DEFAULT_SHOVEL_ACTIONS, SHOVEL_DOUSE);
+    public static final Set<ItemAbility> DEFAULT_AXE_ACTIONS = of(ItemAbilities.DEFAULT_AXE_ACTIONS, AXE_DIG);
+    public static final Set<ItemAbility> DEFAULT_HOE_ACTIONS = of(ItemAbilities.DEFAULT_HOE_ACTIONS, HOE_DIG);
+    public static final Set<ItemAbility> DEFAULT_PICKAXE_ACTIONS = of(PICKAXE_DIG);
+    public static final Set<ItemAbility> DEFAULT_SHOVEL_ACTIONS = of(ItemAbilities.DEFAULT_SHOVEL_ACTIONS, SHOVEL_DIG, SHOVEL_DOUSE);
+    public static final Set<ItemAbility> DEFAULT_SWORD_ACTIONS = of(ItemAbilities.SWORD_SWEEP, SWORD_DIG);
+    public static final Set<ItemAbility> DEFAULT_DRILL_ACTIONS = of(PICKAXE_DIG, SHOVEL_DIG, HOE_DIG);
 
     public static final Map<ItemAbility, GTToolType> DEFAULT_TYPE_ASSOCIATIONS = Util.make(new HashMap<>(), map -> {
-        ItemAbilities.DEFAULT_AXE_ACTIONS.forEach(ability -> map.put(ability, GTToolType.AXE));
-        ItemAbilities.DEFAULT_PICKAXE_ACTIONS.forEach(ability -> map.put(ability, GTToolType.PICKAXE));
-        ItemAbilities.DEFAULT_SHOVEL_ACTIONS.forEach(ability -> map.put(ability, GTToolType.SHOVEL));
-        ItemAbilities.DEFAULT_SWORD_ACTIONS.forEach(ability -> map.put(ability, GTToolType.SWORD));
+        DEFAULT_AXE_ACTIONS.forEach(ability -> map.put(ability, GTToolType.AXE));
+        DEFAULT_PICKAXE_ACTIONS.forEach(ability -> map.put(ability, GTToolType.PICKAXE));
+        DEFAULT_SHOVEL_ACTIONS.forEach(ability -> map.put(ability, GTToolType.SHOVEL));
+        DEFAULT_SWORD_ACTIONS.forEach(ability -> map.put(ability, GTToolType.SWORD));
         ItemAbilities.DEFAULT_SHEARS_ACTIONS.forEach(ability -> map.put(ability, GTToolType.SHEARS));
         GTToolActions.DEFAULT_WRENCH_ACTIONS.forEach(ability -> map.put(ability, GTToolType.WRENCH));
         GTToolActions.DEFAULT_WIRE_CUTTER_ACTIONS.forEach(ability -> map.put(ability, GTToolType.WIRE_CUTTER));

@@ -7,7 +7,11 @@ import com.gregtechceu.gtceu.api.addon.AddonFinder;
 import com.gregtechceu.gtceu.api.addon.IGTAddon;
 import com.gregtechceu.gtceu.common.capability.ElectricItemCapabilityRegistration;
 import com.gregtechceu.gtceu.common.capability.BlockEnergyCapabilityRegistration;
+import com.gregtechceu.gtceu.common.capability.GTAttachments;
 import com.gregtechceu.gtceu.api.capability.recipe.ItemRecipeCapability;
+import com.gregtechceu.gtceu.api.capability.CombinedCapabilityProvider;
+import com.gregtechceu.gtceu.api.capability.GTCapability;
+import com.gregtechceu.gtceu.api.capability.compat.EUToFEProvider;
 import com.gregtechceu.gtceu.api.data.chemical.material.event.MaterialEvent;
 import com.gregtechceu.gtceu.api.data.chemical.material.event.PostMaterialEvent;
 import com.gregtechceu.gtceu.api.data.chemical.material.info.MaterialIconSet;
@@ -22,6 +26,8 @@ import com.gregtechceu.gtceu.api.mui.factory.CoverUIFactory;
 import com.gregtechceu.gtceu.api.mui.factory.MachineUIFactory;
 import com.gregtechceu.gtceu.api.multiblock.error.GTPatternErrors;
 import com.gregtechceu.gtceu.api.item.component.ThermalFluidStats;
+import com.gregtechceu.gtceu.api.item.IComponentItem;
+import com.gregtechceu.gtceu.api.item.IGTTool;
 import com.gregtechceu.gtceu.api.misc.QuantumFluidResourceHandler;
 import com.gregtechceu.gtceu.api.recipe.chance.logic.ChanceLogic;
 import com.gregtechceu.gtceu.api.recipe.ingredient.*;
@@ -38,6 +44,8 @@ import com.gregtechceu.gtceu.common.data.materials.GTFoods;
 import com.gregtechceu.gtceu.common.item.GTBucketItem;
 import com.gregtechceu.gtceu.common.item.DrumMachineItem;
 import com.gregtechceu.gtceu.common.item.QuantumTankMachineItem;
+import com.gregtechceu.gtceu.common.fluid.potion.BottleItemFluidHandler;
+import com.gregtechceu.gtceu.common.fluid.potion.PotionItemFluidHandler;
 import com.gregtechceu.gtceu.common.data.worldgen.*;
 import com.gregtechceu.gtceu.common.item.behavior.SpoilableBehavior;
 import com.gregtechceu.gtceu.common.item.tool.rotation.CustomBlockRotations;
@@ -97,6 +105,7 @@ public class CommonProxy {
         // used for forge events (ClientProxy + CommonProxy)
         IEventBus eventBus = ModLoadingContext.get().getActiveContainer().getEventBus();
         eventBus.register(this);
+        eventBus.addListener(GTRegistries::registerRecipeEntries);
         eventBus.addListener(GTNetwork::registerPayloads);
         ConfigHolder.init();
         GTCEuAPI.initializeHighTier();
@@ -136,7 +145,6 @@ public class CommonProxy {
 
         GTRecipeCapabilities.init();
         GTRecipeConditions.init();
-        GTToolTiers.init();
         GTElements.init();
         MaterialIconSet.init();
         MaterialIconType.init();
@@ -155,6 +163,7 @@ public class CommonProxy {
         GTCreativeModeTabs.init();
 
         GTMenuTypes.init(modBus);
+        GTAttachments.init(modBus);
 
         GTBlocks.init();
         GTFluids.init();
@@ -330,8 +339,17 @@ public class CommonProxy {
         SpoilableBehavior.registerCapabilities(event);
         ElectricItemCapabilityRegistration.register(event);
         BlockEnergyCapabilityRegistration.register(event);
+        EUToFEProvider.registerCapabilities(event);
+        event.registerEntity(GTCapability.CAPABILITY_MEDICAL_CONDITION_TRACKER, EntityTypes.PLAYER,
+                (player, context) -> player.getData(GTAttachments.MEDICAL_CONDITION_TRACKER));
 
         for (var item : BuiltInRegistries.ITEM) {
+            if (item instanceof IComponentItem componentItem) {
+                CombinedCapabilityProvider.registerFluidItem(event, item, componentItem.getComponents());
+            }
+            if (item instanceof IGTTool tool) {
+                CombinedCapabilityProvider.registerFluidItem(event, item, tool.getToolStats().getBehaviors());
+            }
             if (item instanceof GTBucketItem) {
                 event.registerItem(Capabilities.Fluid.ITEM,
                         (stack, access) -> new BucketResourceHandler(access), item);
@@ -355,6 +373,10 @@ public class CommonProxy {
         event.registerItem(Capabilities.Fluid.ITEM,
                 (stack, access) -> GTItems.PLATINUM_LIGHTER_FLUID.createHandler(access.oneByOne()),
                 GTItems.TOOL_LIGHTER_PLATINUM.get());
+        event.registerItem(Capabilities.Fluid.ITEM,
+                (stack, access) -> new PotionItemFluidHandler(access), Items.POTION);
+        event.registerItem(Capabilities.Fluid.ITEM,
+                (stack, access) -> new BottleItemFluidHandler(access), Items.GLASS_BOTTLE);
     }
 
     @SubscribeEvent

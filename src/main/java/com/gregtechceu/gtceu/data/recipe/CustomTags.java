@@ -200,6 +200,17 @@ public class CustomTags {
             NEEDS_NEUTRONIUM_TOOL,
     };
 
+    @SuppressWarnings("unchecked")
+    public static final TagKey<Block>[] INCORRECT_FOR_GT_TOOL_TIERS = new TagKey[] {
+            TagUtil.createModBlockTag("incorrect_for_gt_tool_tier_0"),
+            TagUtil.createModBlockTag("incorrect_for_gt_tool_tier_1"),
+            TagUtil.createModBlockTag("incorrect_for_gt_tool_tier_2"),
+            TagUtil.createModBlockTag("incorrect_for_gt_tool_tier_3"),
+            TagUtil.createModBlockTag("incorrect_for_gt_tool_tier_4"),
+            TagUtil.createModBlockTag("incorrect_for_gt_tool_tier_5"),
+            TagUtil.createModBlockTag("incorrect_for_gt_tool_tier_6"),
+    };
+
     public static final TagKey<Block> ENDSTONE_ORE_REPLACEABLES = TagUtil.createBlockTag("end_stone_ore_replaceables");
     public static final TagKey<Block> CONCRETE_BLOCK = TagUtil.createBlockTag("concretes");
     public static final TagKey<Block> VERY_FAST_WALKABLE_BLOCKS = TagUtil.createBlockTag("very_fast_walkable_blocks");

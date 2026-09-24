@@ -17,6 +17,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -68,8 +69,8 @@ public class SurfaceRockBlock extends Block {
     }
 
     @Override
-    public boolean onDestroyedByPlayer(BlockState state, Level level, BlockPos pos, Player player, boolean willHarvest,
-                                       FluidState fluid) {
+    public boolean onDestroyedByPlayer(BlockState state, Level level, BlockPos pos, Player player, ItemStack toolStack,
+                                       boolean canHarvest, FluidState fluid) {
         if (!level.isClientSide()) {
             ServerCache.instance.prospectSurfaceRockMaterial(
                     level.dimension(),
@@ -77,13 +78,13 @@ public class SurfaceRockBlock extends Block {
                     pos,
                     (ServerPlayer) player);
         }
-        return super.onDestroyedByPlayer(state, level, pos, player, willHarvest, fluid);
+        return super.onDestroyedByPlayer(state, level, pos, player, toolStack, canHarvest, fluid);
     }
 
     @Override
     @SuppressWarnings("deprecation")
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand,
-                                 BlockHitResult hit) {
+    public InteractionResult useItemOn(ItemStack itemStack, BlockState state, Level level, BlockPos pos, Player player,
+                                       InteractionHand hand, BlockHitResult hit) {
         if (!level.isClientSide()) {
             ServerCache.instance.prospectSurfaceRockMaterial(
                     level.dimension(),
@@ -113,12 +114,6 @@ public class SurfaceRockBlock extends Block {
     @Override
     @SuppressWarnings("deprecation")
     public boolean isCollisionShapeFullBlock(BlockState state, BlockGetter level, BlockPos pos) {
-        return false;
-    }
-
-    @Override
-    @SuppressWarnings("deprecation")
-    public boolean isOcclusionShapeFullBlock(BlockState state, BlockGetter view, BlockPos pos) {
         return false;
     }
 
@@ -175,11 +170,6 @@ public class SurfaceRockBlock extends Block {
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
         builder.add(FACING);
-    }
-
-    @Override
-    public String getDescriptionId() {
-        return "block.surface_rock";
     }
 
     @Override

@@ -1,5 +1,7 @@
 package com.gregtechceu.gtceu.core.config;
 
+import com.gregtechceu.gtceu.GTCEu;
+
 import net.neoforged.fml.loading.FMLLoader;
 
 import org.apache.logging.log4j.LogManager;
@@ -40,7 +42,7 @@ public class GTEarlyConfig {
 
         // hidden rules for dev-only mixins
         addHiddenRule("dev", !FMLLoader.getCurrent().isProduction());
-        addHiddenRule("dev.datagen", FMLLoader.getLaunchHandler().isData());
+        addHiddenRule("dev.datagen", GTCEu.isDataGen());
 
         // hidden rules for mod dependencies
         enableIfModPresent("emi", "emi");

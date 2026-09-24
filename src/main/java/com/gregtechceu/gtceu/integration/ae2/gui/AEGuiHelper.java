@@ -4,16 +4,13 @@ import com.gregtechceu.gtceu.integration.ae2.utils.AEUtil;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.fluids.FluidStack;
 
 import appeng.api.stacks.AEFluidKey;
 import appeng.api.stacks.GenericStack;
-import com.mojang.blaze3d.systems.RenderSystem;
+import brachy.modularui.drawable.GuiDraw;
 
 import java.util.List;
 
@@ -24,21 +21,7 @@ public final class AEGuiHelper {
 
     public static void drawFluid(GuiGraphicsExtractor graphics, FluidStack fluid, int x, int y, int width, int height) {
         if (fluid.isEmpty()) return;
-        var renderProps = IClientFluidTypeExtensions.of(fluid.getFluid());
-        var stillTexture = renderProps.getStillTexture(fluid);
-        if (stillTexture == null) return;
-        int color = renderProps.getTintColor(fluid);
-        TextureAtlasSprite sprite = Minecraft.getInstance()
-                .getTextureAtlas(TextureAtlas.LOCATION_BLOCKS)
-                .apply(stillTexture);
-        float r = ((color >> 16) & 0xFF) / 255f;
-        float g = ((color >> 8) & 0xFF) / 255f;
-        float b = (color & 0xFF) / 255f;
-        float a = ((color >> 24) & 0xFF) / 255f;
-        if (a == 0) a = 1f;
-        graphics.setColor(r, g, b, a);
-        graphics.blit(x, y, 0, width, height, sprite);
-        graphics.setColor(1f, 1f, 1f, 1f);
+        GuiDraw.drawFluidTexture(graphics, fluid, x, y, width, height, 0);
     }
 
     public static void drawFluid(GuiGraphicsExtractor graphics, GenericStack stack, int x, int y) {
@@ -50,21 +33,19 @@ public final class AEGuiHelper {
     public static void drawAmountOverlay(GuiGraphicsExtractor graphics, long amount, int x, int y) {
         String text = formatAmount(amount);
         var font = Minecraft.getInstance().font;
-        graphics.pose().pushPose();
-        graphics.pose().translate(0, 0, 200);
-        graphics.pose().scale(0.5f, 0.5f, 1f);
-        int textX = (x + 16) * 2 - font.width(text);
-        int textY = (y + 16) * 2 - font.lineHeight;
-        graphics.drawString(font, text, textX, textY, 0xFFFFFF, true);
-        graphics.pose().popPose();
+        graphics.pose().pushMatrix();
+        try {
+            graphics.pose().scale(0.5f, 0.5f);
+            int textX = (x + 16) * 2 - font.width(text);
+            int textY = (y + 16) * 2 - font.lineHeight;
+            graphics.text(font, text, textX, textY, 0xFFFFFF, true);
+        } finally {
+            graphics.pose().popMatrix();
+        }
     }
 
     public static void drawSelectionOverlay(GuiGraphicsExtractor graphics, int x, int y, int width, int height) {
-        RenderSystem.disableDepthTest();
-        RenderSystem.colorMask(true, true, true, false);
         graphics.fill(x, y, x + width, y + height, 0x80FFFFFF);
-        RenderSystem.colorMask(true, true, true, true);
-        RenderSystem.enableDepthTest();
     }
 
     public static String formatAmountFull(long amount) {

@@ -3,10 +3,10 @@ package com.gregtechceu.gtceu.data.model;
 import com.gregtechceu.gtceu.api.GTValues;
 import com.gregtechceu.gtceu.api.registry.registrate.provider.GTBlockstateProvider;
 import com.gregtechceu.gtceu.common.data.models.GTMachineModels;
+import com.gregtechceu.gtceu.data.model.builder.BlockModelProvider;
 
 import net.minecraft.core.Direction;
 import net.minecraft.resources.Identifier;
-import net.minecraftforge.client.model.generators.BlockModelProvider;
 
 import static com.gregtechceu.gtceu.common.data.models.GTMachineModels.*;
 

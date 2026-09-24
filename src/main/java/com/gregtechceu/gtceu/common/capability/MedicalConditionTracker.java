@@ -13,7 +13,6 @@ import com.gregtechceu.gtceu.api.data.medicalcondition.Symptom;
 import com.gregtechceu.gtceu.api.data.medicalcondition.Symptom.ConfiguredSymptom;
 import com.gregtechceu.gtceu.api.registry.GTRegistries;
 
-import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -24,10 +23,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ICapabilitySerializable;
-import net.neoforged.neoforge.common.util.LazyOptional;
-
 import it.unimi.dsi.fastutil.objects.*;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
@@ -36,7 +31,7 @@ import org.jetbrains.annotations.VisibleForTesting;
 
 import java.util.*;
 
-public class MedicalConditionTracker implements ICapabilitySerializable<CompoundTag> {
+public class MedicalConditionTracker {
 
     @Getter
     @VisibleForTesting
@@ -50,8 +45,6 @@ public class MedicalConditionTracker implements ICapabilitySerializable<Compound
 
     @Getter
     private final Player player;
-
-    private final LazyOptional<MedicalConditionTracker> holder = LazyOptional.of(() -> this);
 
     public MedicalConditionTracker(Player player) {
         this.player = player;
@@ -222,7 +215,6 @@ public class MedicalConditionTracker implements ICapabilitySerializable<Compound
         activeMobEffects.mergeInt(effect, amplifier, Math::max);
     }
 
-    @Override
     public CompoundTag serializeNBT() {
         CompoundTag tag = new CompoundTag();
 
@@ -244,7 +236,6 @@ public class MedicalConditionTracker implements ICapabilitySerializable<Compound
         return tag;
     }
 
-    @Override
     public void deserializeNBT(CompoundTag arg) {
         // ensure the medical condition map(s) is actually empty before loading.
         // IDK if this actually happens, but better be safe than sorry.
@@ -274,8 +265,4 @@ public class MedicalConditionTracker implements ICapabilitySerializable<Compound
         }
     }
 
-    @Override
-    public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-        return GTCapability.CAPABILITY_MEDICAL_CONDITION_TRACKER.orEmpty(cap, this.holder);
-    }
 }

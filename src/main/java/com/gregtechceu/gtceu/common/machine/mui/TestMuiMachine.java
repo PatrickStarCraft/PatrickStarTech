@@ -7,20 +7,22 @@ import com.gregtechceu.gtceu.api.machine.feature.IMuiMachine;
 import com.gregtechceu.gtceu.common.data.GTMaterials;
 import com.gregtechceu.gtceu.common.mui.GTGuiTextures;
 
-import net.minecraft.util.Util;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.Util;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.fox.Fox;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import net.neoforged.neoforge.items.ItemStackHandler;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.transfer.access.ItemAccess;
 
 import brachy.modularui.api.IPanelHandler;
 import brachy.modularui.api.drawable.Text;
@@ -112,6 +114,14 @@ public class TestMuiMachine extends MetaMachine implements IMuiMachine {
         sub = subscribeServerTick(this::tick);
     }
 
+    @SuppressWarnings("unchecked")
+    private static EntityType<? extends Fox> foxEntityType() {
+        return (EntityType<? extends Fox>) BuiltInRegistries.ENTITY_TYPE
+                .get(Identifier.withDefaultNamespace("fox"))
+                .orElseThrow()
+                .value();
+    }
+
     @Override
     public ModularPanel<?> buildUI(PosGuiData guiData, PanelSyncManager syncManager, UISettings settings) {
         // settings.customContainer(() -> new CraftingModularContainer(3, 3, this.craftingInventory));
@@ -137,7 +147,7 @@ public class TestMuiMachine extends MetaMachine implements IMuiMachine {
 
         DynamicSyncHandler dynamicSyncHandler = new DynamicSyncHandler()
                 .widgetProvider((syncManager1, packet) -> {
-                    ItemStack itemStack = packet.readItem();
+                    ItemStack itemStack = ItemStack.OPTIONAL_STREAM_CODEC.decode(packet);
                     if (itemStack.isEmpty()) return new EmptyWidget();
                     Item item = itemStack.getItem();
                     ItemStackHandler handler = stackHandlerMap.computeIfAbsent(item,
@@ -183,7 +193,7 @@ public class TestMuiMachine extends MetaMachine implements IMuiMachine {
         DoubleSyncValue progressPercent = syncManager.getOrCreateSyncHandler("progressPercent", DoubleSyncValue.class, () ->
                 new DoubleSyncValue(() -> (this.progress / (double) this.duration)));
 
-        var babyFop = new Fox(EntityType.FOX, guiData.getLevel());
+        var babyFop = new Fox(foxEntityType(), guiData.getLevel());
         babyFop.setAge(-1);
         panel.child(Flow.row()
                         .name("Tab row")
@@ -422,9 +432,9 @@ public class TestMuiMachine extends MetaMachine implements IMuiMachine {
                                                                         index -> ItemSlot.create(index >= 2)
                                                                                 .slot(new ModularSlot(this.mixerItems, index)
                                                                                         .slotGroup("mixer_items")
-                                                                                        .filter(stack -> !stack.getCapability(
-                                                                                                        ForgeCapabilities.ITEM_HANDLER)
-                                                                                                .isPresent())))
+                                                                                        .filter(stack -> stack.isEmpty() || stack.getCapability(
+                                                                                                Capabilities.Item.ITEM,
+                                                                                                ItemAccess.forStack(stack)) == null)))
                                                                 .build().name("mixer inv")
                                                                 .disableSortButtons())
                                                         .child(Flow.row()
@@ -526,7 +536,8 @@ public class TestMuiMachine extends MetaMachine implements IMuiMachine {
                                                                                 .changeListener(((oldItem, newItem, client, init) -> {
                                                                                     if (client && !ItemStack.isSameItem(oldItem, newItem)) {
                                                                                         dynamicSyncHandler.notifyUpdate(
-                                                                                                packet -> packet.writeItem(newItem));
+                                                                                                packet -> ItemStack.OPTIONAL_STREAM_CODEC
+                                                                                                        .encode(packet, newItem));
                                                                                     }
                                                                                 }))))
                                                                 .child(new DynamicWidget<>()
@@ -697,7 +708,7 @@ public class TestMuiMachine extends MetaMachine implements IMuiMachine {
     public void tick() {
         if (this.time++ % 20 == 0) {
             if (++this.val2 == 3) this.val2 = 0;
-            Collection<Item> vals = ForgeRegistries.ITEMS.getValues();
+            Collection<Item> vals = BuiltInRegistries.ITEM.stream().toList();
             Item item = vals.stream().skip(new Random().nextInt(vals.size())).findFirst().orElse(Items.DIAMOND);
             this.displayItem = new ItemStack(item, 26735987);
 

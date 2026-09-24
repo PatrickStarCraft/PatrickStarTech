@@ -7,22 +7,22 @@ import com.gregtechceu.gtceu.integration.recipeviewer.widgets.ProgrammedCircuitR
 
 import net.minecraft.network.chat.Component;
 
-import brachy.modularui.integration.jei.recipe.ModularUIJeiCategory;
+import brachy.modularui.integration.jei.recipe.ModularUIRecipeCategory;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.helpers.IJeiHelpers;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
-import mezz.jei.api.recipe.RecipeType;
+import mezz.jei.api.recipe.types.IRecipeType;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.stream.IntStream;
 
 public class ProgrammedCircuitJeiCategory extends
-                                          ModularUIJeiCategory<ProgrammedCircuitJeiCategory.GTProgrammedCircuitWrapper> {
+                                          ModularUIRecipeCategory<ProgrammedCircuitJeiCategory.GTProgrammedCircuitWrapper> {
 
-    public final static RecipeType<GTProgrammedCircuitWrapper> RECIPE_TYPE = new RecipeType<>(
+    public final static IRecipeType<GTProgrammedCircuitWrapper> RECIPE_TYPE = IRecipeType.create(
             GTCEu.id("programmed_circuit"), GTProgrammedCircuitWrapper.class);
 
     private final IDrawable icon;
@@ -33,7 +33,7 @@ public class ProgrammedCircuitJeiCategory extends
     }
 
     @Override
-    public RecipeType<GTProgrammedCircuitWrapper> getRecipeType() {
+    public IRecipeType<GTProgrammedCircuitWrapper> getRecipeType() {
         return RECIPE_TYPE;
     }
 
@@ -48,21 +48,23 @@ public class ProgrammedCircuitJeiCategory extends
     }
 
     @Override
-    public int getMaxWidth() {
+    public int getWidth() {
         return 250;
     }
 
     @Override
-    public int getMaxHeight() {
+    public int getHeight() {
         return 250;
     }
 
     @Override
-    public void setupRecipeIngredients(IRecipeLayoutBuilder builder, GTProgrammedCircuitWrapper recipe,
-                                       IFocusGroup focuses) {
+    public void setRecipe(IRecipeLayoutBuilder builder, GTProgrammedCircuitWrapper recipe,
+                          IFocusGroup focuses) {
+        super.setRecipe(builder, recipe, focuses);
         IntStream.range(0, 33)
                 .mapToObj(IntCircuitBehaviour::stack)
-                .forEach(i -> builder.addSlot(RecipeIngredientRole.OUTPUT).addIngredient(VanillaTypes.ITEM_STACK, i));
+                .forEach(i -> builder.addInvisibleIngredients(RecipeIngredientRole.OUTPUT)
+                        .addIngredient(VanillaTypes.ITEM_STACK, i));
     }
 
     public static class GTProgrammedCircuitWrapper {}

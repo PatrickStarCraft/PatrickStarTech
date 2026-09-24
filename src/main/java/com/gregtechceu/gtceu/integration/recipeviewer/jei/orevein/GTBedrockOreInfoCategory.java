@@ -9,7 +9,7 @@ import com.gregtechceu.gtceu.integration.recipeviewer.widgets.OreVeinRecipeWidge
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Items;
 
-import brachy.modularui.integration.jei.recipe.ModularUIJeiCategory;
+import brachy.modularui.integration.jei.recipe.ModularUIRecipeCategory;
 import lombok.Getter;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
@@ -17,15 +17,15 @@ import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.helpers.IJeiHelpers;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
-import mezz.jei.api.recipe.RecipeType;
+import mezz.jei.api.recipe.types.IRecipeType;
 import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
 
 import java.util.Arrays;
 
-public class GTBedrockOreInfoCategory extends ModularUIJeiCategory<BedrockOreDefinition> {
+public class GTBedrockOreInfoCategory extends ModularUIRecipeCategory<BedrockOreDefinition> {
 
-    public final static RecipeType<BedrockOreDefinition> RECIPE_TYPE = new RecipeType<>(
+    public final static IRecipeType<BedrockOreDefinition> RECIPE_TYPE = IRecipeType.create(
             GTCEu.id("bedrock_ore_diagram"), BedrockOreDefinition.class);
     @Getter
     private final IDrawable icon;
@@ -48,27 +48,29 @@ public class GTBedrockOreInfoCategory extends ModularUIJeiCategory<BedrockOreDef
     }
 
     @Override
-    public int getMaxWidth() {
+    public int getWidth() {
         return 180;
     }
 
     @Override
-    public int getMaxHeight() {
+    public int getHeight() {
         return 300;
     }
 
     @Override
-    public void setupRecipeIngredients(IRecipeLayoutBuilder builder, BedrockOreDefinition ore, IFocusGroup focuses) {
+    public void setRecipe(IRecipeLayoutBuilder builder, BedrockOreDefinition ore, IFocusGroup focuses) {
+        super.setRecipe(builder, ore, focuses);
         Arrays.stream(OreVeinRecipeWidget.getDimensionMarkers(ore.dimensionFilter))
-                .forEach(v -> builder.addSlot(RecipeIngredientRole.INPUT).addIngredient(VanillaTypes.ITEM_STACK,
-                        v.getIcon()));
+                .forEach(v -> builder.addInvisibleIngredients(RecipeIngredientRole.INPUT)
+                        .addIngredient(VanillaTypes.ITEM_STACK, v.getIcon()));
 
         OreVeinRecipeWidget.getRawMaterialList(ore).forEach(
-                stack -> builder.addSlot(RecipeIngredientRole.OUTPUT).addIngredient(VanillaTypes.ITEM_STACK, stack));
+                stack -> builder.addInvisibleIngredients(RecipeIngredientRole.OUTPUT)
+                        .addIngredient(VanillaTypes.ITEM_STACK, stack));
     }
 
     @Override
-    public RecipeType<BedrockOreDefinition> getRecipeType() {
+    public IRecipeType<BedrockOreDefinition> getRecipeType() {
         return RECIPE_TYPE;
     }
 

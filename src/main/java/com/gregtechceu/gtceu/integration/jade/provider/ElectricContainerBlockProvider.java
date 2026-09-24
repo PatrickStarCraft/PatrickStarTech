@@ -46,8 +46,8 @@ public class ElectricContainerBlockProvider extends CapabilityBlockProvider<IEne
                               BlockEntity blockEntity, IPluginConfig config) {
         if (!capData.contains("Energy") && !capData.contains("MaxEnergy")) return;
 
-        var energy = new BigInteger(capData.getByteArray("Energy"));
-        var maxEnergy = new BigInteger(capData.getByteArray("MaxEnergy"));
+        var energy = new BigInteger(capData.getByteArray("Energy").orElse(new byte[0]));
+        var maxEnergy = new BigInteger(capData.getByteArray("MaxEnergy").orElse(new byte[0]));
         if (maxEnergy.compareTo(BigInteger.ZERO) <= 0) return;
         var threshold = BigInteger.valueOf((long) 1e12);
         var energyStr = FormattingUtil.formatNumberOrSic(energy, threshold);

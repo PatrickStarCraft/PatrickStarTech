@@ -1,7 +1,6 @@
 package com.gregtechceu.gtceu.api.item;
 
 import com.gregtechceu.gtceu.api.GTValues;
-import com.gregtechceu.gtceu.api.capability.CombinedCapabilityProvider;
 import com.gregtechceu.gtceu.api.capability.GTCapabilityHelper;
 import com.gregtechceu.gtceu.api.data.chemical.ChemicalHelper;
 import com.gregtechceu.gtceu.api.data.chemical.material.Material;
@@ -12,7 +11,6 @@ import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
 import com.gregtechceu.gtceu.api.item.capability.ElectricItem;
 import com.gregtechceu.gtceu.api.item.data.ItemStackData;
 import com.gregtechceu.gtceu.api.item.component.ElectricStats;
-import com.gregtechceu.gtceu.api.item.component.forge.IComponentCapability;
 import com.gregtechceu.gtceu.api.item.tool.GTToolType;
 import com.gregtechceu.gtceu.api.item.tool.IGTToolDefinition;
 import com.gregtechceu.gtceu.api.item.tool.ToolHelper;
@@ -31,44 +29,47 @@ import net.minecraft.util.Util;
 import net.minecraft.client.color.item.ItemColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup.RegistryLookup;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.locale.Language;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.FloatTag;
 import net.minecraft.nbt.IntTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.LongTag;
+import net.minecraft.nbt.ShortTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemInstance;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.minecraftforge.common.ForgeHooks;
 import net.neoforged.neoforge.common.ItemAbility;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.extensions.IForgeItem;
-import net.neoforged.neoforge.common.util.LazyOptional;
+import net.neoforged.neoforge.common.extensions.IItemExtension;
+import net.minecraft.world.entity.EquipmentSlotGroup;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
 
 import brachy.modularui.api.IUIHolder;
 import brachy.modularui.factory.PlayerInventoryGuiData;
@@ -76,8 +77,6 @@ import brachy.modularui.screen.ModularPanel;
 import brachy.modularui.screen.ModularScreen;
 import brachy.modularui.screen.UISettings;
 import brachy.modularui.value.sync.PanelSyncManager;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
 import it.unimi.dsi.fastutil.objects.Object2IntLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import org.jetbrains.annotations.NotNull;
@@ -88,10 +87,8 @@ import java.util.stream.Collectors;
 
 import static com.gregtechceu.gtceu.api.item.tool.ToolHelper.*;
 import static com.gregtechceu.gtceu.data.recipe.generated.ToolRecipeHandler.powerUnitItems;
-import static net.minecraft.world.item.Item.BASE_ATTACK_DAMAGE_UUID;
-import static net.minecraft.world.item.Item.BASE_ATTACK_SPEED_UUID;
 
-public interface IGTTool extends IUIHolder<PlayerInventoryGuiData<?>>, ItemLike, IForgeItem {
+public interface IGTTool extends IUIHolder<PlayerInventoryGuiData<?>>, ItemLike, IItemExtension {
 
     GTToolType getToolType();
 
@@ -436,72 +433,98 @@ public interface IGTTool extends IUIHolder<PlayerInventoryGuiData<?>>, ItemLike,
         return false;
     }
 
-    default Map<Enchantment, Integer> definition$getAllEnchantments(ItemStack stack) {
-        var defaultEnchantments = getDefaultEnchantments(stack);
-
-        if (defaultEnchantments.isEmpty()) {
-            return EnchantmentHelper.getEnchantments(stack);
+    @Override
+    default ItemEnchantments getAllEnchantments(ItemStack stack, RegistryLookup<Enchantment> lookup) {
+        ItemEnchantments.Mutable enchantments = new ItemEnchantments.Mutable(stack.getTagEnchantments());
+        for (var entry : getDefaultEnchantments(stack).object2IntEntrySet()) {
+            lookup.get(entry.getKey()).ifPresent(holder -> enchantments.upgrade(holder, entry.getIntValue()));
         }
-        return joinEnchantments(stack, defaultEnchantments);
+        return enchantments.toImmutable();
     }
 
-    default Map<Enchantment, Integer> getDefaultEnchantments(ItemStack stack) {
+    @Override
+    default int getEnchantmentLevel(ItemInstance stack, Holder<Enchantment> enchantment) {
+        int storedLevel = IItemExtension.super.getEnchantmentLevel(stack, enchantment);
+        if (!(stack instanceof ItemStack itemStack)) return storedLevel;
+
+        ResourceKey<Enchantment> key = enchantment.unwrapKey().orElse(null);
+        return key == null ? storedLevel : Math.max(storedLevel, getDefaultEnchantments(itemStack).getInt(key));
+    }
+
+    @Override
+    default boolean supportsEnchantment(ItemStack stack, Holder<Enchantment> enchantment) {
+        return definition$canApplyAtEnchantingTable(stack, enchantment);
+    }
+
+    @Override
+    default boolean isPrimaryItemFor(ItemStack stack, Holder<Enchantment> enchantment) {
+        return IItemExtension.super.isPrimaryItemFor(stack, enchantment);
+    }
+
+    default Object2IntMap<ResourceKey<Enchantment>> getDefaultEnchantments(ItemStack stack) {
         CompoundTag toolTag = getToolTag(stack);
 
-        if ((toolTag.get(DEFAULT_ENCHANTMENTS_KEY) instanceof ListTag)) {
+        if (toolTag.get(DEFAULT_ENCHANTMENTS_KEY) instanceof ListTag) {
             ListTag defaultsTag = com.gregtechceu.gtceu.utils.data.TypedTagList.read(toolTag, DEFAULT_ENCHANTMENTS_KEY, Tag.TAG_COMPOUND);
-            return EnchantmentHelper.deserializeEnchantments(defaultsTag);
+            Object2IntMap<ResourceKey<Enchantment>> defaults = new Object2IntLinkedOpenHashMap<>();
+            for (int i = 0; i < defaultsTag.size(); i++) {
+                if (!(defaultsTag.get(i) instanceof CompoundTag enchantmentTag)) continue;
+                Identifier id = Identifier.tryParse(enchantmentTag.getStringOr("id", ""));
+                if (id == null) continue;
+
+                Tag levelTag = enchantmentTag.get("lvl");
+                int level = levelTag instanceof ShortTag shortTag ? shortTag.shortValue() :
+                        enchantmentTag.getIntOr("lvl", 0);
+                if (level > 0) defaults.put(ResourceKey.create(Registries.ENCHANTMENT, id), level);
+            }
+            return defaults;
         }
 
-        // Get tool and material enchantments
-        Object2IntMap<Enchantment> defaultEnchantments = new Object2IntLinkedOpenHashMap<>();
+        // Store keys rather than live enchantment instances: enchantments belong to the dynamic registry.
+        Object2IntMap<ResourceKey<Enchantment>> defaultEnchantments = new Object2IntLinkedOpenHashMap<>();
         defaultEnchantments.putAll(getToolStats().getDefaultEnchantments(stack));
         defaultEnchantments.putAll(this.getMaterial().getProperty(PropertyKey.TOOL).getEnchantments());
 
-        // save them to the tool NBT tag
+        // Keep the tool's material defaults on the stack so crafting and reloads preserve them.
         ListTag enchantList = new ListTag();
         for (var entry : defaultEnchantments.object2IntEntrySet()) {
-            Enchantment enchantment = entry.getKey();
-            if (enchantment == null || !this.definition$canApplyAtEnchantingTable(stack, enchantment)) {
-                continue;
-            }
+            ResourceKey<Enchantment> enchantment = entry.getKey();
             int level = entry.getIntValue();
-            enchantList.add(EnchantmentHelper.storeEnchantment(EnchantmentHelper.getEnchantmentId(enchantment), level));
+            if (enchantment == null || level <= 0) continue;
+
+            CompoundTag enchantmentTag = new CompoundTag();
+            enchantmentTag.putString("id", enchantment.identifier().toString());
+            enchantmentTag.putShort("lvl", (short) Math.min(level, Short.MAX_VALUE));
+            enchantList.add(enchantmentTag);
         }
         updateToolTag(stack, tag -> tag.put(DEFAULT_ENCHANTMENTS_KEY, enchantList));
 
         return defaultEnchantments;
     }
 
-    default int definition$getEnchantmentLevel(ItemStack stack, Enchantment enchantment) {
-        return definition$getAllEnchantments(stack).getOrDefault(enchantment, 0);
-    }
-
     default boolean definition$isFoil(ItemStack stack) {
-        return !getAllEnchantments(stack).isEmpty();
+        return !stack.getTagEnchantments().isEmpty() || !getDefaultEnchantments(stack).isEmpty();
     }
 
-    default Multimap<Attribute, AttributeModifier> definition$getDefaultAttributeModifiers(EquipmentSlot equipmentSlot,
-                                                                                           ItemStack stack) {
-        Multimap<Attribute, AttributeModifier> multimap = HashMultimap.create();
-        if (equipmentSlot == EquipmentSlot.MAINHAND) {
-            multimap.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_UUID, "Weapon modifier",
-                    getTotalAttackDamage(stack), AttributeModifier.Operation.ADD_VALUE));
-            multimap.put(Attributes.ATTACK_SPEED, new AttributeModifier(BASE_ATTACK_SPEED_UUID, "Weapon modifier",
-                    Math.max(-3.9D, getTotalAttackSpeed(stack)), AttributeModifier.Operation.ADD_VALUE));
-        }
-        return multimap;
+    @Override
+    default ItemAttributeModifiers getDefaultAttributeModifiers(ItemStack stack) {
+        return ItemAttributeModifiers.builder()
+                .add(Attributes.ATTACK_DAMAGE,
+                        new net.minecraft.world.entity.ai.attributes.AttributeModifier(
+                                Item.BASE_ATTACK_DAMAGE_ID, getTotalAttackDamage(stack),
+                                net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.ADD_VALUE),
+                        EquipmentSlotGroup.MAINHAND)
+                .add(Attributes.ATTACK_SPEED,
+                        new net.minecraft.world.entity.ai.attributes.AttributeModifier(
+                                Item.BASE_ATTACK_SPEED_ID, Math.max(-3.9D, getTotalAttackSpeed(stack)),
+                                net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.ADD_VALUE),
+                        EquipmentSlotGroup.MAINHAND)
+                .build();
     }
 
     default int definition$getHarvestLevel(ItemStack stack, GTToolType toolClass, @Nullable Player player,
                                            @Nullable BlockState blockState) {
         return getToolClasses(stack).contains(toolClass) ? getTotalHarvestLevel(stack) : -1;
-    }
-
-    default boolean definition$canDisableShield(ItemStack stack, ItemStack shield, LivingEntity entity,
-                                                LivingEntity attacker) {
-        return getToolStats().getBehaviors().stream()
-                .anyMatch(behavior -> behavior.canDisableShield(stack, shield, entity, attacker));
     }
 
     default boolean definition$doesSneakBypassUse(@NotNull ItemStack stack, @NotNull BlockGetter world,
@@ -519,8 +542,6 @@ public interface IGTTool extends IUIHolder<PlayerInventoryGuiData<?>>, ItemLike,
             if (newTag != null && oldTag != null) {
                 Set<String> newKeys = new HashSet<>(newTag.keySet());
                 Set<String> oldKeys = new HashSet<>(oldTag.keySet());
-                newKeys.remove(ItemStack.TAG_DAMAGE);
-                oldKeys.remove(ItemStack.TAG_DAMAGE);
                 newKeys.remove(CHARGE_KEY);
                 oldKeys.remove(CHARGE_KEY);
                 if (!newKeys.equals(oldKeys)) {
@@ -534,7 +555,7 @@ public interface IGTTool extends IUIHolder<PlayerInventoryGuiData<?>>, ItemLike,
     }
 
     default boolean definition$hasCraftingRemainingItem(ItemStack stack) {
-        return !ItemStackData.read(stack).getBoolean(DISALLOW_CONTAINER_ITEM_KEY);
+        return !ItemStackData.read(stack).getBooleanOr(DISALLOW_CONTAINER_ITEM_KEY, false);
     }
 
     default ItemStack definition$getCraftingRemainingItem(ItemStack stack) {
@@ -543,9 +564,10 @@ public interface IGTTool extends IUIHolder<PlayerInventoryGuiData<?>>, ItemLike,
             return ItemStack.EMPTY;
         }
         stack = stack.copy();
-        Player player = ForgeHooks.getCraftingPlayer();
-        damageItemWhenCrafting(stack, player);
-        playCraftingSound(player, stack);
+        // The 26.2 ItemInstance crafting-remainder hook has no player context.
+        // Keep the durability and broken-stack behavior for player and automated crafting alike.
+        damageItemWhenCrafting(stack, null);
+        playCraftingSound(null, stack);
         // We cannot simply return the copied stack here because Forge's bug
         // Introduced here: https://github.com/NeoForge/NeoForge/pull/3388
         // Causing PlayerDestroyItemEvent to never be fired under correct circumstances.
@@ -585,7 +607,7 @@ public interface IGTTool extends IUIHolder<PlayerInventoryGuiData<?>>, ItemLike,
             updateToolTag(stack, tag -> tag.remove(DURABILITY_KEY));
             return damage;
         }
-        return IForgeItem.super.getDamage(stack);
+        return IItemExtension.super.getDamage(stack);
     }
 
     default int definition$getMaxDamage(ItemStack stack) {
@@ -785,10 +807,21 @@ public interface IGTTool extends IUIHolder<PlayerInventoryGuiData<?>>, ItemLike,
         if (!defaultEnchants.isEmpty()) {
             tooltip.add(Component.translatable("item.gtceu.tool.tooltip.default_enchantments"));
             for (var entry : defaultEnchants.entrySet()) {
-                Enchantment enchant = entry.getKey();
-                if (enchant == null) continue;
-
-                tooltip.add(enchant.getFullname(entry.getValue()));
+                ResourceKey<Enchantment> enchantment = entry.getKey();
+                MutableComponent name = Component.translatable("enchantment." +
+                        enchantment.identifier().getNamespace() + "." + enchantment.identifier().getPath());
+                if (world != null) {
+                    var holder = world.registryAccess().lookupOrThrow(Registries.ENCHANTMENT).get(enchantment);
+                    if (holder.isPresent()) {
+                        tooltip.add(Enchantment.getFullname(holder.get(), entry.getValue()));
+                        continue;
+                    }
+                }
+                if (entry.getValue() != 1) {
+                    name.append(CommonComponents.SPACE)
+                            .append(Component.translatable("enchantment.level." + entry.getValue()));
+                }
+                tooltip.add(name);
             }
         }
 
@@ -839,10 +872,13 @@ public interface IGTTool extends IUIHolder<PlayerInventoryGuiData<?>>, ItemLike,
         set.add(Identifier.fromNamespaceAndPath(GTValues.MODID_ENSORCELLATION, "smelting")); // CoFH
     });
 
-    default boolean definition$canApplyAtEnchantingTable(@NotNull ItemStack stack, Enchantment enchantment) {
+    default boolean definition$canApplyAtEnchantingTable(@NotNull ItemStack stack,
+                                                         Holder<Enchantment> enchantment) {
         if (stack.isEmpty()) return false;
 
-        Identifier enchantmentId = EnchantmentHelper.getEnchantmentId(enchantment);
+        ResourceKey<Enchantment> key = enchantment.unwrapKey().orElse(null);
+        if (key == null) return false;
+        Identifier enchantmentId = key.identifier();
         if (COFH_SMASHING_ENCHANT_ID.equals(enchantmentId)) {
             // block CoFH smashing enchant from all tools
             return false;
@@ -854,34 +890,18 @@ public interface IGTTool extends IUIHolder<PlayerInventoryGuiData<?>>, ItemLike,
             }
         }
 
-        // bypass EnumEnchantmentType#canEnchantItem and define custom stack-aware logic.
-        // the Minecraft method takes an Item, and does not respect NBT nor meta.
-        switch (enchantment.category) {
-            case DIGGER -> {
-                return getToolStats().isSuitableForBlockBreak(stack);
-            }
-            case WEAPON -> {
-                return getToolStats().isSuitableForAttacking(stack);
-            }
-            case BREAKABLE -> {
-                return ItemStackData.readNullable(stack) != null &&
-                        !ItemStackData.read(stack).getBoolean(UNBREAKABLE_KEY);
-            }
-            case VANISHABLE -> {
-                return true;
-            }
-        }
-
         ToolProperty property = this.getToolProperty();
         if (property == null) return false;
 
         // Check for any special enchantments specified by the material of this Tool
-        if (!property.getEnchantments().isEmpty() && property.getEnchantments().containsKey(enchantment)) {
+        if (!property.getEnchantments().isEmpty() && property.getEnchantments().containsKey(key)) {
             return true;
         }
 
-        // Check for any additional Enchantment Types added in the builder
-        return getToolStats().isEnchantable(stack) && getToolStats().canApplyEnchantment(stack, enchantment);
+        // Modern enchantment definitions use item tags in place of the old category enum.
+        return enchantment.value().isSupportedItem(stack) ||
+                (getToolStats().isEnchantable(stack) &&
+                        getToolStats().canApplyEnchantment(stack, enchantment.value()));
     }
 
     // Sound Playing
@@ -936,34 +956,11 @@ public interface IGTTool extends IUIHolder<PlayerInventoryGuiData<?>>, ItemLike,
         return getToolClasses(stack).stream().flatMap(type -> type.toolClassNames.stream()).collect(Collectors.toSet());
     }
 
-    @Nullable
-    default ICapabilityProvider definition$initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
-        List<ICapabilityProvider> providers = new ArrayList<>();
-        // Electric capability registration now lives in ElectricItemCapabilityRegistration.
-        // The remaining legacy providers below belong to the pending fluid/tool capability migration.
-        for (IToolBehavior behavior : getToolStats().getBehaviors()) {
-            if (behavior instanceof IComponentCapability componentCapability) {
-                providers.add(new ICapabilityProvider() {
-
-                    @Override
-                    public @NotNull <
-                            T> LazyOptional<T> getCapability(@NotNull Capability<T> capability,
-                                                             @Nullable Direction arg) {
-                        return componentCapability.getCapability(stack, capability);
-                    }
-                });
-            }
-        }
-        if (providers.isEmpty()) return null;
-        if (providers.size() == 1) return providers.get(0);
-        return new CombinedCapabilityProvider(providers);
-    }
-
     default boolean definition$isCorrectToolForDrops(ItemStack stack, BlockState state) {
         if (stack.getItem() instanceof IGTTool gtTool) {
             return isToolEffective(state, gtTool.getToolClasses(stack), gtTool.getTotalHarvestLevel(stack));
         }
-        return stack.getItem().isCorrectToolForDrops(state);
+        return stack.getItem().isCorrectToolForDrops(stack, state);
     }
 
     @OnlyIn(Dist.CLIENT)

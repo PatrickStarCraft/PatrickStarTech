@@ -15,11 +15,12 @@ import com.gregtechceu.gtceu.integration.ae2.machine.trait.ProxySlotRecipeHandle
 
 import org.jspecify.annotations.NullMarked;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.Tag;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.phys.BlockHitResult;
 
 import brachy.modularui.factory.PosGuiData;
@@ -123,14 +124,14 @@ public class MEPatternBufferProxyPartMachine extends TieredIOPartMachine
 
     @Override
     public InteractionResult onDataStickUse(Player player, ItemStack dataStick) {
-        if (dataStick.hasTag()) {
-            assert dataStick.getTag() != null;
-            if (dataStick.getTag().contains("pos", Tag.TAG_INT_ARRAY)) {
-                var posArray = dataStick.getOrCreateTag().getIntArray("pos");
-                var bufferPos = new BlockPos(posArray[0], posArray[1], posArray[2]);
-                setBuffer(bufferPos);
-                return InteractionResult.SUCCESS;
-            }
+        var data = dataStick.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+        var posArray = data.getIntArray("pos");
+        if (posArray.isPresent()) {
+            var position = posArray.get();
+            if (position.length < 3) return InteractionResult.PASS;
+            var bufferPos = new BlockPos(position[0], position[1], position[2]);
+            setBuffer(bufferPos);
+            return InteractionResult.SUCCESS;
         }
         return InteractionResult.PASS;
     }

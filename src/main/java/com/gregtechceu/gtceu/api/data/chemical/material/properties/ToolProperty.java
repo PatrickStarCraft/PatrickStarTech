@@ -6,6 +6,7 @@ import com.gregtechceu.gtceu.api.item.tool.MaterialToolTier;
 import com.gregtechceu.gtceu.config.ConfigHolder;
 
 import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.resources.ResourceKey;
 
 import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
@@ -120,7 +121,7 @@ public class ToolProperty implements IMaterialProperty {
      * Enchantment to be applied to tools made from this Material.
      */
     @Getter
-    private final Object2IntMap<Enchantment> enchantments = new Object2IntArrayMap<>();
+    private final Object2IntMap<ResourceKey<Enchantment>> enchantments = new Object2IntArrayMap<>();
 
     public ToolProperty(float harvestSpeed, float attackDamage, int durability, int harvestLevel, GTToolType[] types) {
         this.harvestSpeed = harvestSpeed;
@@ -148,7 +149,7 @@ public class ToolProperty implements IMaterialProperty {
         }
     }
 
-    public void addEnchantmentForTools(Enchantment enchantment, int level) {
+    public void addEnchantmentForTools(ResourceKey<Enchantment> enchantment, int level) {
         if (ConfigHolder.INSTANCE.recipes.enchantedTools) {
             enchantments.put(enchantment, level);
         }
@@ -304,7 +305,7 @@ public class ToolProperty implements IMaterialProperty {
          * @param enchantment The default enchantment, applied on crafting the tool.
          * @param level       The level of the enchantment.
          */
-        public Builder enchantment(Enchantment enchantment, int level) {
+        public Builder enchantment(ResourceKey<Enchantment> enchantment, int level) {
             toolProperty.addEnchantmentForTools(enchantment, level);
             return this;
         }

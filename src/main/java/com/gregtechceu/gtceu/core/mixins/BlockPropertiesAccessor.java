@@ -13,6 +13,7 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.ToIntFunction;
 
 @Mixin(BlockBehaviour.Properties.class)
@@ -79,8 +80,11 @@ public interface BlockPropertiesAccessor {
     @Accessor
     void setOffsetFunction(Optional<BlockBehaviour.OffsetFunction> function);
 
-    @Accessor
-    boolean isSpawnParticlesOnBreak();
+    @Accessor("spawnTerrainParticles")
+    boolean isSpawnTerrainParticles();
+
+    @Accessor("spawnTerrainParticles")
+    void setSpawnTerrainParticles(boolean value);
 
     @Accessor
     FeatureFlagSet getRequiredFeatures();
@@ -89,7 +93,7 @@ public interface BlockPropertiesAccessor {
     void setRequiredFeatures(FeatureFlagSet set);
 
     @Accessor
-    BlockBehaviour.StatePredicate getEmissiveRendering();
+    Predicate<BlockState> getEmissiveRendering();
 
     @Accessor
     NoteBlockInstrument getInstrument();

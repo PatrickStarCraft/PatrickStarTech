@@ -59,6 +59,7 @@ import net.minecraft.server.TickTask;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -67,7 +68,10 @@ import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.TagValueInput;
+import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -86,6 +90,7 @@ import appeng.api.networking.IInWorldGridNodeHost;
 import appeng.capabilities.Capabilities;
 import brachy.modularui.drawable.UITexture;
 import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.MapCodec;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -159,11 +164,19 @@ public class MetaMachine extends ManagedSyncBlockEntity implements IGregtechBloc
     //////////////////////////////////////
 
     @Override
-    public void load(CompoundTag tag) {
-        isOldMachineData = !tag.contains("traitHolder");
-        if (isOldMachineData) TagCompatibilityFixer.fixTraitTags(this, tag);
+    protected void loadAdditional(ValueInput input) {
+        CompoundTag savedData = input.read(MapCodec.assumeMapUnsafe(CompoundTag.CODEC))
+                .orElseGet(CompoundTag::new);
+        isOldMachineData = !savedData.contains("traitHolder");
+        if (isOldMachineData) {
+            // Legacy traits were stored at the root. Migrate a copy, then feed the complete
+            // upgraded value tree through the modern superclass loader.
+            savedData = savedData.copy();
+            TagCompatibilityFixer.fixTraitTags(this, savedData);
+            input = TagValueInput.create(ProblemReporter.DISCARDING, input.lookup(), savedData);
+        }
 
-        super.load(tag);
+        super.loadAdditional(input);
     }
 
     /**
@@ -208,7 +221,7 @@ public class MetaMachine extends ManagedSyncBlockEntity implements IGregtechBloc
      */
     public final void scheduleForNextServerTick(Runnable runnable) {
         if (getLevel() instanceof ServerLevel serverLevel) {
-            serverLevel.getServer().tell(new TickTask(0, runnable));
+            serverLevel.getServer().schedule(new TickTask(0, runnable));
         }
     }
 
@@ -236,6 +249,12 @@ public class MetaMachine extends ManagedSyncBlockEntity implements IGregtechBloc
      */
     public void onMachineDestroyed() {
         getAllTraits().forEach(MachineTrait::onMachineDestroyed);
+    }
+
+    @Override
+    public void preRemoveSideEffects(BlockPos pos, BlockState oldState) {
+        super.preRemoveSideEffects(pos, oldState);
+        onMachineDestroyed();
     }
 
     /**
@@ -715,9 +734,8 @@ public class MetaMachine extends ManagedSyncBlockEntity implements IGregtechBloc
 
         // add render state info
         MachineRenderState renderState = this.getRenderState();
-        for (var property : renderState.getValues().entrySet()) {
-            lines.accept(GTStringUtils.getPropertyValueString(property));
-        }
+        renderState.getValues().forEach(value -> lines.accept(GTStringUtils.getPropertyValueString(
+                java.util.Map.entry(value.property(), value.value()))));
     }
 
     /**
@@ -888,7 +906,12 @@ public class MetaMachine extends ManagedSyncBlockEntity implements IGregtechBloc
      * @param isMoving      If the neighbor block is moving (e.g. moved by a piston)
      */
     public void onNeighborChanged(Block neighborBlock, BlockPos neighborPos, boolean isMoving) {
-        getAllTraits().forEach(t -> t.onMachineNeighborChanged(neighborBlock, neighborPos, isMoving));
+        onNeighborChanged(neighborBlock, neighborPos, null, isMoving);
+    }
+
+    public void onNeighborChanged(Block neighborBlock, @Nullable BlockPos neighborPos,
+                                  @Nullable Orientation orientation, boolean isMoving) {
+        getAllTraits().forEach(t -> t.onMachineNeighborChanged(neighborBlock, neighborPos, orientation, isMoving));
     }
 
     public void animateTick(RandomSource random) {}
@@ -1036,7 +1059,8 @@ public class MetaMachine extends ManagedSyncBlockEntity implements IGregtechBloc
                         .getRenderBoundingBox(this);
             }
         }
-        return new AABB(worldPosition.offset(-1, 0, -1), worldPosition.offset(2, 2, 2));
+        return new AABB(worldPosition.getX() - 1, worldPosition.getY(), worldPosition.getZ() - 1,
+                worldPosition.getX() + 2, worldPosition.getY() + 2, worldPosition.getZ() + 2);
     }
 
     //////////////////////////////////////

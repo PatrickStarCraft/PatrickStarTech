@@ -30,7 +30,7 @@ public class Symptom {
     public static final UUID SYMPTOM_WEAKNESS_UUID = UUID.fromString("482e64e0-de77-49cd-b9bc-96b7e7eb16db");
     public static final UUID SYMPTOM_SLOWNESS_UUID = UUID.fromString("b3ac6b40-2d30-419f-9cac-5b2cf998ad72");
     private static final Identifier SYMPTOM_HEALTH_DEBUFF_ID = modifierId(SYMPTOM_HEALTH_DEBUFF_UUID);
-    private static final Identifier SYMPTOM_MINING_FATIGUE_ID = modifierId(SYMPTOM_MINING_FATIGUE_UUID);
+    public static final Identifier SYMPTOM_MINING_FATIGUE_ID = modifierId(SYMPTOM_MINING_FATIGUE_UUID);
     private static final Identifier SYMPTOM_WEAKNESS_ID = modifierId(SYMPTOM_WEAKNESS_UUID);
     private static final Identifier SYMPTOM_SLOWNESS_ID = modifierId(SYMPTOM_SLOWNESS_UUID);
 

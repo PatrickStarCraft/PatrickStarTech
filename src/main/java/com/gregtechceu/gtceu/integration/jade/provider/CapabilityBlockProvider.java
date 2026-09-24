@@ -53,10 +53,10 @@ public abstract class CapabilityBlockProvider<C>
         var side = block.getSide();
         CompoundTag capData = null;
         if (side != null) {
-            capData = block.getServerData().getCompound(uid.toString()).getCompound(side.getName());
+            capData = block.getServerData().getCompoundOrEmpty(uid.toString()).getCompoundOrEmpty(side.getName());
         }
         if (side == null || capData.isEmpty()) {
-            capData = block.getServerData().getCompound(uid.toString()).getCompound("null");
+            capData = block.getServerData().getCompoundOrEmpty(uid.toString()).getCompoundOrEmpty("null");
         }
 
         addTooltip(capData, tooltip, block.getPlayer(), block, be, config);

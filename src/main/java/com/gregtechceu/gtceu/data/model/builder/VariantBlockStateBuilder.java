@@ -35,8 +35,9 @@ public final class VariantBlockStateBuilder {
         Set<Map<Property<?>, Comparable<?>>> seen = new LinkedHashSet<>();
         for (BlockState state : block.getStateDefinition().getPossibleStates()) {
             PartialState partial = partialState();
-            state.getValues().forEach((property, value) -> {
-                if (!omitted.contains(property)) partial.values.put(property, value);
+            state.getValues().forEach(value -> {
+                Property<?> property = value.property();
+                if (!omitted.contains(property)) partial.values.put(property, value.value());
             });
             if (seen.add(Map.copyOf(partial.values))) partial.setModels(mapper.apply(state));
         }
@@ -59,7 +60,14 @@ public final class VariantBlockStateBuilder {
     }
 
     private static boolean matches(BlockState state, Map<Property<?>, Comparable<?>> key) {
-        return key.entrySet().stream().allMatch(entry -> entry.getValue().equals(state.getValues().get(entry.getKey())));
+        Map<Property<?>, Comparable<?>> values = getStateValues(state);
+        return key.entrySet().stream().allMatch(entry -> entry.getValue().equals(values.get(entry.getKey())));
+    }
+
+    private static Map<Property<?>, Comparable<?>> getStateValues(BlockState state) {
+        Map<Property<?>, Comparable<?>> values = new LinkedHashMap<>();
+        state.getValues().forEach(value -> values.put(value.property(), value.value()));
+        return values;
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })

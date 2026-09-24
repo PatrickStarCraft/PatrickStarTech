@@ -12,11 +12,13 @@ import com.gregtechceu.gtceu.integration.ae2.utils.AEUtil;
 import com.gregtechceu.gtceu.utils.GTMath;
 
 import org.jspecify.annotations.NullMarked;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidUtil;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
@@ -176,7 +178,7 @@ public class MEInputHatchPartMachine extends MEHatchPartMachine
             if (index < 0 || index >= CONFIG_SIZE) return;
             boolean isFluidGhost = packet.readBoolean();
             if (isFluidGhost) {
-                FluidStack fluid = FluidStack.readFromPacket(packet);
+                FluidStack fluid = FluidStack.OPTIONAL_STREAM_CODEC.decode(packet);
                 if (!fluid.isEmpty()) {
                     aeFluidHandler.getInventory()[index].setConfig(AEUtil.fromFluidStack(fluid));
                 }
@@ -193,7 +195,7 @@ public class MEInputHatchPartMachine extends MEHatchPartMachine
         if (!isRemote()) {
             CompoundTag tag = new CompoundTag();
             tag.put("MEInputHatch", writeConfigToTag());
-            dataStick.setTag(tag);
+            CustomData.set(DataComponents.CUSTOM_DATA, dataStick, tag);
             dataStick.set(net.minecraft.core.component.DataComponents.CUSTOM_NAME, Component.translatable("gtceu.machine.me.fluid_import.data_stick.name"));
             player.sendSystemMessage(Component.translatable("gtceu.machine.me.import_copy_settings"));
         }
@@ -202,7 +204,7 @@ public class MEInputHatchPartMachine extends MEHatchPartMachine
 
     @Override
     public final InteractionResult onDataStickUse(Player player, ItemStack dataStick) {
-        CompoundTag tag = dataStick.getTag();
+        CompoundTag tag = dataStick.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
         if (tag == null || !tag.contains("MEInputHatch")) {
             return InteractionResult.PASS;
         }

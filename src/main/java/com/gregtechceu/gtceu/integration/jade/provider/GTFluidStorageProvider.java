@@ -89,7 +89,7 @@ public enum GTFluidStorageProvider implements IServerExtensionProvider<MetaMachi
         if (capacity <= 0) return null;
 
         Fluid fluid = BuiltInRegistries.FLUID.getValue(Identifier.parse(tag.getStringOr("fluid", "")));
-        CompoundTag nbt = tag.contains("tag") ? tag.getCompound("tag") : null;
+        CompoundTag nbt = tag.getCompound("tag").orElse(null);
         long amount = tag.getLongOr("amount", 0);
         JadeFluidObject fluidObject = JadeFluidObject.of(fluid, 1000, nbt);
         FluidView fluidView = new FluidView(IElementHelper.get().fluid(fluidObject));

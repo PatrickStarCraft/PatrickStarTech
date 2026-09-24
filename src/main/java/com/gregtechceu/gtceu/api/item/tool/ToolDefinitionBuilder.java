@@ -5,6 +5,7 @@ import com.gregtechceu.gtceu.api.item.tool.behavior.IToolBehavior;
 import com.gregtechceu.gtceu.config.ConfigHolder;
 
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -60,7 +61,7 @@ public class ToolDefinitionBuilder {
     private AoESymmetrical aoe = AoESymmetrical.ZERO;
     private final Set<Block> effectiveBlocks = new ObjectOpenHashSet<>();
     private Predicate<BlockState> effectiveStates;
-    private final Object2IntMap<Enchantment> defaultEnchantments = new Object2IntArrayMap<>();
+    private final Object2IntMap<ResourceKey<Enchantment>> defaultEnchantments = new Object2IntArrayMap<>();
 
     public ToolDefinitionBuilder behaviors(IToolBehavior... behaviours) {
         Collections.addAll(this.behaviours, behaviours);
@@ -126,7 +127,7 @@ public class ToolDefinitionBuilder {
         return this;
     }
 
-    public ToolDefinitionBuilder defaultEnchantment(Enchantment enchantment, int level) {
+    public ToolDefinitionBuilder defaultEnchantment(ResourceKey<Enchantment> enchantment, int level) {
         if (ConfigHolder.INSTANCE.recipes.enchantedTools) {
             this.defaultEnchantments.put(enchantment, level);
         }
@@ -156,7 +157,7 @@ public class ToolDefinitionBuilder {
             private final Supplier<ItemStack> brokenStack = ToolDefinitionBuilder.this.brokenStack;
             private final AoESymmetrical aoeSymmetrical = ToolDefinitionBuilder.this.aoe;
             private final Predicate<BlockState> effectiveStatePredicate;
-            private final Object2IntMap<Enchantment> defaultEnchantments = ToolDefinitionBuilder.this.defaultEnchantments;
+            private final Object2IntMap<ResourceKey<Enchantment>> defaultEnchantments = ToolDefinitionBuilder.this.defaultEnchantments;
 
             {
                 Set<Block> effectiveBlocks = ToolDefinitionBuilder.this.effectiveBlocks;
@@ -249,7 +250,7 @@ public class ToolDefinitionBuilder {
             }
 
             @Override
-            public Object2IntMap<Enchantment> getDefaultEnchantments(ItemStack stack) {
+            public Object2IntMap<ResourceKey<Enchantment>> getDefaultEnchantments(ItemStack stack) {
                 return Object2IntMaps.unmodifiable(this.defaultEnchantments);
             }
 
