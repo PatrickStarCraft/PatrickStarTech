@@ -1,0 +1,27 @@
+// Exercise the real pure overclock algorithms without loading GT machines or recipe registries.
+gradle.projectsEvaluated {
+    def project = gradle.rootProject
+    def gtRoot = project.projectDir.parentFile.parentFile
+    def selectedProductionSources = project.fileTree(new File(gtRoot, 'src/main/java')) {
+        include 'com/gregtechceu/gtceu/api/recipe/OverclockingLogic.java'
+    }
+    project.sourceSets.test.java.setSrcDirs([
+        new File(gtRoot, 'src/test/java'),
+        new File(gtRoot, 'scripts/port-overclock-test-fixtures')
+    ])
+    project.sourceSets.test.java.setIncludes([
+        'com/gregtechceu/gtceu/api/recipe/OverclockingLogicPortTest.java',
+        'com/gregtechceu/gtceu/api/GTValues.java',
+        'com/gregtechceu/gtceu/api/machine/MetaMachine.java',
+        'com/gregtechceu/gtceu/api/recipe/GTRecipe.java',
+        'com/gregtechceu/gtceu/api/recipe/RecipeHelper.java',
+        'com/gregtechceu/gtceu/api/recipe/content/ContentModifier.java',
+        'com/gregtechceu/gtceu/api/recipe/modifier/ModifierFunction.java',
+        'com/gregtechceu/gtceu/api/recipe/modifier/ParallelLogic.java',
+        'com/gregtechceu/gtceu/utils/GTMath.java',
+        'com/gregtechceu/gtceu/utils/GTUtil.java'
+    ])
+    project.tasks.named('compileTestJava') {
+        source(selectedProductionSources)
+    }
+}

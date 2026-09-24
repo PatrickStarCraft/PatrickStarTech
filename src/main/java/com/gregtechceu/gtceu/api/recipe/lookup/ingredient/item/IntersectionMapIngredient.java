@@ -18,7 +18,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 public class IntersectionMapIngredient extends AbstractMapIngredient {
 
@@ -32,13 +34,13 @@ public class IntersectionMapIngredient extends AbstractMapIngredient {
 
     @NotNull
     public static List<AbstractMapIngredient> from(IntersectionIngredient ingredient) {
-        List<Ingredient> originalChildren = ingredient.children();
-        List<AbstractMapIngredient> mapChildren = new ObjectArrayList<>();
-        for (var ing : originalChildren) {
-            mapChildren.addAll(MapIngredientTypeManager.getFrom(ing, ItemRecipeCapability.CAP));
+        // Any matching stack must match each child. Index the union of child keys as candidates;
+        // RecipeDB's validity predicate applies the full intersection after lookup.
+        Set<AbstractMapIngredient> mapIngredients = new LinkedHashSet<>();
+        for (Ingredient child : ingredient.children()) {
+            mapIngredients.addAll(MapIngredientTypeManager.getFrom(child, ItemRecipeCapability.CAP));
         }
-
-        return Collections.singletonList(new IntersectionMapIngredient(mapChildren));
+        return new ObjectArrayList<>(mapIngredients);
     }
 
     @NotNull
@@ -57,11 +59,9 @@ public class IntersectionMapIngredient extends AbstractMapIngredient {
 
     @Override
     protected int hash() {
-        int hash = 31;
-        for (var child : children) {
-            hash *= 31 * child.hashCode();
-        }
-        return hash;
+        // This key can compare equal to a plain item key when every child accepts that item.
+        // Use the common child bucket so hash-based recipe lookup reaches that comparison.
+        return children.isEmpty() ? 0 : children.get(0).hashCode();
     }
 
     @Override
@@ -82,14 +82,16 @@ public class IntersectionMapIngredient extends AbstractMapIngredient {
                 }
             }
         } else if (o instanceof ItemStackMapIngredient stackIngredient) {
-            for (var child : this.children) {
-                if (!child.equals(stackIngredient)) {
-                    return false;
-                }
-            }
-            return true;
+            return matchesItemStack(stackIngredient);
         }
         return false;
+    }
+
+    boolean matchesItemStack(ItemStackMapIngredient stackIngredient) {
+        for (var child : this.children) {
+            if (!child.equals(stackIngredient)) return false;
+        }
+        return true;
     }
 
     @Override

@@ -4,17 +4,16 @@ import com.gregtechceu.gtceu.GTCEu;
 import com.gregtechceu.gtceu.api.GTValues;
 import com.gregtechceu.gtceu.api.cosmetics.event.RegisterGTCapesEvent;
 import com.gregtechceu.gtceu.api.data.worldgen.GTOreDefinition;
+import com.gregtechceu.gtceu.api.machine.MetaMachine;
 import com.gregtechceu.gtceu.api.data.worldgen.bedrockfluid.BedrockFluidDefinition;
 import com.gregtechceu.gtceu.api.data.worldgen.bedrockore.BedrockOreDefinition;
 import com.gregtechceu.gtceu.api.item.IComponentItem;
 import com.gregtechceu.gtceu.api.item.IGTTool;
-import com.gregtechceu.gtceu.client.model.item.CustomItemRendererWrapperModel;
 import com.gregtechceu.gtceu.client.color.item.GTMaterialPartTintSource;
+import com.gregtechceu.gtceu.client.color.FluidCellTintSource;
 import com.gregtechceu.gtceu.client.color.MaterialLayerTintSource;
-import com.gregtechceu.gtceu.client.model.item.FacadeUnbakedModel;
 import com.gregtechceu.gtceu.client.model.machine.MachineModelLoader;
 import com.gregtechceu.gtceu.client.model.pipe.PipeModel;
-import com.gregtechceu.gtceu.client.model.pipe.PipeModelLoader;
 import com.gregtechceu.gtceu.client.model.runtimegen.*;
 import com.gregtechceu.gtceu.client.particle.GTParticleManager;
 import com.gregtechceu.gtceu.client.particle.HazardParticle;
@@ -45,6 +44,7 @@ import com.gregtechceu.gtceu.data.model.builder.PipeModelBuilder;
 import com.gregtechceu.gtceu.data.pack.event.RegisterDynamicResourcesEvent;
 import com.gregtechceu.gtceu.integration.embeddium.GTEmbeddiumCompat;
 import com.gregtechceu.gtceu.integration.kjs.GregTechKubeJSPlugin;
+import com.gregtechceu.gtceu.integration.modernfix.GTModernFixIntegration;
 import com.gregtechceu.gtceu.integration.map.ClientCacheManager;
 import com.gregtechceu.gtceu.integration.map.cache.client.GTClientCache;
 import com.gregtechceu.gtceu.integration.map.ftbchunks.FTBChunksPlugin;
@@ -54,14 +54,22 @@ import com.gregtechceu.gtceu.integration.map.layer.builtin.OreRenderLayer;
 import com.gregtechceu.gtceu.utils.data.RuntimeBlockstateProvider;
 import com.gregtechceu.gtceu.utils.input.SyncedKeyMapping;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.DeltaTracker;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.debug.DebugEntryLookingAt;
+import net.minecraft.client.gui.components.debug.DebugScreenEntryStatus;
+import net.minecraft.client.gui.components.debug.DebugScreenProfile;
 import net.minecraft.client.model.object.boat.BoatModel;
 import net.minecraft.client.renderer.blockentity.HangingSignRenderer;
 import net.minecraft.client.renderer.blockentity.StandingSignRenderer;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.client.event.lifecycle.ClientStartedEvent;
 import net.neoforged.neoforge.common.NeoForge;
@@ -72,6 +80,9 @@ import net.neoforged.fml.ModLoadingContext;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import lombok.Getter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ClientProxy extends CommonProxy {
 
@@ -131,6 +142,31 @@ public class ClientProxy extends CommonProxy {
     }
 
     @SubscribeEvent
+    public void onRegisterDebugEntries(RegisterDebugEntriesEvent event) {
+        GTParticleManager.INSTANCE.registerDebugEntries(event);
+
+        Identifier machineDebugEntry = GTCEu.id("machine_debug_overlay");
+        event.register(machineDebugEntry, (displayer, level, clientChunk, serverChunk) -> {
+            Minecraft mc = Minecraft.getInstance();
+            if (mc.showOnlyReducedInfo()) return;
+
+            Entity cameraEntity = mc.getCameraEntity();
+            if (cameraEntity == null || mc.level == null) return;
+
+            // Match vanilla's targeted-block debug entry and append GT's machine details to its group.
+            if (!(cameraEntity.pick(20.0, 0.0F, false) instanceof BlockHitResult hit)) return;
+            BlockEntity blockEntity = mc.level.getBlockEntity(hit.getBlockPos());
+            if (!(blockEntity instanceof MetaMachine machine)) return;
+
+            List<String> lines = new ArrayList<>();
+            lines.add("");
+            machine.addDebugOverlayText(lines::add);
+            displayer.addToGroup(DebugEntryLookingAt.BLOCK_GROUP, lines);
+        });
+        event.includeInProfile(machineDebugEntry, DebugScreenProfile.DEFAULT, DebugScreenEntryStatus.ALWAYS_ON);
+    }
+
+    @SubscribeEvent
     public void onRegisterItemDecorations(RegisterItemDecorationsEvent event) {
         for (Item item : BuiltInRegistries.ITEM) {
             if (item instanceof IComponentItem) {
@@ -153,8 +189,16 @@ public class ClientProxy extends CommonProxy {
 
     @SubscribeEvent
     public void onRegisterItemTintSources(RegisterColorHandlersEvent.ItemTintSources event) {
+        event.register(FluidCellTintSource.ID, FluidCellTintSource.MAP_CODEC);
         event.register(GTMaterialPartTintSource.ID, GTMaterialPartTintSource.MAP_CODEC);
         event.register(MaterialLayerTintSource.ID, MaterialLayerTintSource.MAP_CODEC);
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public void onModernFixModifyBakingResult(ModelEvent.ModifyBakingResult event) {
+        if (GTCEu.Mods.isModernFixLoaded()) {
+            GTModernFixIntegration.onModifyBakingResult(event);
+        }
     }
 
     @SubscribeEvent
@@ -199,9 +243,6 @@ public class ClientProxy extends CommonProxy {
     @SubscribeEvent
     public void onRegisterModelLoaders(ModelEvent.RegisterLoaders event) {
         event.register(MachineModelLoader.ID, MachineModelLoader.INSTANCE);
-        event.register(PipeModelLoader.ID, PipeModelLoader.INSTANCE);
-        event.register(GTCEu.id("facade"), FacadeUnbakedModel.Loader.INSTANCE);
-        event.register(CustomItemRendererWrapperModel.ID, CustomItemRendererWrapperModel.Loader.INSTANCE);
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)

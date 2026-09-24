@@ -15,6 +15,7 @@ import com.gregtechceu.gtceu.client.color.MaterialLayerTintSource;
 import com.gregtechceu.gtceu.common.block.*;
 import com.gregtechceu.gtceu.common.data.GTItems;
 import com.gregtechceu.gtceu.common.data.GTMaterialBlocks;
+import com.gregtechceu.gtceu.common.data.GTMaterialItems;
 import com.gregtechceu.gtceu.core.MixinHelpers;
 import com.gregtechceu.gtceu.data.pack.GTDynamicResourcePack;
 import com.gregtechceu.gtceu.data.model.builder.ConfiguredModel;
@@ -142,6 +143,22 @@ public class GTModels {
         return RuntimeModelResources.itemDefinition(modelId, tints);
     }
 
+    /** Keep the generated block-item model as the base so its display transforms stay active. */
+    public static void createLampItemDefinition(DataGenContext<Item, ? extends Item> ctx,
+                                                ItemModelProvider prov) {
+        JsonObject specialModel = new JsonObject();
+        specialModel.addProperty("type", "minecraft:special");
+        specialModel.addProperty("base", ctx.getId().withPrefix("item/").toString());
+
+        JsonObject renderer = new JsonObject();
+        renderer.addProperty("type", GTCEu.id("lamp").toString());
+        specialModel.add("model", renderer);
+
+        JsonObject definition = new JsonObject();
+        definition.add("model", specialModel);
+        prov.bindItemDefinition(ctx.getId(), definition);
+    }
+
     /** Add item definitions and their generated model to the live dynamic resource pack. */
     public static void registerRuntimeTintedItemModels() {
         ItemModelProvider itemModels = RuntimeBlockstateProvider.INSTANCE.itemModels();
@@ -159,6 +176,19 @@ public class GTModels {
         Identifier rotorId = BuiltInRegistries.ITEM.getKey(rotor);
         itemModels.generated(rotorId, GTCEu.id("item/tools/turbine"));
         itemModels.bindItemDefinition(rotorId, materialPartItemDefinition(rotorId.withPrefix("item/")));
+
+        // ToolItemModelGenerator registers the base item definitions first. Re-emit them here with
+        // stack-aware model tints so material and crowbar colors remain dynamic in the 26.2 item pipeline.
+        for (var cell : GTMaterialItems.TOOL_ITEMS.cellSet()) {
+            var toolEntry = cell.getValue();
+            if (toolEntry == null) continue;
+
+            Item tool = toolEntry.get();
+            Identifier itemId = BuiltInRegistries.ITEM.getKey(tool);
+            RuntimeModelResources.emitItem(itemId, cell.getColumnKey().modelLocation,
+                    RuntimeModelResources.dynamicLayerTints(MaterialLayerTintSource.ID, 3),
+                    GTDynamicResourcePack::addResource);
+        }
 
         registerMaterialPipeItemTints(itemModels, GTMaterialBlocks.CABLE_BLOCKS.values());
         registerMaterialPipeItemTints(itemModels, GTMaterialBlocks.FLUID_PIPE_BLOCKS.values());

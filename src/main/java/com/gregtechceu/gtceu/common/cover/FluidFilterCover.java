@@ -12,6 +12,7 @@ import com.gregtechceu.gtceu.api.transfer.fluid.IFluidHandlerModifiable;
 import com.gregtechceu.gtceu.common.cover.data.FilterMode;
 import com.gregtechceu.gtceu.common.cover.data.ManualIOMode;
 import com.gregtechceu.gtceu.common.mui.GTMuiCoverUtil;
+import com.gregtechceu.gtceu.utils.EnumOrdinal;
 
 import org.jspecify.annotations.NullMarked;
 import net.minecraft.core.Direction;
@@ -141,8 +142,8 @@ public class FluidFilterCover extends CoverBehavior implements IMuiCover {
 
     @Override
     public void pasteConfig(ServerPlayer player, CompoundTag tag) {
-        setAllowFlow(ManualIOMode.values()[tag.getIntOr("manualIO", 0)]);
-        setFilterMode(FilterMode.values()[tag.getIntOr("filterMode", 0)]);
+        setAllowFlow(EnumOrdinal.getOrDefault(ManualIOMode.values(), tag.getIntOr("manualIO", 0)));
+        setFilterMode(EnumOrdinal.getOrDefault(FilterMode.values(), tag.getIntOr("filterMode", 0)));
         fluidFilter = Filters.loadFluidFilter(com.gregtechceu.gtceu.utils.data.StackPersistence.loadItem(tag.getCompoundOrEmpty("filter")));
         super.pasteConfig(player, tag);
     }

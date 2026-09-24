@@ -3,6 +3,7 @@ package com.gregtechceu.gtceu.api.recipe.ingredient.nbtpredicate;
 import net.minecraft.nbt.*;
 import org.junit.jupiter.api.Test;
 
+import static com.gregtechceu.gtceu.api.recipe.ingredient.nbtpredicate.NBTPredicates.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class PortNBTPredicateCheck {
@@ -13,7 +14,10 @@ class PortNBTPredicateCheck {
         test.nestedCompoundAndListPathsResolveAndRejectInvalidIndices();
         test.predicatesRetainTheirBehaviorAcrossJsonRoundTrips();
         test.retainsIeeeComparisonBehavior();
-        System.out.println("NBT predicates: 5 checks passed");
+        test.stringEqualityInequalityAndTypeMismatches();
+        test.comparisonOperatorsRespectInclusiveAndExclusiveBounds();
+        test.compositePredicatesPreserveAnyAllAndNotSemantics();
+        System.out.println("NBT predicates: 8 checks passed");
     }
 
     @Test
@@ -36,8 +40,18 @@ class PortNBTPredicateCheck {
     @Test
     void missingAndNonNumericValuesDoNotMatchNumericComparisons() {
         var data = new CompoundTag();
+        assertFalse(eq("missing", "x").test(data));
+        assertFalse(eq("missing", 1).test(data));
+        assertFalse(eq("missing", new CompoundTag()).test(data));
+        assertFalse(neq("missing", "x").test(data));
+        assertFalse(neq("missing", 1).test(data));
+        assertFalse(neq("missing", new CompoundTag()).test(data));
         assertFalse(new ComparisonNBTPredicate("missing", 1).test(data));
         assertFalse(new EqualsNBTPredicate("missing", IntTag.valueOf(1), true).test(data));
+        assertFalse(gt("num", 5).test(data));
+        assertFalse(gte("num", 5).test(data));
+        assertFalse(lt("num", 15).test(data));
+        assertFalse(lte("num", 9).test(data));
         data.putString("amount", "7");
         assertFalse(new ComparisonNBTPredicate("amount", 6).test(data));
         assertFalse(new EqualsNBTPredicate("amount", IntTag.valueOf(7)).test(data));
@@ -79,5 +93,67 @@ class PortNBTPredicateCheck {
         assertFalse(new EqualsNBTPredicate("amount", DoubleTag.valueOf(Double.NaN)).test(data));
         data.putDouble("amount", Double.POSITIVE_INFINITY);
         assertTrue(new ComparisonNBTPredicate("amount", Double.MAX_VALUE).test(data));
+    }
+
+    /** Migrated from the pure-data cases in the legacy NBTPredicateTest GameTest. */
+    @Test
+    void stringEqualityInequalityAndTypeMismatches() {
+        var data = new CompoundTag();
+        data.putString("foo", "bar");
+
+        assertTrue(eq("foo", "bar").test(data));
+        assertFalse(eq("foo", "baz").test(data));
+        assertFalse(eq("foo", 1).test(data));
+        assertFalse(eq("foo", new CompoundTag()).test(data));
+        assertFalse(neq("foo", "bar").test(data));
+        assertTrue(neq("foo", "baz").test(data));
+        assertTrue(neq("foo", 1).test(data));
+        assertTrue(neq("foo", new CompoundTag()).test(data));
+    }
+
+    /** Migrated from the pure-data cases in the legacy NBTPredicateTest GameTest. */
+    @Test
+    void comparisonOperatorsRespectInclusiveAndExclusiveBounds() {
+        var data = new CompoundTag();
+        data.putDouble("num", 10);
+
+        assertTrue(gt("num", 5).test(data));
+        assertFalse(gt("num", 10).test(data));
+        assertFalse(gt("num", 11).test(data));
+        assertTrue(gte("num", 10).test(data));
+        assertTrue(lte("num", 10).test(data));
+        assertTrue(lt("num", 15).test(data));
+        assertFalse(lt("num", 10).test(data));
+        assertFalse(lte("num", 9).test(data));
+    }
+
+    /** Migrated from the pure-data cases in the legacy NBTPredicateTest GameTest. */
+    @Test
+    void compositePredicatesPreserveAnyAllAndNotSemantics() {
+        var data = new CompoundTag();
+        data.putInt("a", 5);
+        data.putInt("b", 10);
+
+        var anyMatches = any(
+                new EqualsNBTPredicate("a", IntTag.valueOf(7)),
+                new EqualsNBTPredicate("b", IntTag.valueOf(10)),
+                eq("missing", 99));
+        var allMatches = all(
+                lt("a", 6),
+                gt("b", 9));
+        var failingAll = all(
+                lt("a", 4),
+                gt("b", 9));
+        var failingAny = any(
+                new EqualsNBTPredicate("a", IntTag.valueOf(7)),
+                new EqualsNBTPredicate("b", IntTag.valueOf(11)));
+
+        assertTrue(anyMatches.test(data));
+        assertTrue(allMatches.test(data));
+        assertFalse(failingAll.test(data));
+        assertFalse(failingAny.test(data));
+        assertFalse(not(new EqualsNBTPredicate("b", IntTag.valueOf(10))).test(data));
+        assertTrue(not(new EqualsNBTPredicate("a", IntTag.valueOf(7))).test(data));
+        assertTrue(NBTPredicates.fromJson(allMatches.toJson()).test(data));
     }
 }

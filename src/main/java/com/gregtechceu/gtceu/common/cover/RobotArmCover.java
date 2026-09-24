@@ -9,6 +9,7 @@ import com.gregtechceu.gtceu.common.cover.data.TransferMode;
 import com.gregtechceu.gtceu.common.mui.GTMuiCoverUtil;
 import com.gregtechceu.gtceu.common.mui.GTMuiWidgets;
 import com.gregtechceu.gtceu.common.pipelike.item.ItemNetHandler;
+import com.gregtechceu.gtceu.utils.EnumOrdinal;
 
 import org.jspecify.annotations.NullMarked;
 import net.minecraft.core.Direction;
@@ -193,7 +194,7 @@ public class RobotArmCover extends ConveyorCover {
 
     @Override
     public void pasteConfig(ServerPlayer player, CompoundTag tag) {
-        setTransferMode(TransferMode.values()[tag.getIntOr("transferMode", 0)]);
+        setTransferMode(EnumOrdinal.getOrDefault(TransferMode.values(), tag.getIntOr("transferMode", 0)));
         setGlobalTransferLimit(tag.getIntOr("transferLimit", 0));
         super.pasteConfig(player, tag);
     }

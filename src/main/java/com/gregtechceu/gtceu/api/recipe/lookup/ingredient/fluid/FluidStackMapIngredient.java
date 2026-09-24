@@ -51,11 +51,13 @@ public class FluidStackMapIngredient extends AbstractMapIngredient {
 
     @Override
     protected int hash() {
-        return stack.hashCode();
+        // Lookup keys compare the fluid and ingredient predicate; stack amount is checked separately.
+        return stack.getFluid().hashCode();
     }
 
     @Override
     public boolean equals(Object o) {
+        if (this == o) return true;
         if (super.equals(o)) {
             FluidStackMapIngredient other = (FluidStackMapIngredient) o;
             if (this.stack.getFluid() != other.stack.getFluid()) {
@@ -69,6 +71,8 @@ public class FluidStackMapIngredient extends AbstractMapIngredient {
                 }
             } else if (other.ingredient != null) {
                 return other.ingredient.test(this.stack);
+            } else {
+                return FluidStack.isSameFluidSameComponents(this.stack, other.stack);
             }
         }
         return false;

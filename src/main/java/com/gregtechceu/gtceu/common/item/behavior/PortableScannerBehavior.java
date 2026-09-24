@@ -138,17 +138,12 @@ public class PortableScannerBehavior implements IInteractionItem, IAddInformatio
     }
 
     protected void setNextMode(ItemStack stack) {
-        com.gregtechceu.gtceu.api.item.data.ItemStackData.update(stack,
-                tag -> tag.putInt("Mode", Math.floorMod(tag.getIntOr("Mode", 0) + 1, DisplayMode.values().length)));
+        ScannerModeData.setNextMode(stack, DisplayMode.values().length);
     }
 
     @Nonnull
     protected DisplayMode getMode(ItemStack stack) {
-        if (stack == ItemStack.EMPTY) {
-            return DisplayMode.SHOW_ALL;
-        }
-        var tag = com.gregtechceu.gtceu.api.item.data.ItemStackData.read(stack);
-        return DisplayMode.values()[Math.floorMod(tag.getIntOr("Mode", 0), DisplayMode.values().length)];
+        return ScannerModeData.getMode(stack, DisplayMode.values());
     }
 
     public int addScannerInfo(Player player, Level level, BlockPos pos, DisplayMode mode, List<Component> list) {

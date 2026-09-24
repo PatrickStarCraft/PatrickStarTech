@@ -118,19 +118,25 @@ public class FluidHandlerList implements IFluidHandlerModifiable, NBTSerializabl
     public @NotNull FluidStack drain(int maxDrain, FluidAction action) {
         if (maxDrain == 0) return FluidStack.EMPTY;
         FluidStack totalDrained = null;
+        outer:
         for (IFluidHandler handler : handlers) {
-            if (totalDrained == null || totalDrained.isEmpty()) {
-                totalDrained = handler.drain(maxDrain, action);
-                if (totalDrained.isEmpty()) totalDrained = null;
-                else maxDrain -= totalDrained.getAmount();
-            } else {
-                FluidStack copy = totalDrained.copy();
-                copy.setAmount(maxDrain);
-                FluidStack drain = handler.drain(copy, action);
-                totalDrained.grow(drain.getAmount());
-                maxDrain -= drain.getAmount();
+            for (int tank = 0; tank < handler.getTanks(); tank++) {
+                FluidStack available = handler.getFluidInTank(tank);
+                if (available.isEmpty() || !filter.test(available)) continue;
+                if (totalDrained != null && !FluidStack.isSameFluidSameComponents(totalDrained, available)) continue;
+
+                FluidStack request = available.copyWithAmount(maxDrain);
+                FluidStack drained = handler.drain(request, action);
+                if (drained.isEmpty()) continue;
+
+                if (totalDrained == null) {
+                    totalDrained = drained.copy();
+                } else {
+                    totalDrained.grow(drained.getAmount());
+                }
+                maxDrain -= drained.getAmount();
+                if (maxDrain <= 0) break outer;
             }
-            if (maxDrain <= 0) break;
         }
         return totalDrained == null ? FluidStack.EMPTY : totalDrained;
     }

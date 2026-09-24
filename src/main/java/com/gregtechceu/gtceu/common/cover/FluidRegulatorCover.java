@@ -10,6 +10,7 @@ import com.gregtechceu.gtceu.common.cover.data.BucketMode;
 import com.gregtechceu.gtceu.common.cover.data.TransferMode;
 import com.gregtechceu.gtceu.common.mui.GTMuiCoverUtil;
 import com.gregtechceu.gtceu.common.mui.GTMuiWidgets;
+import com.gregtechceu.gtceu.utils.EnumOrdinal;
 
 import org.jspecify.annotations.NullMarked;
 import net.minecraft.core.Direction;
@@ -203,9 +204,9 @@ public class FluidRegulatorCover extends PumpCover {
 
     @Override
     public void pasteConfig(ServerPlayer player, CompoundTag tag) {
-        setTransferMode(TransferMode.values()[tag.getIntOr("transferMode", 0)]);
+        setTransferMode(EnumOrdinal.getOrDefault(TransferMode.values(), tag.getIntOr("transferMode", 0)));
         globalTransferLimit = (tag.getIntOr("transferLimit", 0));
-        setTransferBucketMode(BucketMode.values()[tag.getIntOr("transferBucket", 0)]);
+        setTransferBucketMode(EnumOrdinal.getOrDefault(BucketMode.values(), tag.getIntOr("transferBucket", 0)));
         super.pasteConfig(player, tag);
     }
 }

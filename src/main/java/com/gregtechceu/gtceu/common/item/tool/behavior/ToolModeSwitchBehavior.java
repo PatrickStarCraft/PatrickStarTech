@@ -42,7 +42,8 @@ public class ToolModeSwitchBehavior implements IToolBehavior {
 
     @Override
     public boolean canPerformAction(ItemStack stack, ItemAbility action) {
-        var mode = WrenchModeType.values()[getBehaviorsTag(stack).getByteOr("Mode", (byte) 0)];
+        var mode = OrdinalModeData.getMode(WrenchModeType.values(),
+                getBehaviorsTag(stack).getByteOr("Mode", (byte) 0), WrenchModeType.ITEM);
         boolean canWrenchConfigureAll = action == GTToolActions.WRENCH_CONFIGURE_ALL;
         return action == GTToolActions.WRENCH_CONFIGURE || switch (mode) {
             case ITEM -> canWrenchConfigureAll || action == GTToolActions.WRENCH_CONFIGURE_ITEMS;
@@ -97,9 +98,11 @@ public class ToolModeSwitchBehavior implements IToolBehavior {
             var toolTypes = ToolHelper.getToolTypes(itemStack);
             if (toolTypes.contains(GTToolType.WRENCH)) {
                 ToolHelper.updateBehaviorsTag(itemStack, tag -> tag.putByte("Mode",
-                        (byte) ((tag.getByteOr("Mode", (byte) 0) + 1) % WrenchModeType.values().length)));
+                        (byte) OrdinalModeData.nextOrdinal(tag.getByteOr("Mode", (byte) 0),
+                                WrenchModeType.values().length)));
                 player.sendOverlayMessage(Component.translatable("metaitem.machine_configuration.mode",
-                        WrenchModeType.values()[getBehaviorsTag(itemStack).getByteOr("Mode", (byte) 0)].getName()));
+                        OrdinalModeData.getMode(WrenchModeType.values(),
+                                getBehaviorsTag(itemStack).getByteOr("Mode", (byte) 0), WrenchModeType.ITEM).getName()));
             }
             return InteractionResult.SUCCESS.heldItemTransformedTo(itemStack);
         }
@@ -115,7 +118,8 @@ public class ToolModeSwitchBehavior implements IToolBehavior {
         var toolTypes = ToolHelper.getToolTypes(stack);
         if (toolTypes.contains(GTToolType.WRENCH)) {
             tooltip.add(Component.translatable("metaitem.machine_configuration.mode",
-                    WrenchModeType.values()[tagCompound.getByteOr("Mode", (byte) 0)].getName()));
+                    OrdinalModeData.getMode(WrenchModeType.values(), tagCompound.getByteOr("Mode", (byte) 0),
+                            WrenchModeType.ITEM).getName()));
         }
     }
 

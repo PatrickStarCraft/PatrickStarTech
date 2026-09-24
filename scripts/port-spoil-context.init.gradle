@@ -1,0 +1,35 @@
+// Test SpoilContext persistence with the real 26.2 NBT and lifecycle types, excluding unrelated GT runtime services.
+gradle.projectsEvaluated {
+    def project = gradle.rootProject
+    def gtRoot = project.projectDir.parentFile.parentFile
+    def selectedProductionSources = project.fileTree(new File(gtRoot, 'src/main/java')) {
+        include 'com/gregtechceu/gtceu/api/item/component/SpoilContext.java'
+    }
+    project.sourceSets.test.java.setSrcDirs([
+        new File(gtRoot, 'src/test/java'),
+        new File(gtRoot, 'scripts/port-spoil-context-test-fixtures')
+    ])
+    project.sourceSets.test.java.setIncludes([
+        'com/gregtechceu/gtceu/GTCEu.java',
+        'com/gregtechceu/gtceu/api/capability/GTCapabilityHelper.java',
+        'com/gregtechceu/gtceu/api/machine/MetaMachine.java',
+        'com/gregtechceu/gtceu/api/transfer/item/CustomItemStackHandler.java',
+        'com/gregtechceu/gtceu/api/item/component/SpoilContextPortTest.java',
+        'com/gregtechceu/gtceu/api/item/component/ISpoilableItem.java',
+        'com/gregtechceu/gtceu/api/item/component/IAddInformation.java',
+        'com/gregtechceu/gtceu/api/item/component/IDurabilityBar.java',
+        'com/gregtechceu/gtceu/api/item/IMergeableNBTSerializable.java',
+        'com/gregtechceu/gtceu/api/item/ISpoilableItemStackExtension.java',
+        'com/gregtechceu/gtceu/utils/FormattingUtil.java',
+        'com/gregtechceu/gtceu/common/item/behavior/SpoilableBehavior.java',
+        'com/gregtechceu/gtceu/common/item/SpoilableItemStackPortTest.java'
+    ])
+    project.tasks.named('compileTestJava') {
+        source(selectedProductionSources)
+        source(project.fileTree(new File(gtRoot, 'src/main/java')) {
+            include 'com/gregtechceu/gtceu/common/item/SpoilableItemStack.java'
+            include 'com/gregtechceu/gtceu/api/item/data/ItemStackData.java'
+            include 'com/gregtechceu/gtceu/api/sync_system/NBTSerializable.java'
+        })
+    }
+}

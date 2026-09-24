@@ -64,6 +64,9 @@ public class ItemStackMapIngredient extends AbstractMapIngredient {
 
     @Override
     public boolean equals(Object o) {
+        if (o instanceof IntersectionMapIngredient intersection) {
+            return intersection.matchesItemStack(this);
+        }
         if (super.equals(o)) {
             ItemStackMapIngredient other = (ItemStackMapIngredient) o;
             if (!ItemStack.isSameItem(this.stack, other.stack)) {

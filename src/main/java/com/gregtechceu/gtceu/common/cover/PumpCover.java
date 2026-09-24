@@ -17,6 +17,7 @@ import com.gregtechceu.gtceu.common.cover.data.BucketMode;
 import com.gregtechceu.gtceu.common.cover.data.ManualIOMode;
 import com.gregtechceu.gtceu.common.mui.GTMuiCoverUtil;
 import com.gregtechceu.gtceu.common.mui.GTMuiWidgets;
+import com.gregtechceu.gtceu.utils.EnumOrdinal;
 import com.gregtechceu.gtceu.utils.GTTransferUtils;
 
 import org.jspecify.annotations.NullMarked;
@@ -357,10 +358,10 @@ public class PumpCover extends CoverBehavior implements IIOCover, IMuiCover, ICo
     @Override
     public void pasteConfig(ServerPlayer player, CompoundTag tag) {
         setTransferRate(tag.getIntOr("transferRate", 0));
-        setIo(IO.values()[tag.getIntOr("io", 0)]);
-        setManualIOMode(ManualIOMode.values()[tag.getIntOr("manualIO", 0)]);
+        setIo(EnumOrdinal.getOrDefault(IO.values(), tag.getIntOr("io", 0)));
+        setManualIOMode(EnumOrdinal.getOrDefault(ManualIOMode.values(), tag.getIntOr("manualIO", 0)));
         filterHandler.setFilterItem(com.gregtechceu.gtceu.utils.data.StackPersistence.loadItem(tag.getCompoundOrEmpty("filter")));
-        setBucketMode(BucketMode.values()[tag.getIntOr("bucketMode", 0)]);
+        setBucketMode(EnumOrdinal.getOrDefault(BucketMode.values(), tag.getIntOr("bucketMode", 0)));
         super.pasteConfig(player, tag);
     }
 }

@@ -3,7 +3,6 @@ package com.gregtechceu.gtceu.data.model.builder;
 import com.gregtechceu.gtceu.GTCEu;
 import com.gregtechceu.gtceu.api.blockentity.PipeBlockEntity;
 import com.gregtechceu.gtceu.api.registry.registrate.provider.GTBlockstateProvider;
-import com.gregtechceu.gtceu.client.model.pipe.PipeModelLoader;
 import com.gregtechceu.gtceu.utils.GTMath;
 import com.gregtechceu.gtceu.utils.GTUtil;
 import com.gregtechceu.gtceu.utils.memoization.GTMemoizer;
@@ -33,6 +32,8 @@ import static com.gregtechceu.gtceu.data.model.builder.MachineModelBuilder.confi
 @Accessors(fluent = true, chain = true)
 @SuppressWarnings("UnusedReturnValue")
 public class PipeModelBuilder<T extends ModelBuilder<T>> extends CustomLoaderBuilder<T> {
+
+    private static final String PRIMARY_CENTER_KEY = "center";
 
     // spotless:off
     public static <T extends ModelBuilder<T>> BiFunction<T, ModelFileHelper, PipeModelBuilder<T>> begin(@Range(from = 0, to = 16) float thickness,
@@ -288,6 +289,8 @@ public class PipeModelBuilder<T extends ModelBuilder<T>> extends CustomLoaderBui
     @Override
     public JsonObject toJson(JsonObject json) {
         json = super.toJson(json);
+        json.remove("loader");
+        json.addProperty("type", GTCEu.id("pipe").toString());
 
         if (!getParts().isEmpty()) {
             final JsonObject parts = new JsonObject();
@@ -295,7 +298,7 @@ public class PipeModelBuilder<T extends ModelBuilder<T>> extends CustomLoaderBui
                     .sorted(Map.Entry.comparingByKey(Comparator.nullsFirst(Direction::compareTo)))
                     .forEach(entry -> {
                         String key = entry.getKey() != null ? entry.getKey().getName() :
-                                PipeModelLoader.PRIMARY_CENTER_KEY;
+                                PRIMARY_CENTER_KEY;
                         parts.add(key, configuredModelListToJSON(entry.getValue()));
                     });
 

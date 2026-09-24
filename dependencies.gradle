@@ -1,6 +1,10 @@
 dependencies {
     compileOnly(libs.jetbrains.annotations)
 
+    // Match the JUnit version already used by the isolated ModularUI test host.
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.9.2'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
     // Registrate
     jarJar(api(forge.registrate.get()))
 

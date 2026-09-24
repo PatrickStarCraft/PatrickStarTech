@@ -1,0 +1,16 @@
+// Run the scanner's production stack-mode state helper with real Minecraft item components and NBT.
+gradle.projectsEvaluated {
+    def project = gradle.rootProject
+    def gtRoot = project.projectDir.parentFile.parentFile
+    def selectedProductionSources = project.fileTree(new File(gtRoot, 'src/main/java')) {
+        include 'com/gregtechceu/gtceu/api/item/data/ItemStackData.java'
+        include 'com/gregtechceu/gtceu/common/item/behavior/ScannerModeData.java'
+    }
+    project.sourceSets.test.java.setSrcDirs([new File(gtRoot, 'src/test/java')])
+    project.sourceSets.test.java.setIncludes([
+        'com/gregtechceu/gtceu/common/item/behavior/ScannerModeDataPortTest.java'
+    ])
+    project.tasks.named('compileTestJava') {
+        source(selectedProductionSources)
+    }
+}

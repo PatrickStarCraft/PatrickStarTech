@@ -208,24 +208,11 @@ public class ItemMagnetBehavior implements IInteractionItem, IItemLifeCycle, IAd
     }
 
     private static boolean isActive(ItemStack stack) {
-        if (stack == ItemStack.EMPTY) {
-            return false;
-        }
-        CompoundTag tag = com.gregtechceu.gtceu.api.item.data.ItemStackData.read(stack);
-        if (tag == null) {
-            return false;
-        }
-        if (tag.contains("IsActive")) {
-            return tag.getBooleanOr("IsActive", false);
-        }
-        return false;
+        return MagnetStateData.isActive(stack);
     }
 
     private static boolean toggleActive(ItemStack stack) {
-        boolean isActive = isActive(stack);
-        // noinspection ConstantConditions
-        com.gregtechceu.gtceu.api.item.data.ItemStackData.update(stack, tag -> tag.putBoolean("IsActive", !isActive));
-        return !isActive;
+        return MagnetStateData.toggleActive(stack);
     }
 
     @Override
@@ -401,7 +388,8 @@ public class ItemMagnetBehavior implements IInteractionItem, IItemLifeCycle, IAd
         }
 
         public static FilterMode get(int ordinal) {
-            return FilterMode.values()[ordinal];
+            return com.gregtechceu.gtceu.common.item.tool.behavior.OrdinalModeData.getMode(
+                    FilterMode.values(), ordinal, FilterMode.SIMPLE);
         }
 
         public @NotNull String getTooltip() {

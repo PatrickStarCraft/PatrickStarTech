@@ -3,16 +3,13 @@ package com.gregtechceu.gtceu.integration.modernfix;
 import com.gregtechceu.gtceu.client.util.AssetEventListener;
 import com.gregtechceu.gtceu.client.util.ModelEventHelper;
 
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.model.*;
-import net.minecraft.resources.Identifier;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
+import net.neoforged.neoforge.client.event.ModelEvent;
 
 import lombok.Getter;
 import org.embeddedt.modernfix.ModernFixClient;
 import org.embeddedt.modernfix.api.entrypoint.ModernFixClientIntegration;
 import org.jetbrains.annotations.ApiStatus;
-
-import java.util.function.Function;
 
 public class GTModernFixIntegration implements ModernFixClientIntegration {
 
@@ -39,15 +36,22 @@ public class GTModernFixIntegration implements ModernFixClientIntegration {
         dynamicResourcesEnabled = enabled;
     }
 
-    @Override
-    public BakedModel onBakedModelLoad(Identifier modelLocation, UnbakedModel baseModel,
-                                       BakedModel model, ModelState state, ModelBakery bakery,
-                                       Function<Material, TextureAtlasSprite> textureGetter) {
-        // process all model replacers
-        for (var listener : ModelEventHelper.EVENT_LISTENERS) {
-            if (!(listener.listener() instanceof AssetEventListener.BakedModelReplacement modelReplacement)) continue;
-            model = modelReplacement.modifyBakedModel(modelLocation, model, baseModel, bakery);
+    /**
+     * Apply the shared model replacements when ModernFix owns dynamic resource reloads.
+     * Its pinned integration callback uses removed 1.20 model types, while NeoForge's
+     * baking-result event still exposes the complete 26.2 block-state model map.
+     */
+    public static void onModifyBakingResult(ModelEvent.ModifyBakingResult event) {
+        if (!dynamicResourcesEnabled) return;
+
+        var models = event.getBakingResult().blockStateModels();
+        for (var entry : models.entrySet()) {
+            BlockStateModel model = entry.getValue();
+            for (var listener : ModelEventHelper.EVENT_LISTENERS) {
+                if (!(listener.listener() instanceof AssetEventListener.BlockStateModelReplacement modelReplacement)) continue;
+                model = modelReplacement.modifyBlockStateModel(entry.getKey(), model);
+            }
+            entry.setValue(model);
         }
-        return model;
     }
 }

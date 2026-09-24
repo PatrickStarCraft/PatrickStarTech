@@ -15,7 +15,7 @@ import com.gregtechceu.gtceu.api.data.tag.TagUtil;
 import com.gregtechceu.gtceu.api.item.*;
 import com.gregtechceu.gtceu.api.machine.multiblock.IBatteryData;
 import com.gregtechceu.gtceu.api.pipenet.longdistance.LongDistancePipeBlock;
-import com.gregtechceu.gtceu.client.model.item.CustomItemRendererWrapperModel;
+import com.gregtechceu.gtceu.api.registry.registrate.provider.GTBlockstateProvider;
 import com.gregtechceu.gtceu.common.block.*;
 import com.gregtechceu.gtceu.common.block.explosive.IndustrialTNTBlock;
 import com.gregtechceu.gtceu.common.block.explosive.PowderbarrelBlock;
@@ -1303,8 +1303,8 @@ public class GTBlocks {
                             .tag(BlockTags.MINEABLE_WITH_PICKAXE)
                             .blockstate(GTModels.lampModel(dyeColor, true))
                             .item(LampBlockItem::new)
-                            .model((ctx, prov) -> prov.blockItem(ctx::get, "_on")
-                                    .customLoader(CustomItemRendererWrapperModel.Builder::begin).end())
+                            .model((ctx, prov) -> prov.blockItem(ctx::get, "_on").end())
+                            .setData(GTBlockstateProvider.ITEM_MODEL, GTModels::createLampItemDefinition)
                             .build()
                             .register());
         }
@@ -1318,8 +1318,8 @@ public class GTBlocks {
                     .tag(BlockTags.MINEABLE_WITH_PICKAXE)
                     .blockstate(GTModels.lampModel(dyeColor, false))
                     .item(LampBlockItem::new)
-                    .model((ctx, prov) -> prov.blockItem(ctx::get, "_on")
-                            .customLoader(CustomItemRendererWrapperModel.Builder::begin).end())
+                    .model((ctx, prov) -> prov.blockItem(ctx::get, "_on").end())
+                    .setData(GTBlockstateProvider.ITEM_MODEL, GTModels::createLampItemDefinition)
                     .build()
                     .register());
         }

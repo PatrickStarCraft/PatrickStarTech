@@ -201,17 +201,8 @@ public class PowerlessJetpack implements IArmorLogic, IJetpack, IItemHUDProvider
 
     public void findNewRecipe(@NotNull ItemStack stack) {
         FluidUtil.getFluidContained(stack).ifPresentOrElse(fluid -> {
-            if (!previousFuel.isEmpty() && previousFuel.test(fluid) &&
-                    fluid.getAmount() >= previousFuel.getAmount()) {
-                currentFuel = previousFuel;
-                return;
-            }
-
-            for (var fuel : FUELS.keySet()) {
-                if (fuel.test(fluid) && fluid.getAmount() >= fuel.getAmount()) {
-                    previousFuel = currentFuel = fuel;
-                }
-            }
+            currentFuel = JetpackFuelSelection.select(fluid, previousFuel, FUELS.keySet());
+            if (!currentFuel.isEmpty()) previousFuel = currentFuel;
         }, () -> currentFuel = FluidIngredient.EMPTY);
     }
 
@@ -253,12 +244,8 @@ public class PowerlessJetpack implements IArmorLogic, IJetpack, IItemHUDProvider
 
         @Override
         public ResourceHandler<FluidResource> createFluidHandler(ItemAccess access) {
-            return new FilteredFluidResourceHandler(access, maxCapacity, fluid -> {
-                for (var ingredient : FUELS.keySet()) {
-                    if (ingredient.test(fluid)) return true;
-                }
-                return false;
-            });
+            return new FilteredFluidResourceHandler(access, maxCapacity,
+                    fluid -> JetpackFuelSelection.isFuelFluid(fluid, FUELS.keySet()));
         }
 
         @Override

@@ -1,7 +1,9 @@
-param([string]$JavaHome = $env:JAVA_HOME, [switch]$SkipAssets)
+param([string]$JavaHome = $env:JAVA_HOME, [string]$GradleExecutable, [switch]$SkipAssets)
 $ErrorActionPreference = 'Stop'
 if (-not $JavaHome) { throw 'Set JAVA_HOME to Java 25 or pass -JavaHome.' }
 $projectRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
+$gradleExecutable = if ($GradleExecutable) { [IO.Path]::GetFullPath($GradleExecutable) } else { Join-Path $projectRoot 'gradlew.bat' }
+$libraryRoot = Join-Path $projectRoot 'ports/ModularUI'
 $previousJavaHome = $env:JAVA_HOME
 try {
     $env:JAVA_HOME = $JavaHome
@@ -19,10 +21,10 @@ try {
             Set-Content -LiteralPath $properties -Encoding ascii
         $extraArguments = @('-x', 'downloadAssets', "-PitemComponentTestAssetProperties=$properties")
     }
-    & (Join-Path $projectRoot 'gradlew.bat') -p (Join-Path $projectRoot 'ports/ModularUI') `
-        -I (Join-Path $PSScriptRoot 'port-item-components.init.gradle') test -PportDiagnostics `
-        --tests 'com.gregtechceu.gtceu.api.item.data.*PortTest' --max-workers=1 --console=plain @extraArguments
-    if ($LASTEXITCODE -ne 0) { throw 'GT item component checks failed.' }
+    . (Join-Path $PSScriptRoot 'port-junit-runner.ps1')
+    Invoke-PortJUnitTests -GradleExecutable $gradleExecutable -ProjectDirectory $libraryRoot `
+        -InitScript (Join-Path $PSScriptRoot 'port-item-components.init.gradle') `
+        -TestPattern 'com.gregtechceu.gtceu.api.item.data.*PortTest' -AdditionalArguments $extraArguments
 } finally {
     $env:JAVA_HOME = $previousJavaHome
 }
