@@ -1,0 +1,9 @@
+{
+  "parent": "gtceu:block/machine/template/part/hatch_machine_color_ring",
+  "textures": {
+    "bottom": "gtceu:block/casings/voltage/luv/bottom",
+    "overlay": "gtceu:block/overlay/appeng/me_buffer_hatch_proxy",
+    "side": "gtceu:block/casings/voltage/luv/side",
+    "top": "gtceu:block/casings/voltage/luv/top"
+  }
+}

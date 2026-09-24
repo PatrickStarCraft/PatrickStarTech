@@ -1,0 +1,9 @@
+{
+  "parent": "gtceu:block/casings/voltage/hv",
+  "textures": {
+    "overlay_back": "gtceu:block/machines/mixer/overlay_back",
+    "overlay_front": "gtceu:block/machines/mixer/overlay_front",
+    "overlay_side": "gtceu:block/machines/mixer/overlay_side",
+    "overlay_top": "gtceu:block/machines/mixer/overlay_top"
+  }
+}

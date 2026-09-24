@@ -1,0 +1,6 @@
+{
+  "parent": "gtceu:block/casings/voltage/iv",
+  "textures": {
+    "overlay_front": "gtceu:block/machines/lathe/overlay_front"
+  }
+}

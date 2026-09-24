@@ -1,0 +1,6 @@
+{
+  "parent": "gtceu:block/casings/voltage/luv",
+  "textures": {
+    "overlay_front": "gtceu:block/machines/packer/overlay_front"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "parent": "gtceu:block/casings/voltage/zpm",
+  "textures": {
+    "overlay_front": "gtceu:block/machines/packer/overlay_front"
+  }
+}

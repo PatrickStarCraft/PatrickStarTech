@@ -1,0 +1,9 @@
+{
+  "parent": "gtceu:block/machine/template/part/hatch_machine",
+  "textures": {
+    "bottom": "gtceu:block/casings/voltage/ev/bottom",
+    "overlay": "gtceu:block/overlay/appeng/me_output_bus",
+    "side": "gtceu:block/casings/voltage/ev/side",
+    "top": "gtceu:block/casings/voltage/ev/top"
+  }
+}

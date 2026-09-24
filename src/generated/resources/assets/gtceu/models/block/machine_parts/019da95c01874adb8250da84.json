@@ -1,0 +1,6 @@
+{
+  "parent": "gtceu:block/casings/voltage/uv",
+  "textures": {
+    "overlay_front": "gtceu:block/machines/forge_hammer/overlay_front"
+  }
+}

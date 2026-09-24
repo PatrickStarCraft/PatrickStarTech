@@ -1,0 +1,9 @@
+{
+  "parent": "gtceu:block/machine/template/sided/sided",
+  "textures": {
+    "bottom": "gtceu:block/casings/pump_deck/bottom",
+    "overlay_front": "gtceu:block/multiblock/primitive_pump/overlay_front",
+    "side": "gtceu:block/casings/pump_deck/side",
+    "top": "gtceu:block/casings/pump_deck/top"
+  }
+}

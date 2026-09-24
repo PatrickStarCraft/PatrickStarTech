@@ -1,0 +1,9 @@
+{
+  "parent": "gtceu:block/casings/voltage/mv",
+  "textures": {
+    "overlay_front": "gtceu:block/machines/sifter/overlay_front_active",
+    "overlay_front_emissive": "gtceu:block/machines/sifter/overlay_front_active_emissive",
+    "overlay_top": "gtceu:block/machines/sifter/overlay_top_active",
+    "overlay_top_emissive": "gtceu:block/machines/sifter/overlay_top_active_emissive"
+  }
+}

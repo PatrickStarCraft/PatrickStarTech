@@ -1,0 +1,7 @@
+{
+  "parent": "gtceu:block/casings/voltage/luv",
+  "textures": {
+    "overlay_front": "gtceu:block/machines/cutter/overlay_front",
+    "overlay_side": "gtceu:block/machines/cutter/overlay_side"
+  }
+}

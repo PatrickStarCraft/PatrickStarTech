@@ -1,0 +1,6 @@
+{
+  "parent": "gtceu:block/casings/voltage/uev",
+  "textures": {
+    "overlay_front": "gtceu:block/machines/rock_crusher/overlay_front"
+  }
+}

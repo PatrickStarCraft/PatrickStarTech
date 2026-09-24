@@ -1,0 +1,10 @@
+{
+  "parent": "gtceu:block/casings/voltage/ev",
+  "textures": {
+    "overlay_front": "gtceu:block/machines/wiremill/overlay_front_paused",
+    "overlay_front_emissive": "gtceu:block/machines/wiremill/overlay_front_paused_emissive",
+    "overlay_side": "gtceu:block/machines/wiremill/overlay_side",
+    "overlay_top": "gtceu:block/machines/wiremill/overlay_top_paused",
+    "overlay_top_emissive": "gtceu:block/machines/wiremill/overlay_top_paused_emissive"
+  }
+}

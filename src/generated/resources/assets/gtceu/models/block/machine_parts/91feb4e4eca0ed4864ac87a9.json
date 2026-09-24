@@ -1,0 +1,6 @@
+{
+  "parent": "gtceu:block/casings/voltage/mv",
+  "textures": {
+    "overlay_front": "gtceu:block/machines/bender/overlay_front"
+  }
+}

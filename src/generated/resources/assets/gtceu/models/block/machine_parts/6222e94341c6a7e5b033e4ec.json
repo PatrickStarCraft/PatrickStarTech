@@ -1,0 +1,9 @@
+{
+  "parent": "gtceu:block/casings/voltage/uhv",
+  "textures": {
+    "overlay_front": "gtceu:block/machines/macerator/overlay_front_active",
+    "overlay_front_emissive": "gtceu:block/machines/macerator/overlay_front_active_emissive",
+    "overlay_top": "gtceu:block/machines/macerator/overlay_top_active",
+    "overlay_top_emissive": "gtceu:block/machines/macerator/overlay_top_active_emissive"
+  }
+}
