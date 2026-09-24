@@ -46,11 +46,9 @@ import com.gregtechceu.gtceu.common.mui.GTGuiTheme;
 import com.gregtechceu.gtceu.config.ConfigHolder;
 import com.gregtechceu.gtceu.data.model.builder.PipeModelBuilder;
 import com.gregtechceu.gtceu.data.pack.event.RegisterDynamicResourcesEvent;
-import com.gregtechceu.gtceu.integration.kjs.GregTechKubeJSPlugin;
 import com.gregtechceu.gtceu.integration.modernfix.GTModernFixIntegration;
 import com.gregtechceu.gtceu.integration.map.ClientCacheManager;
 import com.gregtechceu.gtceu.integration.map.cache.client.GTClientCache;
-import com.gregtechceu.gtceu.integration.map.ftbchunks.FTBChunksPlugin;
 import com.gregtechceu.gtceu.integration.map.layer.Layers;
 import com.gregtechceu.gtceu.integration.map.layer.builtin.FluidRenderLayer;
 import com.gregtechceu.gtceu.integration.map.layer.builtin.OreRenderLayer;
@@ -243,10 +241,6 @@ public class ClientProxy extends CommonProxy {
     @SubscribeEvent
     private static void onClientStarted(ClientStartedEvent event) {
         MachineOwner.init();
-        if (ConfigHolder.INSTANCE.compat.minimap.toggle.ftbChunksIntegration &&
-                GTCEu.isModLoaded(GTValues.MODID_FTB_CHUNKS)) {
-            FTBChunksPlugin.addEventListeners();
-        }
     }
 
     private static void initializeDynamicRenders() {
@@ -305,9 +299,6 @@ public class ClientProxy extends CommonProxy {
         // do this last so addons can easily add new variants to the registered model set
         PipeModel.initDynamicModels();
 
-        if (GTCEu.Mods.isKubeJSLoaded()) {
-            GregTechKubeJSPlugin.generateMachineBlockModels();
-        }
         RuntimeBlockstateProvider.INSTANCE.run();
         PipeModelBuilder.clearRestrictorModelCache();
     }

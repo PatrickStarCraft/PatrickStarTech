@@ -18,7 +18,6 @@ import com.gregtechceu.gtceu.api.transfer.item.CustomItemStackHandler;
 import com.gregtechceu.gtceu.client.renderer.cover.CoverTextRenderer;
 import com.gregtechceu.gtceu.client.renderer.cover.IDynamicCoverRenderer;
 import com.gregtechceu.gtceu.common.mui.GTMuiWidgets;
-import com.gregtechceu.gtceu.integration.create.GTCreateIntegration;
 import com.gregtechceu.gtceu.utils.GTStringUtils;
 import com.gregtechceu.gtceu.utils.GTUtil;
 
@@ -147,8 +146,6 @@ public class ComputerMonitorCover extends CoverBehavior
         ticksSincePlaced++;
         if (coverHolder.getOffsetTimer() % updateInterval == 0) {
             try {
-                if (GTCEu.Mods.isCreateLoaded())
-                    GTCreateIntegration.TemporaryRedstoneLinkTransmitter.destroyAll();
                 setRedstoneSignalOutput(0);
                 text = getRenderedText();
             } catch (RuntimeException e) {

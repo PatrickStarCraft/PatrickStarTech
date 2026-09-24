@@ -71,8 +71,6 @@ dependencies {
 
     // Standard runtime mods //
     localRuntime(forge.jade)
-    localRuntime(forge.ae2)
-    localRuntime(forge.guideme)
     localRuntime(forge.spark)
     localRuntime(forge.modernfix)
 
@@ -93,7 +91,6 @@ dependencies {
 //    extraLocalRuntime(forge.worldstripper)
 //    extraLocalRuntime(forge.cc.tweaked.forge.impl) for some reason this breaks create
 
-    extraLocalRuntime(forge.bundles.kjs)
 
     extraLocalRuntime(forge.ftblibrary)
     extraLocalRuntime(forge.ftbteams)
@@ -114,9 +111,6 @@ dependencies {
     extraLocalRuntime(forge.kotlinforforge)
     extraLocalRuntime(forge.observable)
 
-    extraLocalRuntime(forge.ponder)
-    extraLocalRuntime(variantOf(forge.create) { classifier("slim") })
-    extraLocalRuntime(forge.flywheel.forge)
 
     localRuntime(forge.curios)
 

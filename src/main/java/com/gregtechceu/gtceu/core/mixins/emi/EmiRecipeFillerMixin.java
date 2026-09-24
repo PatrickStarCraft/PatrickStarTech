@@ -15,7 +15,7 @@ public abstract class EmiRecipeFillerMixin {
 
     @WrapOperation(method = { "getStacks", "clientFill" },
                    at = @At(value = "INVOKE",
-                            target = "Lnet/minecraft/world/item/ItemStack;isSameItemSameTags(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/ItemStack;)Z",
+                            target = "Lnet/minecraft/world/item/ItemStack;isSameItemSameComponents(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/ItemStack;)Z",
                             remap = true))
     private static boolean gtceu$ignoreGTToolNbt(ItemStack stack, ItemStack other, Operation<Boolean> original) {
         if (stack.getItem() instanceof IGTTool && other.getItem() instanceof IGTTool) {

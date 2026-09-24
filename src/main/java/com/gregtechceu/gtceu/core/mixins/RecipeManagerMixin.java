@@ -11,16 +11,16 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeManager;
+import net.minecraft.world.item.crafting.RecipeMap;
 import net.minecraft.world.item.crafting.RecipeType;
 
-import com.google.gson.JsonElement;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Map;
+import java.util.HashMap;
 
 /**
  * Only fires if KubeJS is not interacting with GT recipes.
@@ -28,13 +28,15 @@ import java.util.Map;
 @Mixin(RecipeManager.class)
 public abstract class RecipeManagerMixin {
 
-    @Shadow
-    private Map<RecipeType<?>, Map<Identifier, Recipe<?>>> recipes;
-
-    @Inject(method = "apply(Ljava/util/Map;Lnet/minecraft/server/packs/resources/ResourceManager;Lnet/minecraft/util/profiling/ProfilerFiller;)V",
+    @Inject(method = "apply(Lnet/minecraft/world/item/crafting/RecipeMap;Lnet/minecraft/server/packs/resources/ResourceManager;Lnet/minecraft/util/profiling/ProfilerFiller;)V",
             at = @At(value = "TAIL"))
-    private void gtceu$cloneVanillaRecipes(Map<Identifier, JsonElement> map, ResourceManager resourceManager,
+    private void gtceu$cloneVanillaRecipes(RecipeMap map, ResourceManager resourceManager,
                                            ProfilerFiller profiler, CallbackInfo ci) {
+        Map<RecipeType<?>, Map<Identifier, Recipe<?>>> recipes = new HashMap<>();
+        for (var holder : map.values()) {
+            recipes.computeIfAbsent(holder.value().getType(), type -> new HashMap<>())
+                    .put(holder.id().identifier(), holder.value());
+        }
         PowerlessJetpack.FUELS.clear();
         for (RecipeType<?> recipeType : BuiltInRegistries.RECIPE_TYPE) {
             if (!(recipeType instanceof GTRecipeType gtRecipeType)) {

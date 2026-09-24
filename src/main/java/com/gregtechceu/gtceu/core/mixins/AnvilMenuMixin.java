@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.At;
 @Mixin(AnvilMenu.class)
 public abstract class AnvilMenuMixin {
 
-    @WrapOperation(method = "createResult",
+    @WrapOperation(method = "createResultInternal",
                    at = @At(value = "INVOKE",
                             target = "Lnet/minecraft/world/item/ItemStack;supportsEnchantment(Lnet/minecraft/core/Holder;)Z"))
     private boolean gtceu$checkToolEnchantValidity(ItemStack stack, Holder<Enchantment> enchant,

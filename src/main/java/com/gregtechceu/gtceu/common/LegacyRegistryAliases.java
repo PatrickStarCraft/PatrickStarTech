@@ -12,7 +12,6 @@ import com.gregtechceu.gtceu.common.data.GTItems;
 import com.gregtechceu.gtceu.common.data.GTMaterialBlocks;
 import com.gregtechceu.gtceu.common.data.GTMaterialItems;
 import com.gregtechceu.gtceu.common.data.GTMachines;
-import com.gregtechceu.gtceu.common.data.machines.GTAEMachines;
 import com.gregtechceu.gtceu.utils.FormattingUtil;
 
 import net.minecraft.core.Registry;
@@ -55,9 +54,6 @@ public final class LegacyRegistryAliases {
         registerLegacyWirecutterAliases();
         registerLegacyMaterialAliases();
 
-        if (GTCEu.Mods.isAE2Loaded()) {
-            registerLegacyGregicengAliases();
-        }
     }
 
     private static void registerLegacyWirecutterAliases() {
@@ -105,13 +101,6 @@ public final class LegacyRegistryAliases {
     }
 
     private static void registerLegacyGregicengAliases() {
-        aliasGregicengMachine("stocking_bus", GTAEMachines.STOCKING_IMPORT_BUS_ME);
-        aliasGregicengMachine("adv_stocking_bus", GTAEMachines.STOCKING_IMPORT_BUS_ME);
-        aliasGregicengMachine("stocking_hatch", GTAEMachines.STOCKING_IMPORT_HATCH_ME);
-        aliasGregicengMachine("adv_stocking_hatch", GTAEMachines.STOCKING_IMPORT_HATCH_ME);
-        aliasGregicengMachine("crafting_io_buffer", GTAEMachines.ME_PATTERN_BUFFER);
-        aliasGregicengMachine("crafting_io_slave", GTAEMachines.ME_PATTERN_BUFFER_PROXY);
-
         aliasGregicengBuffers("input_buffer", "dual_input_hatch", GTMachines.DUAL_IMPORT_HATCH);
         aliasGregicengBuffers("output_buffer", "dual_output_hatch", GTMachines.DUAL_EXPORT_HATCH);
     }

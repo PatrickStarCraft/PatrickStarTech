@@ -25,9 +25,7 @@ import com.gregtechceu.gtceu.common.item.modules.ImageModuleBehaviour;
 import com.gregtechceu.gtceu.common.machine.multiblock.part.MaintenanceHatchPartMachine;
 import com.gregtechceu.gtceu.common.machine.multiblock.part.monitor.AdvancedMonitorPartMachine;
 import com.gregtechceu.gtceu.config.ConfigHolder;
-import com.gregtechceu.gtceu.integration.ae2.GTAEPlaceholders;
 import com.gregtechceu.gtceu.integration.cctweaked.CCTweakedPlugin;
-import com.gregtechceu.gtceu.integration.create.GTCreateIntegration;
 import com.gregtechceu.gtceu.utils.GTMath;
 import com.gregtechceu.gtceu.utils.GTStringUtils;
 import com.gregtechceu.gtceu.utils.GTTransferUtils;
@@ -1207,17 +1205,11 @@ public class GTPlaceholders {
             }
         });
 
-        if (GTCEu.Mods.isAE2Loaded()) {
-            GTAEPlaceholders.init();
-        }
 
         if (GTCEu.Mods.isCCTweakedLoaded()) {
             CCTweakedPlugin.initPlaceholders();
         }
 
-        if (ConfigHolder.INSTANCE.compat.createCompat && GTCEu.Mods.isCreateLoaded()) {
-            GTCreateIntegration.initPlaceholders();
-        }
 
         ModLoader.postEvent(new GTCEuAPI.RegisterEvent<>(GTRegistries.PLACEHOLDERS, Placeholder.class));
         GTRegistries.PLACEHOLDERS.freeze();

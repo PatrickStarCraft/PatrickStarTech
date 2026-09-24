@@ -160,6 +160,10 @@ public class GTCEu {
 
     public static class Mods {
 
+        // These integrations are awaiting 26.2 dependency ports. Keep their call sites
+        // dormant even when a player installs one of the optional mods separately.
+        private static final boolean LEGACY_INTEGRATIONS_ENABLED = false;
+
         public static boolean isJEILoaded() {
             return !isModLoaded(GTValues.MODID_EMI) &&
                     isModLoaded(GTValues.MODID_JEI);
@@ -170,7 +174,7 @@ public class GTCEu {
         }
 
         public static boolean isKubeJSLoaded() {
-            return isModLoaded(GTValues.MODID_KUBEJS);
+            return LEGACY_INTEGRATIONS_ENABLED && isModLoaded(GTValues.MODID_KUBEJS);
         }
 
         public static boolean isIrisOculusLoaded() {
@@ -182,7 +186,7 @@ public class GTCEu {
         }
 
         public static boolean isAE2Loaded() {
-            return isModLoaded(GTValues.MODID_APPENG);
+            return LEGACY_INTEGRATIONS_ENABLED && isModLoaded(GTValues.MODID_APPENG);
         }
 
         public static boolean isCuriosLoaded() {
@@ -218,7 +222,7 @@ public class GTCEu {
         }
 
         public static boolean isCreateLoaded() {
-            return isModLoaded(GTValues.MODID_CREATE);
+            return LEGACY_INTEGRATIONS_ENABLED && isModLoaded(GTValues.MODID_CREATE);
         }
     }
 }

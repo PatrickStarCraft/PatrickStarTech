@@ -2,6 +2,7 @@ package com.gregtechceu.gtceu.core.mixins;
 
 import com.gregtechceu.gtceu.api.item.IGTTool;
 
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 
@@ -14,9 +15,9 @@ import org.spongepowered.asm.mixin.injection.At;
 @Mixin(value = Inventory.class, priority = 1200)
 public abstract class InventoryMixin {
 
-    @WrapOperation(method = { "findSlotMatchingUnusedItem", "findSlotMatchingItem" },
+    @WrapOperation(method = { "findSlotMatchingCraftingIngredient", "findSlotMatchingItem" },
                    at = @At(value = "INVOKE",
-                            target = "Lnet/minecraft/world/item/ItemStack;isSameItemSameTags(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/ItemStack;)Z"))
+                            target = "Lnet/minecraft/world/item/ItemStack;isSameItemSameComponents(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/ItemStack;)Z"))
     private boolean gtceu$ignoreGTToolNbt(ItemStack stack, ItemStack other, Operation<Boolean> original) {
         if (stack.getItem() instanceof IGTTool && other.getItem() instanceof IGTTool) {
             return ItemStack.isSameItem(stack, other);
@@ -24,14 +25,12 @@ public abstract class InventoryMixin {
         return original.call(stack, other);
     }
 
-    @WrapOperation(method = "findSlotMatchingUnusedItem",
-                   at = {
-                           @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;isDamaged()Z"),
-                           @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;isEnchanted()Z"),
-                   })
+    @WrapOperation(method = "findSlotMatchingCraftingIngredient",
+                   at = @At(value = "INVOKE",
+                            target = "Lnet/minecraft/world/entity/player/Inventory;isUsableForCrafting(Lnet/minecraft/world/item/ItemStack;)Z"))
     private boolean gtceu$ignoreGTToolDamageAndEnchants(ItemStack stack, Operation<Boolean> original) {
         if (stack.getItem() instanceof IGTTool) {
-            return false;
+            return !stack.has(DataComponents.CUSTOM_NAME);
         }
         return original.call(stack);
     }

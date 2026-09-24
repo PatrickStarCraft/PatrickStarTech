@@ -1204,9 +1204,6 @@ public class GTMachines {
         GCYMMachines.init();
         GTResearchMachines.init();
 
-        if (GTCEu.Mods.isAE2Loaded()) {
-            GTAEMachines.init();
-        }
 
         if (GTCEu.Mods.isKubeJSLoaded()) {
             GTRegistryInfo.registerFor(GTRegistries.MACHINES.getRegistryName());

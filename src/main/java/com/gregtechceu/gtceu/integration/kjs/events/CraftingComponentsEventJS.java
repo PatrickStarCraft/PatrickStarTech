@@ -16,7 +16,6 @@ import net.minecraft.world.item.ItemStack;
 import dev.latvian.mods.kubejs.event.StartupEventJS;
 import dev.latvian.mods.kubejs.item.ItemStackJS;
 import dev.latvian.mods.kubejs.util.ConsoleJS;
-import dev.latvian.mods.kubejs.util.UtilsJS;
 import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 
@@ -141,9 +140,9 @@ public class CraftingComponentsEventJS extends StartupEventJS {
     @SuppressWarnings("unchecked")
     private static TagKey<Item> parseTag(Object o) {
         if (o instanceof TagKey<?> key && key.isFor(Registries.ITEM)) return (TagKey<Item>) key;
-        var resourceLocation = UtilsJS.getMCID(null, o);
-        if (resourceLocation != null) {
-            return TagKey.create(Registries.ITEM, Identifier.parse(resourceLocation.toString()));
+        Identifier id = Identifier.tryParse(String.valueOf(o));
+        if (id != null) {
+            return TagKey.create(Registries.ITEM, id);
         }
         return null;
     }

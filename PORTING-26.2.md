@@ -6,6 +6,13 @@ This is an unfinished source port, not a playable release. Changes are AI-assist
 
 Minecraft 26.2, NeoForge 26.2.0.88, Java 25. ModularUI is included from `ports/ModularUI`.
 
+## Core-first checkpoint — 2026-09-24
+
+- The default `compileJava -PportDiagnostics` build compiles GT's core with zero Java errors. AE2, Create, FTB Chunks, and the unported KubeJS plugin/schema code are separated from the default source set; their source files remain in the repository. The corresponding old development runtime dependencies and KubeJS plugin descriptor are excluded. Shared AE2/Create/FTB registration hooks, recipes, mixins, and UI hooks were detached from the core build. AE2, Create, and KubeJS feature guards remain off even if those mods are installed separately.
+- `-PincludeLegacyIntegrations` selects the preserved integration source for future porting. It is not a working integration switch: compatible 26.2 dependencies, source API ports, and the detached registration hooks must be restored first.
+- Geode previews now enumerate configured block states without calling a world-aware provider with a placeholder world. Callers that have a real world can use the context-taking overload. Provider types that do not serialize explicit states may have no static preview entry; in-game preview and world generation have not been validated.
+- Final offline `compileJava processResources -PportDiagnostics` passed with zero Java errors; the processed resources omit `kubejs.plugins.txt`. This is a compile checkpoint, not a playable release. Runtime startup still needs verification before a release. Changes in this checkpoint are AI-assisted with OpenAI Codex and require human review and editing under `AI_POLICY.md` before contribution.
+
 ## Latest verification — 2026-09-20
 
 ## Item tint checkpoint — 2026-09-23

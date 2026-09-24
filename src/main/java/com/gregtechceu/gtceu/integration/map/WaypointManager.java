@@ -3,7 +3,6 @@ package com.gregtechceu.gtceu.integration.map;
 import com.gregtechceu.gtceu.GTCEu;
 import com.gregtechceu.gtceu.api.GTValues;
 import com.gregtechceu.gtceu.config.ConfigHolder;
-import com.gregtechceu.gtceu.integration.map.ftbchunks.FTBChunksWaypointHandler;
 import com.gregtechceu.gtceu.integration.map.journeymap.JourneymapWaypointHandler;
 import com.gregtechceu.gtceu.integration.map.xaeros.XaeroWaypointHandler;
 import com.gregtechceu.gtceu.utils.GTMath;
@@ -37,10 +36,6 @@ public class WaypointManager {
         }
         if (toggle.journeyMapIntegration && GTCEu.isModLoaded(GTValues.MODID_JOURNEYMAP)) {
             WaypointManager.registerWaypointHandler(new JourneymapWaypointHandler());
-            active = true;
-        }
-        if (toggle.ftbChunksIntegration && GTCEu.isModLoaded(GTValues.MODID_FTB_CHUNKS)) {
-            WaypointManager.registerWaypointHandler(new FTBChunksWaypointHandler());
             active = true;
         }
     }

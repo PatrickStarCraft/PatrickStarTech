@@ -41,7 +41,11 @@ import net.minecraft.world.level.material.FluidState;
 
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import it.unimi.dsi.fastutil.objects.ObjectIntPair;
 import lombok.AllArgsConstructor;
 import lombok.Setter;
@@ -51,6 +55,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.function.Predicate;
 
 @Accessors(chain = true, fluent = true)
@@ -116,18 +122,46 @@ public class GeodeVeinGenerator extends VeinGenerator {
 
     @Override
     public List<VeinEntry> getAllEntries() {
-        RandomSource source = new LegacyRandomSource(0);
+        // This is used by recipe and map previews, which have no WorldGenLevel. Enumerate
+        // configured states instead of sampling a context-sensitive provider with a fake level.
+        List<VeinEntry> entries = new ArrayList<>();
+        addPreviewEntries(entries, geodeBlockSettings.fillingProvider);
+        addPreviewEntries(entries, geodeBlockSettings.innerLayerProvider);
+        addPreviewEntries(entries, geodeBlockSettings.alternateInnerLayerProvider);
+        addPreviewEntries(entries, geodeBlockSettings.middleLayerProvider);
+        addPreviewEntries(entries, geodeBlockSettings.outerLayerProvider);
+        return List.copyOf(entries);
+    }
+
+    /** Samples the same five layers with real world context when a world-generation caller needs it. */
+    public List<VeinEntry> getAllEntries(WorldGenLevel level, RandomSource random, BlockPos pos) {
         return List.of(
-                new VeinEntry(geodeBlockSettings.fillingProvider
-                        .mapLeft(provider -> provider.getState(source, BlockPos.ZERO)), 1),
-                new VeinEntry(geodeBlockSettings.innerLayerProvider
-                        .mapLeft(provider -> provider.getState(source, BlockPos.ZERO)), 1),
-                new VeinEntry(geodeBlockSettings.alternateInnerLayerProvider
-                        .mapLeft(provider -> provider.getState(source, BlockPos.ZERO)), 1),
-                new VeinEntry(geodeBlockSettings.middleLayerProvider
-                        .mapLeft(provider -> provider.getState(source, BlockPos.ZERO)), 1),
-                new VeinEntry(geodeBlockSettings.outerLayerProvider
-                        .mapLeft(provider -> provider.getState(source, BlockPos.ZERO)), 1));
+                new VeinEntry(geodeBlockSettings.fillingProvider.mapLeft(p -> p.getState(level, random, pos)), 1),
+                new VeinEntry(geodeBlockSettings.innerLayerProvider.mapLeft(p -> p.getState(level, random, pos)), 1),
+                new VeinEntry(geodeBlockSettings.alternateInnerLayerProvider.mapLeft(p -> p.getState(level, random, pos)), 1),
+                new VeinEntry(geodeBlockSettings.middleLayerProvider.mapLeft(p -> p.getState(level, random, pos)), 1),
+                new VeinEntry(geodeBlockSettings.outerLayerProvider.mapLeft(p -> p.getState(level, random, pos)), 1));
+    }
+
+    private static void addPreviewEntries(List<VeinEntry> entries, Either<BlockStateProvider, Material> layer) {
+        layer.ifRight(material -> entries.add(new VeinEntry(Either.right(material), 1)));
+        layer.ifLeft(provider -> {
+            JsonElement encoded = BlockStateProvider.CODEC.encodeStart(JsonOps.INSTANCE, provider).getOrThrow();
+            Set<BlockState> states = new LinkedHashSet<>();
+            collectConfiguredStates(encoded, states);
+            states.forEach(state -> entries.add(new VeinEntry(Either.left(state), 1)));
+        });
+    }
+
+    private static void collectConfiguredStates(JsonElement json, Set<BlockState> output) {
+        if (json instanceof JsonObject object) {
+            if (object.has("Name")) {
+                BlockState.CODEC.parse(JsonOps.INSTANCE, object).result().ifPresent(output::add);
+            }
+            for (var entry : object.entrySet()) collectConfiguredStates(entry.getValue(), output);
+        } else if (json instanceof JsonArray array) {
+            for (JsonElement element : array) collectConfiguredStates(element, output);
+        }
     }
 
     @Override

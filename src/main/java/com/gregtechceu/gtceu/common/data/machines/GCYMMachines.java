@@ -609,8 +609,6 @@ public class GCYMMachines {
             .pattern(definition -> {
                 MultiPredicate casingPredicate = blocks(CASING_WATERTIGHT.get()).setMinGlobalLimited(40);
                 MultiPredicate exportPredicate = abilities(PartAbility.EXPORT_FLUIDS_1X);
-                if (GTCEu.Mods.isAE2Loaded())
-                    exportPredicate = exportPredicate.xor(blocks(GTAEMachines.FLUID_EXPORT_HATCH_ME.get()));
                 exportPredicate = exportPredicate.setMaxLayerLimited(1);
                 return MultiblockPatternBuilder.start(UP, BACK, RIGHT)
                         .slice("#YYY#", "YYYYY", "YYYYY", "YYYYY", "#YYY#")

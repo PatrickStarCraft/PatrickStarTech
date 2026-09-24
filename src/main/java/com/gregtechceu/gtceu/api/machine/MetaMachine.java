@@ -92,8 +92,6 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
 
-import appeng.api.networking.IInWorldGridNodeHost;
-import appeng.capabilities.Capabilities;
 import brachy.modularui.drawable.UITexture;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.MapCodec;
@@ -1358,33 +1356,7 @@ public class MetaMachine extends ManagedSyncBlockEntity implements IGregtechBloc
                 return cap.typeClass().cast(list.get(0));
             }
         }
-        if (GTCEu.Mods.isAE2Loaded()) {
-            Object opt = AE2CallWrapper.getGridNodeHostCapability(cap, machine, side);
-            if (opt != null) {
-                // noinspection unchecked
-                return cap.typeClass().cast(opt);
-            }
-        }
         return null;
-    }
-
-    public static class AE2CallWrapper {
-
-        public static Object getGridNodeHostCapability(BlockCapability<?, Direction> cap, MetaMachine machine,
-                                                                @Nullable Direction side) {
-            if (cap == Capabilities.IN_WORLD_GRID_NODE_HOST) {
-                if (machine instanceof IInWorldGridNodeHost nodeHost) {
-                    return cap.typeClass().cast(nodeHost);
-                }
-                var list = getCapabilitiesFromTraits(machine.getAllTraits(), side,
-                        IInWorldGridNodeHost.class);
-                if (!list.isEmpty()) {
-                    // TODO wrap list in the future (or not.)
-                    return cap.typeClass().cast(list.get(0));
-                }
-            }
-            return null;
-        }
     }
 
     // NBT keys for machine config values

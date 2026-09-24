@@ -27,7 +27,6 @@ import com.gregtechceu.gtceu.common.commands.HazardCommands;
 import com.gregtechceu.gtceu.common.commands.MedicalConditionCommands;
 import com.gregtechceu.gtceu.common.cosmetics.GTCapes;
 import com.gregtechceu.gtceu.common.data.*;
-import com.gregtechceu.gtceu.common.data.machines.GTAEMachines;
 import com.gregtechceu.gtceu.common.item.armor.IJetpack;
 import com.gregtechceu.gtceu.common.item.armor.QuarkTechSuite;
 import com.gregtechceu.gtceu.common.item.behavior.ToggleEnergyConsumerBehavior;

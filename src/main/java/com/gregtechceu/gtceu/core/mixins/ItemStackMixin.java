@@ -11,17 +11,17 @@ import com.gregtechceu.gtceu.utils.FormattingUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.PatchedDataComponentMap;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.ARGB;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.*;
@@ -29,9 +29,10 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 import javax.annotation.Nullable;
 
@@ -128,32 +129,42 @@ public abstract class ItemStackMixin implements ISpoilableItemStackExtension {
     // Injectors //
     // ********* //
 
-    @Inject(at = @At("HEAD"), method = "isSameItemSameComponents")
+    @Inject(at = @At("HEAD"), method = "isSameItemSameComponents(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/ItemStack;)Z")
     private static void gtceu$mergeSpoilageBeforeComponentComparison(ItemStack first, ItemStack second,
                                                                      CallbackInfoReturnable<Boolean> cir) {
         gtceu$prepareSpoilageMerge(first, second);
     }
 
     @Inject(at = @At("HEAD"), method = { "getItem", "getCount" })
-    private void gtceu$injectedFreshnessUpdate(CallbackInfoReturnable<Item> cir) {
+    private void gtceu$injectedFreshnessUpdate(CallbackInfoReturnable<?> cir) {
         gtceu$updateFreshness(new SpoilContext(), false);
     }
 
     @Inject(at = @At("HEAD"), method = "inventoryTick")
-    private void gtceu$tickFreshness(Level level, Entity entity, int inventorySlot, boolean isCurrentItem,
+    private void gtceu$tickFreshness(Level level, Entity entity, @Nullable EquipmentSlot equipmentSlot,
                                      CallbackInfo ci) {
-        if (entity instanceof Player player) gtceu$updateFreshness(new SpoilContext(player, inventorySlot), true);
+        if (entity instanceof Player player) {
+            int inventorySlot = -1;
+            for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
+                if (player.getInventory().getItem(i) == gtceu$self()) {
+                    inventorySlot = i;
+                    break;
+                }
+            }
+            gtceu$updateFreshness(new SpoilContext(player, inventorySlot), true);
+        }
         else gtceu$updateFreshness(new SpoilContext(entity), true);
     }
 
     @Inject(at = @At("HEAD"), method = "onCraftedBy")
-    private void gtceu$updateFreshnessOnCraft(Level level, Player player, int amount, CallbackInfo ci) {
+    private void gtceu$updateFreshnessOnCraft(Player player, int amount, CallbackInfo ci) {
         gtceu$updateFreshness(new SpoilContext(player, -1), true);
     }
 
     @Inject(at = @At("RETURN"),
-            method = "<init>(Lnet/minecraft/world/level/ItemLike;ILnet/minecraft/nbt/CompoundTag;)V")
-    private void gtceu$injectFakeTooltipInit(ItemLike item, int count, CompoundTag tag, CallbackInfo ci) {
+            method = "<init>(Lnet/minecraft/core/Holder;ILnet/minecraft/core/component/PatchedDataComponentMap;)V")
+    private void gtceu$injectFakeTooltipInit(Holder<Item> item, int count, PatchedDataComponentMap components,
+                                             CallbackInfo ci) {
         gtceu$fakeTooltip = GTValues.FOOLS.getAsBoolean() && GTValues.RNG.nextFloat() < .1f;
     }
 
@@ -161,22 +172,20 @@ public abstract class ItemStackMixin implements ISpoilableItemStackExtension {
      * Allows {@link ISpoilableItem} subclasses that implement {@link IAddInformation} to
      * actually display the added tooltip.
      */
-    @Inject(at = @At(value = "INVOKE",
-                     target = "Lnet/minecraft/world/item/Item;appendHoverText(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/level/Level;Ljava/util/List;Lnet/minecraft/world/item/TooltipFlag;)V"),
-            method = "getTooltipLines",
-            locals = LocalCapture.CAPTURE_FAILSOFT)
-    private void gtceu$spoilageTooltip(Player player, TooltipFlag isAdvanced,
-                                       CallbackInfoReturnable<List<Component>> cir,
-                                       List<Component> list) {
+    @Inject(at = @At("TAIL"), method = "addDetailsToTooltip")
+    private void gtceu$spoilageTooltip(Item.TooltipContext context, TooltipDisplay display,
+                                       @Nullable Player player, TooltipFlag flag,
+                                       Consumer<Component> tooltip, CallbackInfo ci) {
         ISpoilableItem spoilable = GTCapabilityHelper.getSpoilable(gtceu$self());
         if (spoilable instanceof IAddInformation addInformation) {
-            addInformation.appendHoverText(gtceu$self(), player == null ? null : player.level(), list,
-                    isAdvanced);
+            List<Component> lines = new ArrayList<>();
+            addInformation.appendHoverText(gtceu$self(), player == null ? null : player.level(), lines, flag);
+            lines.forEach(tooltip);
         } else if (gtceu$fakeTooltip) {
-            list.add(Component.translatable(
+            tooltip.accept(Component.translatable(
                     "gtceu.tooltip.spoil_time_remaining",
                     Component.literal(FormattingUtil.formatTime(100)).withStyle(ChatFormatting.DARK_AQUA)));
-            list.add(Component.translatable(
+            tooltip.accept(Component.translatable(
                     "gtceu.tooltip.spoils_into",
                     Items.DIRT.getDefaultInstance().getDisplayName()));
         }

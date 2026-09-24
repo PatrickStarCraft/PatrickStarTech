@@ -357,9 +357,6 @@ public class GTMultiMachines {
             .appearanceBlock(CASING_STAINLESS_CLEAN)
             .pattern(definition -> {
                 MultiPredicate exportPredicate = abilities(PartAbility.EXPORT_FLUIDS_1X);
-                if (GTCEu.Mods.isAE2Loaded()) {
-                    exportPredicate = exportPredicate.xor(blocks(GTAEMachines.FLUID_EXPORT_HATCH_ME.get()));
-                }
                 exportPredicate = exportPredicate.setMaxLayerLimited(1);
                 MultiPredicate maint = autoAbilities(true, false, false)
                         .setMaxGlobalLimited(1);

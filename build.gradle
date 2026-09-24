@@ -26,6 +26,27 @@ sourceSets {
         srcDir 'src/generated/resources'
     }
 
+    // The currently pinned AE2, KubeJS and FTB Chunks artifacts target the old Forge API.
+    // Keep their source in the repository while building the 26.2 core by default.
+    // Opt in after compatible dependencies and source ports are available.
+    if (!providers.gradleProperty('includeLegacyIntegrations').isPresent()) {
+        main.resources.exclude 'kubejs.plugins.txt'
+        main.java.exclude(
+                'com/gregtechceu/gtceu/integration/ae2/**',
+                'com/gregtechceu/gtceu/integration/create/**',
+                'com/gregtechceu/gtceu/integration/map/ftbchunks/**',
+                'com/gregtechceu/gtceu/core/mixins/ftbchunks/**',
+                'com/gregtechceu/gtceu/integration/kjs/GregTechKubeJSPlugin.java',
+                'com/gregtechceu/gtceu/integration/kjs/recipe/GTRecipeSchema.java',
+                'com/gregtechceu/gtceu/integration/kjs/recipe/WrappingRecipeSchemaType.java',
+                'com/gregtechceu/gtceu/integration/kjs/builders/block/ActiveBlockBuilder.java',
+                'com/gregtechceu/gtceu/integration/kjs/builders/block/CoilBlockBuilder.java',
+                'com/gregtechceu/gtceu/common/data/machines/GTAEMachines.java',
+                'com/gregtechceu/gtceu/integration/jade/provider/MEGridConnectedProvider.java',
+                'com/gregtechceu/gtceu/integration/jade/provider/MEPatternBufferProvider.java',
+                'com/gregtechceu/gtceu/integration/jade/provider/MEPatternBufferProxyProvider.java')
+    }
+
     client {
         compileClasspath += main.output
         runtimeClasspath += main.output + main.runtimeClasspath

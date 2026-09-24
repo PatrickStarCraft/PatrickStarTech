@@ -4,8 +4,6 @@ import com.gregtechceu.gtceu.GTCEu;
 import com.gregtechceu.gtceu.api.machine.MetaMachine;
 import com.gregtechceu.gtceu.common.machine.storage.CreativeTankMachine;
 import com.gregtechceu.gtceu.common.machine.storage.QuantumTankMachine;
-import com.gregtechceu.gtceu.integration.ae2.machine.MEPatternBufferPartMachine;
-import com.gregtechceu.gtceu.integration.ae2.machine.MEPatternBufferProxyPartMachine;
 
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.material.Fluid;
@@ -56,21 +54,6 @@ public enum GTFluidStorageProvider implements IServerExtensionProvider<FluidView
             return List.of(new ViewGroup<>(List.of(new FluidView.Data(
                     JadeFluidObject.of(stored.getFluid(), amount, stored.getComponentsPatch()),
                     qtm.getMaxAmount()))));
-        } else if (GTCEu.Mods.isAE2Loaded() && machine instanceof MEPatternBufferPartMachine buffer) {
-            var tank = buffer.getShareTank();
-            List<FluidView.Data> list = new ArrayList<>(tank.getTanks());
-            for (var storage : tank.getStorages()) {
-                var stack = storage.getFluid();
-                if (stack.isEmpty()) continue;
-                int capacity = storage.getCapacity();
-                list.add(new FluidView.Data(JadeFluidObject.of(stack.getFluid(), stack.getAmount(),
-                        stack.getComponentsPatch()), capacity));
-            }
-            return list.isEmpty() ? List.of() : List.of(new ViewGroup<>(list));
-        } else if (GTCEu.Mods.isAE2Loaded() && machine instanceof MEPatternBufferProxyPartMachine proxy) {
-            var buffer = proxy.getBuffer();
-            if (buffer == null) return Collections.emptyList();
-            return FluidStorageProvider.Extension.INSTANCE.getGroups(accessor);
         }
 
         return FluidStorageProvider.Extension.INSTANCE.getGroups(accessor);

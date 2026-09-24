@@ -11,6 +11,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.random.WeightedList;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityReference;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.PrimedTnt;
@@ -45,7 +46,7 @@ public abstract class GTExplosiveEntity extends PrimedTnt {
         this.xo = x;
         this.yo = y;
         this.zo = z;
-        ((PrimedTntAccessor) this).setOwner(owner);
+        ((PrimedTntAccessor) this).setOwner(EntityReference.of(owner));
     }
 
     public GTExplosiveEntity(EntityType<? extends GTExplosiveEntity> type, Level world) {

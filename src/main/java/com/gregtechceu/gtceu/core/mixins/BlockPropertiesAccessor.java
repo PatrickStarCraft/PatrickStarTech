@@ -11,7 +11,6 @@ import net.minecraft.world.level.material.PushReaction;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.ToIntFunction;
@@ -74,11 +73,10 @@ public interface BlockPropertiesAccessor {
     boolean isRequiresCorrectToolForDrops();
 
     @Accessor
-    Optional<BlockBehaviour.OffsetFunction> getOffsetFunction();
+    BlockBehaviour.OffsetFunction getOffsetFunction();
 
-    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     @Accessor
-    void setOffsetFunction(Optional<BlockBehaviour.OffsetFunction> function);
+    void setOffsetFunction(BlockBehaviour.OffsetFunction function);
 
     @Accessor("spawnTerrainParticles")
     boolean isSpawnTerrainParticles();

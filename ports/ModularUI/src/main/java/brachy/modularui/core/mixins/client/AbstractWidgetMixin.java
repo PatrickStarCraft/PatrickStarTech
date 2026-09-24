@@ -21,9 +21,10 @@ public abstract class AbstractWidgetMixin {
     @Shadow
     protected boolean isHovered;
 
-    @Inject(method = "render",
+    @Inject(method = "extractRenderState",
             at = @At(value = "FIELD",
                     opcode = Opcodes.PUTFIELD,
+                    shift = At.Shift.AFTER,
                     target = "Lnet/minecraft/client/gui/components/AbstractWidget;isHovered:Z"))
     public void mui$fixHoveredState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY,
                                     float partialTick, CallbackInfo ci) {

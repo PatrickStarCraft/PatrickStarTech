@@ -4,7 +4,6 @@ import com.gregtechceu.gtceu.GTCEu;
 import com.gregtechceu.gtceu.api.machine.MetaMachine;
 import com.gregtechceu.gtceu.common.machine.storage.CreativeChestMachine;
 import com.gregtechceu.gtceu.common.machine.storage.QuantumChestMachine;
-import com.gregtechceu.gtceu.integration.ae2.machine.MEPatternBufferProxyPartMachine;
 import com.gregtechceu.gtceu.utils.GTMath;
 
 import net.minecraft.resources.Identifier;
@@ -57,9 +56,6 @@ public enum GTItemStorageProvider implements IServerExtensionProvider<ItemStack>
                 list.add(stored.copyWithCount(stack));
             }
             return list.isEmpty() ? Collections.emptyList() : List.of(new ViewGroup<>(list));
-        } else if (machine instanceof MEPatternBufferProxyPartMachine proxy) {
-            var buffer = proxy.getBuffer();
-            if (buffer == null) return Collections.emptyList();
         }
 
         return ItemStorageProvider.Extension.INSTANCE.getGroups(accessor);
