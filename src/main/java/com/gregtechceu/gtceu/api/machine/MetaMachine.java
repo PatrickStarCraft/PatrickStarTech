@@ -1119,7 +1119,6 @@ public class MetaMachine extends ManagedSyncBlockEntity implements IGregtechBloc
     }
 
     @OnlyIn(Dist.CLIENT)
-    @Override
     public AABB getRenderBoundingBox() {
         return MachineBlockEntityRenderer.getMachineRenderBoundingBox(this);
     }

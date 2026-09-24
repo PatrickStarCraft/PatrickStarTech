@@ -1,6 +1,7 @@
 package com.gregtechceu.gtceu.integration.kjs.recipe.components;
 
 import com.gregtechceu.gtceu.api.recipe.ingredient.IntProviderIngredient;
+import com.gregtechceu.gtceu.api.recipe.ingredient.IngredientStacks;
 import com.gregtechceu.gtceu.api.recipe.ingredient.SizedIngredient;
 
 import net.minecraft.util.valueproviders.ConstantInt;
@@ -8,7 +9,6 @@ import net.minecraft.util.valueproviders.IntProvider;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 
-import dev.latvian.mods.kubejs.core.IngredientKJS;
 import dev.latvian.mods.kubejs.item.InputItem;
 import dev.latvian.mods.kubejs.item.OutputItem;
 import dev.latvian.mods.kubejs.recipe.OutputReplacement;
@@ -25,7 +25,8 @@ public class ExtendedOutputItem extends OutputItem implements OutputReplacement 
     public SizedIngredient ingredient;
 
     public ExtendedOutputItem(Ingredient ingredient, int count, IntProvider rolls) {
-        super(((IngredientKJS) ingredient).kjs$getFirst().copyWithCount(count), Double.NaN, rolls);
+        super(java.util.Arrays.stream(IngredientStacks.getItems(ingredient)).findFirst()
+                .orElse(ItemStack.EMPTY).copyWithCount(count), Double.NaN, rolls);
         this.ingredient = (SizedIngredient) SizedIngredient.create(ingredient, count).getCustomIngredient();
     }
 
@@ -70,7 +71,7 @@ public class ExtendedOutputItem extends OutputItem implements OutputReplacement 
         var map = MapJS.of(o);
         if (map != null && map.containsKey("count_provider")) {
             IntProvider intProvider = UtilsJS.intProviderOf(map.get("count_provider"));
-            if (!(intProvider instanceof ConstantInt c && c.getValue() == 0)) {
+            if (!(intProvider instanceof ConstantInt c && c.value() == 0)) {
                 rolls = intProvider;
             }
         }

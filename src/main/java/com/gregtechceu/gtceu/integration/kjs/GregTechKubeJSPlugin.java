@@ -441,7 +441,7 @@ public class GregTechKubeJSPlugin extends KubeJSPlugin {
         typeWrappers.registerSimple(HeightRangePlacement.class, o -> {
             if (o instanceof HeightRangePlacement placement) return placement;
             return Optional.ofNullable(NBTUtils.toTagCompound(o))
-                    .map(tag -> HeightRangePlacement.CODEC.parse(NbtOps.INSTANCE, tag))
+                    .map(tag -> HeightRangePlacement.CODEC.codec().parse(NbtOps.INSTANCE, tag))
                     .flatMap(DataResult::result)
                     .orElse(null);
         });
