@@ -1,0 +1,7 @@
+{
+  "parent": "gtceu:block/hpca_heat_sink_component_base",
+  "textures": {
+    "overlay": "gtceu:block/overlay/machine/hpca/heat_sink",
+    "overlay_emissive": "gtceu:block/void"
+  }
+}

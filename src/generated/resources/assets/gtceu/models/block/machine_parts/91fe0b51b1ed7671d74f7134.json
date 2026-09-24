@@ -1,0 +1,8 @@
+{
+  "parent": "gtceu:block/machine/template/cube_all/sided",
+  "textures": {
+    "all": "gtceu:block/casings/hpca/high_power_casing",
+    "overlay_front": "gtceu:block/multiblock/data_bank/overlay_front",
+    "overlay_front_emissive": "gtceu:block/multiblock/data_bank/overlay_front_emissive"
+  }
+}

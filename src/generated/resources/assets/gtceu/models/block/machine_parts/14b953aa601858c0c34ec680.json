@@ -1,0 +1,9 @@
+{
+  "parent": "gtceu:block/machine/template/sided/sided",
+  "textures": {
+    "bottom": "gtceu:block/casings/wood_wall/bottom",
+    "overlay_front": "gtceu:block/multiblock/tank_valve/overlay_front_active",
+    "side": "gtceu:block/casings/wood_wall/side",
+    "top": "gtceu:block/casings/wood_wall/top"
+  }
+}

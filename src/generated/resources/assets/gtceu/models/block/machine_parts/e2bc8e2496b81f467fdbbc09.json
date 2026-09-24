@@ -1,0 +1,10 @@
+{
+  "parent": "gtceu:block/machine/template/sided/sided",
+  "textures": {
+    "bottom": "gtceu:block/casings/voltage/lv/bottom",
+    "overlay_bottom": "gtceu:block/machines/item_collector/overlay_bottom",
+    "overlay_top": "gtceu:block/machines/item_collector/overlay_top_active",
+    "side": "gtceu:block/casings/voltage/lv/side",
+    "top": "gtceu:block/casings/voltage/lv/top"
+  }
+}

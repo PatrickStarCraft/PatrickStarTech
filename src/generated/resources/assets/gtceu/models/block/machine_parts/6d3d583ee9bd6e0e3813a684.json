@@ -1,0 +1,7 @@
+{
+  "parent": "gtceu:block/hpca_empty_component_base",
+  "textures": {
+    "overlay": "gtceu:block/overlay/machine/hpca/empty",
+    "overlay_emissive": "gtceu:block/void"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "parent": "gtceu:block/machine/template/cube_all/sided",
+  "textures": {
+    "all": "gtceu:block/casings/solid/machine_primitive_bricks",
+    "overlay_front": "gtceu:block/multiblock/primitive_blast_furnace/overlay_front_active",
+    "overlay_front_emissive": "gtceu:block/multiblock/primitive_blast_furnace/overlay_front_active_emissive"
+  }
+}

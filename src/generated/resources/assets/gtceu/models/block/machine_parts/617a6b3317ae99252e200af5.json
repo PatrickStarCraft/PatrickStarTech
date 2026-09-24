@@ -1,0 +1,15 @@
+{
+  "parent": "gtceu:block/casings/voltage/ev",
+  "textures": {
+    "overlay_back": "gtceu:block/machines/air_scrubber/overlay_back",
+    "overlay_back_emissive": "gtceu:block/machines/air_scrubber/overlay_back_emissive",
+    "overlay_bottom": "gtceu:block/machines/air_scrubber/overlay_bottom",
+    "overlay_bottom_emissive": "gtceu:block/machines/air_scrubber/overlay_bottom_emissive",
+    "overlay_front": "gtceu:block/machines/air_scrubber/overlay_front",
+    "overlay_front_emissive": "gtceu:block/machines/air_scrubber/overlay_front_emissive",
+    "overlay_side": "gtceu:block/machines/air_scrubber/overlay_side",
+    "overlay_side_emissive": "gtceu:block/machines/air_scrubber/overlay_side_emissive",
+    "overlay_top": "gtceu:block/machines/air_scrubber/overlay_top_paused",
+    "overlay_top_emissive": "gtceu:block/machines/air_scrubber/overlay_top_paused_emissive"
+  }
+}

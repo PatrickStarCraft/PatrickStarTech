@@ -1,0 +1,9 @@
+{
+  "parent": "gtceu:block/casings/voltage/ev",
+  "textures": {
+    "overlay_front": "gtceu:block/machines/assembler/overlay_front_paused",
+    "overlay_front_emissive": "gtceu:block/machines/assembler/overlay_front_paused_emissive",
+    "overlay_top": "gtceu:block/machines/assembler/overlay_top",
+    "overlay_top_emissive": "gtceu:block/machines/assembler/overlay_top_emissive"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "parent": "gtceu:block/machine/template/cube_all/sided",
+  "textures": {
+    "all": "gtceu:block/casings/solid/machine_casing_bronze_plated_bricks",
+    "overlay_top": "gtceu:block/multiblock/charcoal_pile_igniter/overlay_top_active",
+    "overlay_top_emissive": "gtceu:block/multiblock/charcoal_pile_igniter/overlay_top_active_emissive"
+  }
+}

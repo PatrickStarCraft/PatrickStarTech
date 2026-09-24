@@ -1,0 +1,8 @@
+{
+  "parent": "gtceu:block/machine/template/cube_all/sided",
+  "textures": {
+    "all": "gtceu:block/casings/cleanroom/plascrete",
+    "overlay_bottom": "gtceu:block/multiblock/cleanroom/overlay_bottom_active",
+    "overlay_top": "gtceu:block/multiblock/cleanroom/overlay_top_active"
+  }
+}

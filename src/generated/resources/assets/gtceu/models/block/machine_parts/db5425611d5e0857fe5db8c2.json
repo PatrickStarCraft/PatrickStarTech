@@ -1,0 +1,9 @@
+{
+  "parent": "gtceu:block/casings/voltage/ev",
+  "textures": {
+    "overlay_front": "gtceu:block/machines/extruder/overlay_front",
+    "overlay_front_emissive": "gtceu:block/machines/extruder/overlay_front_emissive",
+    "overlay_top": "gtceu:block/machines/extruder/overlay_top",
+    "overlay_top_emissive": "gtceu:block/machines/extruder/overlay_top_emissive"
+  }
+}

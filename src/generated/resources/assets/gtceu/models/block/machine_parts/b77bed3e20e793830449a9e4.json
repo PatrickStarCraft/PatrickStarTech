@@ -1,0 +1,9 @@
+{
+  "parent": "gtceu:block/casings/steam/bricked_bronze",
+  "textures": {
+    "overlay_back": "gtceu:block/machines/steam_miner/overlay_back",
+    "overlay_bottom": "gtceu:block/machines/steam_miner/overlay_bottom",
+    "overlay_front": "gtceu:block/machines/steam_miner/overlay_front",
+    "overlay_side": "gtceu:block/machines/steam_miner/overlay_side"
+  }
+}
