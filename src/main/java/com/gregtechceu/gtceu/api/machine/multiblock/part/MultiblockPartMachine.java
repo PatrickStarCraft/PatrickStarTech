@@ -102,6 +102,7 @@ public class MultiblockPartMachine extends MetaMachine {
                 }
             }
         }
+        scheduleRenderUpdate();
     }
 
     /**

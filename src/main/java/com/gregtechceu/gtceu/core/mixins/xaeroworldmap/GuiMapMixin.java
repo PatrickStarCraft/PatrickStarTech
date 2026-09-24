@@ -18,6 +18,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import xaero.lib.client.gui.ScreenBase;
 import xaero.lib.client.gui.widget.Tooltip;
 import xaero.map.MapProcessor;
 import xaero.map.gui.*;
@@ -27,6 +28,9 @@ public abstract class GuiMapMixin extends ScreenBase implements IRightClickableE
 
     @Shadow
     public abstract <T extends GuiEventListener & Renderable & NarratableEntry> T addButton(T guiEventListener);
+
+    @Shadow
+    public abstract void init();
 
     protected GuiMapMixin(Screen parent, Screen escape, MapProcessor mapProcessor, Entity player) {
         super(parent, escape, Component.translatable("gui.xaero_world_map_screen"));
@@ -117,7 +121,7 @@ public abstract class GuiMapMixin extends ScreenBase implements IRightClickableE
                     GTCEu.id("textures/gui/widget/button_" + button.name + ".png"),
                     guiButton -> {
                         ButtonState.toggleButton(button);
-                        init(minecraft, width, height);
+                        init();
                     },
                     () -> new Tooltip("gtceu.button." + button.name));
 

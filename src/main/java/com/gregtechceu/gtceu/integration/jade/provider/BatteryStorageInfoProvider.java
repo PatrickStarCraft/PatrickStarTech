@@ -19,7 +19,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import snownee.jade.api.BlockAccessor;
 import snownee.jade.api.ITooltip;
 import snownee.jade.api.config.IPluginConfig;
-import snownee.jade.api.ui.IElementHelper;
+import snownee.jade.api.ui.JadeUI;
 
 import static com.gregtechceu.gtceu.utils.GTUtil.formatLongNumber;
 import static com.gregtechceu.gtceu.utils.GTUtil.getStringRemainTime;
@@ -65,11 +65,10 @@ public class BatteryStorageInfoProvider extends MachineInfoProvider<BatteryBuffe
         if (GTUtil.isShiftDown()) {
             CustomItemStackHandler handler = new CustomItemStackHandler();
             handler.deserializeNBT(data.getCompoundOrEmpty("storage"));
-            IElementHelper helper = tooltip.getElementHelper();
             for (int i = 0; i < handler.getSlots(); i++) {
                 if (handler.getStackInSlot(i).getCount() != 0) {
                     ItemStack stack = handler.getStackInSlot(i);
-                    tooltip.add(helper.smallItem(stack));
+                    tooltip.add(JadeUI.smallItem(stack));
                     IElectricItem item = GTCapabilityHelper.getElectricItem(stack);
                     if (item == null) continue;
                     tooltip.append(Component.literal(

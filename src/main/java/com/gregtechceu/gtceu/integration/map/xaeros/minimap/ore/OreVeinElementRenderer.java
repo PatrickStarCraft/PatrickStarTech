@@ -9,14 +9,15 @@ import com.gregtechceu.gtceu.integration.map.GroupingMapRenderer;
 import com.gregtechceu.gtceu.integration.map.layer.builtin.OreRenderLayer;
 import com.gregtechceu.gtceu.integration.map.xaeros.common.ore.OreVeinElement;
 
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.TextureAtlas;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.data.AtlasIds;
 import net.minecraft.resources.Identifier;
 
-import com.mojang.blaze3d.systems.RenderSystem;
+import xaero.lib.client.graphics.XaeroBufferProvider;
+import xaero.lib.client.graphics.util.ImmediateRenderUtil;
 import xaero.common.graphics.renderer.multitexture.MultiTextureRenderTypeRendererProvider;
+import xaero.hud.minimap.element.render.MinimapElementGraphics;
 import xaero.hud.minimap.element.render.MinimapElementRenderInfo;
 import xaero.hud.minimap.element.render.MinimapElementRenderLocation;
 import xaero.hud.minimap.element.render.MinimapElementRenderer;
@@ -30,7 +31,7 @@ public class OreVeinElementRenderer extends MinimapElementRenderer<OreVeinElemen
     }
 
     @Override
-    public void preRender(MinimapElementRenderInfo renderInfo, MultiBufferSource.BufferSource renderTypeBuffers,
+    public void preRender(MinimapElementRenderInfo renderInfo, XaeroBufferProvider renderTypeBuffers,
                           MultiTextureRenderTypeRendererProvider multiTextureRenderTypeRenderers) {}
 
     @Override
@@ -39,23 +40,24 @@ public class OreVeinElementRenderer extends MinimapElementRenderer<OreVeinElemen
                                  boolean outOfBounds,
                                  double optionalDepth, float optionalScale, double partialX, double partialY,
                                  MinimapElementRenderInfo renderInfo,
-                                 GuiGraphicsExtractor graphics, MultiBufferSource.BufferSource renderTypeBuffers) {
+                                 MinimapElementGraphics graphics, XaeroBufferProvider renderTypeBuffers) {
         GeneratedVeinMetadata vein = element.getVein();
         int iconSize = ConfigHolder.INSTANCE.compat.minimap.oreIconSize;
 
         Material material = OreRenderLayer.getMaterial(vein);
         int materialARGB = material.getMaterialARGB();
         float[] colors = RenderUtil.floats(materialARGB);
-        RenderSystem.setShaderColor(1, 1, 1, 1);
+        ImmediateRenderUtil.setShaderColor(colors[0], colors[1], colors[2], colors[3]);
 
         Identifier oreTexture = MaterialIconType.rawOre
                 .getItemTexturePath(material.getMaterialIconSet(), true);
         if (oreTexture != null) {
             var oreSprite = Minecraft.getInstance()
-                    .getTextureAtlas(TextureAtlas.LOCATION_BLOCKS)
-                    .apply(oreTexture);
-            graphics.blit(-iconSize / 2, -iconSize / 2, 0, iconSize, iconSize,
-                    oreSprite, colors[0], colors[1], colors[2], 1);
+                    .getAtlasManager()
+                    .getAtlasOrThrow(AtlasIds.BLOCKS)
+                    .getSprite(oreTexture);
+            graphics.blit(oreSprite, -iconSize / 2, -iconSize / 2, iconSize, iconSize,
+                    RenderPipelines.GUI_TEXTURED);
         }
         // FIXME drawing the 2nd layer makes xaero's minimap transparent. so we won't. for now.
         // oreTexture = MaterialIconType.rawOre.getItemTexturePath(firstMaterial.getMaterialIconSet(), "secondary",
@@ -70,7 +72,7 @@ public class OreVeinElementRenderer extends MinimapElementRenderer<OreVeinElemen
         // oreSprite, colors[0], colors[1], colors[2], 1);
         // }
 
-        RenderSystem.setShaderColor(1, 1, 1, 1);
+        ImmediateRenderUtil.setShaderColor(1, 1, 1, 1);
         int borderColor = ConfigHolder.INSTANCE.compat.minimap.getBorderColor(materialARGB | 0xFF000000);
         if ((borderColor & 0xFF000000) != 0) {
             int thickness = iconSize / 16;
@@ -83,7 +85,7 @@ public class OreVeinElementRenderer extends MinimapElementRenderer<OreVeinElemen
     }
 
     @Override
-    public void postRender(MinimapElementRenderInfo renderInfo, MultiBufferSource.BufferSource renderTypeBuffers,
+    public void postRender(MinimapElementRenderInfo renderInfo, XaeroBufferProvider renderTypeBuffers,
                            MultiTextureRenderTypeRendererProvider multiTextureRenderTypeRenderers) {}
 
     @Override

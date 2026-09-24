@@ -42,7 +42,7 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> {
 
     public T nested() {
         Identifier id = Identifier.fromNamespaceAndPath(namespace, "__nested/" + nestedModelSequence++);
-        return create(id);
+        return getBuilder(id);
     }
 
     public ModelFile getExistingFile(Identifier location) {

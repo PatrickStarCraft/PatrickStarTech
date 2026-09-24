@@ -7,11 +7,7 @@ import com.gregtechceu.gtceu.common.machine.storage.QuantumTankMachine;
 import com.gregtechceu.gtceu.integration.ae2.machine.MEPatternBufferPartMachine;
 import com.gregtechceu.gtceu.integration.ae2.machine.MEPatternBufferProxyPartMachine;
 
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.Identifier;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
 
@@ -19,14 +15,11 @@ import org.jetbrains.annotations.Nullable;
 import snownee.jade.addon.universal.FluidStorageProvider;
 import snownee.jade.api.Accessor;
 import snownee.jade.api.fluid.JadeFluidObject;
-import snownee.jade.api.ui.IElementHelper;
 import snownee.jade.api.view.ClientViewGroup;
 import snownee.jade.api.view.FluidView;
 import snownee.jade.api.view.IClientExtensionProvider;
 import snownee.jade.api.view.IServerExtensionProvider;
 import snownee.jade.api.view.ViewGroup;
-import snownee.jade.util.FluidTextHelper;
-import snownee.jade.util.JadeForgeUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,8 +30,8 @@ import java.util.List;
  * Currently: Quantum Tanks, Pattern Buffer Proxies
  * Defaults to Jade's normal FluidView provider
  */
-public enum GTFluidStorageProvider implements IServerExtensionProvider<MetaMachine, CompoundTag>,
-        IClientExtensionProvider<CompoundTag, FluidView> {
+public enum GTFluidStorageProvider implements IServerExtensionProvider<FluidView.Data>,
+        IClientExtensionProvider<FluidView.Data, FluidView> {
 
     INSTANCE;
 
@@ -48,56 +41,38 @@ public enum GTFluidStorageProvider implements IServerExtensionProvider<MetaMachi
     }
 
     @Override
-    public List<ClientViewGroup<FluidView>> getClientGroups(Accessor<?> accessor, List<ViewGroup<CompoundTag>> groups) {
-        return ClientViewGroup.map(groups, GTFluidStorageProvider::readFluid, null);
+    public List<ClientViewGroup<FluidView>> getClientGroups(Accessor<?> accessor, List<ViewGroup<FluidView.Data>> groups) {
+        return ClientViewGroup.map(groups, FluidView::readDefault, null);
     }
 
     @Override
-    public @Nullable List<ViewGroup<CompoundTag>> getGroups(ServerPlayer serverPlayer, ServerLevel serverLevel,
-                                                            MetaMachine machine, boolean b) {
+    public @Nullable List<ViewGroup<FluidView.Data>> getGroups(Accessor<?> accessor) {
+        if (!(accessor.getTarget() instanceof MetaMachine machine)) return null;
         if (machine instanceof QuantumTankMachine qtm) {
             FluidStack stored = qtm.getStored();
             if (stored.isEmpty() && qtm instanceof CreativeTankMachine) return Collections.emptyList();
             if (stored.isEmpty() && qtm.isLocked()) stored = qtm.getLockedFluid();
-            CompoundTag tag = JadeForgeUtils.fromFluidStack(stored, qtm.getMaxAmount());
-            tag.putBoolean("special", true);
-            tag.putLong("amount", qtm.getStoredAmount());
-            return List.of(new ViewGroup<>(List.of(tag)));
+            long amount = qtm.getStoredAmount();
+            return List.of(new ViewGroup<>(List.of(new FluidView.Data(
+                    JadeFluidObject.of(stored.getFluid(), amount, stored.getComponentsPatch()),
+                    qtm.getMaxAmount()))));
         } else if (GTCEu.Mods.isAE2Loaded() && machine instanceof MEPatternBufferPartMachine buffer) {
             var tank = buffer.getShareTank();
-            List<CompoundTag> list = new ArrayList<>(tank.getTanks());
+            List<FluidView.Data> list = new ArrayList<>(tank.getTanks());
             for (var storage : tank.getStorages()) {
                 var stack = storage.getFluid();
                 if (stack.isEmpty()) continue;
                 int capacity = storage.getCapacity();
-                list.add(JadeForgeUtils.fromFluidStack(stack, capacity));
+                list.add(new FluidView.Data(JadeFluidObject.of(stack.getFluid(), stack.getAmount(),
+                        stack.getComponentsPatch()), capacity));
             }
             return list.isEmpty() ? List.of() : List.of(new ViewGroup<>(list));
         } else if (GTCEu.Mods.isAE2Loaded() && machine instanceof MEPatternBufferProxyPartMachine proxy) {
             var buffer = proxy.getBuffer();
             if (buffer == null) return Collections.emptyList();
-            return FluidStorageProvider.INSTANCE.getGroups(serverPlayer, serverLevel, proxy, b);
+            return FluidStorageProvider.Extension.INSTANCE.getGroups(accessor);
         }
 
-        return FluidStorageProvider.INSTANCE.getGroups(serverPlayer, serverLevel, machine, b);
-    }
-
-    // FluidView#readDefault can't handle amount > INT_MAX
-    private static FluidView readFluid(CompoundTag tag) {
-        if (!tag.contains("special")) return FluidView.readDefault(tag);
-        long capacity = tag.getLongOr("capacity", 0);
-        if (capacity <= 0) return null;
-
-        Fluid fluid = BuiltInRegistries.FLUID.getValue(Identifier.parse(tag.getStringOr("fluid", "")));
-        CompoundTag nbt = tag.getCompound("tag").orElse(null);
-        long amount = tag.getLongOr("amount", 0);
-        JadeFluidObject fluidObject = JadeFluidObject.of(fluid, 1000, nbt);
-        FluidView fluidView = new FluidView(IElementHelper.get().fluid(fluidObject));
-        fluidView.fluidName = fluid.getFluidType().getDescription();
-        fluidView.current = FluidTextHelper.getUnicodeMillibuckets(amount, true);
-        fluidView.max = FluidTextHelper.getUnicodeMillibuckets(capacity, true);
-        fluidView.ratio = Math.min(1f, (float) ((double) amount / capacity));
-
-        return fluidView;
+        return FluidStorageProvider.Extension.INSTANCE.getGroups(accessor);
     }
 }

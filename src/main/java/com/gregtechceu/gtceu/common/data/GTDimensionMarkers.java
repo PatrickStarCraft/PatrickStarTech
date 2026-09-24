@@ -57,15 +57,16 @@ public class GTDimensionMarkers {
     private static BlockEntry<Block> createMarker(String name) {
         return REGISTRATE.block("%s_marker".formatted(name), Block::new)
                 .lang(FormattingUtil.toEnglishName(name))
-                .blockstate((ctx, prov) -> prov.simpleBlock(ctx.get(), prov.models().cube(ctx.getName(),
-                        prov.modLoc("block/dim_markers/%s/down".formatted(name)),
-                        prov.modLoc("block/dim_markers/%s/up".formatted(name)),
-                        prov.modLoc("block/dim_markers/%s/north".formatted(name)),
-                        prov.modLoc("block/dim_markers/%s/south".formatted(name)),
-                        prov.modLoc("block/dim_markers/%s/east".formatted(name)),
-                        prov.modLoc("block/dim_markers/%s/west".formatted(name)))
+                .gtBlockstate((ctx, prov) -> prov.simpleBlock(ctx.getEntry(), prov.models()
+                        .withExistingParent(ctx.getName(), prov.mcLoc("block/cube"))
+                        .texture("down", prov.modLoc("block/dim_markers/%s/down".formatted(name)))
+                        .texture("up", prov.modLoc("block/dim_markers/%s/up".formatted(name)))
+                        .texture("north", prov.modLoc("block/dim_markers/%s/north".formatted(name)))
+                        .texture("south", prov.modLoc("block/dim_markers/%s/south".formatted(name)))
+                        .texture("east", prov.modLoc("block/dim_markers/%s/east".formatted(name)))
+                        .texture("west", prov.modLoc("block/dim_markers/%s/west".formatted(name)))
                         .texture("particle", "#north")
-                        .guiLight(UnbakedModel.GuiLight.FRONT)))
+                        .guiLight(UnbakedModel.GuiLight.FRONT.getSerializedName())))
                 .simpleItem()
                 .register();
     }

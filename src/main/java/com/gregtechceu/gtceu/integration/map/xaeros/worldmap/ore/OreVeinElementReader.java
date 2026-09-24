@@ -12,7 +12,8 @@ import net.minecraft.network.chat.Component;
 import xaero.lib.client.gui.widget.Tooltip;
 import xaero.map.WorldMap;
 import xaero.map.common.config.option.WorldMapProfiledConfigOptions;
-import xaero.map.element.MapElementReader;
+import xaero.map.element.render.ElementReader;
+import xaero.map.element.render.ElementRenderLocation;
 import xaero.map.gui.IRightClickableElement;
 import xaero.map.gui.dropdown.rightclick.RightClickOption;
 
@@ -21,7 +22,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class OreVeinElementReader extends
-                                  MapElementReader<OreVeinElement, OreVeinElementContext, OreVeinElementRenderer> {
+                                  ElementReader<OreVeinElement, OreVeinElementContext, OreVeinElementRenderer> {
 
     @Override
     public boolean isHidden(OreVeinElement element, OreVeinElementContext context) {
@@ -29,12 +30,12 @@ public class OreVeinElementReader extends
     }
 
     @Override
-    public boolean isInteractable(int location, OreVeinElement element) {
+    public boolean isInteractable(ElementRenderLocation location, OreVeinElement element) {
         return true;
     }
 
     @Override
-    public float getBoxScale(int location, OreVeinElement element, OreVeinElementContext context) {
+    public float getBoxScale(ElementRenderLocation location, OreVeinElement element, OreVeinElementContext context) {
         return context.worldmapWaypointsScale;
     }
 

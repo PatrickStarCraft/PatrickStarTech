@@ -299,6 +299,8 @@ public class CommonProxy {
     @SubscribeEvent
     public void commonSetup(FMLCommonSetupEvent event) {
         event.enqueueWork(() -> {
+            LegacyRegistryAliases.register();
+
             // register the map ingredient converters for all of our ingredients
             MapIngredientTypeManager.registerMapIngredient(FluidIngredient.class, FluidTagMapIngredient::from);
             MapIngredientTypeManager.registerMapIngredient(FluidIngredient.class, FluidStackMapIngredient::from);

@@ -55,6 +55,8 @@ public class MachineModelBuilder<T extends ModelBuilder<T>> extends CustomLoader
     @Override
     public JsonObject toJson(JsonObject json) {
         json = super.toJson(json);
+        json.remove("loader");
+        json.addProperty("type", GTCEu.id("machine").toString());
 
         json.addProperty("machine", owner.getId().toString());
         StateDefinition<MachineDefinition, MachineRenderState> stateDefinition = owner.getStateDefinition();
@@ -80,7 +82,8 @@ public class MachineModelBuilder<T extends ModelBuilder<T>> extends CustomLoader
             getModels().entrySet().stream()
                     .sorted(Map.Entry.comparingByKey(PartialState.comparingByProperties()))
                     .forEach(entry -> {
-                        variants.add(entry.getKey().toString(), configuredModelListToJSON(entry.getValue()));
+                        variants.add(entry.getKey().toString(),
+                                configuredModelListToBlockStateModelJSON(entry.getValue()));
                     });
 
             json.add("variants", variants);
@@ -145,6 +148,20 @@ public class MachineModelBuilder<T extends ModelBuilder<T>> extends CustomLoader
         }
     }
 
+    /** Serialize child variants using the native 26.2 BlockStateModel.Unbaked codec fields. */
+    public static JsonElement configuredModelListToBlockStateModelJSON(ConfiguredModelList list) {
+        List<ConfiguredModel> models = list.getModels();
+        if (models.size() == 1) {
+            return configuredModelToBlockStateModelJSON(models.getFirst(), false);
+        }
+
+        JsonArray variants = new JsonArray();
+        for (ConfiguredModel model : models) {
+            variants.add(configuredModelToBlockStateModelJSON(model, true));
+        }
+        return variants;
+    }
+
     public static JsonObject configuredModelToJSON(ConfiguredModel model, boolean includeWeight) {
         JsonObject modelJson = new JsonObject();
         modelJson.add("model", modelToJson(model.model));
@@ -152,6 +169,20 @@ public class MachineModelBuilder<T extends ModelBuilder<T>> extends CustomLoader
         if (model.rotationX != 0) modelJson.addProperty("x", model.rotationX);
         if (model.rotationY != 0) modelJson.addProperty("y", model.rotationY);
         if (model.rotationZ != 0) modelJson.addProperty(GTBlockstateProvider.Z_ROT_PROPERTY_NAME, model.rotationZ);
+        if (model.uvLock) modelJson.addProperty("uvlock", true);
+        if (includeWeight && model.weight != ConfiguredModel.DEFAULT_WEIGHT) {
+            modelJson.addProperty("weight", model.weight);
+        }
+        return modelJson;
+    }
+
+    public static JsonObject configuredModelToBlockStateModelJSON(ConfiguredModel model, boolean includeWeight) {
+        JsonObject modelJson = new JsonObject();
+        modelJson.add("model", modelToJson(model.model));
+
+        if (model.rotationX != 0) modelJson.addProperty("x", model.rotationX);
+        if (model.rotationY != 0) modelJson.addProperty("y", model.rotationY);
+        if (model.rotationZ != 0) modelJson.addProperty("z", model.rotationZ);
         if (model.uvLock) modelJson.addProperty("uvlock", true);
         if (includeWeight && model.weight != ConfiguredModel.DEFAULT_WEIGHT) {
             modelJson.addProperty("weight", model.weight);
@@ -601,7 +632,7 @@ public class MachineModelBuilder<T extends ModelBuilder<T>> extends CustomLoader
             } else if (!nestedConditionGroups.isEmpty()) {
                 out.add("when", groupsToJson(this.nestedConditionGroups, this.useOr));
             }
-            out.add("apply", configuredModelListToJSON(this.models));
+            out.add("apply", configuredModelListToBlockStateModelJSON(this.models));
             return out;
         }
 

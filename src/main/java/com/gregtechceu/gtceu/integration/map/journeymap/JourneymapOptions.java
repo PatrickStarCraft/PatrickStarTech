@@ -3,9 +3,9 @@ package com.gregtechceu.gtceu.integration.map.journeymap;
 import com.gregtechceu.gtceu.GTCEu;
 import com.gregtechceu.gtceu.integration.map.layer.Layers;
 
-import journeymap.client.api.IClientAPI;
-import journeymap.client.api.option.BooleanOption;
-import journeymap.client.api.option.OptionCategory;
+import journeymap.api.v2.client.IClientAPI;
+import journeymap.api.v2.common.option.BooleanOption;
+import journeymap.api.v2.common.option.OptionCategory;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -12,6 +12,7 @@ import com.gregtechceu.gtceu.api.machine.multiblock.IBatteryData;
 import com.gregtechceu.gtceu.api.registry.GTRegistries;
 import com.gregtechceu.gtceu.api.registry.registrate.provider.GTBlockstateProvider;
 import com.gregtechceu.gtceu.client.color.MaterialLayerTintSource;
+import com.gregtechceu.gtceu.client.color.MachineItemTintSource;
 import com.gregtechceu.gtceu.common.block.*;
 import com.gregtechceu.gtceu.common.data.GTItems;
 import com.gregtechceu.gtceu.common.data.GTMaterialBlocks;
@@ -148,7 +149,7 @@ public class GTModels {
                                                 ItemModelProvider prov) {
         JsonObject specialModel = new JsonObject();
         specialModel.addProperty("type", "minecraft:special");
-        specialModel.addProperty("base", ctx.getId().withPrefix("item/").toString());
+        specialModel.addProperty("base", ctx.getId().withPrefix("block/").withSuffix("_on").toString());
 
         JsonObject renderer = new JsonObject();
         renderer.addProperty("type", GTCEu.id("lamp").toString());
@@ -157,6 +158,41 @@ public class GTModels {
         JsonObject definition = new JsonObject();
         definition.add("model", specialModel);
         prov.bindItemDefinition(ctx.getId(), definition);
+    }
+
+    /** Preserve the generated machine item model's transforms while layering its target dynamic renderer. */
+    public static void createMachineItemDefinition(DataGenContext<Item, ? extends Item> ctx,
+                                                   ItemModelProvider prov) {
+        Identifier baseModel = ctx.getId().withPrefix("item/");
+        prov.withExistingParent(baseModel.toString(), ctx.getId().withPrefix("block/machine/"));
+        prov.bindItemDefinition(ctx.getId(), machineItemDefinition(baseModel));
+    }
+
+    public static JsonObject machineItemDefinition(Identifier baseModel) {
+        JsonObject base = new JsonObject();
+        base.addProperty("type", "minecraft:model");
+        base.addProperty("model", baseModel.toString());
+        base.add("tints", RuntimeModelResources.dynamicLayerTints(MachineItemTintSource.ID, 65));
+
+        JsonObject specialModel = new JsonObject();
+        specialModel.addProperty("type", "minecraft:special");
+        specialModel.addProperty("base", baseModel.toString());
+
+        JsonObject renderer = new JsonObject();
+        renderer.addProperty("type", GTCEu.id("machine_dynamic").toString());
+        specialModel.add("model", renderer);
+
+        JsonArray models = new JsonArray();
+        models.add(base);
+        models.add(specialModel);
+
+        JsonObject composite = new JsonObject();
+        composite.addProperty("type", "minecraft:composite");
+        composite.add("models", models);
+
+        JsonObject definition = new JsonObject();
+        definition.add("model", composite);
+        return definition;
     }
 
     /** Add item definitions and their generated model to the live dynamic resource pack. */
@@ -208,6 +244,38 @@ public class GTModels {
     public static void rubberTreeSaplingModel(DataGenContext<Item, BlockItem> context,
                                               ItemModelProvider provider) {
         provider.generated(context.getId(), provider.modLoc("block/" + context.getName()));
+    }
+
+    public static <T extends Item> void fenceInventoryItemModel(DataGenContext<Item, T> context,
+                                                                 ItemModelProvider provider,
+                                                                 Identifier plankTexture) {
+        var model = provider.withExistingParent(context.getId().withPrefix("item/").toString(),
+                Identifier.withDefaultNamespace("block/fence_inventory"))
+                .texture("texture", plankTexture);
+        provider.bindItem(context.getId(), model);
+    }
+
+    public static <T extends Item> void trapdoorInventoryItemModel(DataGenContext<Item, T> context,
+                                                                   ItemModelProvider provider,
+                                                                   Identifier trapdoorTexture) {
+        var model = provider.withExistingParent(context.getId().withPrefix("item/").toString(),
+                Identifier.withDefaultNamespace("block/template_orientable_trapdoor_bottom"))
+                .texture("texture", trapdoorTexture);
+        provider.bindItem(context.getId(), model);
+    }
+
+    public static <T extends Item> void buttonInventoryItemModel(DataGenContext<Item, T> context,
+                                                                 ItemModelProvider provider,
+                                                                 Identifier plankTexture) {
+        var model = provider.withExistingParent(context.getId().withPrefix("item/").toString(),
+                Identifier.withDefaultNamespace("block/button_inventory"))
+                .texture("texture", plankTexture);
+        provider.bindItem(context.getId(), model);
+    }
+
+    public static <T extends Item> void generatedBlockItemModel(DataGenContext<Item, T> context,
+                                                                ItemModelProvider provider) {
+        provider.generated(context.getId(), provider.modLoc("item/" + context.getName()));
     }
 
     private static JsonObject itemModelReference(Identifier modelId) {
@@ -418,7 +486,7 @@ public class GTModels {
         };
     }
 
-    public static void createPipeBlockModel(DataGenContext<Block, ? extends PipeBlock<?, ?, ?>> ctx,
+    public static <T extends PipeBlock<?, ?, ?>> void createPipeBlockModel(DataGenContext<Block, T> ctx,
                                             GTBlockstateProvider prov) {
         // the pipe model generator handles adding its models to the provider by itself
         ctx.getEntry().createPipeModel(prov).initModels();

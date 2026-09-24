@@ -20,6 +20,7 @@ public abstract class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile 
     protected final Map<String, String> textures = new LinkedHashMap<>();
     protected final List<ElementData> elements = new ArrayList<>();
     protected final JsonObject display = new JsonObject();
+    protected String guiLight;
     protected Identifier renderType;
     protected CustomLoaderBuilder<T> customLoader;
     private int anonymousElement;
@@ -37,6 +38,7 @@ public abstract class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile 
 
     public T parent(ModelFile parent) { this.parent = Objects.requireNonNull(parent); return self(); }
     public T parent(Identifier parent) { return parent(new ModelFile.UncheckedModelFile(parent)); }
+    public T guiLight(String guiLight) { this.guiLight = Objects.requireNonNull(guiLight); return self(); }
     public T texture(String key, Identifier value) { return texture(key, value.toString()); }
     public T texture(String key, String value) {
         String texture = value.startsWith("#") || value.indexOf(':') >= 0 ? value : getLocation().getNamespace() + ":" + value;
@@ -80,6 +82,7 @@ public abstract class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile 
             parent.assertExists();
             json.addProperty("parent", parent.getLocation().toString());
         }
+        if (guiLight != null) json.addProperty("gui_light", guiLight);
         if (!textures.isEmpty()) {
             JsonObject textureJson = new JsonObject();
             textures.forEach(textureJson::addProperty);

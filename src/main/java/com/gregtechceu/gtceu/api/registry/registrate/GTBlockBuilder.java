@@ -2,8 +2,7 @@ package com.gregtechceu.gtceu.api.registry.registrate;
 
 import com.gregtechceu.gtceu.api.registry.registrate.provider.GTBlockstateProvider;
 
-import net.minecraft.client.color.block.BlockColor;
-import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.color.block.BlockTintSource;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -12,11 +11,15 @@ import com.tterrag.registrate.AbstractRegistrate;
 import com.tterrag.registrate.builders.BlockBuilder;
 import com.tterrag.registrate.builders.BlockEntityBuilder;
 import com.tterrag.registrate.builders.BuilderCallback;
+import com.tterrag.registrate.providers.DataGenContext;
+import com.tterrag.registrate.providers.GeneratorType;
 import com.tterrag.registrate.providers.*;
 import com.tterrag.registrate.providers.generators.RegistrateRecipeProvider;
+import com.tterrag.registrate.providers.generators.RegistrateBlockModelGenerator;
 import com.tterrag.registrate.providers.loot.RegistrateBlockLootTables;
 import com.tterrag.registrate.util.nullness.*;
 
+import java.util.List;
 import java.util.function.Supplier;
 
 public class GTBlockBuilder<T extends Block, P> extends BlockBuilder<T, P> {
@@ -36,11 +39,13 @@ public class GTBlockBuilder<T extends Block, P> extends BlockBuilder<T, P> {
     }
 
     public GTBlockBuilder<T, P> exBlockstate(NonNullBiConsumer<DataGenContext<Block, ? extends Block>, GTBlockstateProvider> cons) {
-        return setDataGeneric(ProviderType.BLOCKSTATE, (ctx, prov) -> cons.accept(ctx, (GTBlockstateProvider) prov));
+        return setDataGeneric(GTBlockstateProvider.BLOCKSTATE, cons);
     }
 
-    public GTBlockBuilder<T, P> gtBlockstate(NonNullBiConsumer<DataGenContext<Block, ? extends T>, GTBlockstateProvider> cons) {
-        return setData(ProviderType.BLOCKSTATE, (ctx, prov) -> cons.accept(ctx, (GTBlockstateProvider) prov));
+    public GTBlockBuilder<T, P> gtBlockstate(NonNullBiConsumer<DataGenContext<Block, T>, GTBlockstateProvider> cons) {
+        getOwner().setDataGenerator(this, GTBlockstateProvider.BLOCKSTATE,
+                prov -> cons.accept(DataGenContext.from(this), prov));
+        return this;
     }
 
     // region default overrides
@@ -53,12 +58,6 @@ public class GTBlockBuilder<T extends Block, P> extends BlockBuilder<T, P> {
     @Override
     public GTBlockBuilder<T, P> initialProperties(NonNullSupplier<? extends Block> block) {
         return (GTBlockBuilder<T, P>) super.initialProperties(block);
-    }
-
-    @SuppressWarnings("removal")
-    @Override
-    public GTBlockBuilder<T, P> addLayer(Supplier<Supplier<RenderType>> layer) {
-        return (GTBlockBuilder<T, P>) super.addLayer(layer);
     }
 
     @Override
@@ -77,8 +76,8 @@ public class GTBlockBuilder<T extends Block, P> extends BlockBuilder<T, P> {
     }
 
     @Override
-    public GTBlockBuilder<T, P> color(NonNullSupplier<Supplier<BlockColor>> colorHandler) {
-        return (GTBlockBuilder<T, P>) super.color(colorHandler);
+    public GTBlockBuilder<T, P> color(NonNullSupplier<Supplier<List<BlockTintSource>>> tintSources) {
+        return (GTBlockBuilder<T, P>) super.color(tintSources);
     }
 
     @Override
@@ -87,8 +86,8 @@ public class GTBlockBuilder<T extends Block, P> extends BlockBuilder<T, P> {
     }
 
     @Override
-    public GTBlockBuilder<T, P> blockstate(NonNullBiConsumer<DataGenContext<Block, T>, RegistrateBlockstateProvider> cons) {
-        return (GTBlockBuilder<T, P>) setData(ProviderType.BLOCKSTATE, cons);
+    public GTBlockBuilder<T, P> blockstate(NonNullSupplier<NonNullBiConsumer<DataGenContext<Block, T>, RegistrateBlockModelGenerator>> cons) {
+        return (GTBlockBuilder<T, P>) super.blockstate(cons);
     }
 
     @Override
@@ -122,14 +121,15 @@ public class GTBlockBuilder<T extends Block, P> extends BlockBuilder<T, P> {
     //     return tag(ProviderType.BLOCK_TAGS, tags);
     // }
 
-    public <D extends RegistrateProvider> GTBlockBuilder<T, P> setDataGeneric(ProviderType<? extends D> type, NonNullBiConsumer<DataGenContext<Block, ? extends Block>, D> cons) {
+    public <D> GTBlockBuilder<T, P> setDataGeneric(GeneratorType<? extends D> type, NonNullBiConsumer<DataGenContext<Block, ? extends Block>, D> cons) {
         getOwner().setDataGenerator(this, type, prov -> cons.accept(DataGenContext.from(this), prov));
         return this;
     }
 
     @Override
-    public  <D extends RegistrateProvider> GTBlockBuilder<T, P> setData(ProviderType<? extends D> type, NonNullBiConsumer<DataGenContext<Block, T>, D> cons) {
-        return (GTBlockBuilder<T, P>) super.setData(type, cons);
+    public <D> GTBlockBuilder<T, P> setData(GeneratorType<? extends D> type, NonNullBiConsumer<DataGenContext<Block, T>, D> cons) {
+        super.setData(type, cons);
+        return this;
     }
 
     // spotless:on

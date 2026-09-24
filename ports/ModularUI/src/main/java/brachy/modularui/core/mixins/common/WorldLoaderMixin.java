@@ -2,7 +2,9 @@ package brachy.modularui.core.mixins.common;
 
 import brachy.modularui.utils.RegistryAccessContainer;
 
+import net.minecraft.core.LayeredRegistryAccess;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.server.RegistryLayer;
 import net.minecraft.server.WorldLoader;
 
 import com.llamalad7.mixinextras.sugar.Local;
@@ -11,26 +13,25 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.concurrent.CompletableFuture;
-
 @Mixin(WorldLoader.class)
 public class WorldLoaderMixin {
 
-    @Inject(method = "load",
+    @Inject(method = "lambda$load$0",
             at = @At(value = "INVOKE",
-                    target = "Lnet/minecraft/resources/RegistryDataLoader;load(Lnet/minecraft/server/packs/resources/ResourceManager;Lnet/minecraft/core/RegistryAccess;Ljava/util/List;)Lnet/minecraft/core/RegistryAccess$Frozen;",
+                    target = "Lnet/minecraft/resources/RegistryDataLoader;load(Lnet/minecraft/server/packs/resources/ResourceManager;Ljava/util/List;Ljava/util/List;Ljava/util/concurrent/Executor;Ljava/util/List;)Ljava/util/concurrent/CompletableFuture;",
                     shift = At.Shift.BEFORE))
-    private static <D, R> void mui$captureRegistries1(CallbackInfoReturnable<CompletableFuture<R>> cir,
-                                                      @Local(ordinal = 0) RegistryAccess.Frozen registriesWithDimensions) {
-        RegistryAccessContainer.update(registriesWithDimensions, null);
+    private static void mui$captureRegistries1(CallbackInfoReturnable<?> cir,
+                                               @Local(ordinal = 0) RegistryAccess.Frozen worldgenLoadContext) {
+        RegistryAccessContainer.update(worldgenLoadContext, null);
     }
 
-    @Inject(method = "load",
-            at = @At(value = "INVOKE_ASSIGN",
-                    target = "Lnet/minecraft/resources/RegistryDataLoader;load(Lnet/minecraft/server/packs/resources/ResourceManager;Lnet/minecraft/core/RegistryAccess;Ljava/util/List;)Lnet/minecraft/core/RegistryAccess$Frozen;",
-                    shift = At.Shift.AFTER))
-    private static <D, R> void mui$captureRegistries2(CallbackInfoReturnable<CompletableFuture<R>> cir,
-                                                      @Local(ordinal = 1) RegistryAccess.Frozen registriesWithEverything) {
+    @Inject(method = "lambda$load$2", at = @At("HEAD"))
+    private static void mui$captureRegistries2(CallbackInfoReturnable<?> cir,
+                                               @Local(ordinal = 0) LayeredRegistryAccess<RegistryLayer> initialLayers,
+                                               @Local(ordinal = 0) RegistryAccess.Frozen loadedWorldgenRegistries,
+                                               @Local(ordinal = 1) RegistryAccess.Frozen initialWorldgenDimensions) {
+        RegistryAccess.Frozen registriesWithEverything = initialLayers.replaceFrom(
+                RegistryLayer.WORLDGEN, loadedWorldgenRegistries, initialWorldgenDimensions).compositeAccess();
         RegistryAccessContainer.update(registriesWithEverything, null);
     }
 }

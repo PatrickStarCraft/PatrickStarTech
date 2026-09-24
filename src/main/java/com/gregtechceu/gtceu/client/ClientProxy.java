@@ -9,10 +9,11 @@ import com.gregtechceu.gtceu.api.data.worldgen.bedrockfluid.BedrockFluidDefiniti
 import com.gregtechceu.gtceu.api.data.worldgen.bedrockore.BedrockOreDefinition;
 import com.gregtechceu.gtceu.api.item.IComponentItem;
 import com.gregtechceu.gtceu.api.item.IGTTool;
+import com.gregtechceu.gtceu.api.item.armor.ArmorComponentItem;
 import com.gregtechceu.gtceu.client.color.item.GTMaterialPartTintSource;
 import com.gregtechceu.gtceu.client.color.FluidCellTintSource;
 import com.gregtechceu.gtceu.client.color.MaterialLayerTintSource;
-import com.gregtechceu.gtceu.client.model.machine.MachineModelLoader;
+import com.gregtechceu.gtceu.client.color.MachineItemTintSource;
 import com.gregtechceu.gtceu.client.model.pipe.PipeModel;
 import com.gregtechceu.gtceu.client.model.runtimegen.*;
 import com.gregtechceu.gtceu.client.particle.GTParticleManager;
@@ -25,6 +26,7 @@ import com.gregtechceu.gtceu.client.renderer.item.decorator.GTLampItemOverlayRen
 import com.gregtechceu.gtceu.client.renderer.item.decorator.GTTankItemFluidPreview;
 import com.gregtechceu.gtceu.client.renderer.item.decorator.GTToolBarRenderer;
 import com.gregtechceu.gtceu.client.renderer.machine.DynamicRenderManager;
+import com.gregtechceu.gtceu.client.renderer.machine.MachineBlockEntityRenderer;
 import com.gregtechceu.gtceu.client.renderer.machine.impl.*;
 import com.gregtechceu.gtceu.client.renderer.machine.impl.BoilerMultiPartRender;
 import com.gregtechceu.gtceu.client.util.ModelEventHelper;
@@ -32,9 +34,11 @@ import com.gregtechceu.gtceu.common.CommonEventListener;
 import com.gregtechceu.gtceu.common.CommonProxy;
 import com.gregtechceu.gtceu.common.data.*;
 import com.gregtechceu.gtceu.common.data.models.GTModels;
+import com.gregtechceu.gtceu.api.registry.GTRegistries;
 import com.gregtechceu.gtceu.common.entity.GTBoat;
 import com.gregtechceu.gtceu.common.item.DrumMachineItem;
 import com.gregtechceu.gtceu.common.item.LampBlockItem;
+import com.gregtechceu.gtceu.common.item.armor.GTArmorItem;
 import com.gregtechceu.gtceu.common.item.QuantumTankMachineItem;
 import com.gregtechceu.gtceu.common.machine.owner.MachineOwner;
 import com.gregtechceu.gtceu.common.mui.GTGuiTextures;
@@ -65,12 +69,14 @@ import net.minecraft.client.renderer.blockentity.HangingSignRenderer;
 import net.minecraft.client.renderer.blockentity.StandingSignRenderer;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.neoforge.client.event.*;
+import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import net.neoforged.neoforge.client.event.lifecycle.ClientStartedEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.bus.api.EventPriority;
@@ -82,7 +88,10 @@ import com.google.common.collect.HashBiMap;
 import lombok.Getter;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Set;
 
 public class ClientProxy extends CommonProxy {
 
@@ -130,6 +139,14 @@ public class ClientProxy extends CommonProxy {
 
         event.registerEntityRenderer(GTEntityTypes.BOAT.get(), c -> new GTBoatRenderer(c, false));
         event.registerEntityRenderer(GTEntityTypes.CHEST_BOAT.get(), c -> new GTBoatRenderer(c, true));
+
+        Set<BlockEntityType<?>> registeredMachineTypes = Collections.newSetFromMap(new IdentityHashMap<>());
+        for (var definition : GTRegistries.MACHINES) {
+            BlockEntityType<? extends MetaMachine> type = definition.getBlockEntityType();
+            if (registeredMachineTypes.add(type)) {
+                registerMachineRenderer(event, type);
+            }
+        }
     }
 
     @SubscribeEvent
@@ -192,6 +209,16 @@ public class ClientProxy extends CommonProxy {
         event.register(FluidCellTintSource.ID, FluidCellTintSource.MAP_CODEC);
         event.register(GTMaterialPartTintSource.ID, GTMaterialPartTintSource.MAP_CODEC);
         event.register(MaterialLayerTintSource.ID, MaterialLayerTintSource.MAP_CODEC);
+        event.register(MachineItemTintSource.ID, MachineItemTintSource.MAP_CODEC);
+    }
+
+    @SubscribeEvent
+    public void onRegisterClientExtensions(RegisterClientExtensionsEvent event) {
+        for (Item item : BuiltInRegistries.ITEM) {
+            if (item instanceof ArmorComponentItem || item instanceof GTArmorItem) {
+                event.registerItem(GTArmorClientExtensions.INSTANCE, item);
+            }
+        }
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
@@ -240,9 +267,9 @@ public class ClientProxy extends CommonProxy {
         DynamicRenderManager.register(GTCEu.id("central_monitor"), CentralMonitorRender.TYPE);
     }
 
-    @SubscribeEvent
-    public void onRegisterModelLoaders(ModelEvent.RegisterLoaders event) {
-        event.register(MachineModelLoader.ID, MachineModelLoader.INSTANCE);
+    private static <T extends MetaMachine> void registerMachineRenderer(EntityRenderersEvent.RegisterRenderers event,
+                                                                        BlockEntityType<T> type) {
+        event.registerBlockEntityRenderer(type, MachineBlockEntityRenderer::new);
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)

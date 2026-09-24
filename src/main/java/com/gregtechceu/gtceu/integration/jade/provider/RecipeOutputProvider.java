@@ -33,7 +33,7 @@ import snownee.jade.api.BlockAccessor;
 import snownee.jade.api.ITooltip;
 import snownee.jade.api.config.IPluginConfig;
 import snownee.jade.api.fluid.JadeFluidObject;
-import snownee.jade.api.ui.IElementHelper;
+import snownee.jade.api.ui.JadeUI;
 import snownee.jade.util.FluidTextHelper;
 
 import java.util.ArrayList;
@@ -179,7 +179,6 @@ public class RecipeOutputProvider extends MachineTraitProvider<RecipeLogic, Comp
     }
 
     private void addItemTooltips(ITooltip iTooltip, List<Ingredient> outputItems) {
-        IElementHelper helper = iTooltip.getElementHelper();
         for (Ingredient itemOutput : outputItems) {
             if (itemOutput != null && !itemOutput.isEmpty()) {
                 ItemStack item;
@@ -198,7 +197,7 @@ public class RecipeOutputProvider extends MachineTraitProvider<RecipeLogic, Comp
                         getItemName(item))
                         .withStyle(ChatFormatting.WHITE));
 
-                iTooltip.add(helper.smallItem(item));
+                iTooltip.add(JadeUI.smallItem(item));
                 iTooltip.append(text);
             }
         }
@@ -212,11 +211,11 @@ public class RecipeOutputProvider extends MachineTraitProvider<RecipeLogic, Comp
                 if (fluidOutput instanceof IntProviderFluidIngredient provider) {
                     stack = provider.getMaxSizeStack();
                     text.append(Component.translatable("gtceu.gui.content.range",
-                            FluidTextHelper.getUnicodeMillibuckets(provider.getCountProvider().minInclusive(), true),
-                            FluidTextHelper.getUnicodeMillibuckets(provider.getCountProvider().maxInclusive(), true)));
+                            FluidTextHelper.getMillibuckets(provider.getCountProvider().minInclusive(), true),
+                            FluidTextHelper.getMillibuckets(provider.getCountProvider().maxInclusive(), true)));
                 } else {
                     stack = fluidOutput.getStacks()[0];
-                    text.append(FluidTextHelper.getUnicodeMillibuckets(stack.getAmount(), true));
+                    text.append(FluidTextHelper.getMillibuckets(stack.getAmount(), true));
                 }
                 text.append(CommonComponents.space())
                         .append(getFluidName(stack))

@@ -107,8 +107,10 @@ public class MultiblockControllerMachine extends MetaMachine {
     }
 
     public void setFlipped(boolean flipped) {
+        if (isFlipped == flipped) return;
         isFlipped = flipped;
         syncDataHolder.markClientSyncFieldDirty("isFlipped");
+        refreshFormedPartRenderData();
     }
 
     @SuppressWarnings("unused")

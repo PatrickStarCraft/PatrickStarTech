@@ -18,6 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 import snownee.jade.api.BlockAccessor;
 import snownee.jade.api.ITooltip;
 import snownee.jade.api.config.IPluginConfig;
+import snownee.jade.api.ui.JadeUI;
 
 public class AutoOutputBlockProvider extends MachineTraitProvider<AutoOutputTrait, CompoundTag> {
 
@@ -82,7 +83,7 @@ public class AutoOutputBlockProvider extends MachineTraitProvider<AutoOutputTrai
                 var block = BuiltInRegistries.BLOCK.getValue(Identifier.parse(compoundTag.getStringOr("block", ""))).asItem()
                         .getDefaultInstance();
                 if (!block.isEmpty()) {
-                    iTooltip.append(iTooltip.getElementHelper().smallItem(block));
+                    iTooltip.append(JadeUI.smallItem(block));
                 }
             }
 

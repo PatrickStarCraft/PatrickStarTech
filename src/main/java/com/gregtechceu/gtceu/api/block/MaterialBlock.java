@@ -12,7 +12,6 @@ import com.gregtechceu.gtceu.config.ConfigHolder;
 import com.gregtechceu.gtceu.data.recipe.VanillaRecipeHelper;
 
 import org.jspecify.annotations.NullMarked;
-import net.minecraft.client.color.block.BlockColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.BlockParticleOption;
@@ -48,8 +47,6 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 import java.util.Set;
 
@@ -75,16 +72,6 @@ public class MaterialBlock extends Block {
             MaterialBlockModelGenerator.add(block, tagPrefix.materialIconType(), material.getMaterialIconSet());
         }
         return block;
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    public static BlockColor tintedColor() {
-        return (state, reader, pos, tintIndex) -> {
-            if (state.getBlock() instanceof MaterialBlock block) {
-                return block.material.getLayerARGB(tintIndex);
-            }
-            return -1;
-        };
     }
 
     public static VoxelShape FRAME_COLLISION_BOX = Shapes.box(0.05, 0.0, 0.05, 0.95, 1.0, 0.95);

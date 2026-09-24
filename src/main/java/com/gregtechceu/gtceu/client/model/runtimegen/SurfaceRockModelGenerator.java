@@ -13,7 +13,6 @@ import net.minecraft.world.level.block.Block;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -44,14 +43,12 @@ public class SurfaceRockModelGenerator {
             blockState.add("variants", variants);
             RuntimeModelResources.emitBlockState(blockId, blockState, GTDynamicResourcePack::addResource);
 
-            JsonArray tints = new JsonArray();
+            int materialColor = -1;
             if (model.block instanceof SurfaceRockBlock surfaceRock) {
-                JsonObject tint = new JsonObject();
-                tint.addProperty("type", "minecraft:constant");
-                tint.addProperty("value", surfaceRock.getMaterial().getMaterialRGB());
-                tints.add(tint);
+                materialColor = surfaceRock.getMaterial().getMaterialRGB();
             }
-            RuntimeModelResources.emitItem(blockId, RuntimeModelResources.itemDefinition(modelId, tints),
+            RuntimeModelResources.emitItem(blockId, RuntimeModelResources.itemDefinition(modelId,
+                    RuntimeModelResources.constantTints(-1, materialColor)),
                     GTDynamicResourcePack::addResource);
         }
     }

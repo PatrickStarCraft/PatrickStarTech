@@ -15,6 +15,7 @@ import com.gregtechceu.gtceu.utils.GradientUtil;
 import com.gregtechceu.gtceu.utils.GTUtil;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.FluidModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.core.BlockPos;
@@ -23,18 +24,19 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
+import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
 
 import com.mojang.blaze3d.platform.NativeImage;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import journeymap.client.api.IClientAPI;
-import journeymap.client.api.display.*;
-import journeymap.client.api.model.MapImage;
-import journeymap.client.api.model.MapPolygon;
-import journeymap.client.api.model.ShapeProperties;
-import journeymap.client.api.util.PolygonHelper;
-import journeymap.client.api.util.UIState;
+import journeymap.api.v2.client.IClientAPI;
+import journeymap.api.v2.client.display.*;
+import journeymap.api.v2.client.fullscreen.ModPopupMenu;
+import journeymap.api.v2.client.model.MapImage;
+import journeymap.api.v2.client.model.MapPolygon;
+import journeymap.api.v2.client.model.ShapeProperties;
+import journeymap.api.v2.client.util.PolygonHelper;
+import journeymap.api.v2.client.util.UIState;
 import lombok.Getter;
 
 import java.awt.geom.Point2D;
@@ -53,6 +55,7 @@ public class JourneymapRenderer extends GenericMapRenderer {
 
     @Getter
     private static final Map<String, Overlay> markers = new Object2ObjectOpenHashMap<>();
+    private static final Map<Fluid, NativeImage> FLUID_ICONS = new HashMap<>();
 
     public JourneymapRenderer() {
         super();
@@ -66,7 +69,7 @@ public class JourneymapRenderer extends GenericMapRenderer {
             return false;
         }
         PolygonOverlay marker = createMarker(name, id, dim, pos, fluid);
-        markers.put(id, marker);
+        replaceMarker(id, marker);
         if (this.doShowLayer("bedrock_fluids")) {
             try {
                 api.show(marker);
@@ -85,7 +88,7 @@ public class JourneymapRenderer extends GenericMapRenderer {
             return false;
         }
         MarkerOverlay marker = createMarker(name, id, dim, vein);
-        markers.put(id, marker);
+        replaceMarker(id, marker);
         if (this.doShowLayer("ore_veins")) {
             try {
                 api.show(marker);
@@ -125,6 +128,11 @@ public class JourneymapRenderer extends GenericMapRenderer {
         markers.clear();
     }
 
+    private static void replaceMarker(String id, Overlay marker) {
+        Overlay previous = markers.put(id, marker);
+        if (previous != null) JourneyMapPlugin.getJmApi().remove(previous);
+    }
+
     private MarkerOverlay createMarker(Component name, String id, ResourceKey<Level> dim,
                                        GeneratedVeinMetadata oreVein) {
         final BlockPos center = oreVein.center();
@@ -135,7 +143,7 @@ public class JourneymapRenderer extends GenericMapRenderer {
                 .setDisplayWidth(ConfigHolder.INSTANCE.compat.minimap.oreIconSize)
                 .setDisplayHeight(ConfigHolder.INSTANCE.compat.minimap.oreIconSize);
 
-        MarkerOverlay overlay = new MarkerOverlay(GTCEu.MOD_ID, id, center, image);
+        MarkerOverlay overlay = new MarkerOverlay(GTCEu.MOD_ID, center, image);
 
         overlay.setDimension(dim);
         overlay.setLabel("")
@@ -181,11 +189,11 @@ public class JourneymapRenderer extends GenericMapRenderer {
             return MATERIAL_ICONS.get(material);
         }
 
-        int materialABGR = GradientUtil.argbToAbgr(material.getMaterialARGB());
+        int materialARGB = material.getMaterialARGB();
 
         Identifier layer1 = MaterialIconType.rawOre.getItemTexturePath(material.getMaterialIconSet(), true);
-        TextureAtlasSprite baseTexture = Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS)
-                .apply(layer1);
+        TextureAtlasSprite baseTexture = Minecraft.getInstance().getAtlasManager()
+                .getAtlasOrThrow(TextureAtlas.LOCATION_BLOCKS).getSprite(layer1);
         if (baseTexture == null) {
             return null;
         }
@@ -198,44 +206,80 @@ public class JourneymapRenderer extends GenericMapRenderer {
         for (int x = 0; x < result.getWidth(); ++x) {
             for (int y = 0; y < result.getHeight(); ++y) {
                 int color = baseTexture.getPixelRGBA(0, x, y);
-                result.setPixelRGBA(x, y, GradientUtil
-                        .multiplyBlendWithAlpha(color, materialABGR));
+                result.setPixel(x, y, GradientUtil.multiplyBlendWithAlpha(color, materialARGB));
             }
         }
         if (material.getMaterialSecondaryARGB() != -1) {
-            int materialSecondaryABGR = GradientUtil.argbToAbgr(material.getMaterialSecondaryARGB());
+            int materialSecondaryARGB = material.getMaterialSecondaryARGB();
             Identifier layer2 = MaterialIconType.rawOre
                     .getItemTexturePath(material.getMaterialIconSet(), "secondary", true);
             if (layer2 == null) {
                 return result;
             }
-            TextureAtlasSprite image2 = Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS)
-                    .apply(layer2);
+            TextureAtlasSprite image2 = Minecraft.getInstance().getAtlasManager()
+                    .getAtlasOrThrow(TextureAtlas.LOCATION_BLOCKS).getSprite(layer2);
 
             for (int x = 0; x < result.getWidth(); ++x) {
                 for (int y = 0; y < result.getHeight(); ++y) {
-                    int color = image2.getPixelRGBA(0, x, y);
-                    result.blendPixel(x, y, GradientUtil
-                            .multiplyBlendWithAlpha(color, materialSecondaryABGR));
+                    int color = GradientUtil.multiplyBlendWithAlpha(image2.getPixelRGBA(0, x, y), materialSecondaryARGB);
+                    result.setPixel(x, y, blendArgbOver(result.getPixel(x, y), color));
                 }
             }
         }
         // always set alpha to 1
-        result.applyToAllPixels(color -> {
-            if ((color & 0xFF000000) != 0) {
-                return color | 0xFF000000;
+        for (int x = 0; x < result.getWidth(); ++x) {
+            for (int y = 0; y < result.getHeight(); ++y) {
+                int color = result.getPixel(x, y);
+                if ((color & 0xFF000000) != 0) result.setPixel(x, y, color | 0xFF000000);
             }
-            return color;
-        });
+        }
 
         MATERIAL_ICONS.put(material, result);
         return result;
     }
 
+    private static NativeImage createFluidImage(Fluid fluid) {
+        FluidModel model = Minecraft.getInstance().getModelManager().getFluidStateModelSet()
+                .get(fluid.defaultFluidState());
+        TextureAtlasSprite sprite = model.stillMaterial().sprite();
+        NativeImage image = new NativeImage(NativeImage.Format.RGBA, sprite.contents().width(),
+                sprite.contents().height(), false);
+        for (int x = 0; x < image.getWidth(); ++x) {
+            for (int y = 0; y < image.getHeight(); ++y) {
+                image.setPixel(x, y, sprite.getPixelRGBA(0, x, y));
+            }
+        }
+        return image;
+    }
+
+    private static int blendArgbOver(int background, int foreground) {
+        int sourceAlpha = foreground >>> 24;
+        if (sourceAlpha == 0) return background;
+        if (sourceAlpha == 255) return foreground;
+
+        int backgroundAlpha = background >>> 24;
+        int inverseSourceAlpha = 255 - sourceAlpha;
+        int outputAlpha = (sourceAlpha * 255 + backgroundAlpha * inverseSourceAlpha + 127) / 255;
+        if (outputAlpha == 0) return 0;
+        int red = blendArgbChannel(background >>> 16 & 255, foreground >>> 16 & 255,
+                backgroundAlpha, sourceAlpha, inverseSourceAlpha, outputAlpha);
+        int green = blendArgbChannel(background >>> 8 & 255, foreground >>> 8 & 255,
+                backgroundAlpha, sourceAlpha, inverseSourceAlpha, outputAlpha);
+        int blue = blendArgbChannel(background & 255, foreground & 255,
+                backgroundAlpha, sourceAlpha, inverseSourceAlpha, outputAlpha);
+        return outputAlpha << 24 | red << 16 | green << 8 | blue;
+    }
+
+    private static int blendArgbChannel(int background, int foreground, int backgroundAlpha, int sourceAlpha,
+                                        int inverseSourceAlpha, int outputAlpha) {
+        int premultiplied = foreground * sourceAlpha * 255 + background * backgroundAlpha * inverseSourceAlpha;
+        return (premultiplied + outputAlpha * 127) / (outputAlpha * 255);
+    }
+
     private PolygonOverlay createMarker(Component name, String id, ResourceKey<Level> dim, ChunkPos pos,
                                         final ProspectorMode.FluidInfo vein) {
         final BlockPos center = pos.getMiddleBlockPosition(0);
-        Identifier texture = IClientFluidTypeExtensions.of(vein.fluid()).getStillTexture();
+        NativeImage fluidIcon = FLUID_ICONS.computeIfAbsent(vein.fluid(), JourneymapRenderer::createFluidImage);
 
         final int color;
         Material material = ChemicalHelper.getMaterial(vein.fluid());
@@ -250,10 +294,10 @@ public class JourneymapRenderer extends GenericMapRenderer {
                 .setStrokeColor(color)
                 .setFillColor(color)
                 .setFillOpacity(.4f)
-                .setImageLocation(texture);
+                .setImage(fluidIcon);
 
         MapPolygon polygon = PolygonHelper.createChunkPolygon(pos.x(), 0, pos.z());
-        var overlay = new PolygonOverlay(GTCEu.MOD_ID, id, dim, shapeProps, polygon);
+        var overlay = new PolygonOverlay(GTCEu.MOD_ID, dim, shapeProps, polygon);
 
         overlay.setDimension(dim);
         overlay.setLabel("")

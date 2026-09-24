@@ -33,6 +33,11 @@ public abstract class CapabilityBlockProvider<C>
         this.uid = uid;
     }
 
+    @Override
+    public Identifier getUid() {
+        return uid;
+    }
+
     @Nullable
     protected abstract C getCapability(Level level, BlockPos pos, @Nullable Direction side);
 

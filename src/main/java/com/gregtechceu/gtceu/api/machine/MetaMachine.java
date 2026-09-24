@@ -17,6 +17,8 @@ import com.gregtechceu.gtceu.api.item.tool.GTToolType;
 import com.gregtechceu.gtceu.api.item.tool.IToolGridHighlight;
 import com.gregtechceu.gtceu.api.item.tool.ToolHelper;
 import com.gregtechceu.gtceu.api.machine.feature.*;
+import com.gregtechceu.gtceu.api.machine.multiblock.MultiblockControllerMachine;
+import com.gregtechceu.gtceu.api.machine.multiblock.part.MultiblockPartMachine;
 import com.gregtechceu.gtceu.api.machine.property.GTMachineModelProperties;
 import com.gregtechceu.gtceu.api.machine.trait.MachineTrait;
 import com.gregtechceu.gtceu.api.machine.trait.MachineTraitHolder;
@@ -38,6 +40,7 @@ import com.gregtechceu.gtceu.client.model.GTModelProperties;
 import com.gregtechceu.gtceu.client.model.item.FacadeRenderState;
 import com.gregtechceu.gtceu.client.model.machine.MachineOutputRenderState;
 import com.gregtechceu.gtceu.client.model.machine.MachineRenderState;
+import com.gregtechceu.gtceu.client.model.machine.ControllerPartRenderState;
 import com.gregtechceu.gtceu.client.util.RenderUtil;
 import com.gregtechceu.gtceu.common.cover.FacadeCover;
 import com.gregtechceu.gtceu.common.cover.FluidFilterCover;
@@ -661,11 +664,27 @@ public class MetaMachine extends ManagedSyncBlockEntity implements IGregtechBloc
     }
 
     public void setRenderState(MachineRenderState renderState) {
+        MachineRenderState previousState = this.renderState;
         this.renderState = renderState;
         if (level != null && !level.isClientSide()) {
             syncDataHolder.markClientSyncFieldDirty("renderState");
         }
         scheduleRenderUpdate();
+        if (this instanceof MultiblockControllerMachine && isControllerActive(previousState) != isControllerActive(renderState)) {
+            refreshFormedPartRenderData();
+        }
+    }
+
+    private static boolean isControllerActive(MachineRenderState state) {
+        return state != null && state.getOptionalValue(GTMachineModelProperties.IS_ACTIVE).orElse(false);
+    }
+
+    /** Requests a fresh immutable chunk-model snapshot on every formed part owned by this controller. */
+    protected void refreshFormedPartRenderData() {
+        if (!(this instanceof MultiblockControllerMachine controller)) return;
+        for (MultiblockPartMachine part : controller.getParts()) {
+            part.scheduleRenderUpdate();
+        }
     }
 
     public void setPaintingColor(int color) {
@@ -831,6 +850,7 @@ public class MetaMachine extends ManagedSyncBlockEntity implements IGregtechBloc
         if (getLevel() != null && !getLevel().isClientSide()) {
             notifyBlockUpdate();
         }
+        refreshFormedPartRenderData();
     }
 
     /**
@@ -861,6 +881,7 @@ public class MetaMachine extends ManagedSyncBlockEntity implements IGregtechBloc
             if (getLevel() != null && !getLevel().isClientSide()) {
                 notifyBlockUpdate();
             }
+            refreshFormedPartRenderData();
         }
     }
 
@@ -903,6 +924,17 @@ public class MetaMachine extends ManagedSyncBlockEntity implements IGregtechBloc
         ModelData parentModelData = super.getModelData();
         var builder = parentModelData.derive();
         builder.with(GTModelProperties.MACHINE_RENDER_STATE, getRenderState());
+
+        if (this instanceof MultiblockPartMachine part && part.replacePartModelWhenFormed()) {
+            var controllers = part.getControllers();
+            if (!controllers.isEmpty()) {
+                MultiblockControllerMachine controller = controllers.first();
+                MachineRenderState controllerState = controller.getRenderState();
+                builder.with(GTModelProperties.FORMED_PART_RENDER_STATE, new ControllerPartRenderState(
+                        controller.getBlockState(), controller.getBlockPos(), controller.getFrontFacing(),
+                        controller.getUpwardsFacing(), controller.isFlipped(), isControllerActive(controllerState)));
+            }
+        }
 
         AutoOutputTrait autoOutput = getTrait(AutoOutputTrait.class);
         boolean supportsItemOutput = autoOutput != null && autoOutput.supportsAutoOutputItems();

@@ -22,19 +22,20 @@ import com.gregtechceu.gtceu.api.recipe.modifier.RecipeModifier;
 import com.gregtechceu.gtceu.api.recipe.modifier.RecipeModifierList;
 import com.gregtechceu.gtceu.api.registry.GTRegistries;
 import com.gregtechceu.gtceu.api.registry.registrate.provider.GTBlockstateProvider;
+import com.gregtechceu.gtceu.client.color.GTBlockTintSources;
 import com.gregtechceu.gtceu.client.model.machine.MachineRenderState;
-import com.gregtechceu.gtceu.client.renderer.BlockEntityWithBERModelRenderer;
 import com.gregtechceu.gtceu.common.data.GTRecipeModifiers;
 import com.gregtechceu.gtceu.common.data.GTRecipeTypes;
+import com.gregtechceu.gtceu.common.data.models.GTModels;
 import com.gregtechceu.gtceu.common.data.models.GTMachineModels;
 import com.gregtechceu.gtceu.config.ConfigHolder;
+import com.gregtechceu.gtceu.data.model.builder.BlockModelBuilder;
 import com.gregtechceu.gtceu.data.model.builder.MachineModelBuilder;
 import com.gregtechceu.gtceu.integration.kjs.GTCEuStartupEvents;
 import com.gregtechceu.gtceu.integration.kjs.events.ModifyMachineEventJS;
 import com.gregtechceu.gtceu.utils.data.RuntimeBlockstateProvider;
 
 import org.jspecify.annotations.NullMarked;
-import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
@@ -48,7 +49,6 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.client.model.generators.BlockModelBuilder;
 import net.neoforged.fml.ModLoadingContext;
 
 import brachy.modularui.theme.ThemeAPI;
@@ -713,9 +713,6 @@ public class MachineBuilder<DEFINITION extends MachineDefinition, MACHINE extend
                                 .buildMachine(new BlockEntityCreationInfo(type, pos, state)))
                 .onRegister(onBlockEntityRegister)
                 .validBlock(block);
-        if (hasBER) {
-            blockEntityBuilder = blockEntityBuilder.renderer(() -> BlockEntityWithBERModelRenderer::new);
-        }
         var blockEntity = blockEntityBuilder.register();
         if (this.ui != null) {
             definition.setUI(ui);
@@ -803,10 +800,9 @@ public class MachineBuilder<DEFINITION extends MachineDefinition, MACHINE extend
         public static <DEFINITION extends MachineDefinition> BlockBuilder<Block, ? extends AbstractRegistrate<?>> makeBlockBuilder(MachineBuilder<DEFINITION, ?, ?> builder,
                                                                                                                                    DEFINITION definition) {
             return builder.registrate.block(properties -> makeBlock(builder, definition, properties))
-                    .color(() -> () -> MetaMachineBlock::colorTinted)
+                    .color(GTBlockTintSources::machineLayers)
                     .initialProperties(() -> Blocks.DISPENSER)
                     .properties(BlockBehaviour.Properties::noLootTable)
-                    .addLayer(() -> RenderType::cutout)
                     .exBlockstate(builder.blockModel != null ? builder.blockModel : createMachineModel(builder.model))
                     .properties(builder.blockProp)
                     .onRegister(b -> Arrays.stream(builder.abilities).forEach(a -> a.register(builder.tier, b)));
@@ -826,11 +822,13 @@ public class MachineBuilder<DEFINITION extends MachineDefinition, MACHINE extend
         public static <DEFINITION extends MachineDefinition> ItemBuilder<MetaMachineItem, ? extends AbstractRegistrate<?>> makeItemBuilder(MachineBuilder<DEFINITION, ?, ?> builder,
                                                                                                                                            BlockEntry<Block> block) {
             return builder.registrate
-                    .item(properties -> builder.itemFactory.apply((MetaMachineBlock) block.get(), properties))
+                    .item(properties -> {
+                        MetaMachineItem item = builder.itemFactory.apply((MetaMachineBlock) block.get(), properties);
+                        item.setTintColor(builder.itemColor);
+                        return item;
+                    })
                     .setData(ProviderType.LANG, NonNullBiConsumer.noop()) // do not gen any lang keys
-                    // copied from BlockBuilder#item
-                    .model((ctx, prov) -> prov.withExistingParent(ctx.getName(), builder.registrate.makeResourceLocation("block/machine/" + ctx.getName())))
-                    .color(() -> () -> builder.itemColor::apply)
+                    .setData(GTBlockstateProvider.ITEM_MODEL, GTModels::createMachineItemDefinition)
                     .properties(builder.itemProp);
         }
     }
@@ -856,6 +854,7 @@ public class MachineBuilder<DEFINITION extends MachineDefinition, MACHINE extend
                 }
             } else {
                 generator.itemModel(id, gen -> gen.parent(id.withPrefix("block/machine/").toString()));
+                generator.json(id.withPrefix("items/"), GTModels.machineItemDefinition(id.withPrefix("item/")));
             }
         }
 

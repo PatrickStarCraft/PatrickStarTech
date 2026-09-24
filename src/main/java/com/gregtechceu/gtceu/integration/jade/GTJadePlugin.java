@@ -7,14 +7,13 @@ import com.gregtechceu.gtceu.common.blockentity.FluidPipeBlockEntity;
 import com.gregtechceu.gtceu.common.data.GTMaterialItems;
 import com.gregtechceu.gtceu.integration.jade.provider.*;
 
-import net.minecraft.world.item.Item;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
 import com.tterrag.registrate.util.entry.ItemProviderEntry;
-import snownee.jade.addon.harvest.HarvestToolProvider;
-import snownee.jade.addon.harvest.SimpleToolHandler;
 import snownee.jade.api.*;
+import snownee.jade.api.harvest.ToolTier;
 
 import java.util.Objects;
 
@@ -92,6 +91,15 @@ public class GTJadePlugin implements IWailaPlugin {
         registration.registerItemStorageClient(GTItemStorageProvider.INSTANCE);
         registration.registerFluidStorageClient(GTFluidStorageProvider.INSTANCE);
         registration.registerFluidStorageClient(FluidPipeStorageProvider.INSTANCE);
+        registration.addHarvestPlugin(toolTypes -> GTMaterialItems.TOOL_ITEMS.columnMap().forEach((type, map) -> {
+            if (type.harvestTags.isEmpty() || type.harvestTags.get(0).location().getNamespace().equals("minecraft"))
+                return;
+            var toolType = toolTypes.type(GTCEu.id(type.name));
+            var harvestTag = type.harvestTags.get(0);
+            map.values().stream().filter(Objects::nonNull).map(ItemProviderEntry::asItem).forEach(item ->
+                    toolType.addTier(ToolTier.of(BuiltInRegistries.ITEM.getKey(item), item.getDefaultInstance(),
+                            state -> state.is(harvestTag))));
+        }));
     }
 
     @SafeVarargs
@@ -115,15 +123,5 @@ public class GTJadePlugin implements IWailaPlugin {
             }
             reg.registerBlockComponent(provider, clazz);
         }
-    }
-
-    static {
-        GTMaterialItems.TOOL_ITEMS.columnMap().forEach((type, map) -> {
-            if (type.harvestTags.isEmpty() || type.harvestTags.get(0).location().getNamespace().equals("minecraft"))
-                return;
-            HarvestToolProvider.registerHandler(new SimpleToolHandler(type.name, type.harvestTags.get(0),
-                    map.values().stream().filter(Objects::nonNull)
-                            .map(ItemProviderEntry::asItem).toArray(Item[]::new)));
-        });
     }
 }

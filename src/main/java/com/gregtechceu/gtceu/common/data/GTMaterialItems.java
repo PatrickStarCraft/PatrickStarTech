@@ -12,7 +12,6 @@ import com.gregtechceu.gtceu.api.registry.registrate.GTRegistrate;
 import com.gregtechceu.gtceu.common.item.armor.GTArmorItem;
 import com.gregtechceu.gtceu.common.item.armor.GTDyeableArmorItem;
 
-import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.equipment.ArmorType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -28,8 +27,8 @@ import com.tterrag.registrate.util.entry.ItemEntry;
 import com.tterrag.registrate.util.entry.ItemProviderEntry;
 import com.tterrag.registrate.util.nullness.NonNullBiConsumer;
 
-import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -61,11 +60,13 @@ public class GTMaterialItems {
                     .filter(mat -> mat.hasProperty(PropertyKey.TOOL))
                     .toList(),
             GTToolType.getTypes().values().stream().toList());
-    public static final Table<Material, ArmorType, ItemEntry<? extends ArmorItem>> ARMOR_ITEMS = ArrayTable.create(
+    private static final List<ArmorType> MATERIAL_ARMOR_TYPES = List.of(
+            ArmorType.HELMET, ArmorType.CHESTPLATE, ArmorType.LEGGINGS, ArmorType.BOOTS);
+    public static final Table<Material, ArmorType, ItemEntry<? extends GTArmorItem>> ARMOR_ITEMS = ArrayTable.create(
             GTRegistries.MATERIALS.values().stream()
                     .filter(mat -> mat.hasProperty(PropertyKey.ARMOR))
                     .toList(),
-            Arrays.asList(ArmorType.values()));
+            MATERIAL_ARMOR_TYPES);
 
     // Material Items
     public static void generateMaterialItems() {
@@ -142,7 +143,7 @@ public class GTMaterialItems {
     // Material Armors
     public static void generateArmors() {
         REGISTRATE.creativeModeTab(() -> TOOL);
-        for (ArmorType type : ArmorType.values()) {
+        for (ArmorType type : MATERIAL_ARMOR_TYPES) {
             for (Material material : GTRegistries.MATERIALS) {
                 if (material.hasProperty(PropertyKey.ARMOR)) {
                     generateArmor(material, type, GTRegistrate.createIgnoringListenerErrors(material.getModid()));
@@ -160,7 +161,6 @@ public class GTMaterialItems {
                                     material, property))
                     .setData(ProviderType.LANG, NonNullBiConsumer.noop())
                     .model(() -> NonNullBiConsumer.noop())
-                    .color(() -> GTArmorItem::tintColor)
                     .register());
         } else {
             ARMOR_ITEMS.put(material, type, registrate
@@ -169,7 +169,6 @@ public class GTMaterialItems {
                                     material, property))
                     .setData(ProviderType.LANG, NonNullBiConsumer.noop())
                     .model(() -> NonNullBiConsumer.noop())
-                    .color(() -> GTArmorItem::tintColor)
                     .register());
         }
     }

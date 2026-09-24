@@ -38,6 +38,11 @@ public abstract class MachineTraitProvider<T extends MachineTrait, TagType exten
     }
 
     @Override
+    public Identifier getUid() {
+        return uid;
+    }
+
+    @Override
     @SuppressWarnings("unchecked")
     public void appendTooltip(ITooltip iTooltip, BlockAccessor block, IPluginConfig iPluginConfig) {
         var be = block.getBlockEntity();

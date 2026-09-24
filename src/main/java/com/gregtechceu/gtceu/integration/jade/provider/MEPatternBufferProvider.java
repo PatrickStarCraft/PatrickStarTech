@@ -20,7 +20,7 @@ import snownee.jade.api.BlockAccessor;
 import snownee.jade.api.ITooltip;
 import snownee.jade.api.config.IPluginConfig;
 import snownee.jade.api.fluid.JadeFluidObject;
-import snownee.jade.api.ui.IElementHelper;
+import snownee.jade.api.ui.JadeUI;
 
 public class MEPatternBufferProvider extends MachineInfoProvider<MEPatternBufferPartMachine, CompoundTag> {
 
@@ -74,15 +74,13 @@ public class MEPatternBufferProvider extends MachineInfoProvider<MEPatternBuffer
     }
 
     public static void readBufferTag(ITooltip iTooltip, CompoundTag serverData) {
-        IElementHelper helper = iTooltip.getElementHelper();
-
         ListTag itemsTag = com.gregtechceu.gtceu.utils.data.TypedTagList.read(serverData, "items", Tag.TAG_COMPOUND);
         for (Tag t : itemsTag) {
             if (!(t instanceof CompoundTag ct)) continue;
             var stack = com.gregtechceu.gtceu.utils.data.StackPersistence.loadItem(ct);
             var count = ct.getLongOr("real", 0);
             if (!stack.isEmpty() && count > 0) {
-                iTooltip.add(helper.smallItem(stack));
+                iTooltip.add(JadeUI.smallItem(stack));
                 Component text = Component.literal(" ")
                         .append(Component.literal(FormattingUtil.formatNumbers(count))
                                 .withStyle(ChatFormatting.DARK_PURPLE))
@@ -102,7 +100,7 @@ public class MEPatternBufferProvider extends MachineInfoProvider<MEPatternBuffer
                         .append(Component.literal(FormattingUtil.formatBuckets(amount)))
                         .withStyle(ChatFormatting.DARK_PURPLE)
                         .append(Component.literal(" ").withStyle(ChatFormatting.WHITE))
-                        .append(stack.getDisplayName().copy().withStyle(ChatFormatting.DARK_AQUA));
+                        .append(stack.getHoverName().copy().withStyle(ChatFormatting.DARK_AQUA));
                 iTooltip.append(text);
             }
         }

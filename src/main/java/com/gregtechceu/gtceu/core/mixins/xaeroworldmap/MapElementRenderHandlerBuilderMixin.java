@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import xaero.map.element.MapElementRenderHandler;
-import xaero.map.element.MapElementRenderer;
+import xaero.map.element.render.ElementRenderer;
 
 import java.util.List;
 
@@ -15,7 +15,7 @@ import java.util.List;
 public class MapElementRenderHandlerBuilderMixin {
 
     @ModifyVariable(method = "build", at = @At(value = "LOAD", ordinal = 3))
-    private List<MapElementRenderer<?, ?, ?>> gtceu$addOreRenderer(List<MapElementRenderer<?, ?, ?>> value) {
+    private List<ElementRenderer<?, ?, ?>> gtceu$addOreRenderer(List<ElementRenderer<?, ?, ?>> value) {
         if (ConfigHolder.INSTANCE.compat.minimap.toggle.xaerosMapIntegration) {
             value.add(OreVeinElementRenderer.Builder.begin().build());
         }

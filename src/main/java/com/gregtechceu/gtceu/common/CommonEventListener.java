@@ -16,7 +16,6 @@ import com.gregtechceu.gtceu.api.data.medicalcondition.Symptom;
 import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
 import com.gregtechceu.gtceu.api.item.armor.ArmorComponentItem;
 import com.gregtechceu.gtceu.api.item.data.ArmorMovementItemData;
-import com.gregtechceu.gtceu.api.item.tool.GTToolType;
 import com.gregtechceu.gtceu.api.machine.MetaMachine;
 import com.gregtechceu.gtceu.api.registry.GTRegistries;
 import com.gregtechceu.gtceu.common.capability.EnvironmentalHazardSavedData;
@@ -97,18 +96,11 @@ import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
-import net.minecraftforge.registries.MissingMappingsEvent;
 
 import com.mojang.datafixers.util.Either;
-import com.tterrag.registrate.util.entry.BlockEntry;
-import com.tterrag.registrate.util.entry.ItemEntry;
 
 import java.util.function.UnaryOperator;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import static com.gregtechceu.gtceu.utils.FormattingUtil.toLowerCaseUnderscore;
 
 @net.neoforged.fml.common.EventBusSubscriber(modid = GTCEu.MOD_ID)
 public class CommonEventListener {
@@ -561,163 +553,4 @@ public class CommonEventListener {
         }
     }
 
-    @SubscribeEvent
-    public static void remapIds(MissingMappingsEvent event) {
-        event.getMappings(Registries.BLOCK, GTCEu.MOD_ID).forEach(mapping -> {
-            if (mapping.getKey().equals(GTCEu.id("tungstensteel_coil_block"))) {
-                mapping.remap(GTBlocks.COIL_RTMALLOY.get());
-            }
-            if (mapping.getKey().equals(GTCEu.id("steam_miner"))) {
-                mapping.remap(GTMachines.STEAM_MINER.first().getBlock());
-            }
-        });
-        event.getMappings(Registries.ITEM, GTCEu.MOD_ID).forEach(mapping -> {
-            if (mapping.getKey().equals(GTCEu.id("tungstensteel_coil_block"))) {
-                mapping.remap(GTBlocks.COIL_RTMALLOY.get().asItem());
-            }
-            if (mapping.getKey().equals(GTCEu.id("steam_miner"))) {
-                mapping.remap(GTMachines.STEAM_MINER.first().getItem());
-            }
-            if (mapping.getKey().equals(GTCEu.id("tungstensteel_fluid_cell"))) {
-                mapping.remap(GTItems.FLUID_CELL_LARGE_TUNGSTEN_STEEL.get().asItem());
-            }
-            if (mapping.getKey().equals(GTCEu.id("avanced_nanomuscle_chestplate"))) {
-                mapping.remap(GTItems.NANO_CHESTPLATE_ADVANCED.get());
-            }
-            String path = mapping.getKey().getPath();
-            if (path.matches("[lhi]v_.+_wirecutter")) {
-                String suffix = "_wirecutter";
-                String typeString = path.substring(0, 2) + suffix; // [lhi]v_wirecutter -- tooltype name
-                String matString = path.substring(3, path.length() - suffix.length()); // material name
-
-                GTToolType type = GTToolType.getTypes().get(typeString);
-                Material material = GTMaterials.get(matString);
-                if (type == null || material == null) {
-                    mapping.warn();
-                    return;
-                }
-                var tool = GTMaterialItems.TOOL_ITEMS.get(material, type);
-                if (tool == null) {
-                    mapping.warn();
-                    return;
-                }
-                mapping.remap(tool.asItem());
-            }
-        });
-        event.getMappings(Registries.BLOCK_ENTITY_TYPE, GTCEu.MOD_ID).forEach(mapping -> {
-            if (mapping.getKey().equals(GTCEu.id("steam_miner"))) {
-                mapping.remap(GTMachines.STEAM_MINER.first().getBlockEntityType());
-            }
-        });
-
-        event.getMappings(Registries.BLOCK, "gregiceng").forEach(mapping -> {
-            String path = mapping.getKey().getPath();
-            switch (path) {
-                case "stocking_bus", "adv_stocking_bus" -> mapping
-                        .remap(GTAEMachines.STOCKING_IMPORT_BUS_ME.getBlock());
-                case "stocking_hatch", "adv_stocking_hatch" -> mapping
-                        .remap(GTAEMachines.STOCKING_IMPORT_HATCH_ME.getBlock());
-                case "crafting_io_buffer" -> mapping.remap(GTAEMachines.ME_PATTERN_BUFFER.getBlock());
-                case "crafting_io_slave" -> mapping.remap(GTAEMachines.ME_PATTERN_BUFFER_PROXY.getBlock());
-            }
-            if (path.contains("input_buffer")) {
-                Identifier newName = GTCEu.id(path.replace("input_buffer", "dual_input_hatch"));
-                if (mapping.getRegistry().containsKey(newName)) {
-                    mapping.remap(mapping.getRegistry().getValue(newName));
-                } else {
-                    mapping.remap(GTMachines.DUAL_IMPORT_HATCH[GTValues.LuV].getBlock());
-                }
-            } else if (path.contains("output_buffer")) {
-                Identifier newName = GTCEu.id(path.replace("output_buffer", "dual_output_hatch"));
-                if (mapping.getRegistry().containsKey(newName)) {
-                    mapping.remap(mapping.getRegistry().getValue(newName));
-                } else {
-                    mapping.remap(GTMachines.DUAL_EXPORT_HATCH[GTValues.LuV].getBlock());
-                }
-            }
-        });
-        event.getMappings(Registries.BLOCK_ENTITY_TYPE, "gregiceng").forEach(mapping -> {
-            String path = mapping.getKey().getPath();
-            switch (path) {
-                case "stocking_bus", "adv_stocking_bus" -> mapping
-                        .remap(GTAEMachines.STOCKING_IMPORT_BUS_ME.getBlockEntityType());
-                case "stocking_hatch", "adv_stocking_hatch" -> mapping
-                        .remap(GTAEMachines.STOCKING_IMPORT_HATCH_ME.getBlockEntityType());
-                case "crafting_io_buffer" -> mapping.remap(GTAEMachines.ME_PATTERN_BUFFER.getBlockEntityType());
-                case "crafting_io_slave" -> mapping.remap(GTAEMachines.ME_PATTERN_BUFFER_PROXY.getBlockEntityType());
-            }
-            if (path.contains("input_buffer")) {
-                Identifier newName = GTCEu.id(path.replace("input_buffer", "dual_input_hatch"));
-                if (mapping.getRegistry().containsKey(newName)) {
-                    mapping.remap(mapping.getRegistry().getValue(newName));
-                } else {
-                    mapping.remap(GTMachines.DUAL_IMPORT_HATCH[GTValues.LuV].getBlockEntityType());
-                }
-            } else if (path.contains("output_buffer")) {
-                Identifier newName = GTCEu.id(path.replace("output_buffer", "dual_output_hatch"));
-                if (mapping.getRegistry().containsKey(newName)) {
-                    mapping.remap(mapping.getRegistry().getValue(newName));
-                } else {
-                    mapping.remap(GTMachines.DUAL_EXPORT_HATCH[GTValues.LuV].getBlockEntityType());
-                }
-            }
-        });
-        event.getMappings(Registries.ITEM, "gregiceng").forEach(mapping -> {
-            String path = mapping.getKey().getPath();
-            switch (path) {
-                case "stocking_bus", "adv_stocking_bus" -> mapping.remap(GTAEMachines.STOCKING_IMPORT_BUS_ME.getItem());
-                case "stocking_hatch", "adv_stocking_hatch" -> mapping
-                        .remap(GTAEMachines.STOCKING_IMPORT_HATCH_ME.getItem());
-                case "crafting_io_buffer" -> mapping.remap(GTAEMachines.ME_PATTERN_BUFFER.getItem());
-                case "crafting_io_slave" -> mapping.remap(GTAEMachines.ME_PATTERN_BUFFER_PROXY.getItem());
-            }
-            if (path.contains("input_buffer")) {
-                Identifier newName = GTCEu.id(path.replace("input_buffer", "dual_input_hatch"));
-                if (mapping.getRegistry().containsKey(newName)) {
-                    mapping.remap(mapping.getRegistry().getValue(newName));
-                } else {
-                    mapping.remap(GTMachines.DUAL_IMPORT_HATCH[GTValues.LuV].getItem());
-                }
-            } else if (path.contains("output_buffer")) {
-                Identifier newName = GTCEu.id(path.replace("output_buffer", "dual_output_hatch"));
-                if (mapping.getRegistry().containsKey(newName)) {
-                    mapping.remap(mapping.getRegistry().getValue(newName));
-                } else {
-                    mapping.remap(GTMachines.DUAL_EXPORT_HATCH[GTValues.LuV].getItem());
-                }
-            }
-        });
-
-        for (TagPrefix prefix : TagPrefix.values()) {
-            String first = prefix.invertedName ? toLowerCaseUnderscore(prefix.name) : "(.+?)";
-            String last = prefix.invertedName ? "(.+?)" : toLowerCaseUnderscore(prefix.name);
-            Pattern idPattern = Pattern.compile(first + "_" + last);
-            event.getMappings(Registries.BLOCK, GTCEu.MOD_ID).forEach(mapping -> {
-                Matcher matcher = idPattern.matcher(mapping.getKey().getPath());
-                if (matcher.matches()) {
-                    BlockEntry<? extends Block> block = GTMaterialBlocks.MATERIAL_BLOCKS.get(prefix,
-                            GTRegistries.MATERIALS.get(GTCEu.id(matcher.group(1))));
-                    if (block != null && block.isBound()) {
-                        mapping.remap(block.get());
-                    }
-                }
-            });
-            event.getMappings(Registries.ITEM, GTCEu.MOD_ID).forEach(mapping -> {
-                Matcher matcher = idPattern.matcher(mapping.getKey().getPath());
-                if (matcher.matches()) {
-                    BlockEntry<? extends Block> block = GTMaterialBlocks.MATERIAL_BLOCKS.get(prefix,
-                            GTRegistries.MATERIALS.get(GTCEu.id(matcher.group(1))));
-                    if (block != null && block.isBound()) {
-                        mapping.remap(block.asItem());
-                    } else {
-                        ItemEntry<? extends Item> item = GTMaterialItems.MATERIAL_ITEMS.get(prefix,
-                                GTRegistries.MATERIALS.get(GTCEu.id(matcher.group(1))));
-                        if (item != null && item.isBound()) {
-                            mapping.remap(item.asItem());
-                        }
-                    }
-                }
-            });
-        }
-    }
 }

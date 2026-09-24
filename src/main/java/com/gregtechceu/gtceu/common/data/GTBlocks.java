@@ -22,6 +22,7 @@ import com.gregtechceu.gtceu.common.block.explosive.PowderbarrelBlock;
 import com.gregtechceu.gtceu.common.item.GTBlockTooltipItem;
 import com.gregtechceu.gtceu.common.data.blocks.GTDevBlocks;
 import com.gregtechceu.gtceu.common.data.models.GTModels;
+import com.gregtechceu.gtceu.client.color.GTBlockTintSources;
 import com.gregtechceu.gtceu.common.data.worldgen.GTConfiguredFeatures;
 import com.gregtechceu.gtceu.common.item.LampBlockItem;
 import com.gregtechceu.gtceu.common.item.LaserPipeBlockItem;
@@ -35,10 +36,10 @@ import com.gregtechceu.gtceu.data.recipe.CustomTags;
 import com.gregtechceu.gtceu.utils.memoization.GTMemoizer;
 
 import net.minecraft.advancements.predicates.StatePropertiesPredicate;
-import net.minecraft.client.color.block.BlockColor;
-import net.minecraft.client.color.item.ItemColor;
-import net.minecraft.client.renderer.BiomeColors;
-import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.color.block.BlockTintSources;
+import net.minecraft.client.data.models.BlockModelGenerators;
+import net.minecraft.client.data.models.model.ModelLocationUtils;
+import net.minecraft.client.data.models.model.TexturedModel;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
@@ -47,8 +48,8 @@ import net.minecraft.tags.BlockItemTags;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.*;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.FoliageColor;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.grower.TreeGrower;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -64,10 +65,6 @@ import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePrope
 import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.minecraftforge.client.model.generators.ModelFile;
-import net.minecraftforge.client.model.generators.ModelProvider;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.fml.ModLoader;
 
@@ -81,9 +78,9 @@ import com.tterrag.registrate.util.nullness.NonNullBiConsumer;
 import com.tterrag.registrate.util.nullness.NonNullFunction;
 import com.tterrag.registrate.util.nullness.NonNullSupplier;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import static com.gregtechceu.gtceu.api.GTValues.*;
@@ -124,12 +121,9 @@ public class GTBlocks {
                 .gtBlockstate(GTModels::createPipeBlockModel)
                 .defaultLoot()
                 .tag(CustomTags.MINEABLE_WITH_CONFIG_VALID_PICKAXE_WIRE_CUTTER)
-                .addLayer(() -> RenderType::cutoutMipped)
-                .addLayer(() -> RenderType::translucent)
-                .color(() -> LaserPipeBlock::tintedColor)
+                .color(GTBlockTintSources::paintablePipes)
                 .item(LaserPipeBlockItem::new)
                 .model(() -> NonNullBiConsumer.noop())
-                .color(() -> LaserPipeBlockItem::tintColor)
                 .build()
                 .register();
         LASER_PIPES[index] = entry;
@@ -154,9 +148,7 @@ public class GTBlocks {
                 .gtBlockstate(GTModels::createPipeBlockModel)
                 .defaultLoot()
                 .tag(CustomTags.MINEABLE_WITH_CONFIG_VALID_PICKAXE_WIRE_CUTTER)
-                .addLayer(() -> RenderType::cutoutMipped)
-                .addLayer(() -> RenderType::translucent)
-                .color(() -> OpticalPipeBlock::tintedColor)
+                .color(GTBlockTintSources::paintablePipes)
                 .item(PipeBlockItem::new)
                 .model(() -> NonNullBiConsumer.noop())
                 .build()
@@ -182,8 +174,6 @@ public class GTBlocks {
                 .gtBlockstate(GTModels::createPipeBlockModel)
                 .defaultLoot()
                 .tag(CustomTags.MINEABLE_WITH_CONFIG_VALID_PICKAXE_WRENCH)
-                .addLayer(() -> RenderType::cutoutMipped)
-                .addLayer(() -> RenderType::translucent)
                 .item(PipeBlockItem::new)
                 .model(() -> NonNullBiConsumer.noop())
                 .build()
@@ -246,7 +236,7 @@ public class GTBlocks {
     public static final BlockEntry<Block> CASING_PALLADIUM_SUBSTATION = createCasingBlock("palladium_substation",
             GTCEu.id("block/casings/solid/machine_casing_palladium_substation"));
     public static final BlockEntry<TransparentBlock> CASING_TEMPERED_GLASS = createGlassCasingBlock("tempered_glass",
-            GTCEu.id("block/casings/transparent/tempered_glass"), () -> RenderType::translucent);
+            GTCEu.id("block/casings/transparent/tempered_glass"));
     public static final ImmutableMap<Material, BlockEntry<Block>> MATERIALS_TO_CASINGS;
 
     static {
@@ -282,7 +272,7 @@ public class GTBlocks {
     public static final BlockEntry<Block> CASING_ASSEMBLY_CONTROL = createCasingBlock("assembly_line_casing",
             GTCEu.id("block/casings/mechanic/machine_casing_assembly_control"));
     public static final BlockEntry<TransparentBlock> CASING_LAMINATED_GLASS = createGlassCasingBlock("laminated_glass",
-            GTCEu.id("block/casings/transparent/laminated_glass"), () -> RenderType::cutoutMipped);
+            GTCEu.id("block/casings/transparent/laminated_glass"));
     public static final BlockEntry<ActiveBlock> CASING_ASSEMBLY_LINE = createActiveCasing("assembly_line_unit",
             "block/variant/assembly_line");
 
@@ -322,7 +312,6 @@ public class GTBlocks {
     public static final BlockEntry<MinerPipeBlock> MINER_PIPE = REGISTRATE.block("miner_pipe", MinerPipeBlock::new)
             .initialProperties(() -> Blocks.BEDROCK)
             .properties(BlockBehaviour.Properties::noOcclusion)
-            .addLayer(() -> RenderType::cutoutMipped)
             .exBlockstate(GTModels.createModelBlockState(GTCEu.id("block/miner_pipe")))
             .tag(BlockTags.DRAGON_IMMUNE, BlockTags.WITHER_IMMUNE, BlockTags.INFINIBURN_END,
                     BlockTags.FEATURES_CANNOT_REPLACE, BlockTags.GEODE_INVALID_BLOCKS)
@@ -333,7 +322,7 @@ public class GTBlocks {
             .block("pump_deck", Block::new)
             .initialProperties(() -> Blocks.IRON_BLOCK)
             .properties(p -> p.sound(SoundType.WOOD).mapColor(MapColor.WOOD))
-            .blockstate(GTModels.createSidedCasingModel(GTCEu.id("block/casings/pump_deck")))
+            .gtBlockstate(GTModels.createSidedCasingModel(GTCEu.id("block/casings/pump_deck")))
             .tag(CustomTags.MINEABLE_WITH_WRENCH, BlockTags.MINEABLE_WITH_AXE)
             .item(BlockItem::new)
             .build()
@@ -407,13 +396,13 @@ public class GTBlocks {
     public static final BlockEntry<FusionCasingBlock> FUSION_CASING_MK2 = createFusionCasing(FusionCasingBlock.CasingType.FUSION_CASING_MK2);
     public static final BlockEntry<FusionCasingBlock> FUSION_CASING_MK3 = createFusionCasing(FusionCasingBlock.CasingType.FUSION_CASING_MK3);
     public static final BlockEntry<TransparentBlock> FUSION_GLASS = createGlassCasingBlock("fusion_glass",
-            GTCEu.id("block/casings/transparent/fusion_glass"), () -> RenderType::cutoutMipped);
+            GTCEu.id("block/casings/transparent/fusion_glass"));
 
     // Cleanroom
     public static final BlockEntry<Block> PLASTCRETE = createCasingBlock("plascrete", GTCEu.id("block/casings/cleanroom/plascrete"));
     public static final BlockEntry<Block> FILTER_CASING = createCleanroomFilter(CleanroomFilterType.FILTER_CASING);
     public static final BlockEntry<Block> FILTER_CASING_STERILE = createCleanroomFilter(CleanroomFilterType.FILTER_CASING_STERILE);
-    public static final BlockEntry<TransparentBlock> CLEANROOM_GLASS = createGlassCasingBlock("cleanroom_glass", GTCEu.id("block/casings/transparent/cleanroom_glass"), () -> RenderType::cutoutMipped);
+    public static final BlockEntry<TransparentBlock> CLEANROOM_GLASS = createGlassCasingBlock("cleanroom_glass", GTCEu.id("block/casings/transparent/cleanroom_glass"));
 
     // Fireboxes
     public static final Map<BoilerFireboxType, BlockEntry<ActiveBlock>> ALL_FIREBOXES = new HashMap<>();
@@ -429,7 +418,7 @@ public class GTBlocks {
             .block("computer_casing", Block::new)
             .initialProperties(() -> Blocks.IRON_BLOCK)
             .properties(p -> p.isValidSpawn((state, level, pos, ent) -> false))
-            .blockstate((ctx, prov) -> {
+            .gtBlockstate((ctx, prov) -> {
                 prov.simpleBlock(ctx.getEntry(), prov.models().getExistingFile(GTCEu.id("block/computer_casing")));
             })
             .tag(CustomTags.MINEABLE_WITH_CONFIG_VALID_PICKAXE_WRENCH)
@@ -440,7 +429,7 @@ public class GTBlocks {
             .block("advanced_computer_casing", Block::new)
             .initialProperties(() -> Blocks.IRON_BLOCK)
             .properties(p -> p.isValidSpawn((state, level, pos, ent) -> false))
-            .blockstate((ctx, prov) -> {
+            .gtBlockstate((ctx, prov) -> {
                 prov.simpleBlock(ctx.getEntry(),
                         prov.models().getExistingFile(GTCEu.id("block/advanced_computer_casing")));
             })
@@ -452,9 +441,10 @@ public class GTBlocks {
             .block("computer_heat_vent", Block::new)
             .initialProperties(() -> Blocks.IRON_BLOCK)
             .properties(p -> p.isValidSpawn((state, level, pos, ent) -> false))
-            .blockstate((ctx, prov) -> {
-                prov.simpleBlock(ctx.getEntry(), prov.models().cubeColumn("computer_heat_vent",
+            .gtBlockstate((ctx, prov) -> {
+                prov.simpleBlock(ctx.getEntry(), prov.models().cubeBottomTop("computer_heat_vent",
                         GTCEu.id("block/casings/hpca/computer_heat_vent_side"),
+                        GTCEu.id("block/casings/hpca/computer_heat_vent_top_bot"),
                         GTCEu.id("block/casings/hpca/computer_heat_vent_top_bot")));
             })
             .tag(CustomTags.MINEABLE_WITH_CONFIG_VALID_PICKAXE_WRENCH)
@@ -469,7 +459,7 @@ public class GTBlocks {
         return REGISTRATE.block(name, Block::new)
                 .initialProperties(() -> Blocks.IRON_BLOCK)
                 .properties(p -> p.isValidSpawn((state, level, pos, ent) -> false))
-                .blockstate(GTModels.createSidedCasingModel(texture))
+                .gtBlockstate(GTModels.createSidedCasingModel(texture))
                 .tag(CustomTags.MINEABLE_WITH_CONFIG_VALID_PICKAXE_WRENCH)
                 .item(BlockItem::new)
                 .build()
@@ -488,12 +478,10 @@ public class GTBlocks {
                 .register();
     }
 
-    private static BlockEntry<TransparentBlock> createGlassCasingBlock(String name, Identifier texture,
-                                                                 Supplier<Supplier<RenderType>> type) {
+    private static BlockEntry<TransparentBlock> createGlassCasingBlock(String name, Identifier texture) {
         return REGISTRATE.block(name, TransparentBlock::new)
                 .initialProperties(() -> Blocks.GLASS)
                 .properties(p -> p.isValidSpawn((state, level, pos, ent) -> false))
-                .addLayer(type)
                 .exBlockstate(GTModels.cubeAllModel(texture))
                 .tag(BlockTags.MINEABLE_WITH_PICKAXE)
                 .item(BlockItem::new)
@@ -502,19 +490,9 @@ public class GTBlocks {
     }
 
     public static BlockEntry<Block> createCasingBlock(String name, Identifier texture) {
-        return createCasingBlock(name, Block::new, texture, () -> Blocks.IRON_BLOCK,
-                () -> RenderType::solid);
-    }
-
-    public static BlockEntry<Block> createCasingBlock(String name,
-                                                      NonNullFunction<BlockBehaviour.Properties, Block> blockSupplier,
-                                                      Identifier texture,
-                                                      NonNullSupplier<? extends Block> properties,
-                                                      Supplier<Supplier<RenderType>> type) {
-        return REGISTRATE.block(name, blockSupplier)
-                .initialProperties(properties)
+        return REGISTRATE.block(name, Block::new)
+                .initialProperties(() -> Blocks.IRON_BLOCK)
                 .properties(p -> p.isValidSpawn((state, level, pos, ent) -> false))
-                .addLayer(type)
                 .exBlockstate(GTModels.cubeAllModel(texture))
                 .tag(CustomTags.MINEABLE_WITH_CONFIG_VALID_PICKAXE_WRENCH)
                 .item(BlockItem::new)
@@ -529,7 +507,7 @@ public class GTBlocks {
                 .lang("%s Machine Casing".formatted(GTValues.VN[tier]))
                 .initialProperties(() -> Blocks.IRON_BLOCK)
                 .properties(p -> p.isValidSpawn((state, level, pos, ent) -> false))
-                .blockstate(GTModels.createMachineCasingModel(tierName))
+                .gtBlockstate(GTModels.createMachineCasingModel(tierName))
                 .tag(CustomTags.MINEABLE_WITH_CONFIG_VALID_PICKAXE_WRENCH)
                 .item(BlockItem::new)
                 .build()
@@ -547,8 +525,7 @@ public class GTBlocks {
                 .lang("Hermetic Casing %s".formatted(GTValues.LVT[tier]))
                 .initialProperties(() -> Blocks.IRON_BLOCK)
                 .properties(p -> p.isValidSpawn((state, level, pos, ent) -> false))
-                .addLayer(() -> RenderType::cutoutMipped)
-                .blockstate(GTModels.createHermeticCasingModel(tierName))
+                .gtBlockstate(GTModels.createHermeticCasingModel(tierName))
                 .tag(CustomTags.MINEABLE_WITH_CONFIG_VALID_PICKAXE_WRENCH)
                 .item(BlockItem::new)
                 .build()
@@ -562,7 +539,7 @@ public class GTBlocks {
     private static BlockEntry<Block> createSteamCasing(String name, String material) {
         return REGISTRATE.block(name, Block::new)
                 .initialProperties(() -> Blocks.IRON_BLOCK)
-                .blockstate(GTModels.createSteamCasingModel(material))
+                .gtBlockstate(GTModels.createSteamCasingModel(material))
                 .tag(CustomTags.MINEABLE_WITH_CONFIG_VALID_PICKAXE_WRENCH)
                 .item(BlockItem::new)
                 .build()
@@ -574,8 +551,7 @@ public class GTBlocks {
                 .block("%s_coil_block".formatted(coilType.getName()), p -> new CoilBlock(p, coilType))
                 .initialProperties(() -> Blocks.IRON_BLOCK)
                 .properties(p -> p.isValidSpawn((state, level, pos, ent) -> false))
-                .addLayer(() -> RenderType::cutoutMipped)
-                .blockstate(GTModels.createCoilModel(coilType))
+                .gtBlockstate(GTModels.createCoilModel(coilType))
                 .tag(CustomTags.MINEABLE_WITH_CONFIG_VALID_PICKAXE_WRENCH)
                 .item(GTBlockTooltipItem::new)
                 .build()
@@ -589,7 +565,7 @@ public class GTBlocks {
                 p -> new BatteryBlock(p, batteryData))
                 .initialProperties(() -> Blocks.IRON_BLOCK)
                 .properties(p -> p.isValidSpawn((state, level, pos, entityType) -> false))
-                .blockstate(GTModels.createBatteryBlockModel(batteryData))
+                .gtBlockstate(GTModels.createBatteryBlockModel(batteryData))
                 .tag(CustomTags.MINEABLE_WITH_CONFIG_VALID_PICKAXE_WRENCH)
                 .item(GTBlockTooltipItem::new)
                 .build()
@@ -604,8 +580,7 @@ public class GTBlocks {
                 .block(casingType.getSerializedName(), p -> new FusionCasingBlock(p, casingType))
                 .initialProperties(() -> Blocks.IRON_BLOCK)
                 .properties(properties -> properties.strength(5.0f, 10.0f).sound(SoundType.METAL))
-                .addLayer(() -> RenderType::cutoutMipped)
-                .blockstate(GTModels.createFusionCasingModel(casingType))
+                .gtBlockstate(GTModels.createFusionCasingModel(casingType))
                 .tag(CustomTags.MINEABLE_WITH_CONFIG_VALID_PICKAXE_WRENCH,
                         CustomTags.TOOL_TIERS[casingType.getHarvestLevel()])
                 .item(BlockItem::new)
@@ -620,7 +595,7 @@ public class GTBlocks {
                 .initialProperties(() -> Blocks.IRON_BLOCK)
                 .properties(properties -> properties.strength(2.0f, 8.0f).sound(SoundType.METAL)
                         .isValidSpawn((blockState, blockGetter, blockPos, entityType) -> false))
-                .blockstate(GTModels.createCleanroomFilterModel(filterType))
+                .gtBlockstate(GTModels.createCleanroomFilterModel(filterType))
                 .tag(CustomTags.MINEABLE_WITH_CONFIG_VALID_PICKAXE_WRENCH, CustomTags.TOOL_TIERS[1])
                 .item(BlockItem::new)
                 .build()
@@ -632,11 +607,10 @@ public class GTBlocks {
     protected static BlockEntry<ActiveBlock> createActiveCasing(String name, String baseModelPath) {
         return REGISTRATE.block(name, ActiveBlock::new)
                 .initialProperties(() -> Blocks.IRON_BLOCK)
-                .addLayer(() -> RenderType::cutoutMipped)
-                .blockstate(GTModels.createActiveModel(GTCEu.id(baseModelPath)))
+                .gtBlockstate(GTModels.createActiveModel(GTCEu.id(baseModelPath)))
                 .tag(CustomTags.MINEABLE_WITH_CONFIG_VALID_PICKAXE_WRENCH)
                 .item(BlockItem::new)
-                .model((ctx, prov) -> prov.withExistingParent(prov.name(ctx), GTCEu.id(baseModelPath)))
+                .model(() -> (ctx, prov) -> prov.createWithExistingModel(ctx.get(), GTCEu.id(baseModelPath)))
                 .build()
                 .register();
     }
@@ -646,8 +620,7 @@ public class GTBlocks {
                 .block("%s_casing".formatted(type.name()), ActiveBlock::new)
                 .initialProperties(() -> Blocks.IRON_BLOCK)
                 .properties(p -> p.isValidSpawn((state, level, pos, ent) -> false))
-                .addLayer(() -> RenderType::cutoutMipped)
-                .blockstate(GTModels.createFireboxModel(type))
+                .gtBlockstate(GTModels.createFireboxModel(type))
                 .tag(CustomTags.MINEABLE_WITH_CONFIG_VALID_PICKAXE_WRENCH)
                 .item(BlockItem::new)
                 .build()
@@ -674,11 +647,12 @@ public class GTBlocks {
             .block("industrial_tnt", IndustrialTNTBlock::new)
             .lang("Industrial TNT")
             .properties(p -> p.mapColor(MapColor.FIRE).instabreak().sound(SoundType.GRASS).ignitedByLava())
-            .tag(BlockTags.MINEABLE_WITH_AXE)
-            .blockstate((ctx, prov) -> prov.simpleBlock(ctx.get(), prov.models().cubeBottomTop(ctx.getName(),
+            .setData(GTBlockstateProvider.BLOCKSTATE,
+                    (ctx, prov) -> prov.simpleBlock(ctx.getEntry(), prov.models().cubeBottomTop(ctx.getName(),
                     GTCEu.id("block/misc/industrial_tnt_side"),
                     Identifier.withDefaultNamespace("block/tnt_bottom"),
                     Identifier.withDefaultNamespace("block/tnt_top"))))
+            .tag(BlockTags.MINEABLE_WITH_AXE)
             .item(GTBlockTooltipItem::new)
             .build()
             .register();
@@ -689,11 +663,10 @@ public class GTBlocks {
                             Optional.of(GTConfiguredFeatures.RUBBER)), properties))
             .initialProperties(() -> Blocks.OAK_SAPLING)
             .lang("Rubber Sapling")
-            .blockstate(GTModels::createCrossBlockState)
-            .addLayer(() -> RenderType::cutout)
+            .gtBlockstate(GTModels::createCrossBlockState)
             .tag(BlockItemTags.SAPLINGS.block())
             .item()
-            .model(GTModels::rubberTreeSaplingModel)
+            .setData(GTBlockstateProvider.ITEM_MODEL, GTModels::rubberTreeSaplingModel)
             .tag(ItemTags.SAPLINGS)
             .build()
             .register();
@@ -713,7 +686,7 @@ public class GTBlocks {
                                     .when(LootItemRandomChanceCondition.randomChance(0.85F))))))
             .lang("Rubber Log")
             .tag(net.minecraft.tags.BlockItemTags.LOGS_THAT_BURN.block(), BlockTags.OVERWORLD_NATURAL_LOGS)
-            .blockstate((ctx, provider) -> provider.logBlock(ctx.get()))
+            .blockstate(() -> (ctx, provider) -> provider.generateLogBlock(ctx.getEntry()))
             .item()
             .tag(ItemTags.LOGS_THAT_BURN, CustomTags.RUBBER_LOGS)
             .build()
@@ -722,35 +695,17 @@ public class GTBlocks {
     // Fortune Level
     public static final float[] RUBBER_LEAVES_DROPPING_CHANCE = new float[] { 0.05F, 0.0625F, 0.083333336F, 0.1F };
 
-    @OnlyIn(Dist.CLIENT)
-    public static BlockColor leavesBlockColor() {
-        return (state, reader, pos, tintIndex) -> {
-            if (reader != null && pos != null) {
-                // return reader.getBlockTint(pos, (biome, x, z) -> biome.getFoliageColor());
-                return BiomeColors.getAverageFoliageColor(reader, pos);
-            }
-            return FoliageColor.getDefaultColor();
-        };
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    public static ItemColor leavesItemColor() {
-        return (stack, tintIndex) -> FoliageColor.getDefaultColor();
-    }
-
-    public static final BlockEntry<LeavesBlock> RUBBER_LEAVES = REGISTRATE
-            .block("rubber_leaves", LeavesBlock::new)
+    public static final BlockEntry<TintedParticleLeavesBlock> RUBBER_LEAVES = REGISTRATE
+            .block("rubber_leaves", p -> new TintedParticleLeavesBlock(0.01F, p))
             .initialProperties(() -> Blocks.OAK_LEAVES)
             .lang("Rubber Leaves")
-            .blockstate((ctx, prov) -> {
-                prov.simpleBlock(ctx.get(), prov.models().leaves(ctx.getName(), prov.blockTexture(ctx.get())));
-            })
+            .blockstate(() -> (ctx, prov) -> prov.createTintedLeaves(ctx.getEntry(), TexturedModel.LEAVES,
+                    FoliageColor.FOLIAGE_DEFAULT))
+            .color(() -> () -> List.of(BlockTintSources.foliage()))
             .loot((table, block) -> table.add(block,
                     table.createLeavesDrops(block, GTBlocks.RUBBER_SAPLING.get(), RUBBER_LEAVES_DROPPING_CHANCE)))
             .tag(BlockTags.LEAVES, BlockTags.MINEABLE_WITH_HOE)
-            .color(() -> GTBlocks::leavesBlockColor)
             .item()
-            .color(() -> GTBlocks::leavesItemColor)
             .tag(ItemTags.LEAVES)
             .build()
             .register();
@@ -764,7 +719,7 @@ public class GTBlocks {
             .block("stripped_rubber_log", RotatedPillarBlock::new)
             .initialProperties(() -> Blocks.STRIPPED_SPRUCE_LOG)
             .lang("Stripped Rubber Log")
-            .blockstate((ctx, provider) -> provider.logBlock(ctx.get()))
+            .blockstate(() -> (ctx, provider) -> provider.generateLogBlock(ctx.getEntry()))
             .tag(net.minecraft.tags.BlockItemTags.LOGS_THAT_BURN.block(), BlockTags.MINEABLE_WITH_AXE)
             .item()
             .tag(ItemTags.LOGS_THAT_BURN, CustomTags.RUBBER_LOGS)
@@ -774,7 +729,7 @@ public class GTBlocks {
             .block("rubber_wood", RubberWoodBlock::new)
             .initialProperties(() -> Blocks.SPRUCE_WOOD)
             .lang("Rubber Wood")
-            .blockstate((ctx, provider) -> provider.axisBlock(ctx.get(),
+            .blockstate(() -> (ctx, provider) -> provider.generateAxisBlock(ctx.getEntry(),
                     provider.blockTexture(GTBlocks.RUBBER_LOG.get()), provider.blockTexture(GTBlocks.RUBBER_LOG.get())))
             .tag(net.minecraft.tags.BlockItemTags.LOGS_THAT_BURN.block(), BlockTags.MINEABLE_WITH_AXE)
             .item()
@@ -785,8 +740,8 @@ public class GTBlocks {
             .block("stripped_rubber_wood", RotatedPillarBlock::new)
             .initialProperties(() -> Blocks.STRIPPED_SPRUCE_WOOD)
             .lang("Stripped Rubber Wood")
-            .blockstate((ctx, provider) -> provider.axisBlock(ctx.get(), provider.blockTexture(ctx.get()),
-                    provider.blockTexture(ctx.get())))
+            .blockstate(() -> (ctx, provider) -> provider.generateAxisBlock(ctx.getEntry(),
+                    provider.blockTexture(ctx.getEntry()), provider.blockTexture(ctx.getEntry())))
             .tag(net.minecraft.tags.BlockItemTags.LOGS_THAT_BURN.block(), BlockTags.MINEABLE_WITH_AXE)
             .item()
             .tag(ItemTags.LOGS_THAT_BURN, CustomTags.RUBBER_LOGS)
@@ -807,7 +762,8 @@ public class GTBlocks {
             .block("rubber_slab", SlabBlock::new)
             .initialProperties(() -> Blocks.SPRUCE_SLAB)
             .lang("Rubber Slab")
-            .blockstate((ctx, prov) -> prov.slabBlock(ctx.getEntry(), prov.blockTexture(GTBlocks.RUBBER_PLANK.get()),
+            .blockstate(() -> (ctx, prov) -> prov.generateSlabBlock(ctx.getEntry(),
+                    BlockModelGenerators.plainVariant(ModelLocationUtils.getModelLocation(GTBlocks.RUBBER_PLANK.get())),
                     prov.blockTexture(GTBlocks.RUBBER_PLANK.get())))
             .tag(BlockTags.WOODEN_SLABS, BlockTags.MINEABLE_WITH_AXE)
             .item()
@@ -819,10 +775,10 @@ public class GTBlocks {
             .block("rubber_fence", FenceBlock::new)
             .initialProperties(() -> Blocks.SPRUCE_FENCE)
             .lang("Rubber Fence")
-            .blockstate((ctx, prov) -> prov.fenceBlock(ctx.getEntry(), prov.blockTexture(RUBBER_PLANK.get())))
+            .blockstate(() -> (ctx, prov) -> prov.generateFenceBlock(ctx.getEntry(), prov.blockTexture(RUBBER_PLANK.get())))
             .tag(BlockTags.WOODEN_FENCES, BlockTags.MINEABLE_WITH_AXE)
             .item()
-            .model((ctx, prov) -> prov.fenceInventory(ctx.getName(),
+            .setData(GTBlockstateProvider.ITEM_MODEL, (ctx, prov) -> GTModels.fenceInventoryItemModel(ctx, prov,
                     GTBlocks.RUBBER_PLANK.getId().withPrefix("block/")))
             .tag(ItemTags.WOODEN_FENCES)
             .build()
@@ -832,11 +788,11 @@ public class GTBlocks {
             .block("rubber_sign", (p) -> new GTStandingSignBlock(p, RUBBER_TYPE))
             .initialProperties(() -> Blocks.SPRUCE_SIGN)
             .lang("Rubber Sign")
-            .blockstate((ctx, prov) -> prov.signBlock(ctx.get(), GTBlocks.RUBBER_WALL_SIGN.get(),
+            .blockstate(() -> (ctx, prov) -> prov.generateSignBlock(ctx.getEntry(), GTBlocks.RUBBER_WALL_SIGN.get(),
                     prov.blockTexture(GTBlocks.RUBBER_PLANK.get())))
             .tag(BlockTags.STANDING_SIGNS, BlockTags.MINEABLE_WITH_AXE)
             .setData(ProviderType.LANG, NonNullBiConsumer.noop())
-            .item((b, p) -> new SignItem(p, b, GTBlocks.RUBBER_WALL_SIGN.get()))
+            .item((b, p) -> new SignItem(b, GTBlocks.RUBBER_WALL_SIGN.get(), p))
             .defaultModel()
             .tag(ItemTags.SIGNS)
             .build()
@@ -855,10 +811,8 @@ public class GTBlocks {
             .block("rubber_hanging_sign", (p) -> new GTCeilingHangingSignBlock(p, RUBBER_TYPE))
             .initialProperties(() -> Blocks.SPRUCE_HANGING_SIGN)
             .lang("Rubber Hanging Sign")
-            .blockstate((ctx, prov) -> {
-                ModelFile model = prov.models().sign(ctx.getName(), prov.blockTexture(GTBlocks.RUBBER_PLANK.get()));
-                prov.simpleBlock(ctx.get(), model);
-            })
+            .blockstate(() -> (ctx, prov) -> prov.generateHangingSignBlock(ctx.getEntry(),
+                    GTBlocks.RUBBER_WALL_HANGING_SIGN.get(), prov.blockTexture(GTBlocks.RUBBER_PLANK.get())))
             .tag(BlockTags.CEILING_HANGING_SIGNS, BlockTags.MINEABLE_WITH_AXE)
             .setData(ProviderType.LANG, NonNullBiConsumer.noop())
             .item((b, p) -> new HangingSignItem(b, GTBlocks.RUBBER_WALL_HANGING_SIGN.get(), p))
@@ -872,10 +826,6 @@ public class GTBlocks {
             .block("rubber_wall_hanging_sign", (p) -> new GTWallHangingSignBlock(p, RUBBER_TYPE))
             .initialProperties(() -> Blocks.SPRUCE_WALL_HANGING_SIGN)
             .lang("Rubber Wall Hanging Sign")
-            .blockstate((ctx, prov) -> {
-                ModelFile model = prov.models().sign(ctx.getName(), prov.blockTexture(GTBlocks.RUBBER_PLANK.get()));
-                prov.simpleBlock(ctx.get(), model);
-            })
             .tag(BlockTags.WALL_HANGING_SIGNS, BlockTags.MINEABLE_WITH_AXE)
             .loot((table, block) -> table.dropOther(block, RUBBER_HANGING_SIGN.asItem()))
             .register();
@@ -886,7 +836,7 @@ public class GTBlocks {
             .initialProperties(() -> Blocks.SPRUCE_PRESSURE_PLATE)
             .lang("Rubber Pressure Plate")
             .tag(BlockTags.WOODEN_PRESSURE_PLATES, BlockTags.MINEABLE_WITH_AXE)
-            .blockstate((ctx, prov) -> prov.pressurePlateBlock(ctx.getEntry(),
+            .blockstate(() -> (ctx, prov) -> prov.generatePressurePlateBlock(ctx.getEntry(),
                     prov.blockTexture(GTBlocks.RUBBER_PLANK.get())))
             .item()
             .tag(ItemTags.WOODEN_PRESSURE_PLATES)
@@ -896,10 +846,11 @@ public class GTBlocks {
             .block("rubber_trapdoor", (p) -> new TrapDoorBlock(RUBBER_SET, p))
             .initialProperties(() -> Blocks.SPRUCE_TRAPDOOR)
             .lang("Rubber Trapdoor")
-            .blockstate((ctx, prov) -> prov.trapdoorBlock(ctx.get(), prov.blockTexture(ctx.get()), true))
+            .blockstate(() -> (ctx, prov) -> prov.generateTrapdoorBlock(ctx.getEntry(), prov.blockTexture(ctx.getEntry()), true))
             .tag(BlockTags.WOODEN_TRAPDOORS, BlockTags.MINEABLE_WITH_AXE)
             .item()
-            .model((ctx, prov) -> prov.trapdoorOrientableBottom(ctx.getName(), ctx.getId().withPrefix("block/")))
+            .setData(GTBlockstateProvider.ITEM_MODEL, (ctx, prov) -> GTModels.trapdoorInventoryItemModel(ctx, prov,
+                    ctx.getId().withPrefix("block/")))
             .tag(ItemTags.WOODEN_TRAPDOORS)
             .build()
             .register();
@@ -908,7 +859,7 @@ public class GTBlocks {
             .initialProperties(() -> Blocks.SPRUCE_STAIRS)
             .lang("Rubber Stairs")
             .tag(BlockTags.STAIRS, BlockTags.MINEABLE_WITH_AXE)
-            .blockstate((ctx, prov) -> prov.stairsBlock(ctx.getEntry(), prov.blockTexture(GTBlocks.RUBBER_PLANK.get())))
+            .blockstate(() -> (ctx, prov) -> prov.generateStairsBlock(ctx.getEntry(), prov.blockTexture(GTBlocks.RUBBER_PLANK.get())))
             .item()
             .tag(BlockItemTags.STAIRS.item())
             .build()
@@ -918,9 +869,9 @@ public class GTBlocks {
             .initialProperties(() -> Blocks.SPRUCE_BUTTON)
             .lang("Rubber Button")
             .tag(BlockTags.WOODEN_BUTTONS, BlockTags.MINEABLE_WITH_AXE)
-            .blockstate((ctx, prov) -> prov.buttonBlock(ctx.getEntry(), prov.blockTexture(RUBBER_PLANK.get())))
+            .blockstate(() -> (ctx, prov) -> prov.generateButtonBlock(ctx.getEntry(), prov.blockTexture(RUBBER_PLANK.get())))
             .item()
-            .model((ctx, prov) -> prov.buttonInventory(ctx.getName(),
+            .setData(GTBlockstateProvider.ITEM_MODEL, (ctx, prov) -> GTModels.buttonInventoryItemModel(ctx, prov,
                     GTBlocks.RUBBER_PLANK.getId().withPrefix("block/")))
             .tag(ItemTags.WOODEN_BUTTONS)
             .build()
@@ -930,8 +881,8 @@ public class GTBlocks {
             .initialProperties(() -> Blocks.SPRUCE_FENCE_GATE)
             .lang("Rubber Fence Gate")
             .tag(BlockTags.FENCE_GATES, BlockTags.MINEABLE_WITH_AXE)
-            .blockstate(
-                    (ctx, prov) -> prov.fenceGateBlock(ctx.getEntry(), prov.blockTexture(GTBlocks.RUBBER_PLANK.get())))
+            .blockstate(() -> (ctx, prov) -> prov.generateFenceGateBlock(ctx.getEntry(),
+                    prov.blockTexture(GTBlocks.RUBBER_PLANK.get())))
             .item()
             .tag(ItemTags.FENCE_GATES)
             .build()
@@ -941,12 +892,11 @@ public class GTBlocks {
             .initialProperties(() -> Blocks.SPRUCE_DOOR)
             .lang("Rubber Door")
             .loot((table, block) -> table.add(block, table.createDoorTable(block)))
-            .addLayer(() -> RenderType::cutout)
-            .blockstate((ctx, prov) -> prov.doorBlock(ctx.getEntry(), GTCEu.id("block/rubber_door_bottom"),
-                    GTCEu.id("block/rubber_door_top")))
+            .blockstate(() -> (ctx, prov) -> prov.generateDoorBlock(ctx.getEntry(),
+                    prov.modBlockTexture("block/rubber_door_bottom"), prov.modBlockTexture("block/rubber_door_top")))
             .tag(BlockTags.WOODEN_DOORS, BlockTags.MINEABLE_WITH_AXE)
             .item()
-            .model((ctx, prov) -> prov.generated(ctx))
+            .setData(GTBlockstateProvider.ITEM_MODEL, GTModels::generatedBlockItemModel)
             .tag(ItemTags.WOODEN_DOORS)
             .build()
             .register();
@@ -973,7 +923,9 @@ public class GTBlocks {
             .initialProperties(() -> Blocks.SPRUCE_SLAB)
             .lang("Treated Wood Slab")
             .blockstate(
-                    (ctx, prov) -> prov.slabBlock(ctx.getEntry(), prov.blockTexture(GTBlocks.TREATED_WOOD_PLANK.get()),
+                    () -> (ctx, prov) -> prov.generateSlabBlock(ctx.getEntry(),
+                            BlockModelGenerators.plainVariant(ModelLocationUtils.getModelLocation(
+                                    GTBlocks.TREATED_WOOD_PLANK.get())),
                             prov.blockTexture(GTBlocks.TREATED_WOOD_PLANK.get())))
             .tag(BlockTags.WOODEN_SLABS, BlockTags.MINEABLE_WITH_AXE)
             .item()
@@ -985,10 +937,10 @@ public class GTBlocks {
             .block("treated_wood_fence", FenceBlock::new)
             .initialProperties(() -> Blocks.SPRUCE_FENCE)
             .lang("Treated Wood Fence")
-            .blockstate((ctx, prov) -> prov.fenceBlock(ctx.getEntry(), prov.blockTexture(TREATED_WOOD_PLANK.get())))
+            .blockstate(() -> (ctx, prov) -> prov.generateFenceBlock(ctx.getEntry(), prov.blockTexture(TREATED_WOOD_PLANK.get())))
             .tag(BlockTags.WOODEN_FENCES, BlockTags.MINEABLE_WITH_AXE)
             .item()
-            .model((ctx, prov) -> prov.fenceInventory(ctx.getName(),
+            .setData(GTBlockstateProvider.ITEM_MODEL, (ctx, prov) -> GTModels.fenceInventoryItemModel(ctx, prov,
                     GTBlocks.TREATED_WOOD_PLANK.getId().withPrefix("block/")))
             .tag(ItemTags.WOODEN_FENCES)
             .build()
@@ -998,11 +950,11 @@ public class GTBlocks {
             .block("treated_wood_sign", (p) -> new GTStandingSignBlock(p, TREATED_WOOD_TYPE))
             .initialProperties(() -> Blocks.SPRUCE_SIGN)
             .lang("Treated Wood Sign")
-            .blockstate((ctx, prov) -> prov.signBlock(ctx.get(), GTBlocks.TREATED_WOOD_WALL_SIGN.get(),
+            .blockstate(() -> (ctx, prov) -> prov.generateSignBlock(ctx.getEntry(), GTBlocks.TREATED_WOOD_WALL_SIGN.get(),
                     prov.blockTexture(GTBlocks.TREATED_WOOD_PLANK.get())))
             .tag(BlockTags.STANDING_SIGNS, BlockTags.MINEABLE_WITH_AXE)
             .setData(ProviderType.LANG, NonNullBiConsumer.noop())
-            .item((b, p) -> new SignItem(p, b, GTBlocks.TREATED_WOOD_WALL_SIGN.get()))
+            .item((b, p) -> new SignItem(b, GTBlocks.TREATED_WOOD_WALL_SIGN.get(), p))
             .defaultModel()
             .tag(ItemTags.SIGNS)
             .build()
@@ -1019,11 +971,9 @@ public class GTBlocks {
             .block("treated_wood_hanging_sign", (p) -> new GTCeilingHangingSignBlock(p, TREATED_WOOD_TYPE))
             .initialProperties(() -> Blocks.SPRUCE_HANGING_SIGN)
             .lang("Treated Wood Hanging Sign")
-            .blockstate((ctx, prov) -> {
-                ModelFile model = prov.models().sign(ctx.getName(),
-                        prov.blockTexture(GTBlocks.TREATED_WOOD_PLANK.get()));
-                prov.simpleBlock(ctx.get(), model);
-            })
+            .blockstate(() -> (ctx, prov) -> prov.generateHangingSignBlock(ctx.getEntry(),
+                    GTBlocks.TREATED_WOOD_WALL_HANGING_SIGN.get(),
+                    prov.blockTexture(GTBlocks.TREATED_WOOD_PLANK.get())))
             .tag(BlockTags.CEILING_HANGING_SIGNS, BlockTags.MINEABLE_WITH_AXE)
             .setData(ProviderType.LANG, NonNullBiConsumer.noop())
             .item((b, p) -> new HangingSignItem(b, GTBlocks.TREATED_WOOD_WALL_HANGING_SIGN.get(), p))
@@ -1036,11 +986,6 @@ public class GTBlocks {
             .block("treated_wood_wall_hanging_sign", (p) -> new GTWallHangingSignBlock(p, TREATED_WOOD_TYPE))
             .initialProperties(() -> Blocks.SPRUCE_WALL_HANGING_SIGN)
             .lang("Treated Wood Wall Hanging Sign")
-            .blockstate((ctx, prov) -> {
-                ModelFile model = prov.models().sign(ctx.getName(),
-                        prov.blockTexture(GTBlocks.TREATED_WOOD_PLANK.get()));
-                prov.simpleBlock(ctx.get(), model);
-            })
             .tag(BlockTags.WALL_HANGING_SIGNS, BlockTags.MINEABLE_WITH_AXE)
             .loot((table, block) -> table.dropOther(block, TREATED_WOOD_HANGING_SIGN.asItem()))
             .register();
@@ -1050,7 +995,7 @@ public class GTBlocks {
             .initialProperties(() -> Blocks.SPRUCE_PRESSURE_PLATE)
             .lang("Treated Wood Pressure Plate")
             .tag(BlockTags.WOODEN_PRESSURE_PLATES, BlockTags.MINEABLE_WITH_AXE)
-            .blockstate((ctx, prov) -> prov.pressurePlateBlock(ctx.getEntry(),
+            .blockstate(() -> (ctx, prov) -> prov.generatePressurePlateBlock(ctx.getEntry(),
                     prov.blockTexture(GTBlocks.TREATED_WOOD_PLANK.get())))
             .item()
             .tag(ItemTags.WOODEN_PRESSURE_PLATES)
@@ -1060,10 +1005,11 @@ public class GTBlocks {
             .block("treated_wood_trapdoor", (p) -> new TrapDoorBlock(RUBBER_SET, p))
             .initialProperties(() -> Blocks.SPRUCE_TRAPDOOR)
             .lang("Treated Wood Trapdoor")
-            .blockstate((ctx, prov) -> prov.trapdoorBlock(ctx.get(), prov.blockTexture(ctx.get()), true))
+            .blockstate(() -> (ctx, prov) -> prov.generateTrapdoorBlock(ctx.getEntry(), prov.blockTexture(ctx.getEntry()), true))
             .tag(BlockTags.WOODEN_TRAPDOORS, BlockTags.MINEABLE_WITH_AXE)
             .item()
-            .model((ctx, prov) -> prov.trapdoorOrientableBottom(ctx.getName(), ctx.getId().withPrefix("block/")))
+            .setData(GTBlockstateProvider.ITEM_MODEL, (ctx, prov) -> GTModels.trapdoorInventoryItemModel(ctx, prov,
+                    ctx.getId().withPrefix("block/")))
             .tag(ItemTags.WOODEN_TRAPDOORS)
             .build()
             .register();
@@ -1072,7 +1018,7 @@ public class GTBlocks {
             .initialProperties(() -> Blocks.SPRUCE_STAIRS)
             .lang("Treated Wood Stairs")
             .tag(BlockTags.STAIRS, BlockTags.MINEABLE_WITH_AXE)
-            .blockstate((ctx, prov) -> prov.stairsBlock(ctx.getEntry(),
+            .blockstate(() -> (ctx, prov) -> prov.generateStairsBlock(ctx.getEntry(),
                     prov.blockTexture(GTBlocks.TREATED_WOOD_PLANK.get())))
             .item()
             .tag(BlockItemTags.STAIRS.item())
@@ -1083,9 +1029,9 @@ public class GTBlocks {
             .initialProperties(() -> Blocks.SPRUCE_BUTTON)
             .lang("Treated Wood Button")
             .tag(BlockTags.WOODEN_BUTTONS)
-            .blockstate((ctx, prov) -> prov.buttonBlock(ctx.getEntry(), prov.blockTexture(TREATED_WOOD_PLANK.get())))
+            .blockstate(() -> (ctx, prov) -> prov.generateButtonBlock(ctx.getEntry(), prov.blockTexture(TREATED_WOOD_PLANK.get())))
             .item()
-            .model((ctx, prov) -> prov.buttonInventory(ctx.getName(),
+            .setData(GTBlockstateProvider.ITEM_MODEL, (ctx, prov) -> GTModels.buttonInventoryItemModel(ctx, prov,
                     GTBlocks.TREATED_WOOD_PLANK.getId().withPrefix("block/")))
             .tag(ItemTags.WOODEN_BUTTONS)
             .build()
@@ -1095,7 +1041,7 @@ public class GTBlocks {
             .initialProperties(() -> Blocks.SPRUCE_FENCE_GATE)
             .lang("Treated Wood Fence Gate")
             .tag(BlockTags.FENCE_GATES)
-            .blockstate((ctx, prov) -> prov.fenceGateBlock(ctx.getEntry(),
+            .blockstate(() -> (ctx, prov) -> prov.generateFenceGateBlock(ctx.getEntry(),
                     prov.blockTexture(GTBlocks.TREATED_WOOD_PLANK.get())))
             .item()
             .tag(ItemTags.FENCE_GATES)
@@ -1106,12 +1052,12 @@ public class GTBlocks {
             .initialProperties(() -> Blocks.SPRUCE_DOOR)
             .lang("Treated Wood Door")
             .loot((table, block) -> table.add(block, table.createDoorTable(block)))
-            .addLayer(() -> RenderType::cutout)
-            .blockstate((ctx, prov) -> prov.doorBlock(ctx.getEntry(), GTCEu.id("block/treated_wood_door_bottom"),
-                    GTCEu.id("block/treated_wood_door_top")))
+            .blockstate(() -> (ctx, prov) -> prov.generateDoorBlock(ctx.getEntry(),
+                    prov.modBlockTexture("block/treated_wood_door_bottom"),
+                    prov.modBlockTexture("block/treated_wood_door_top")))
             .tag(BlockTags.WOODEN_DOORS)
             .item()
-            .model((ctx, prov) -> prov.generated(ctx))
+            .setData(GTBlockstateProvider.ITEM_MODEL, GTModels::generatedBlockItemModel)
             .tag(ItemTags.WOODEN_DOORS)
             .build()
             .register();
@@ -1187,11 +1133,11 @@ public class GTBlocks {
             .item((b, p) -> new BlockItem(b, p) {
 
                 @Override
-                public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltipComponents,
-                                            TooltipFlag isAdvanced) {
-                    super.appendHoverText(stack, level, tooltipComponents, isAdvanced);
-                    tooltipComponents.add(1, Component.translatable("tile.gtceu.brittle_charcoal.tooltip.0"));
-                    tooltipComponents.add(2, Component.translatable("tile.gtceu.brittle_charcoal.tooltip.1"));
+                public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display,
+                                            Consumer<Component> tooltipComponents, TooltipFlag isAdvanced) {
+                    super.appendHoverText(stack, context, display, tooltipComponents, isAdvanced);
+                    tooltipComponents.accept(Component.translatable("tile.gtceu.brittle_charcoal.tooltip.0"));
+                    tooltipComponents.accept(Component.translatable("tile.gtceu.brittle_charcoal.tooltip.1"));
                 }
             })
             .build()
@@ -1205,13 +1151,24 @@ public class GTBlocks {
             for (StoneBlockType type : StoneBlockType.values()) {
                 String blockId = type.blockId.formatted(strata.getSerializedName());
                 if (BuiltInRegistries.BLOCK.containsKey(Identifier.parse(blockId))) continue;
-                var entry = REGISTRATE.block(blockId, Block::new)
+                var blockBuilder = REGISTRATE.block(blockId, Block::new)
                         .initialProperties(() -> Blocks.STONE)
                         .properties(p -> p.strength(type.hardness, type.resistance).mapColor(strata.mapColor))
                         .transform(type == StoneBlockType.STONE ?
                                 GTBlocks.unificationBlock(strata.getTagPrefix(), strata.getMaterial()) :
-                                builder2 -> builder2)
-                        .tag(BlockTags.MINEABLE_WITH_PICKAXE, CustomTags.NEEDS_WOOD_TOOL)
+                                builder2 -> builder2);
+                if (type == StoneBlockType.STONE && strata.isNatural()) {
+                    blockBuilder.setData(GTBlockstateProvider.BLOCKSTATE,
+                            (ctx, prov) -> GTModels.randomRotatedModel(GTCEu.id("block/stones/" +
+                                    strata.getSerializedName() + "/" + type.id)).accept(ctx, prov));
+                } else {
+                    blockBuilder.setData(GTBlockstateProvider.BLOCKSTATE, (ctx, prov) -> prov.simpleBlock(ctx.getEntry(),
+                            prov.models().singleTexture(ctx.getName(),
+                                    prov.mcLoc("block/cube_all"), "all",
+                                    prov.modLoc("block/stones/" + strata.getSerializedName() +
+                                            "/" + type.id))));
+                }
+                blockBuilder.tag(BlockTags.MINEABLE_WITH_PICKAXE, CustomTags.NEEDS_WOOD_TOOL)
                         .loot((tables, block) -> {
                             if (type == StoneBlockType.STONE) {
                                 tables.add(block, tables.createSingleItemTableWithSilkTouch(block,
@@ -1219,21 +1176,12 @@ public class GTBlocks {
                             } else {
                                 tables.add(block, tables.createSingleItemTable(block));
                             }
-                        })
-                        .item()
-                        .build();
+                        });
                 if (type == StoneBlockType.STONE && strata.isNatural()) {
-                    entry.tag(BlockTags.STONE_ORE_REPLACEABLES, BlockTags.BASE_STONE_OVERWORLD,
-                            BlockTags.DRIPSTONE_REPLACEABLE, BlockTags.MOSS_REPLACEABLE)
-                            .blockstate(GTModels.randomRotatedModel(GTCEu.id(ModelProvider.BLOCK_FOLDER + "/stones/" +
-                                    strata.getSerializedName() + "/" + type.id)));
-                } else {
-                    entry.blockstate((ctx, prov) -> prov.simpleBlock(ctx.getEntry(),
-                            prov.models().singleTexture(ctx.getName(),
-                                    prov.mcLoc(ModelProvider.BLOCK_FOLDER + "/cube_all"), "all",
-                                    prov.modLoc(ModelProvider.BLOCK_FOLDER + "/stones/" + strata.getSerializedName() +
-                                            "/" + type.id))));
+                    blockBuilder.tag(BlockTags.STONE_ORE_REPLACEABLES, BlockTags.BASE_STONE_OVERWORLD,
+                            BlockTags.DRIPSTONE_REPLACEABLE, BlockTags.MOSS_REPLACEABLE);
                 }
+                var entry = blockBuilder.item().build();
                 if (type == StoneBlockType.STONE) {
                     entry.tag(Tags.Blocks.STONES);
                 }
@@ -1299,11 +1247,10 @@ public class GTBlocks {
                     REGISTRATE.block("%s_lamp".formatted(dyeColor.getName()), (p) -> new LampBlock(p, dyeColor, true))
                             .initialProperties(() -> Blocks.GLASS)
                             .properties(p -> p.strength(0.3f, 8.0f).sound(SoundType.GLASS))
-                            .addLayer(() -> RenderType::cutout)
+                            .gtBlockstate(GTModels.lampModel(dyeColor, true))
                             .tag(BlockTags.MINEABLE_WITH_PICKAXE)
-                            .blockstate(GTModels.lampModel(dyeColor, true))
                             .item(LampBlockItem::new)
-                            .model((ctx, prov) -> prov.blockItem(ctx::get, "_on").end())
+                            .model(() -> (ctx, prov) -> prov.generateBlockItem(ctx.get(), "_on"))
                             .setData(GTBlockstateProvider.ITEM_MODEL, GTModels::createLampItemDefinition)
                             .build()
                             .register());
@@ -1315,10 +1262,10 @@ public class GTBlocks {
                     .block("%s_borderless_lamp".formatted(dyeColor.getName()), (p) -> new LampBlock(p, dyeColor, false))
                     .initialProperties(() -> Blocks.GLASS)
                     .properties(p -> p.strength(0.3f, 8.0f).sound(SoundType.GLASS))
+                    .gtBlockstate(GTModels.lampModel(dyeColor, false))
                     .tag(BlockTags.MINEABLE_WITH_PICKAXE)
-                    .blockstate(GTModels.lampModel(dyeColor, false))
                     .item(LampBlockItem::new)
-                    .model((ctx, prov) -> prov.blockItem(ctx::get, "_on").end())
+                    .model(() -> (ctx, prov) -> prov.generateBlockItem(ctx.get(), "_on"))
                     .setData(GTBlockstateProvider.ITEM_MODEL, GTModels::createLampItemDefinition)
                     .build()
                     .register());
@@ -1338,10 +1285,10 @@ public class GTBlocks {
             metalsheetBuilder.put(dyeColor, REGISTRATE.block("%s_metal_sheet".formatted(dyeColor.getName()), Block::new)
                     .initialProperties(() -> Blocks.IRON_BLOCK)
                     .properties(p -> p.strength(2.0F, 5.0F).mapColor(dyeColor))
-                    .tag(CustomTags.MINEABLE_WITH_CONFIG_VALID_PICKAXE_WRENCH)
-                    .blockstate((ctx, prov) -> prov.simpleBlock(ctx.get(),
+                    .gtBlockstate((ctx, prov) -> prov.simpleBlock(ctx.getEntry(),
                             prov.models().cubeAll(ctx.getName(),
                                     GTCEu.id("block/decoration/metalsheet_%s".formatted(dyeColor.getName())))))
+                    .tag(CustomTags.MINEABLE_WITH_CONFIG_VALID_PICKAXE_WRENCH)
                     .simpleItem()
                     .register());
         }
@@ -1353,9 +1300,9 @@ public class GTBlocks {
                     REGISTRATE.block("%s_large_metal_sheet".formatted(dyeColor.getName()), Block::new)
                             .initialProperties(() -> Blocks.IRON_BLOCK)
                             .properties(p -> p.strength(2.0F, 5.0F).mapColor(dyeColor))
-                            .tag(CustomTags.MINEABLE_WITH_CONFIG_VALID_PICKAXE_WRENCH)
-                            .blockstate((ctx, prov) -> prov.simpleBlock(ctx.get(), prov.models().cubeAll(ctx.getName(),
+                            .gtBlockstate((ctx, prov) -> prov.simpleBlock(ctx.getEntry(), prov.models().cubeAll(ctx.getName(),
                                     GTCEu.id("block/decoration/large_metalsheet_%s".formatted(dyeColor.getName())))))
+                            .tag(CustomTags.MINEABLE_WITH_CONFIG_VALID_PICKAXE_WRENCH)
                             .simpleItem()
                             .register());
         }
@@ -1366,10 +1313,10 @@ public class GTBlocks {
             studsBuilder.put(dyeColor, REGISTRATE.block("%s_studs".formatted(dyeColor.getName()), Block::new)
                     .initialProperties(() -> Blocks.WOOL.white())
                     .properties(p -> p.strength(1.5F, 2.5F).mapColor(dyeColor))
-                    .tag(BlockTags.MINEABLE_WITH_PICKAXE, CustomTags.NEEDS_WOOD_TOOL)
-                    .blockstate((ctx, prov) -> prov.simpleBlock(ctx.get(),
+                    .gtBlockstate((ctx, prov) -> prov.simpleBlock(ctx.getEntry(),
                             prov.models().cubeAll(ctx.getName(),
                                     GTCEu.id("block/decoration/studs_%s".formatted(dyeColor.getName())))))
+                    .tag(BlockTags.MINEABLE_WITH_PICKAXE, CustomTags.NEEDS_WOOD_TOOL)
                     .simpleItem()
                     .register());
         }

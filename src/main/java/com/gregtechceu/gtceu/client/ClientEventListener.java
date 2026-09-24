@@ -8,18 +8,19 @@ import com.gregtechceu.gtceu.client.renderer.PatternPreviewRenderer;
 import com.gregtechceu.gtceu.client.renderer.cover.FacadeCoverRenderer;
 import com.gregtechceu.gtceu.client.util.TooltipHelper;
 import com.gregtechceu.gtceu.common.commands.GTClientCommands;
-import com.gregtechceu.gtceu.core.mixins.client.AbstractClientPlayerAccessor;
-import com.gregtechceu.gtceu.core.mixins.client.PlayerInfoAccessor;
 import com.gregtechceu.gtceu.data.recipe.CustomTags;
 import com.gregtechceu.gtceu.integration.map.ClientCacheManager;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.ClientAsset;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
+import net.minecraft.client.renderer.entity.state.AvatarRenderState;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.PlayerSkin;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.client.event.*;
@@ -30,12 +31,6 @@ import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 
-import com.mojang.authlib.minecraft.MinecraftProfileTexture;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-
-import java.util.Map;
-import java.util.UUID;
-
 @net.neoforged.fml.common.EventBusSubscriber(modid = GTCEu.MOD_ID, value = Dist.CLIENT)
 @OnlyIn(Dist.CLIENT)
 public class ClientEventListener {
@@ -45,28 +40,18 @@ public class ClientEventListener {
         FacadeCoverRenderer.clearItemModelCache();
     }
 
-    private static final Map<UUID, Identifier> DEFAULT_CAPES = new Object2ObjectOpenHashMap<>();
-
     @SubscribeEvent
     public static void onPlayerRender(RenderPlayerEvent.Pre event) {
-        Player player = event.getEntity();
-        AbstractClientPlayerAccessor clientPlayer = (AbstractClientPlayerAccessor) player;
-        if (clientPlayer.gtceu$getPlayerInfo() != null) {
-            PlayerInfoAccessor playerInfo = ((PlayerInfoAccessor) clientPlayer.gtceu$getPlayerInfo());
-            Map<MinecraftProfileTexture.Type, Identifier> playerTextures = playerInfo.getTextureLocations();
+        AvatarRenderState renderState = (AvatarRenderState) event.getRenderState();
+        var level = Minecraft.getInstance().level;
+        if (level == null || !(level.getEntity(renderState.id) instanceof Player player)) return;
 
-            UUID uuid = player.getUUID();
-            Identifier defaultPlayerCape;
-            if (!DEFAULT_CAPES.containsKey(uuid)) {
-                defaultPlayerCape = playerTextures.get(MinecraftProfileTexture.Type.CAPE);
-                DEFAULT_CAPES.put(uuid, defaultPlayerCape);
-            } else {
-                defaultPlayerCape = DEFAULT_CAPES.get(uuid);
-            }
+        Identifier cape = CapeRegistry.getPlayerCapeTexture(player.getUUID());
+        if (cape == null) return;
 
-            Identifier cape = CapeRegistry.getPlayerCapeTexture(uuid);
-            playerTextures.put(MinecraftProfileTexture.Type.CAPE, cape == null ? defaultPlayerCape : cape);
-        }
+        PlayerSkin skin = renderState.skin;
+        ClientAsset.Texture capeTexture = new ClientAsset.ResourceTexture(cape, cape);
+        renderState.skin = new PlayerSkin(skin.body(), capeTexture, skin.elytra(), skin.model(), skin.secure());
     }
 
     @SubscribeEvent
@@ -108,7 +93,7 @@ public class ClientEventListener {
             }
         }
 
-        return attrib.getAttribute().sanitizeValue(applied);
+        return attrib.getAttribute().value().sanitizeValue(applied);
     }
 
     @SubscribeEvent

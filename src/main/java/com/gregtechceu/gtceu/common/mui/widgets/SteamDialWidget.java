@@ -1,20 +1,22 @@
 package com.gregtechceu.gtceu.common.mui.widgets;
 
-import com.gregtechceu.gtceu.client.renderer.GTRenderTypes;
-
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.util.Mth;
 
 import brachy.modularui.api.drawable.IDrawable;
+import brachy.modularui.drawable.GuiShapeBuilder;
+import brachy.modularui.drawable.GuiShapeRenderState;
+import brachy.modularui.drawable.GuiTexturedShapeRenderState;
 import brachy.modularui.drawable.UITexture;
 import brachy.modularui.screen.viewport.GuiContext;
 import brachy.modularui.theme.WidgetTheme;
+import brachy.modularui.utils.MUIRenderTypes;
 import brachy.modularui.utils.Color;
 import brachy.modularui.value.sync.DoubleSyncValue;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import org.joml.Matrix4f;
+
+import java.util.List;
 
 @Accessors(chain = true)
 public class SteamDialWidget implements IDrawable {
@@ -37,63 +39,33 @@ public class SteamDialWidget implements IDrawable {
     @Override
     public void draw(GuiContext context, int x, int y, int width, int height, WidgetTheme widgetTheme) {
         GuiGraphicsExtractor graphics = context.getGraphics();
-        // RenderSystem.setShader(GameRenderer::getPositionColorShader);
-        Matrix4f pose = graphics.pose().last().pose();
+        final float progressPercent = Mth.clamp(progress.getFloatValue(), 0.0f, 1.0f);
+        final float angle = Mth.lerp(progressPercent, this.minAngle, this.maxAngle);
+        lastAngle = Float.isNaN(lastAngle) ? angle : (lastAngle + angle) / 2.0f;
+
+        final float sinAngle = Mth.sin(-lastAngle);
+        final float cosAngle = Mth.cos(-lastAngle);
+        height /= 2.0f;
+        int alpha = Color.getAlpha(color), red = Color.getRed(color), green = Color.getGreen(color), blue = Color.getBlue(color);
+        int packedColor = (alpha & 255) << 24 | (red & 255) << 16 | (green & 255) << 8 | (blue & 255);
+
+        float x0 = x + width * cosAngle, y0 = y + width * sinAngle;
+        float x1 = x + height * sinAngle, y1 = y - height * cosAngle;
+        float x2 = x - height * sinAngle, y2 = y + height * cosAngle;
+        float x3 = x - height * cosAngle, y3 = y - height * sinAngle;
         if (texture == null) {
-            VertexConsumer bufferBuilder = graphics.bufferSource().getBuffer(GTRenderTypes.guiTriangleStrip());
-
-            final float progressPercent = Mth.clamp(progress.getFloatValue(), 0.0f, 1.0f);
-            final float angle = Mth.lerp(progressPercent, this.minAngle, this.maxAngle);
-
-            if (Float.isNaN(lastAngle)) {
-                lastAngle = angle;
-            } else {
-                lastAngle = (lastAngle + angle) / 2.0f;
-            }
-            final float lastAngleF = lastAngle;
-
-            final float sinAngle = Mth.sin(-lastAngleF);
-            final float cosAngle = Mth.cos(-lastAngleF);
-
-            height /= 2.f;
-            int a = Color.getAlpha(color), r = Color.getRed(color), g = Color.getGreen(color), b = Color.getBlue(color);
-
-            bufferBuilder.addVertex(pose, x + width * cosAngle, y + width * sinAngle, 0.0f).setColor(r, g, b, a);
-            bufferBuilder.addVertex(pose, x + height * sinAngle, y - height * cosAngle, 0.0f).setColor(r, g, b, a)
-                    ;
-            bufferBuilder.addVertex(pose, x - height * sinAngle, y + height * cosAngle, 0.0f).setColor(r, g, b, a)
-                    ;
-            bufferBuilder.addVertex(pose, x - height * cosAngle, y - height * sinAngle, 0.0f).setColor(r, g, b, a)
-                    ;
+            GuiShapeBuilder vertices = MUIRenderTypes.guiTriangleStrip();
+            vertices.addVertex(x0, y0, 0).setColor(red, green, blue, alpha);
+            vertices.addVertex(x1, y1, 0).setColor(red, green, blue, alpha);
+            vertices.addVertex(x2, y2, 0).setColor(red, green, blue, alpha);
+            vertices.addVertex(x3, y3, 0).setColor(red, green, blue, alpha);
+            vertices.submit(graphics);
         } else {
-            VertexConsumer bufferBuilder = graphics.bufferSource()
-                    .getBuffer(GTRenderTypes.guiTriangleStrip(texture.location));
-
-            final float progressPercent = Mth.clamp(progress.getFloatValue(), 0.0f, 1.0f);
-            final float angle = Mth.lerp(progressPercent, this.minAngle, this.maxAngle);
-
-            if (Float.isNaN(lastAngle)) {
-                lastAngle = angle;
-            } else {
-                lastAngle = (lastAngle + angle) / 2.0f;
-            }
-            final float lastAngleF = lastAngle;
-
-            final float sinAngle = Mth.sin(-lastAngleF);
-            final float cosAngle = Mth.cos(-lastAngleF);
-
-            height /= 2.f;
-            int a = Color.getAlpha(color), r = Color.getRed(color), g = Color.getGreen(color), b = Color.getBlue(color);
-
-            bufferBuilder.addVertex(pose, x + width * cosAngle, y + width * sinAngle, 0.0f).setColor(r, g, b, a)
-                    .setUv(0.0f, 0.0f);
-            bufferBuilder.addVertex(pose, x + height * sinAngle, y - height * cosAngle, 0.0f).setColor(r, g, b, a)
-                    .setUv(1.0f, 0.0f);
-            bufferBuilder.addVertex(pose, x - height * sinAngle, y + height * cosAngle, 0.0f).setColor(r, g, b, a)
-                    .setUv(0.0f, 1.0f);
-            bufferBuilder.addVertex(pose, x - height * cosAngle, y - height * sinAngle, 0.0f).setColor(r, g, b, a)
-                    .setUv(1.0f, 1.0f);
+            GuiTexturedShapeRenderState.submitStrip(graphics, texture.location, List.of(
+                    new GuiTexturedShapeRenderState.Vertex(x0, y0, 0, 0, packedColor),
+                    new GuiTexturedShapeRenderState.Vertex(x1, y1, 1, 0, packedColor),
+                    new GuiTexturedShapeRenderState.Vertex(x2, y2, 0, 1, packedColor),
+                    new GuiTexturedShapeRenderState.Vertex(x3, y3, 1, 1, packedColor)));
         }
-        // RenderSystem.disableBlend();
     }
 }

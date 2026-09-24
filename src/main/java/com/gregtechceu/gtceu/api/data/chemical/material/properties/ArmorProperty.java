@@ -33,6 +33,10 @@ import java.util.function.Supplier;
 // TODO document
 public class ArmorProperty implements IMaterialProperty {
 
+    private static final ArmorType[] MATERIAL_ARMOR_TYPES = {
+            ArmorType.HELMET, ArmorType.CHESTPLATE, ArmorType.LEGGINGS, ArmorType.BOOTS
+    };
+
     @Setter
     @Range(from = 0, to = Integer.MAX_VALUE)
     private int durabilityMultiplier;
@@ -68,8 +72,8 @@ public class ArmorProperty implements IMaterialProperty {
     public ArmorProperty(int durabilityMultiplier, int[] protectionValues) {
         this.durabilityMultiplier = durabilityMultiplier;
         this.protectionValues = Util.make(new EnumMap<>(ArmorType.class), map -> {
-            for (int i = 0; i < ArmorType.values().length; i++) {
-                map.put(ArmorType.values()[i], protectionValues[i]);
+            for (int i = 0; i < MATERIAL_ARMOR_TYPES.length; i++) {
+                map.put(MATERIAL_ARMOR_TYPES[i], protectionValues[i]);
             }
         });
         this.sound = GTMemoizer.memoize(() -> SoundEvents.ARMOR_EQUIP_IRON.value());
@@ -108,8 +112,9 @@ public class ArmorProperty implements IMaterialProperty {
          * Create Armor for this Material.
          *
          * @param durabilityMultiplier The durability value of this Armor. Leather is 5, Iron is 15, Diamond is 33.
-         * @param protectionValues     The protection values of each armor piece in the set.<br>
-         *                             Ordered as Helmet, Chestplate, Leggings, Boots.
+         * @param protectionValues     The protection values of each humanoid armor piece in the set.<br>
+         *                             Ordered as Helmet, Chestplate, Leggings, Boots. BODY armor is not a material
+         *                             armor piece and has no value in this property.
          * @throws IllegalArgumentException If the protectionValues array parameter does not have exactly 4 entries.
          *
          * @see net.minecraft.world.item.equipment.ArmorMaterials
@@ -240,11 +245,19 @@ public class ArmorProperty implements IMaterialProperty {
                 });
 
         public int getDurabilityForType(@NotNull ArmorType type) {
-            return HEALTH_FUNCTION_FOR_TYPE.get(type) * ArmorProperty.this.durabilityMultiplier;
+            Integer health = HEALTH_FUNCTION_FOR_TYPE.get(type);
+            if (health == null) {
+                throw new IllegalArgumentException("Material armor does not support armor type " + type);
+            }
+            return health * ArmorProperty.this.durabilityMultiplier;
         }
 
         public int getDefenseForType(@NotNull ArmorType type) {
-            return ArmorProperty.this.protectionValues.get(type);
+            Integer defense = ArmorProperty.this.protectionValues.get(type);
+            if (defense == null) {
+                throw new IllegalArgumentException("Material armor does not support armor type " + type);
+            }
+            return defense;
         }
 
         public int getEnchantmentValue() {

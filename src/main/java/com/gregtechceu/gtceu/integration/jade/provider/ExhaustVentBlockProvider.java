@@ -16,6 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 import snownee.jade.api.BlockAccessor;
 import snownee.jade.api.ITooltip;
 import snownee.jade.api.config.IPluginConfig;
+import snownee.jade.api.ui.JadeUI;
 
 public class ExhaustVentBlockProvider extends MachineTraitProvider<ExhaustVentMachineTrait, CompoundTag> {
 
@@ -48,7 +49,7 @@ public class ExhaustVentBlockProvider extends MachineTraitProvider<ExhaustVentMa
             if (blockAccessor.showDetails()) {
                 var block = BuiltInRegistries.BLOCK.getValue(Identifier.parse(compoundTag.getStringOr("ventBlock", "")))
                         .asItem().getDefaultInstance();
-                iTooltip.append(iTooltip.getElementHelper().smallItem(block));
+                iTooltip.append(JadeUI.smallItem(block));
             }
 
             if (compoundTag.getBooleanOr("needsVenting", false)) {

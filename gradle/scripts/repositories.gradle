@@ -60,7 +60,10 @@ repositories {
         filter { includeGroup("dev.ftb.mods") }
     }
     exclusiveContent { // JourneyMap API
-        forRepository { maven { url = "https://jm.gserv.me/repository/maven-public/" } }
+        forRepositories(
+                maven { url = "https://jm.gserv.me/repository/maven-public/" },
+                maven { url = "https://maven.blamejared.com/" },
+        )
         filter { includeGroup("info.journeymap") }
     }
     exclusiveContent { // Modrinth Maven

@@ -5,7 +5,6 @@ import com.gregtechceu.gtceu.api.capability.GTCapabilityHelper;
 import com.gregtechceu.gtceu.api.capability.IEnergyInfoProvider;
 import com.gregtechceu.gtceu.utils.FormattingUtil;
 
-import net.minecraft.util.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -19,6 +18,8 @@ import snownee.jade.api.BlockAccessor;
 import snownee.jade.api.ITooltip;
 import snownee.jade.api.config.IPluginConfig;
 import snownee.jade.api.ui.BoxStyle;
+import snownee.jade.api.ui.JadeUI;
+import snownee.jade.api.view.ProgressView;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -54,15 +55,9 @@ public class ElectricContainerBlockProvider extends CapabilityBlockProvider<IEne
         var maxEnergyStr = FormattingUtil.formatNumberOrSic(maxEnergy, threshold);
         var progress = getProgress(energy, maxEnergy);
 
-        var helper = tooltip.getElementHelper();
-
-        tooltip.add(
-                helper.progress(
-                        progress,
-                        Component.translatable("gtceu.jade.energy_stored", energyStr, maxEnergyStr),
-                        helper.progressStyle().color(0xFFEEE600, 0xFFEEE600).textColor(-1),
-                        Util.make(BoxStyle.DEFAULT, style -> style.borderColor = 0xFF555555),
-                        true));
+        tooltip.add(JadeUI.progress(new ProgressView(ProgressView.Part.of(progress, 0xFFEEE600),
+                Component.translatable("gtceu.jade.energy_stored", energyStr, maxEnergyStr),
+                JadeUI.progressStyle(), BoxStyle.nestedBox())));
     }
 
     @Override

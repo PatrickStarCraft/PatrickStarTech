@@ -5,7 +5,6 @@ import com.gregtechceu.gtceu.api.item.component.*;
 import com.gregtechceu.gtceu.common.data.GTItems;
 import com.gregtechceu.gtceu.common.item.armor.GTArmorMaterials;
 
-import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -21,7 +20,6 @@ import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.equipment.ArmorType;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 
 import com.google.common.base.Preconditions;
 import lombok.Getter;
@@ -129,21 +127,7 @@ public class ArmorComponentItem extends Item implements IComponentItem {
         return entity == null ? 0 : armorLogic.damageArmor(entity, stack, entity.getLastDamageSource(), amount, this.getEquipmentSlot());
     }
 
-    @Override
-    public void initializeClient(Consumer<IClientItemExtensions> consumer) {
-        consumer.accept(new IClientItemExtensions() {
-
-            @Override
-            public @NotNull HumanoidModel<?> getHumanoidArmorModel(LivingEntity livingEntity, ItemStack itemStack,
-                                                                   EquipmentSlot equipmentSlot,
-                                                                   HumanoidModel<?> original) {
-                return armorLogic.getArmorModel(livingEntity, itemStack, equipmentSlot, original);
-            }
-        });
-    }
-
     @Nullable
-    @Override
     public String getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, String type) {
         var textureId = armorLogic.getArmorTexture(stack, entity, slot, type);
         return textureId == null ? null : textureId.toString();

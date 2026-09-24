@@ -5,6 +5,7 @@ import com.gregtechceu.gtceu.integration.map.xaeros.minimap.ore.OreVeinElementRe
 
 import net.minecraft.client.Minecraft;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -31,8 +32,8 @@ public abstract class MinimapFBORendererMixin extends MinimapRenderer {
     private OreVeinElementRenderer gtceu$oreVeinElementRenderer;
 
     public MinimapFBORendererMixin(HudMod modMain, Minecraft mc, WaypointMapRenderer waypointMapRenderer,
-                                   Minimap minimap, CompassRenderer compassRenderer) {
-        super(modMain, mc, waypointMapRenderer, minimap, compassRenderer);
+                                   Minimap minimap, CompassRenderer compassRenderer, PoseStack poseStack) {
+        super(modMain, mc, waypointMapRenderer, minimap, compassRenderer, poseStack);
     }
 
     @Inject(method = "loadFrameBuffer",

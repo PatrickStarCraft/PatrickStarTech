@@ -26,8 +26,8 @@ import org.joml.Vector3f;
 import java.util.*;
 import java.util.function.BiFunction;
 
-import static com.gregtechceu.gtceu.data.model.builder.MachineModelBuilder.configuredModelListToJSON;
-import static com.gregtechceu.gtceu.data.model.builder.MachineModelBuilder.configuredModelToJSON;
+import static com.gregtechceu.gtceu.data.model.builder.MachineModelBuilder.configuredModelListToBlockStateModelJSON;
+import static com.gregtechceu.gtceu.data.model.builder.MachineModelBuilder.configuredModelToBlockStateModelJSON;
 
 @Accessors(fluent = true, chain = true)
 @SuppressWarnings("UnusedReturnValue")
@@ -299,7 +299,7 @@ public class PipeModelBuilder<T extends ModelBuilder<T>> extends CustomLoaderBui
                     .forEach(entry -> {
                         String key = entry.getKey() != null ? entry.getKey().getName() :
                                 PRIMARY_CENTER_KEY;
-                        parts.add(key, configuredModelListToJSON(entry.getValue()));
+                        parts.add(key, configuredModelListToBlockStateModelJSON(entry.getValue()));
                     });
 
             json.add("parts", parts);
@@ -310,7 +310,7 @@ public class PipeModelBuilder<T extends ModelBuilder<T>> extends CustomLoaderBui
             for (int i = 0; i < GTUtil.DIRECTIONS.length; i++) {
                 Direction dir = GTUtil.DIRECTIONS[i];
                 restrictors.add(dir.getName(),
-                        configuredModelToJSON(ConfiguredModel.builder()
+                        configuredModelToBlockStateModelJSON(ConfiguredModel.builder()
                                 .modelFile(new ModelFile.UncheckedModelFile(this.restrictors[i].getLocation()))
                                 .buildLast(), false));
             }

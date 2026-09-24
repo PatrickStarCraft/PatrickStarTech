@@ -18,21 +18,21 @@ clothmath = "+"
 clothconfig = "11.1.136"
 curios = "16.0.0+26.2"
 kotlinforforge = "4.11.0"
-journeyMapApi = "1.20-1.9-SNAPSHOT"
+journeyMapApi = "26.2-2.0.0"
 ftblibrary = "2001.2.4"
 ftbteams = "2001.3.0"
 ftbquests = "2001.4.11"
 ftbchunks = "2001.3.4"
-ccTweaked = "1.114.3"
+ccTweaked = "1.120.2"
 create = "6.0.6-150"
 ponder = "1.0.80"
 flywheel = "1.0.4"
-xaerosLib = "1.1.0"
-xaerosWorldMap = "1.40.11"
-xaerosMinimap = "25.3.10"
+xaerosLib = "1.7.7"
+xaerosWorldMap = "8885193"
+xaerosMinimap = "8885205"
 
 ## modrinth maven ##
-jade = "11.6.3"
+jade = "26.2.10+neoforge"
 embeddium = "0.3.31-beta.53+mc1.20.1"
 oculus = "1.20.1-1.8.0"
 modernfix = "DdUByV9S" # 5.24.1+mc1.20.1
@@ -41,7 +41,7 @@ modernfix = "DdUByV9S" # 5.24.1+mc1.20.1
 worldStripper = "4578579"
 javd = "4803995"
 trenzalore = "4848244"
-journeyMap = "5789363"
+journeyMap = "8923651"
 resourcefullib = "5659871"
 argonauts = "5263580"
 heracles = "5406935"
@@ -79,7 +79,7 @@ clothmath           = { module = "me.shedaniel.cloth:basic-math", version.ref = 
 clothconfig         = { module = "me.shedaniel.cloth:cloth-config-forge", version.ref = "clothconfig" }
 curios              = { module = "top.theillusivec4.curios:curios-neoforge", version.ref = "curios" }
 kotlinforforge      = { module = "thedarkcolour:kotlinforforge", version.ref = "kotlinforforge" }
-journeymap-api      = { module = "info.journeymap:journeymap-api", version.ref = "journeyMapApi" }
+journeymap-api      = { module = "info.journeymap:journeymap-api-neoforge", version.ref = "journeyMapApi" }
 ftblibrary          = { module = "dev.ftb.mods:ftb-library-forge", version.ref = "ftblibrary" }
 ftbteams            = { module = "dev.ftb.mods:ftb-teams-forge", version.ref = "ftbteams" }
 ftbquests           = { module = "dev.ftb.mods:ftb-quests-forge", version.ref = "ftbquests" }
@@ -88,14 +88,14 @@ jade                = { module = "maven.modrinth:jade", version.ref = "jade" }
 embeddium           = { module = "org.embeddedt:embeddium-1.20.1", version.ref = "embeddium" }
 oculus              = { module = "maven.modrinth:oculus", version.ref = "oculus" }
 modernfix           = { module = "maven.modrinth:modernfix", version.ref = "modernfix" }
-xaeroslib           = { module = "xaero.lib:xaerolib-forge-1.20.1", version.ref = "xaerosLib" }
-xaerosworldmap      = { module = "xaero.map:xaeroworldmap-forge-1.20.1", version.ref = "xaerosWorldMap" }
-xaerosminimap       = { module = "xaero.minimap:xaerominimap-forge-1.20.1", version.ref = "xaerosMinimap" }
+xaeroslib           = { module = "xaero.lib:xaerolib-neoforge-26.2", version.ref = "xaerosLib" }
+xaerosworldmap      = { module = "curse.maven:xaeros-world-map-317780", version.ref = "xaerosWorldMap" }
+xaerosminimap       = { module = "curse.maven:xaeros-minimap-263420", version.ref = "xaerosMinimap" }
 
 
-cc-tweaked-core-api   = { module = "cc.tweaked:cc-tweaked-1.20.1-core-api", version.ref = "ccTweaked" }
-cc-tweaked-forge-api  = { module = "cc.tweaked:cc-tweaked-1.20.1-forge-api", version.ref = "ccTweaked" }
-cc-tweaked-forge-impl = { module = "cc.tweaked:cc-tweaked-1.20.1-forge", version.ref = "ccTweaked" }
+cc-tweaked-core-api   = { module = "cc.tweaked:cc-tweaked-26.2-core-api", version.ref = "ccTweaked" }
+cc-tweaked-forge-api  = { module = "cc.tweaked:cc-tweaked-26.2-forge-api", version.ref = "ccTweaked" }
+cc-tweaked-forge-impl = { module = "cc.tweaked:cc-tweaked-26.2-forge", version.ref = "ccTweaked" }
 
 worldstripper       = { module = "curse.maven:worldStripper-250603", version.ref = "worldStripper" }
 javd                = { module = "curse.maven:javd-370890", version.ref = "javd" }

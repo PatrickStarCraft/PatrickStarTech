@@ -1,14 +1,15 @@
 package com.gregtechceu.gtceu.integration.map.journeymap;
 
+import com.gregtechceu.gtceu.GTCEu;
 import com.gregtechceu.gtceu.config.ConfigHolder;
 import com.gregtechceu.gtceu.integration.map.ButtonState;
 
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.common.NeoForge;
 
-import journeymap.client.api.display.IThemeButton;
-import journeymap.client.api.event.forge.FullscreenDisplayEvent;
+import journeymap.api.v2.client.event.FullscreenDisplayEvent;
+import journeymap.api.v2.client.fullscreen.IThemeButton;
+import journeymap.api.v2.common.event.FullscreenEventRegistry;
 import journeymap.client.io.ThemeLoader;
 
 import java.util.ArrayList;
@@ -17,9 +18,10 @@ import java.util.Arrays;
 public class JourneymapEventListener {
 
     public static void init() {
-        var bus = NeoForge.EVENT_BUS;
-        bus.addListener(JourneymapEventListener::onFullscreenAddonButton);
-        bus.addListener(JourneymapEventListener::onFullscreenToolbarEvent);
+        FullscreenEventRegistry.ADDON_BUTTON_DISPLAY_EVENT.subscribe(GTCEu.MOD_ID,
+                JourneymapEventListener::onFullscreenAddonButton);
+        FullscreenEventRegistry.CUSTOM_TOOLBAR_UPDATE_EVENT.subscribe(GTCEu.MOD_ID,
+                JourneymapEventListener::onFullscreenToolbarEvent);
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -34,8 +36,8 @@ public class JourneymapEventListener {
         var display = event.getThemeButtonDisplay();
         var buttons = new ArrayList<IThemeButton>(ButtonState.getAllButtons().size());
         for (var state : ButtonState.getAllButtons()) {
-            buttons.add(display.addThemeToggleButton("gtceu.button." + state.name, state.name, state.enabled,
-                    b -> {
+            buttons.add(display.addThemeToggleButton("gtceu.button." + state.name, state.name,
+                    GTCEu.id("textures/gui/widget/button_" + state.name + ".png"), state.enabled, b -> {
                         ButtonState.toggleButton(state);
                         buttons.stream().filter(btn -> btn.getToggled() || btn == b).forEach(IThemeButton::toggle);
                     }));
@@ -57,7 +59,7 @@ public class JourneymapEventListener {
         for (int i = 0; i < allButtons.size(); i++) {
             var state = allButtons.get(i);
             buttons[i] = builder.getThemeToggleButton("gtceu.button." + state.name, state.name,
-                    b -> {
+                    GTCEu.id("textures/gui/widget/button_" + state.name + ".png"), b -> {
                         ButtonState.toggleButton(state);
                         Arrays.stream(buttons).filter(btn -> btn.getToggled() || btn == b)
                                 .forEach(IThemeButton::toggle);

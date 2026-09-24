@@ -103,9 +103,9 @@ public class EnvironmentalHazardClientHandler {
         for (var entry : newZones.entrySet()) {
             if (entry.getValue().strength() > COLORING_LOW) {
                 ChunkPos pos = entry.getKey();
-                for (int y = Minecraft.getInstance().level.getMinSection(); y <
-                        Minecraft.getInstance().level.getMaxSection(); ++y) {
-                    Minecraft.getInstance().levelRenderer.setSectionDirtyWithNeighbors(pos.x(), y, pos.z());
+                for (int y = Minecraft.getInstance().level.getMinSectionY(); y <=
+                        Minecraft.getInstance().level.getMaxSectionY(); ++y) {
+                    Minecraft.getInstance().level.setSectionDirtyWithNeighbors(pos.x(), y, pos.z());
                 }
 
                 ((ClientLevelAccessor) Minecraft.getInstance().level).getTintCaches()
@@ -147,9 +147,9 @@ public class EnvironmentalHazardClientHandler {
     }
 
     private void updateChunks(ChunkPos pos) {
-        for (int y = Minecraft.getInstance().level.getMinSection(); y <
-                Minecraft.getInstance().level.getMaxSection(); ++y) {
-            Minecraft.getInstance().levelRenderer.setSectionDirtyWithNeighbors(pos.x(), y, pos.z());
+        for (int y = Minecraft.getInstance().level.getMinSectionY(); y <=
+                Minecraft.getInstance().level.getMaxSectionY(); ++y) {
+            Minecraft.getInstance().level.setSectionDirtyWithNeighbors(pos.x(), y, pos.z());
         }
 
         ((ClientLevelAccessor) Minecraft.getInstance().level).getTintCaches()

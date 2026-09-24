@@ -17,7 +17,6 @@ import com.gregtechceu.gtceu.common.pipelike.laser.LaserPipeType;
 import com.gregtechceu.gtceu.common.pipelike.laser.LevelLaserPipeNet;
 
 import org.jspecify.annotations.NullMarked;
-import net.minecraft.client.color.block.BlockColor;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
@@ -26,8 +25,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -44,26 +41,6 @@ public class LaserPipeBlock extends PipeBlock<LaserPipeType, LaserPipeProperties
         this.properties = LaserPipeProperties.INSTANCE;
 
         registerDefaultState(defaultBlockState().setValue(GTBlockStateProperties.ACTIVE, false));
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    public static BlockColor tintedColor() {
-        return (state, level, pos, index) -> {
-            if (pos != null && level != null &&
-                    level.getBlockEntity(pos) instanceof PipeBlockEntity<?, ?> pipe) {
-                if (pipe.getFrameMaterial() != null) {
-                    if (index == 3) {
-                        return pipe.getFrameMaterial().getMaterialRGB();
-                    } else if (index == 4) {
-                        return pipe.getFrameMaterial().getMaterialSecondaryRGB();
-                    }
-                }
-                if (pipe.isPainted()) {
-                    return pipe.getRealColor();
-                }
-            }
-            return -1;
-        };
     }
 
     @Override

@@ -2,13 +2,10 @@ package com.gregtechceu.gtceu.common.block;
 
 import com.gregtechceu.gtceu.GTCEu;
 import com.gregtechceu.gtceu.api.data.chemical.material.Material;
-import com.gregtechceu.gtceu.api.item.SurfaceRockBlockItem;
 import com.gregtechceu.gtceu.client.model.runtimegen.SurfaceRockModelGenerator;
 import com.gregtechceu.gtceu.integration.map.cache.server.ServerCache;
 
 import org.jspecify.annotations.NullMarked;
-import net.minecraft.client.color.block.BlockColor;
-import net.minecraft.client.color.item.ItemColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -33,8 +30,6 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 import lombok.Getter;
 import org.jetbrains.annotations.Nullable;
@@ -144,26 +139,6 @@ public class SurfaceRockBlock extends Block {
 
     public BlockState getStateForDirection(Direction direction) {
         return defaultBlockState().setValue(FACING, direction);
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    public static BlockColor tintedBlockColor() {
-        return (state, reader, pos, tintIndex) -> {
-            if (state.getBlock() instanceof SurfaceRockBlock block) {
-                return block.material.getMaterialRGB();
-            }
-            return -1;
-        };
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    public static ItemColor tintedItemColor() {
-        return (stack, tintIndex) -> {
-            if (stack.getItem() instanceof SurfaceRockBlockItem surfaceRock) {
-                return surfaceRock.getMat().getMaterialRGB();
-            }
-            return -1;
-        };
     }
 
     @Override

@@ -1,18 +1,14 @@
 package com.gregtechceu.gtceu.api.block;
 
-import com.gregtechceu.gtceu.api.blockentity.IPaintable;
 import com.gregtechceu.gtceu.api.data.chemical.material.Material;
 import com.gregtechceu.gtceu.api.pipenet.*;
 
 import org.jspecify.annotations.NullMarked;
-import net.minecraft.client.color.block.BlockColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -30,21 +26,6 @@ public abstract class MaterialPipeBlock<
     public MaterialPipeBlock(Properties properties, PipeType pipeType, Material material) {
         super(properties, pipeType);
         this.material = material;
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    public static BlockColor tintedColor() {
-        return (state, level, pos, index) -> {
-            if (level != null && pos != null && (index == 0 || index == 1)) {
-                if (level.getBlockEntity(pos) instanceof IPaintable paintable && paintable.isPainted()) {
-                    return paintable.getPaintingColor();
-                }
-            }
-            if (state.getBlock() instanceof MaterialPipeBlock<?, ?, ?> block) {
-                return block.tinted(state, level, pos, index);
-            }
-            return -1;
-        };
     }
 
     public int tinted(BlockState blockState, @Nullable BlockAndTintGetter level, @Nullable BlockPos pos, int index) {

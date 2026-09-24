@@ -36,6 +36,11 @@ public abstract class MachineInfoProvider<T extends MetaMachine, TagType extends
     }
 
     @Override
+    public Identifier getUid() {
+        return uid;
+    }
+
+    @Override
     @SuppressWarnings("unchecked")
     public void appendTooltip(ITooltip iTooltip, BlockAccessor block, IPluginConfig iPluginConfig) {
         var be = block.getBlockEntity();

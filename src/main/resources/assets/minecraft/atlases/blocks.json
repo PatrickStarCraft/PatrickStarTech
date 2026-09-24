@@ -1,9 +1,9 @@
 {
-  "sources": [
-    {
-      "type": "minecraft:directory",
-      "source": "block/cover",
-      "prefix": "block/cover/"
-    }
-  ]
+    "sources": [
+        {
+            "type": "minecraft:directory",
+            "source": "block/cover",
+            "prefix": "block/cover/"
+        }
+    ]
 }

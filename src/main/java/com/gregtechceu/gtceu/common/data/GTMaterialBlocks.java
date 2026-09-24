@@ -11,13 +11,13 @@ import com.gregtechceu.gtceu.api.item.MaterialPipeBlockItem;
 import com.gregtechceu.gtceu.api.item.SurfaceRockBlockItem;
 import com.gregtechceu.gtceu.api.registry.GTRegistries;
 import com.gregtechceu.gtceu.api.registry.registrate.GTRegistrate;
+import com.gregtechceu.gtceu.client.color.GTBlockTintSources;
 import com.gregtechceu.gtceu.common.block.*;
 import com.gregtechceu.gtceu.common.pipelike.cable.Insulation;
 import com.gregtechceu.gtceu.common.pipelike.fluidpipe.FluidPipeType;
 import com.gregtechceu.gtceu.common.pipelike.item.ItemPipeType;
 import com.gregtechceu.gtceu.utils.FormattingUtil;
 
-import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 
@@ -76,11 +76,10 @@ public class GTMaterialBlocks {
                 .initialProperties(() -> Blocks.IRON_BLOCK)
                 .properties(p -> tagPrefix.blockProperties().properties().apply(p).noLootTable())
                 .transform(GTBlocks.unificationBlock(tagPrefix, material))
-                .addLayer(tagPrefix.blockProperties().renderType())
                 .setData(ProviderType.BLOCKSTATE, NonNullBiConsumer.noop())
                 .setData(ProviderType.LANG, NonNullBiConsumer.noop())
                 .setData(ProviderType.LOOT, NonNullBiConsumer.noop())
-                .color(() -> MaterialBlock::tintedColor)
+                .color(GTBlockTintSources::materialLayers)
                 .item((b, p) -> tagPrefix.blockItemConstructor().create(b, p, tagPrefix, material))
                 .model(() -> NonNullBiConsumer.noop())
                 .build()
@@ -125,7 +124,7 @@ public class GTMaterialBlocks {
                     .blockstate(() -> NonNullBiConsumer.noop())
                     .setData(ProviderType.LANG, NonNullBiConsumer.noop())
                     .setData(ProviderType.LOOT, NonNullBiConsumer.noop())
-                    .color(() -> MaterialBlock::tintedColor)
+                    .color(GTBlockTintSources::materialLayers)
                     .item((b, p) -> oreTag.blockItemConstructor().create(b, p, oreTag, material))
                     .model(() -> NonNullBiConsumer.noop())
                     .build()
@@ -159,10 +158,8 @@ public class GTMaterialBlocks {
                 .setData(ProviderType.LANG, NonNullBiConsumer.noop())
                 .setData(ProviderType.LOOT, NonNullBiConsumer.noop())
                 .setData(ProviderType.BLOCKSTATE, NonNullBiConsumer.noop())
-                .addLayer(() -> RenderType::cutoutMipped)
-                .color(() -> SurfaceRockBlock::tintedBlockColor)
+                .color(GTBlockTintSources::surfaceRock)
                 .item((b, p) -> SurfaceRockBlockItem.create(b, p, material))
-                .color(() -> SurfaceRockBlock::tintedItemColor)
                 .setData(ProviderType.ITEM_MODEL, NonNullBiConsumer.noop())
                 .build()
                 .register();
@@ -199,9 +196,7 @@ public class GTMaterialBlocks {
                 .blockstate(() -> NonNullBiConsumer.noop())
                 .setData(ProviderType.LANG, NonNullBiConsumer.noop())
                 .setData(ProviderType.LOOT, NonNullBiConsumer.noop())
-                .addLayer(() -> RenderType::cutoutMipped)
-                .addLayer(() -> RenderType::translucent)
-                .color(() -> MaterialPipeBlock::tintedColor)
+                .color(GTBlockTintSources::materialPipeLayers)
                 .item(MaterialPipeBlockItem::new)
                 .model(() -> NonNullBiConsumer.noop())
                 .build()
@@ -244,9 +239,7 @@ public class GTMaterialBlocks {
                 .blockstate(() -> NonNullBiConsumer.noop())
                 .setData(ProviderType.LANG, NonNullBiConsumer.noop())
                 .setData(ProviderType.LOOT, NonNullBiConsumer.noop())
-                .addLayer(() -> RenderType::cutoutMipped)
-                .addLayer(() -> RenderType::translucent)
-                .color(() -> MaterialPipeBlock::tintedColor)
+                .color(GTBlockTintSources::materialPipeLayers)
                 .item(MaterialPipeBlockItem::new)
                 .model(() -> NonNullBiConsumer.noop())
                 .build()
@@ -288,9 +281,7 @@ public class GTMaterialBlocks {
                 .blockstate(() -> NonNullBiConsumer.noop())
                 .setData(ProviderType.LANG, NonNullBiConsumer.noop())
                 .setData(ProviderType.LOOT, NonNullBiConsumer.noop())
-                .addLayer(() -> RenderType::cutoutMipped)
-                .addLayer(() -> RenderType::translucent)
-                .color(() -> MaterialPipeBlock::tintedColor)
+                .color(GTBlockTintSources::materialPipeLayers)
                 .item(MaterialPipeBlockItem::new)
                 .model(() -> NonNullBiConsumer.noop())
                 .build()

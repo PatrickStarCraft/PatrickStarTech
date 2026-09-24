@@ -4,10 +4,8 @@ import com.gregtechceu.gtceu.api.block.MetaMachineBlock;
 import com.gregtechceu.gtceu.api.block.PipeBlock;
 import com.gregtechceu.gtceu.api.machine.MachineDefinition;
 import com.gregtechceu.gtceu.api.pipenet.IPipeNode;
-import com.gregtechceu.gtceu.client.renderer.ItemWithBERModelRenderer;
 
 import org.jspecify.annotations.NullMarked;
-import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.locale.Language;
@@ -21,10 +19,10 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -33,12 +31,22 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @NullMarked
 public class MetaMachineItem extends BlockItem {
 
+    private BiFunction<ItemStack, Integer, Integer> tintColor = (stack, index) -> -1;
+
     public MetaMachineItem(MetaMachineBlock block, Properties properties) {
         super(block, properties);
     }
 
     public MachineDefinition getDefinition() {
         return ((MetaMachineBlock) getBlock()).getDefinition();
+    }
+
+    public void setTintColor(BiFunction<ItemStack, Integer, Integer> tintColor) {
+        this.tintColor = tintColor;
+    }
+
+    public int getTintColor(ItemStack stack, int index) {
+        return this.tintColor.apply(stack, index);
     }
 
     @Override
@@ -78,14 +86,4 @@ public class MetaMachineItem extends BlockItem {
         return superVal;
     }
 
-    @Override
-    public void initializeClient(Consumer<IClientItemExtensions> consumer) {
-        consumer.accept(new IClientItemExtensions() {
-
-            @Override
-            public BlockEntityWithoutLevelRenderer getCustomRenderer() {
-                return ItemWithBERModelRenderer.INSTANCE;
-            }
-        });
-    }
 }

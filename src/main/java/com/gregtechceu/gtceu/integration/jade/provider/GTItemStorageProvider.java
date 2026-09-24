@@ -8,8 +8,6 @@ import com.gregtechceu.gtceu.integration.ae2.machine.MEPatternBufferProxyPartMac
 import com.gregtechceu.gtceu.utils.GTMath;
 
 import net.minecraft.resources.Identifier;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 
 import org.jetbrains.annotations.Nullable;
@@ -30,7 +28,7 @@ import java.util.List;
  * Currently: Quantum Chests, Pattern Buffer Proxies
  * Defaults to Jade's normal ItemStack provider
  */
-public enum GTItemStorageProvider implements IServerExtensionProvider<MetaMachine, ItemStack>,
+public enum GTItemStorageProvider implements IServerExtensionProvider<ItemStack>,
         IClientExtensionProvider<ItemStack, ItemView> {
 
     INSTANCE;
@@ -42,12 +40,12 @@ public enum GTItemStorageProvider implements IServerExtensionProvider<MetaMachin
 
     @Override
     public List<ClientViewGroup<ItemView>> getClientGroups(Accessor<?> accessor, List<ViewGroup<ItemStack>> list) {
-        return ItemStorageProvider.INSTANCE.getClientGroups(accessor, list);
+        return ItemStorageProvider.Extension.INSTANCE.getClientGroups(accessor, list);
     }
 
     @Override
-    public @Nullable List<ViewGroup<ItemStack>> getGroups(ServerPlayer serverPlayer, ServerLevel serverLevel,
-                                                          MetaMachine machine, boolean b) {
+    public @Nullable List<ViewGroup<ItemStack>> getGroups(Accessor<?> accessor) {
+        if (!(accessor.getTarget() instanceof MetaMachine machine)) return null;
         if (machine instanceof QuantumChestMachine qcm) {
             ItemStack stored = qcm.getStored();
             long amount = qcm.getStoredAmount();
@@ -62,9 +60,8 @@ public enum GTItemStorageProvider implements IServerExtensionProvider<MetaMachin
         } else if (machine instanceof MEPatternBufferProxyPartMachine proxy) {
             var buffer = proxy.getBuffer();
             if (buffer == null) return Collections.emptyList();
-            return ItemStorageProvider.INSTANCE.getGroups(serverPlayer, serverLevel, machine, b);
         }
 
-        return ItemStorageProvider.INSTANCE.getGroups(serverPlayer, serverLevel, machine, b);
+        return ItemStorageProvider.Extension.INSTANCE.getGroups(accessor);
     }
 }

@@ -9,16 +9,17 @@ import net.minecraft.util.Mth;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import com.google.common.collect.Tables;
-import com.mojang.blaze3d.opengl.GlUtil;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import org.jetbrains.annotations.Contract;
 import org.joml.*;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.system.MemoryUtil;
 
 import java.lang.Math;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.security.InvalidParameterException;
 import java.util.EnumMap;
 import java.util.Map;
@@ -37,7 +38,6 @@ public class GTMatrixUtils {
     private static final Table<Direction, Direction, Matrix4fc> rotations = Tables
             .synchronizedTable(HashBasedTable.create());
 
-    private static final ByteBuffer PIXEL_DEPTH_BUFFER = GlUtil.allocateMemory(4);
     private static final int[] VIEWPORT_COORDS = { 0, 0, 0, 0 };
 
     /**
@@ -245,14 +245,14 @@ public class GTMatrixUtils {
      * @apiNote the Z component of the return value is the distance from the screen.
      */
     public static Vector3f projectWorldToScreen(Vector3fc worldPos, int viewWidth, int viewHeight) {
-        // read projection and model view matrices
-        Matrix4f transform = new Matrix4f(RenderSystem.getProjectionMatrix()).mul(RenderSystem.getModelViewMatrix());
-        Vector3f screenPos = new Vector3f(worldPos).mulPosition(transform);
-        screenPos.x = viewWidth * (screenPos.x + 1.0f) / 2.0f;
-        screenPos.y = viewHeight * (screenPos.y + 1.0f) / 2.0f;
-        screenPos.z = (screenPos.z + 1.0f) / 2.0f;
-
-        return screenPos;
+        var normalized = Minecraft.getInstance().gameRenderer.projectPointToScreen(
+                new net.minecraft.world.phys.Vec3(worldPos.x(), worldPos.y(), worldPos.z()));
+        float screenDepth = RenderSystem.getDevice().getDeviceInfo().isZZeroToOne() ?
+                (float) normalized.z : (float) ((normalized.z + 1.0) / 2.0);
+        return new Vector3f(
+                (float) (viewWidth * (normalized.x + 1.0) / 2.0),
+                (float) (viewHeight * (normalized.y + 1.0) / 2.0),
+                screenDepth);
     }
 
     /**
@@ -297,19 +297,30 @@ public class GTMatrixUtils {
      * @return world pos
      */
     public static Vector3f projectScreenToWorld(int x, int y, int[] viewport, boolean checkDepth) {
-        // read projection and model view matrices
-        Matrix4f transform = new Matrix4f(RenderSystem.getProjectionMatrix()).mul(RenderSystem.getModelViewMatrix());
-
+        var camera = Minecraft.getInstance().gameRenderer.mainCamera();
+        Matrix4f inverseTransform = camera.getViewRotationProjectionMatrix(new Matrix4f()).invert();
         float depth = 1.0f;
         if (checkDepth) {
-            // read depth under mouse
-            RenderSystem.readPixels(x, y, 1, 1, GL11.GL_DEPTH_COMPONENT, GL11.GL_FLOAT, PIXEL_DEPTH_BUFFER);
-            PIXEL_DEPTH_BUFFER.rewind();
-            depth = PIXEL_DEPTH_BUFFER.getFloat();
-            PIXEL_DEPTH_BUFFER.rewind();
+            RenderSystem.assertOnRenderThread();
+            ByteBuffer pixelDepth = MemoryUtil.memAlloc(Float.BYTES).order(ByteOrder.nativeOrder());
+            try {
+                GL11.glReadPixels(x, y, 1, 1, GL11.GL_DEPTH_COMPONENT, GL11.GL_FLOAT, pixelDepth);
+                depth = pixelDepth.getFloat(0);
+            } finally {
+                MemoryUtil.memFree(pixelDepth);
+            }
         }
 
-        return transform.unproject(x, y, depth, viewport, new Vector3f());
+        float normalizedX = 2.0f * (x - viewport[0]) / viewport[2] - 1.0f;
+        float normalizedY = 2.0f * (y - viewport[1]) / viewport[3] - 1.0f;
+        float normalizedDepth = RenderSystem.getDevice().getDeviceInfo().isZZeroToOne() ? depth : depth * 2.0f - 1.0f;
+        Vector4f cameraRelative = new Vector4f(normalizedX, normalizedY, normalizedDepth, 1.0f)
+                .mul(inverseTransform);
+        cameraRelative.div(cameraRelative.w);
+        var cameraPos = camera.position();
+        return new Vector3f(cameraRelative.x + (float) cameraPos.x,
+                cameraRelative.y + (float) cameraPos.y,
+                cameraRelative.z + (float) cameraPos.z);
     }
 
     public static Direction adjustUpwardsToLocal(Direction frontFacing, Direction upwardFacing) {
