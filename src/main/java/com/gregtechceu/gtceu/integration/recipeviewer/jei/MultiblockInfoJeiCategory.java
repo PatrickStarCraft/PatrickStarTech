@@ -12,7 +12,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 
-import brachy.modularui.integration.jei.recipe.ModularUIJeiCategory;
+import brachy.modularui.integration.jei.recipe.ModularUIRecipeCategory;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
@@ -20,7 +20,7 @@ import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.helpers.IJeiHelpers;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
-import mezz.jei.api.recipe.RecipeType;
+import mezz.jei.api.recipe.types.IRecipeType;
 import mezz.jei.api.registration.IRecipeRegistration;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,9 +30,9 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @NullMarked
 @ParametersAreNonnullByDefault
-public class MultiblockInfoJeiCategory extends ModularUIJeiCategory<MultiblockMachineDefinition> {
+public class MultiblockInfoJeiCategory extends ModularUIRecipeCategory<MultiblockMachineDefinition> {
 
-    public final static RecipeType<MultiblockMachineDefinition> RECIPE_TYPE = new RecipeType<>(
+    public final static IRecipeType<MultiblockMachineDefinition> RECIPE_TYPE = IRecipeType.create(
             GTCEu.id("multiblock_info"),
             MultiblockMachineDefinition.class);
 
@@ -58,30 +58,31 @@ public class MultiblockInfoJeiCategory extends ModularUIJeiCategory<MultiblockMa
     }
 
     @Override
-    public RecipeType<MultiblockMachineDefinition> getRecipeType() {
+    public IRecipeType<MultiblockMachineDefinition> getRecipeType() {
         return RECIPE_TYPE;
     }
 
     @Override
-    public int getMaxWidth() {
+    public int getWidth() {
         return 200;
     }
 
     @Override
-    public int getMaxHeight() {
+    public int getHeight() {
         return 180;
     }
 
     @Override
-    public void setupRecipeIngredients(IRecipeLayoutBuilder builder, MultiblockMachineDefinition definition,
-                                       IFocusGroup focuses) {
+    public void setRecipe(IRecipeLayoutBuilder builder, MultiblockMachineDefinition definition,
+                          IFocusGroup focuses) {
+        super.setRecipe(builder, definition, focuses);
         List<ItemStack> containedBlocks = MultiblockPreviewWidget.initializeContainedBlocks(definition);
 
-        builder.addSlot(RecipeIngredientRole.OUTPUT).addIngredient(VanillaTypes.ITEM_STACK,
+        builder.addInvisibleIngredients(RecipeIngredientRole.OUTPUT).addIngredient(VanillaTypes.ITEM_STACK,
                 new ItemStack(definition.getBlock()));
 
         for (var stack : containedBlocks) {
-            builder.addSlot(RecipeIngredientRole.INPUT).addIngredient(VanillaTypes.ITEM_STACK, stack);
+            builder.addInvisibleIngredients(RecipeIngredientRole.INPUT).addIngredient(VanillaTypes.ITEM_STACK, stack);
         }
     }
 

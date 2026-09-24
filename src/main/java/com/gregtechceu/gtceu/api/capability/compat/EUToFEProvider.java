@@ -3,18 +3,20 @@ package com.gregtechceu.gtceu.api.capability.compat;
 import com.gregtechceu.gtceu.api.GTValues;
 import com.gregtechceu.gtceu.api.capability.GTCapability;
 import com.gregtechceu.gtceu.api.capability.IEnergyContainer;
+import com.gregtechceu.gtceu.common.capability.GTAttachments;
 import com.gregtechceu.gtceu.config.ConfigHolder;
 import com.gregtechceu.gtceu.utils.GTMath;
 import com.gregtechceu.gtceu.utils.GTUtil;
 
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.neoforged.neoforge.common.util.LazyOptional;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class EUToFEProvider extends CapabilityCompatProvider {
 
@@ -29,17 +31,25 @@ public class EUToFEProvider extends CapabilityCompatProvider {
         super(blockEntity);
     }
 
-    @Override
-    public <T> LazyOptional<T> getCapability(@NotNull Capability<T> capability, Direction facing) {
-        if (!ConfigHolder.INSTANCE.compat.energy.nativeEUToFE ||
-                capability != GTCapability.CAPABILITY_ENERGY_CONTAINER)
-            return LazyOptional.empty();
+    public static void registerCapabilities(RegisterCapabilitiesEvent event) {
+        event.registerBlock(GTCapability.CAPABILITY_ENERGY_CONTAINER,
+                (level, pos, state, blockEntity, facing) -> {
+                    if (blockEntity == null || blockEntity.isRemoved() ||
+                            !ConfigHolder.INSTANCE.compat.energy.nativeEUToFE) {
+                        return null;
+                    }
+                    return blockEntity.getData(GTAttachments.EU_TO_FE_PROVIDER).getCapability(facing);
+                }, BuiltInRegistries.BLOCK.stream().toArray(Block[]::new));
+    }
 
-        LazyOptional<IEnergyStorage> energyStorage = getUpvalueCapability(ForgeCapabilities.ENERGY, facing);
-        return energyStorage.isPresent() ?
-                GTCapability.CAPABILITY_ENERGY_CONTAINER.orEmpty(capability,
-                        LazyOptional.of(() -> new GTEnergyWrapper(energyStorage.resolve().get()))) :
-                LazyOptional.empty();
+    @Nullable
+    public IEnergyContainer getCapability(@Nullable Direction facing) {
+        if (!ConfigHolder.INSTANCE.compat.energy.nativeEUToFE) {
+            return null;
+        }
+
+        var energyHandler = getUpvalueCapability(Capabilities.Energy.BLOCK, facing);
+        return energyHandler == null ? null : new GTEnergyWrapper(IEnergyStorage.of(energyHandler));
     }
 
     public class GTEnergyWrapper implements IEnergyContainer {

@@ -82,9 +82,9 @@ public class KeyStorage implements NBTSerializable<ListTag>,
     @Override
     public void deserializeNBT(ListTag tags) {
         for (int i = 0; i < tags.size(); i++) {
-            var tag = tags.getCompound(i);
-            var key = AEKey.fromTagGeneric(tag.getCompound("key"));
-            long value = tag.getLong("value");
+            var tag = tags.getCompoundOrEmpty(i);
+            var key = AEKey.fromTagGeneric(tag.getCompoundOrEmpty("key"));
+            long value = tag.getLongOr("value", 0);
             storage.put(key, value);
         }
     }

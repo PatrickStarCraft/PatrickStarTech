@@ -28,23 +28,24 @@ public class CableBlockProvider implements IBlockComponentProvider, IServerDataP
         if (be != null) {
             CompoundTag data = blockAccessor.getServerData().getCompoundOrEmpty(getUid().toString());
             if ((data.get("cableData") instanceof CompoundTag)) {
-                var tag = data.getCompound("cableData");
-                long voltage = tag.getLong("currentVoltage");
-                double amperage = tag.getDouble("currentAmperage");
-                int temperature = tag.getInt("temperature");
+                CompoundTag tag = data.getCompoundOrEmpty("cableData");
+                long voltage = tag.getLongOr("currentVoltage", 0L);
+                double amperage = tag.getDoubleOr("currentAmperage", 0.0);
+                int temperature = tag.getIntOr("temperature", 0);
                 iTooltip.add(Component.translatable("gtceu.top.cable_voltage"));
                 if (voltage != 0) {
                     iTooltip.append(Component.literal(GTValues.VNF[GTUtil.getTierByVoltage(voltage)]));
                     iTooltip.append(Component.literal(" / "));
                 }
-                iTooltip.append(Component.literal(GTValues.VNF[GTUtil.getTierByVoltage(tag.getLong("maxVoltage"))]));
+                iTooltip.append(Component.literal(
+                        GTValues.VNF[GTUtil.getTierByVoltage(tag.getLongOr("maxVoltage", 0L))]));
 
                 iTooltip.add(Component.translatable("gtceu.top.cable_amperage"));
                 if (amperage != 0) {
                     iTooltip.append(Component.literal(DECIMAL_FORMAT_1F.format(amperage) + "A / "));
                 }
                 iTooltip.append(Component.translatable("gtceu.jade.amperage_use",
-                        DECIMAL_FORMAT_1F.format(tag.getDouble("maxAmperage"))));
+                        DECIMAL_FORMAT_1F.format(tag.getDoubleOr("maxAmperage", 0.0))));
 
                 if (temperature != CableBlockEntity.getDefaultTemp()) {
                     iTooltip.add(Component.translatable("gtceu.top.cable_overloaded", progressToFailure(

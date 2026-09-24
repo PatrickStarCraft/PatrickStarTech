@@ -19,6 +19,7 @@ import com.gregtechceu.gtceu.utils.GTTransferUtils;
 import com.gregtechceu.gtceu.utils.ISubscription;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.ItemStack;
@@ -157,8 +158,9 @@ public class ItemBusPartMachine extends TieredIOPartMachine
     //////////////////////////////////////
 
     @Override
-    public void onNeighborChanged(Block block, BlockPos fromPos, boolean isMoving) {
-        super.onNeighborChanged(block, fromPos, isMoving);
+    public void onNeighborChanged(Block block, @Nullable BlockPos fromPos, @Nullable Orientation orientation,
+                                  boolean isMoving) {
+        super.onNeighborChanged(block, fromPos, orientation, isMoving);
         updateInventorySubscription();
     }
 

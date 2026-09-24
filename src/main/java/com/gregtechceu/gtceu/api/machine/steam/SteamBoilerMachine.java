@@ -21,6 +21,7 @@ import com.gregtechceu.gtceu.config.ConfigHolder;
 import com.gregtechceu.gtceu.utils.*;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
@@ -118,8 +119,9 @@ public abstract class SteamBoilerMachine extends SteamWorkableMachine
     //////////////////////////////////////
 
     @Override
-    public void onNeighborChanged(Block block, BlockPos fromPos, boolean isMoving) {
-        super.onNeighborChanged(block, fromPos, isMoving);
+    public void onNeighborChanged(Block block, @Nullable BlockPos fromPos, @Nullable Orientation orientation,
+                                  boolean isMoving) {
+        super.onNeighborChanged(block, fromPos, orientation, isMoving);
         updateAutoOutputSubscription();
     }
 

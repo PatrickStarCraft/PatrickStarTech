@@ -121,18 +121,24 @@ public class ClientEventListener {
     private static double getValueWithoutWalkingBoost(AttributeInstance attrib) {
         double base = attrib.getBaseValue();
 
-        for (AttributeModifier mod : attrib.getModifiers(AttributeModifier.Operation.ADD_VALUE)) {
-            base += mod.getAmount();
+        for (AttributeModifier mod : attrib.getModifiers()) {
+            if (mod.operation() == AttributeModifier.Operation.ADD_VALUE) {
+                base += mod.amount();
+            }
         }
 
         double applied = base;
-        for (AttributeModifier mod : attrib.getModifiers(AttributeModifier.Operation.ADD_MULTIPLIED_BASE)) {
-            if (mod.id() == BlockAttributes.BLOCK_SPEED_BOOST) continue;
-            applied += base * mod.getAmount();
+        for (AttributeModifier mod : attrib.getModifiers()) {
+            if (mod.operation() == AttributeModifier.Operation.ADD_MULTIPLIED_BASE &&
+                    !mod.id().equals(BlockAttributes.BLOCK_SPEED_BOOST)) {
+                applied += base * mod.amount();
+            }
         }
 
-        for (AttributeModifier mod : attrib.getModifiers(AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL)) {
-            applied *= 1 + mod.getAmount();
+        for (AttributeModifier mod : attrib.getModifiers()) {
+            if (mod.operation() == AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL) {
+                applied *= 1 + mod.amount();
+            }
         }
 
         return attrib.getAttribute().sanitizeValue(applied);

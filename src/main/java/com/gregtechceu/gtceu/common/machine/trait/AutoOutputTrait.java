@@ -21,6 +21,7 @@ import com.gregtechceu.gtceu.utils.GTTransferUtils;
 import com.gregtechceu.gtceu.utils.ISubscription;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
@@ -161,7 +162,8 @@ public class AutoOutputTrait extends MachineTrait implements IRenderingTrait, II
     }
 
     @Override
-    public void onMachineNeighborChanged(Block block, BlockPos fromPos, boolean isMoving) {
+    public void onMachineNeighborChanged(Block block, @Nullable BlockPos fromPos, @Nullable Orientation orientation,
+                                         boolean isMoving) {
         updateItemOutputSubscription();
         updateFluidOutputSubscription();
     }

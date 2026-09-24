@@ -22,11 +22,6 @@ public class DisableShieldBehavior implements IToolBehavior {
     protected DisableShieldBehavior() {/**/}
 
     @Override
-    public boolean canDisableShield(ItemStack stack, ItemStack shield, LivingEntity entity, LivingEntity attacker) {
-        return true;
-    }
-
-    @Override
     public void addBehaviorNBT(@NotNull ItemStack stack, @NotNull CompoundTag tag) {
         tag.putBoolean(ToolHelper.DISABLE_SHIELDS_KEY, true);
     }

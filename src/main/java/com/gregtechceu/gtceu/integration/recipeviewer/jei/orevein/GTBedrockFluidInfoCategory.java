@@ -10,24 +10,24 @@ import com.gregtechceu.gtceu.integration.recipeviewer.widgets.OreVeinRecipeWidge
 import net.minecraft.network.chat.Component;
 import net.neoforged.neoforge.fluids.FluidStack;
 
-import brachy.modularui.integration.jei.recipe.ModularUIJeiCategory;
+import brachy.modularui.integration.jei.recipe.ModularUIRecipeCategory;
 import mezz.jei.api.constants.VanillaTypes;
-import mezz.jei.api.forge.ForgeTypes;
+import mezz.jei.api.neoforge.NeoForgeTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.helpers.IJeiHelpers;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
-import mezz.jei.api.recipe.RecipeType;
+import mezz.jei.api.recipe.types.IRecipeType;
 import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 
-public class GTBedrockFluidInfoCategory extends ModularUIJeiCategory<BedrockFluidDefinition> {
+public class GTBedrockFluidInfoCategory extends ModularUIRecipeCategory<BedrockFluidDefinition> {
 
-    public final static RecipeType<BedrockFluidDefinition> RECIPE_TYPE = new RecipeType<>(
+    public final static IRecipeType<BedrockFluidDefinition> RECIPE_TYPE = IRecipeType.create(
             GTCEu.id("bedrock_fluid_diagram"), BedrockFluidDefinition.class);
 
     private final IDrawable icon;
@@ -50,28 +50,29 @@ public class GTBedrockFluidInfoCategory extends ModularUIJeiCategory<BedrockFlui
 
     @NotNull
     @Override
-    public RecipeType<BedrockFluidDefinition> getRecipeType() {
+    public IRecipeType<BedrockFluidDefinition> getRecipeType() {
         return RECIPE_TYPE;
     }
 
     @Override
-    public int getMaxHeight() {
+    public int getHeight() {
         return 250;
     }
 
     @Override
-    public int getMaxWidth() {
+    public int getWidth() {
         return 180;
     }
 
     @Override
-    public void setupRecipeIngredients(IRecipeLayoutBuilder builder, BedrockFluidDefinition fluid,
-                                       IFocusGroup focuses) {
+    public void setRecipe(IRecipeLayoutBuilder builder, BedrockFluidDefinition fluid,
+                          IFocusGroup focuses) {
+        super.setRecipe(builder, fluid, focuses);
         Arrays.stream(OreVeinRecipeWidget.getDimensionMarkers(fluid.dimensionFilter))
-                .forEach(v -> builder.addSlot(RecipeIngredientRole.INPUT).addIngredient(VanillaTypes.ITEM_STACK,
-                        v.getIcon()));
+                .forEach(v -> builder.addInvisibleIngredients(RecipeIngredientRole.INPUT)
+                        .addIngredient(VanillaTypes.ITEM_STACK, v.getIcon()));
 
-        builder.addSlot(RecipeIngredientRole.OUTPUT).addIngredient(ForgeTypes.FLUID_STACK,
+        builder.addInvisibleIngredients(RecipeIngredientRole.OUTPUT).addIngredient(NeoForgeTypes.FLUID_STACK,
                 new FluidStack(fluid.getStoredFluid().get(), 1000));
     }
 

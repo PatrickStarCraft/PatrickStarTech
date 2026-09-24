@@ -312,7 +312,8 @@ public class MachineModelBuilder<T extends ModelBuilder<T>> extends CustomLoader
                                                      Property<?>... ignored) {
         Set<PartialState<T>> seen = new HashSet<>();
         for (MachineRenderState fullState : owner.getStateDefinition().getPossibleStates()) {
-            Map<Property<?>, Comparable<?>> propertyValues = Maps.newLinkedHashMap(fullState.getValues());
+            Map<Property<?>, Comparable<?>> propertyValues = new LinkedHashMap<>();
+            fullState.getValues().forEach(value -> propertyValues.put(value.property(), value.value()));
             for (Property<?> p : ignored) {
                 propertyValues.remove(p);
             }
@@ -333,7 +334,8 @@ public class MachineModelBuilder<T extends ModelBuilder<T>> extends CustomLoader
                                                             Property<?>... ignored) {
         Set<PartialState<T>> seen = new HashSet<>();
         for (MachineRenderState fullState : owner.getStateDefinition().getPossibleStates()) {
-            Map<Property<?>, Comparable<?>> propertyValues = Maps.newLinkedHashMap(fullState.getValues());
+            Map<Property<?>, Comparable<?>> propertyValues = new LinkedHashMap<>();
+            fullState.getValues().forEach(value -> propertyValues.put(value.property(), value.value()));
             for (Property<?> p : ignored) {
                 propertyValues.remove(p);
             }
@@ -648,13 +650,12 @@ public class MachineModelBuilder<T extends ModelBuilder<T>> extends CustomLoader
         protected boolean matchesState(MachineRenderState state, boolean useOr,
                                        Multimap<Property<?>, Comparable<?>> conditions,
                                        List<ConditionGroup> nestedConditionGroups) {
-            var stateValues = state.getValues();
             boolean matched = !useOr;
 
             if (!conditions.isEmpty()) {
-                for (var entry : stateValues.entrySet()) {
-                    Property<?> property = entry.getKey();
-                    Comparable<?> value = entry.getValue();
+                for (var stateValue : state.getValues().toList()) {
+                    Property<?> property = stateValue.property();
+                    Comparable<?> value = stateValue.value();
                     boolean contains = conditions.containsEntry(property, value);
 
                     if (useOr) {

@@ -14,6 +14,7 @@ import com.gregtechceu.gtceu.utils.FormattingUtil;
 
 import org.jspecify.annotations.NullMarked;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.Block;
@@ -122,7 +123,8 @@ public abstract class LongDistanceEndpointMachine extends MetaMachine implements
     }
 
     @Override
-    public void onNeighborChanged(Block block, BlockPos fromPos, boolean isMoving) {
+    public void onNeighborChanged(Block block, @Nullable BlockPos fromPos, @Nullable Orientation orientation,
+                                  boolean isMoving) {
         if (!placed || isRemote()) return;
 
         List<LongDistanceNetwork> networks = findNetworks();

@@ -117,8 +117,8 @@ public class CableBlock extends MaterialPipeBlock<Insulation, WireProperties, Le
     }
 
     @Override
-    protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity,
-                                InsideBlockEffectApplier effectApplier, boolean isPrecise) {
+    public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity,
+                              InsideBlockEffectApplier effectApplier, boolean isPrecise) {
         // dont apply damage if there is a frame box
         var pipeNode = getPipeTile(level, pos);
         if (pipeNode == null) {

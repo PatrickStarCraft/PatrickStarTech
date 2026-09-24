@@ -31,6 +31,7 @@ import com.gregtechceu.gtceu.integration.kjs.recipe.components.ExtendedOutputIte
 import com.gregtechceu.gtceu.integration.kjs.recipe.components.GTRecipeComponents;
 import com.gregtechceu.gtceu.utils.ResearchManager;
 
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -299,13 +300,16 @@ public interface GTRecipeSchema {
             return input(ItemRecipeCapability.CAP,
                     Arrays.stream(inputs)
                             .map(stack -> InputItem.of(
-                                    stack.hasTag() ? DataComponentIngredient.of(true, stack) : Ingredient.of(stack),
+                                    !stack.getComponentsPatch().isEmpty() ? DataComponentIngredient.of(true, stack)
+                                            : Ingredient.of(stack.getItem()),
                                     stack.getCount()))
                             .toArray());
         }
 
         public GTRecipeJS inputItems(TagKey<Item> tag, int amount) {
-            return inputItems(InputItem.of(Ingredient.of(tag), amount));
+            var items = BuiltInRegistries.ITEM.get(tag)
+                    .orElseThrow(() -> new IllegalStateException("Missing item tag " + tag.location()));
+            return inputItems(InputItem.of(Ingredient.of(items), amount));
         }
 
         public GTRecipeJS inputItems(Item input, int amount) {
@@ -1315,9 +1319,10 @@ public interface GTRecipeSchema {
                 return ing.ingredient().toJson();
             }
 
-            var fluid = ((FluidStackJS) value).getFluidStack();
-            return FluidIngredient.of(fluid.getFluid(), (int) fluid.getAmount(),
-                    com.gregtechceu.gtceu.api.transfer.fluid.FluidStackData.readNullable(fluid)).toJson();
+            var fluid = (FluidStackJS) value;
+            var modernStack = FluidStackData.fromLegacyNbt(fluid.getFluid(), (int) fluid.getAmount(), fluid.getNbt());
+            return FluidIngredient.of(modernStack.getFluid(), modernStack.getAmount(),
+                    FluidStackData.readNullable(modernStack)).toJson();
         }
 
         @Override
@@ -1333,9 +1338,10 @@ public interface GTRecipeSchema {
                 return ingredient.toJson();
             }
 
-            var fluid = ((FluidStackJS) value).getFluidStack();
-            return FluidIngredient.of(fluid.getFluid(), (int) fluid.getAmount(),
-                    com.gregtechceu.gtceu.api.transfer.fluid.FluidStackData.readNullable(fluid)).toJson();
+            var fluid = (FluidStackJS) value;
+            var modernStack = FluidStackData.fromLegacyNbt(fluid.getFluid(), (int) fluid.getAmount(), fluid.getNbt());
+            return FluidIngredient.of(modernStack.getFluid(), modernStack.getAmount(),
+                    FluidStackData.readNullable(modernStack)).toJson();
         }
     }
 
@@ -1392,9 +1398,9 @@ public interface GTRecipeSchema {
         var outputs = map.get(ItemRecipeCapability.CAP);
         if (outputs != null && outputs.length > 0) {
             var output = GTRecipeComponents.ITEM_OUT.baseComponent().read(recipe, outputs[0].content());
-            var id = output.item.getItemHolder().unwrapKey();
+            var id = BuiltInRegistries.ITEM.getResourceKey(output.item.getItem());
             if (id.isPresent()) {
-                return id.get().location().getPath();
+                return id.get().identifier().getPath();
             }
         }
         return null;

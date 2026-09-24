@@ -7,7 +7,9 @@ import com.gregtechceu.gtceu.integration.ae2.slot.IConfigurableSlotList;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -318,7 +320,7 @@ public class AEConfigWidget extends Widget<AEConfigWidget>
                     syncManager.callSyncedAction("ae_config_set_ghost", buf -> {
                         buf.writeVarInt(findTargetSlot());
                         buf.writeBoolean(true);
-                        fluid.writeToPacket(buf);
+                        FluidStack.OPTIONAL_STREAM_CODEC.encode(buf, fluid);
                     });
                 }
             });
@@ -326,7 +328,7 @@ public class AEConfigWidget extends Widget<AEConfigWidget>
             syncManager.callSyncedAction("ae_config_set_ghost", buf -> {
                 buf.writeVarInt(slot);
                 buf.writeBoolean(false);
-                buf.writeItem(ingredient);
+                ItemStack.OPTIONAL_STREAM_CODEC.encode(buf, ingredient);
             });
         }
     }
@@ -345,7 +347,7 @@ public class AEConfigWidget extends Widget<AEConfigWidget>
             syncManager.callSyncedAction("ae_config_set_ghost", buf -> {
                 buf.writeVarInt(slot);
                 buf.writeBoolean(true);
-                fluidStack.writeToPacket(buf);
+                FluidStack.OPTIONAL_STREAM_CODEC.encode(buf, fluidStack);
             });
             return true;
         } else {
@@ -357,7 +359,7 @@ public class AEConfigWidget extends Widget<AEConfigWidget>
             syncManager.callSyncedAction("ae_config_set_ghost", buf -> {
                 buf.writeVarInt(slot);
                 buf.writeBoolean(false);
-                buf.writeItem(itemStack);
+                ItemStack.OPTIONAL_STREAM_CODEC.encode(buf, itemStack);
             });
             return true;
         }
@@ -402,8 +404,10 @@ public class AEConfigWidget extends Widget<AEConfigWidget>
             AEGuiHelper.drawFluid(graphics, stack, x, y);
         } else if (stack.what() instanceof AEItemKey key) {
             ItemStack displayStack = new ItemStack(key.getItem());
-            if (key.hasTag()) displayStack.setTag(Objects.requireNonNull(key.getTag()).copy());
-            graphics.renderItem(displayStack, x, y);
+            if (key.hasTag()) {
+                displayStack.set(DataComponents.CUSTOM_DATA, CustomData.of(Objects.requireNonNull(key.getTag())));
+            }
+            graphics.item(displayStack, x, y);
         }
     }
 

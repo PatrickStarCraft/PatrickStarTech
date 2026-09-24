@@ -10,13 +10,21 @@ import org.jspecify.annotations.NullMarked;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.locale.Language;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item.TooltipContext;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -31,6 +39,20 @@ public class MetaMachineItem extends BlockItem {
 
     public MachineDefinition getDefinition() {
         return ((MetaMachineBlock) getBlock()).getDefinition();
+    }
+
+    @Override
+    public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay display,
+                                Consumer<Component> tooltip, TooltipFlag flag) {
+        super.appendHoverText(stack, context, display, tooltip, flag);
+        List<Component> components = new ArrayList<>();
+        getDefinition().getTooltipBuilder().accept(stack, components);
+        String mainKey = String.format("%s.machine.%s.tooltip", getDefinition().getId().getNamespace(),
+                getDefinition().getId().getPath());
+        if (Language.getInstance().has(mainKey)) {
+            components.add(Math.min(1, components.size()), Component.translatable(mainKey));
+        }
+        components.forEach(tooltip);
     }
 
     @Override

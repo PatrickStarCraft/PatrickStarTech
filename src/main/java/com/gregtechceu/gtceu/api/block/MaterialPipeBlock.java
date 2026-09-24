@@ -77,11 +77,6 @@ public abstract class MaterialPipeBlock<
     protected abstract NodeDataType createMaterialData();
 
     @Override
-    public String getDescriptionId() {
-        return pipeType.getTagPrefix().getUnlocalizedName(material);
-    }
-
-    @Override
     public MutableComponent getName() {
         return pipeType.getTagPrefix().getLocalizedName(material);
     }

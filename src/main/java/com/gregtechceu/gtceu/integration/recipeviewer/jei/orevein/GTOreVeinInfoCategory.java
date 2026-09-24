@@ -11,14 +11,14 @@ import com.gregtechceu.gtceu.integration.recipeviewer.widgets.OreVeinRecipeWidge
 
 import net.minecraft.network.chat.Component;
 
-import brachy.modularui.integration.jei.recipe.ModularUIJeiCategory;
+import brachy.modularui.integration.jei.recipe.ModularUIRecipeCategory;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.helpers.IJeiHelpers;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
-import mezz.jei.api.recipe.RecipeType;
+import mezz.jei.api.recipe.types.IRecipeType;
 import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
 import org.jetbrains.annotations.NotNull;
@@ -28,9 +28,9 @@ import java.util.Arrays;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
-public class GTOreVeinInfoCategory extends ModularUIJeiCategory<GTOreDefinition> {
+public class GTOreVeinInfoCategory extends ModularUIRecipeCategory<GTOreDefinition> {
 
-    public final static RecipeType<GTOreDefinition> RECIPE_TYPE = new RecipeType<>(GTCEu.id("ore_vein_diagram"),
+    public final static IRecipeType<GTOreDefinition> RECIPE_TYPE = IRecipeType.create(GTCEu.id("ore_vein_diagram"),
             GTOreDefinition.class);
     private final IDrawable icon;
 
@@ -51,6 +51,9 @@ public class GTOreVeinInfoCategory extends ModularUIJeiCategory<GTOreDefinition>
         super.setRecipe(builder, oreDefinition, focuses);
         builder.addInvisibleIngredients(RecipeIngredientRole.OUTPUT)
                 .addItemStacks(OreVeinRecipeWidget.getContainedOresAndBlocks(oreDefinition));
+        Arrays.stream(OreVeinRecipeWidget.getDimensionMarkers(oreDefinition.dimensionFilter()))
+                .forEach(v -> builder.addInvisibleIngredients(RecipeIngredientRole.INPUT)
+                        .addIngredient(VanillaTypes.ITEM_STACK, v.getIcon()));
     }
 
     public static void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
@@ -61,28 +64,18 @@ public class GTOreVeinInfoCategory extends ModularUIJeiCategory<GTOreDefinition>
 
     @NotNull
     @Override
-    public RecipeType<GTOreDefinition> getRecipeType() {
+    public IRecipeType<GTOreDefinition> getRecipeType() {
         return RECIPE_TYPE;
     }
 
     @Override
-    public int getMaxWidth() {
+    public int getWidth() {
         return 180;
     }
 
     @Override
-    public int getMaxHeight() {
+    public int getHeight() {
         return 300;
-    }
-
-    @Override
-    public void setupRecipeIngredients(IRecipeLayoutBuilder builder, GTOreDefinition ore, IFocusGroup focuses) {
-        Arrays.stream(OreVeinRecipeWidget.getDimensionMarkers(ore.dimensionFilter()))
-                .forEach(v -> builder.addSlot(RecipeIngredientRole.INPUT).addIngredient(VanillaTypes.ITEM_STACK,
-                        v.getIcon()));
-
-        OreVeinRecipeWidget.getContainedOresAndBlocks(ore)
-                .forEach(v -> builder.addSlot(RecipeIngredientRole.OUTPUT).addIngredient(VanillaTypes.ITEM_STACK, v));
     }
 
     @NotNull

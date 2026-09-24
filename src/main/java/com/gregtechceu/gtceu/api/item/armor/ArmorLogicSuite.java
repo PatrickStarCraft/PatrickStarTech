@@ -10,7 +10,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
@@ -18,13 +18,12 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.equipment.ArmorType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Multimap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -60,18 +59,21 @@ public abstract class ArmorLogicSuite implements IArmorLogic, IItemHUDProvider {
     }
 
     @Override
-    public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slot, ItemStack stack) {
-        if (slot != this.type.getSlot()) return ImmutableMultimap.of();
+    public ItemAttributeModifiers getAttributeModifiers(EquipmentSlot slot, ItemStack stack) {
+        if (slot != this.type.getSlot()) return ItemAttributeModifiers.EMPTY;
         IElectricItem item = GTCapabilityHelper.getElectricItem(stack);
         UUID uuid = IArmorLogic.ARMOR_MODIFIER_UUID_PER_TYPE.get(type);
-        if (item == null) return ImmutableMultimap.of();
+        if (item == null) return ItemAttributeModifiers.EMPTY;
+        double armor;
         if (item.getCharge() >= energyPerUse) {
-            return ImmutableMultimap.of(Attributes.ARMOR, new AttributeModifier(uuid, "Armor modifier",
-                    20.0F * this.getAbsorption() * this.getDamageAbsorption(), AttributeModifier.Operation.ADD_VALUE));
+            armor = 20.0F * this.getAbsorption() * this.getDamageAbsorption();
         } else {
-            return ImmutableMultimap.of(Attributes.ARMOR, new AttributeModifier(uuid, "Armor modifier",
-                    4.0F * this.getAbsorption() * this.getDamageAbsorption(), AttributeModifier.Operation.ADD_VALUE));
+            armor = 4.0F * this.getAbsorption() * this.getDamageAbsorption();
         }
+        Identifier modifierId = Identifier.fromNamespaceAndPath("gtceu", "powered_armor/" + uuid);
+        return ItemAttributeModifiers.builder().add(Attributes.ARMOR,
+                new AttributeModifier(modifierId, armor, AttributeModifier.Operation.ADD_VALUE),
+                EquipmentSlotGroup.bySlot(slot)).build();
     }
 
     @Override
@@ -142,6 +144,7 @@ public abstract class ArmorLogicSuite implements IArmorLogic, IItemHUDProvider {
             case HELMET, BOOTS -> 0.15F;
             case CHESTPLATE -> 0.4F;
             case LEGGINGS -> 0.3F;
+            case BODY -> 0.0F;
         };
     }
 }

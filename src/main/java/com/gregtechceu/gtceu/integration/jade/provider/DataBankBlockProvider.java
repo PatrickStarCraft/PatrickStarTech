@@ -29,7 +29,7 @@ public class DataBankBlockProvider extends MachineInfoProvider<DataBankMachine, 
     @Override
     protected void addTooltip(LongTag data, ITooltip tooltip, Player player, BlockAccessor block,
                               BlockEntity blockEntity, IPluginConfig config) {
-        long energyUsage = data.getAsLong();
+        long energyUsage = data.longValue();
         String energyFormatted = FormattingUtil.formatNumbers(energyUsage);
         // wrap in text component to keep it from being formatted
         Component voltageName = Component.literal(GTValues.VNF[GTUtil.getTierByVoltage(energyUsage)]);

@@ -36,7 +36,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.FallingBlock;
 import net.minecraft.world.level.block.SoundType;
@@ -108,13 +109,14 @@ public class MaterialBlock extends Block {
 
     @SuppressWarnings("deprecation")
     @Override
-    public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level,
-                                  BlockPos currentPos, BlockPos neighborPos) {
+    public BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess ticks, BlockPos currentPos,
+                                  Direction direction, BlockPos neighborPos, BlockState neighborState,
+                                  RandomSource random) {
         if (TagPrefix.ORES.containsKey(this.tagPrefix) && TagPrefix.ORES.get(tagPrefix).isSand() &&
                 ConfigHolder.INSTANCE.worldgen.sandOresFall) {
-            level.scheduleTick(currentPos, this, this.getDelayAfterPlace());
+            ticks.scheduleTick(currentPos, this, this.getDelayAfterPlace());
         }
-        return super.updateShape(state, direction, neighborState, level, currentPos, neighborPos);
+        return super.updateShape(state, level, ticks, currentPos, direction, neighborPos, neighborState, random);
     }
 
     @SuppressWarnings("deprecation")
@@ -149,22 +151,17 @@ public class MaterialBlock extends Block {
     /** End falling ore stuff */
 
     @Override
-    public String getDescriptionId() {
-        return tagPrefix.getUnlocalizedName(material);
-    }
-
-    @Override
     public MutableComponent getName() {
         return tagPrefix.getLocalizedName(material);
     }
 
     @Override
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand,
-                                 BlockHitResult hit) {
+    public InteractionResult useItemOn(ItemStack itemStack, BlockState state, Level level, BlockPos pos, Player player,
+                                       InteractionHand hand, BlockHitResult hit) {
         if (this.tagPrefix != TagPrefix.frameGt) {
-            return super.use(state, level, pos, player, hand, hit);
+            return super.useItemOn(itemStack, state, level, pos, player, hand, hit);
         }
-        ItemStack stack = player.getItemInHand(hand);
+        ItemStack stack = itemStack;
         if (stack.isEmpty())
             return InteractionResult.PASS;
 

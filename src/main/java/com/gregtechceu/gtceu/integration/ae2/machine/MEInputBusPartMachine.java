@@ -11,11 +11,13 @@ import com.gregtechceu.gtceu.integration.ae2.slot.ExportOnlyAESlot;
 import com.gregtechceu.gtceu.utils.GTMath;
 
 import org.jspecify.annotations.NullMarked;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 
 import appeng.api.config.Actionable;
 import appeng.api.stacks.AEItemKey;
@@ -177,7 +179,7 @@ public class MEInputBusPartMachine extends MEBusPartMachine
                 if (!player.containerMenu.getCarried().isEmpty()) return;
                 ItemStack stack = new ItemStack(key.getItem());
                 stack.setCount(Math.min((int) slot.getStock().amount(), stack.getMaxStackSize()));
-                if (key.hasTag()) stack.setTag(key.getTag().copy());
+                if (key.hasTag()) stack.set(DataComponents.CUSTOM_DATA, CustomData.of(key.getTag()));
                 player.containerMenu.setCarried(stack);
                 GenericStack remaining = ExportOnlyAESlot.copy(slot.getStock(),
                         Math.max(0, slot.getStock().amount() - stack.getCount()));
@@ -190,7 +192,7 @@ public class MEInputBusPartMachine extends MEBusPartMachine
             if (index < 0 || index >= CONFIG_SIZE) return;
             boolean isFluid = packet.readBoolean();
             if (!isFluid) {
-                ItemStack item = packet.readItem();
+                ItemStack item = ItemStack.OPTIONAL_STREAM_CODEC.decode(packet);
                 if (!item.isEmpty()) {
                     aeItemHandler.getInventory()[index].setConfig(GenericStack.fromItemStack(item));
                 }
@@ -207,7 +209,7 @@ public class MEInputBusPartMachine extends MEBusPartMachine
         if (!isRemote()) {
             CompoundTag tag = new CompoundTag();
             tag.put("MEInputBus", writeConfigToTag());
-            dataStick.setTag(tag);
+            CustomData.set(DataComponents.CUSTOM_DATA, dataStick, tag);
             dataStick.set(net.minecraft.core.component.DataComponents.CUSTOM_NAME, Component.translatable("gtceu.machine.me.item_import.data_stick.name"));
             player.sendSystemMessage(Component.translatable("gtceu.machine.me.import_copy_settings"));
         }
@@ -216,7 +218,7 @@ public class MEInputBusPartMachine extends MEBusPartMachine
 
     @Override
     public final InteractionResult onDataStickUse(Player player, ItemStack dataStick) {
-        CompoundTag tag = dataStick.getTag();
+        CompoundTag tag = dataStick.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
         if (tag == null || !tag.contains("MEInputBus")) {
             return InteractionResult.PASS;
         }

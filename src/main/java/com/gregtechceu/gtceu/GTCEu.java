@@ -9,7 +9,6 @@ import com.gregtechceu.gtceu.utils.FormattingUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
-import net.minecraftforge.fml.DistExecutor;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.loading.FMLEnvironment;
@@ -36,7 +35,11 @@ public class GTCEu {
     public GTCEu() {
         GTCEu.init();
         GTCEuAPI.instance = this;
-        DistExecutor.unsafeRunForDist(() -> ClientProxy::new, () -> CommonProxy::new);
+        if (isClientSide()) {
+            new ClientProxy();
+        } else {
+            new CommonProxy();
+        }
     }
 
     public static void init() {
@@ -90,7 +93,9 @@ public class GTCEu {
      * @return if we're running data generation
      */
     public static boolean isDataGen() {
-        return FMLLoader.getLaunchHandler().isData();
+        var programArgs = FMLLoader.getCurrent().getProgramArgs();
+        // DataClient/DataServer forward these data-main options through FMLLoader.
+        return programArgs.get("output") != null && programArgs.get("existing") != null;
     }
 
     /**
@@ -109,7 +114,7 @@ public class GTCEu {
     public static boolean isModLoaded(String modId) {
         ModList modList = ModList.get();
         if (modList != null) return modList.isLoaded(modId);
-        else return FMLLoader.getLoadingModList().getModFileById(modId) != null;
+        else return FMLLoader.getCurrent().getLoadingModList().getModFileById(modId) != null;
     }
 
     /**

@@ -24,7 +24,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.MilkBucketItem;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.material.EmptyFluid;
 import net.minecraft.world.level.material.Fluid;
@@ -55,16 +55,16 @@ public class TooltipsHandler {
             }
         }
         if (stack.getItem() instanceof BucketItem bucket) {
-            var fluid = bucket.getFluid();
+            var fluid = bucket.getContent();
             if (!(fluid instanceof EmptyFluid)) {
                 appendFluidTooltips(new FluidStack(fluid, FluidType.BUCKET_VOLUME), tooltips::add, flag);
             }
-        } else if (stack.getItem() instanceof MilkBucketItem) {
+        } else if (stack.is(Items.MILK_BUCKET)) {
             appendFluidTooltips(GTMaterials.Milk.getFluid(FluidType.BUCKET_VOLUME), tooltips::add, flag);
         }
 
         // Block/Item custom tooltips
-        String translationKey = stack.getDescriptionId();
+        String translationKey = stack.getItem().getDescriptionId();
         if (translationKey.startsWith(ITEM_PREFIX) || translationKey.startsWith(BLOCK_PREFIX)) {
             String tooltipKey = translationKey + ".tooltip";
             if (Language.getInstance().has(tooltipKey)) {

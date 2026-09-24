@@ -28,6 +28,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
 
@@ -1831,7 +1832,7 @@ public final class Material implements Comparable<Material> {
          * @param level   The level that the enchantment starts at when created.
          */
         @Deprecated
-        public Builder addDefaultEnchant(Enchantment enchant, int level) {
+        public Builder addDefaultEnchant(ResourceKey<Enchantment> enchant, int level) {
             if (!properties.hasProperty(PropertyKey.TOOL)) // cannot assign default here
                 throw new IllegalArgumentException("Material cannot have an Enchant without Tools!");
             properties.getPropertyOrThrow(PropertyKey.TOOL).addEnchantmentForTools(enchant, level);

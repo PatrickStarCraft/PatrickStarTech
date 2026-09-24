@@ -71,18 +71,6 @@ public interface IToolBehavior {
     default void onEntitySwing(@NotNull LivingEntity entityLiving, @NotNull ItemStack stack) {}
 
     /**
-     *
-     * @param stack    the tool
-     * @param shield   the shield to disable
-     * @param entity   the entity holding the shield
-     * @param attacker the entity attacking the shield
-     * @return if the tool can disable shields
-     */
-    default boolean canDisableShield(ItemStack stack, ItemStack shield, LivingEntity entity, LivingEntity attacker) {
-        return false;
-    }
-
-    /**
      * Called when a Block is right-clicked with this Item, but before the block is activated
      *
      * @param stack   the stack used

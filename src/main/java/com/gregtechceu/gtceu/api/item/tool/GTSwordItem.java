@@ -7,34 +7,28 @@ import com.gregtechceu.gtceu.api.sound.SoundEntry;
 import com.gregtechceu.gtceu.client.model.runtimegen.ToolItemModelGenerator;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.context.UseOnContext;
-import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.common.ItemAbility;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
 
-import com.google.common.collect.Multimap;
 import lombok.Getter;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Map;
+import java.util.function.Consumer;
 
-public class GTSwordItem extends SwordItem implements IGTTool {
+public class GTSwordItem extends GTToolItem {
 
     @Getter
     private final GTToolType toolType;
@@ -47,7 +41,7 @@ public class GTSwordItem extends SwordItem implements IGTTool {
 
     public GTSwordItem(GTToolType toolType, MaterialToolTier tier, Material material, IGTToolDefinition toolStats,
                        Properties properties) {
-        super(tier, 0, 0, properties);
+        super(toolType, tier, material, toolStats, properties);
         this.toolType = toolType;
         this.material = material;
         this.electricTier = toolType.electricTier;
@@ -59,16 +53,10 @@ public class GTSwordItem extends SwordItem implements IGTTool {
     }
 
     @Override
-    public @Nullable ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
-        return definition$initCapabilities(stack, nbt);
-    }
-
-    @Override
     public ItemStack getDefaultInstance() {
         return get();
     }
 
-    @Override
     public boolean canPerformAction(ItemStack stack, ItemAbility action) {
         return definition$canPerformAction(stack, action);
     }
@@ -130,8 +118,8 @@ public class GTSwordItem extends SwordItem implements IGTTool {
     }
 
     @Override
-    public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
-        return definition$hurtEnemy(stack, target, attacker);
+    public void hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
+        definition$hurtEnemy(stack, target, attacker);
     }
 
     public boolean onBlockStartBreak(ItemStack stack, BlockPos pos, Player player) {
@@ -139,46 +127,20 @@ public class GTSwordItem extends SwordItem implements IGTTool {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltipComponents,
-                                TooltipFlag isAdvanced) {
-        definition$appendHoverText(stack, level, tooltipComponents, isAdvanced);
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay display,
+                                Consumer<Component> tooltip, TooltipFlag flags) {
+        List<Component> components = new java.util.ArrayList<>();
+        definition$appendHoverText(stack, null, components, flags);
+        components.forEach(tooltip);
     }
 
-    public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
-        return definition$canApplyAtEnchantingTable(stack, enchantment);
-    }
-
-    public int getEnchantmentValue(ItemStack stack) {
-        return getTotalEnchantability(stack);
-    }
-
-    @Override
     public boolean isValidRepairItem(ItemStack stack, ItemStack repairCandidate) {
         return definition$isValidRepairItem(stack, repairCandidate);
     }
 
     @Override
-    public Map<Enchantment, Integer> getAllEnchantments(ItemStack stack) {
-        return definition$getAllEnchantments(stack);
-    }
-
-    @Override
-    public int getEnchantmentLevel(ItemStack stack, Enchantment enchantment) {
-        return definition$getEnchantmentLevel(stack, enchantment);
-    }
-
-    @Override
     public boolean isFoil(ItemStack stack) {
         return definition$isFoil(stack);
-    }
-
-    @Override
-    public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slot, ItemStack stack) {
-        return definition$getDefaultAttributeModifiers(slot, stack);
-    }
-
-    public boolean canDisableShield(ItemStack stack, ItemStack shield, LivingEntity entity, LivingEntity attacker) {
-        return definition$canDisableShield(shield, shield, entity, attacker);
     }
 
     public boolean doesSneakBypassUse(ItemStack stack, LevelReader level, BlockPos pos, Player player) {

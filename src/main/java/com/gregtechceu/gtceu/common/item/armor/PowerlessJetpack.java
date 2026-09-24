@@ -7,6 +7,7 @@ import com.gregtechceu.gtceu.api.item.armor.ArmorUtils;
 import com.gregtechceu.gtceu.api.item.armor.IArmorLogic;
 import com.gregtechceu.gtceu.api.item.component.*;
 import com.gregtechceu.gtceu.api.item.component.forge.IComponentCapability;
+import com.gregtechceu.gtceu.api.misc.FilteredFluidResourceHandler;
 import com.gregtechceu.gtceu.api.recipe.ingredient.FluidIngredient;
 import com.gregtechceu.gtceu.common.data.GTMaterials;
 import com.gregtechceu.gtceu.utils.GradientUtil;
@@ -25,14 +26,13 @@ import net.minecraft.world.item.equipment.ArmorType;
 import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.neoforged.neoforge.common.util.LazyOptional;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidUtil;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
-import net.neoforged.neoforge.fluids.capability.templates.FluidHandlerItemStack;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.access.ItemAccess;
+import net.neoforged.neoforge.transfer.fluid.FluidResource;
 
 import it.unimi.dsi.fastutil.ints.IntIntPair;
 import it.unimi.dsi.fastutil.objects.AbstractObject2IntMap;
@@ -138,7 +138,7 @@ public class PowerlessJetpack implements IArmorLogic, IJetpack, IItemHUDProvider
     @OnlyIn(Dist.CLIENT)
     @Override
     public void drawHUD(@NotNull ItemStack item, GuiGraphicsExtractor guiGraphics) {
-        IFluidHandler tank = FluidUtil.getFluidHandler(item).resolve().orElse(null);
+        IFluidHandler tank = FluidUtil.getFluidHandler(item).orElse(null);
         if (tank != null) {
             if (tank.getFluidInTank(0).getAmount() == 0) return;
             String formated = String.format("%.1f",
@@ -252,18 +252,13 @@ public class PowerlessJetpack implements IArmorLogic, IJetpack, IItemHUDProvider
         }
 
         @Override
-        public @NotNull <T> LazyOptional<T> getCapability(ItemStack itemStack, @NotNull Capability<T> cap) {
-            return ForgeCapabilities.FLUID_HANDLER_ITEM.orEmpty(cap,
-                    LazyOptional.of(() -> new FluidHandlerItemStack(itemStack, maxCapacity) {
-
-                        @Override
-                        public boolean canFillFluidType(FluidStack fluid) {
-                            for (var ingredient : FUELS.keySet()) {
-                                if (ingredient.test(fluid)) return true;
-                            }
-                            return false;
-                        }
-                    }));
+        public ResourceHandler<FluidResource> createFluidHandler(ItemAccess access) {
+            return new FilteredFluidResourceHandler(access, maxCapacity, fluid -> {
+                for (var ingredient : FUELS.keySet()) {
+                    if (ingredient.test(fluid)) return true;
+                }
+                return false;
+            });
         }
 
         @Override
@@ -285,7 +280,7 @@ public class PowerlessJetpack implements IArmorLogic, IJetpack, IItemHUDProvider
         @Override
         public void fillItemCategory(Item item, CreativeModeTab category, NonNullList<ItemStack> items) {
             ItemStack copy = item.getDefaultInstance();
-            IFluidHandler fluidHandlerItem = FluidUtil.getFluidHandler(copy).resolve().orElse(null);
+            IFluidHandler fluidHandlerItem = FluidUtil.getFluidHandler(copy).orElse(null);
             if (fluidHandlerItem != null) {
                 fluidHandlerItem.fill(GTMaterials.Diesel.getFluid(tankCapacity), IFluidHandler.FluidAction.SIMULATE);
                 items.add(copy);

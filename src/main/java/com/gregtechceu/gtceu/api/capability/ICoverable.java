@@ -23,6 +23,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
@@ -186,8 +187,13 @@ public interface ICoverable extends ITickSubscription, ISyncManaged, ICopyable {
     }
 
     default void onNeighborChanged(Block block, BlockPos fromPos, boolean isMoving) {
+        onNeighborChanged(block, fromPos, null, isMoving);
+    }
+
+    default void onNeighborChanged(Block block, @Nullable BlockPos fromPos, @Nullable Orientation orientation,
+                                   boolean isMoving) {
         for (CoverBehavior cover : getCovers()) {
-            cover.onNeighborChanged(block, fromPos, isMoving);
+            cover.onNeighborChanged(block, fromPos, orientation, isMoving);
         }
     }
 

@@ -14,6 +14,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.redstone.Orientation;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -170,12 +171,14 @@ public abstract class MachineTrait implements ISyncManaged {
      */
     public void removedFromController(MultiblockControllerMachine controller) {}
 
-    /**
-     * Called when a neighboring block is updated.
-     *
-     * @param neighborBlock The neighbor block type.
-     * @param neighborPos   The neighbor position.
-     * @param isMoving      If the neighbor block is moving (e.g. moved by a piston)
-     */
+    /** Legacy source-position callback for callers that still know the changed neighbor position. */
     public void onMachineNeighborChanged(Block neighborBlock, BlockPos neighborPos, boolean isMoving) {}
+
+    /**
+     * Current block callback. 26.2 may provide orientation context without the source position.
+     */
+    public void onMachineNeighborChanged(Block neighborBlock, @Nullable BlockPos neighborPos,
+                                         @Nullable Orientation orientation, boolean isMoving) {
+        if (neighborPos != null) onMachineNeighborChanged(neighborBlock, neighborPos, isMoving);
+    }
 }

@@ -22,6 +22,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
 
@@ -101,8 +102,9 @@ public class MachineCoverContainer extends MachineTrait
     }
 
     @Override
-    public void onMachineNeighborChanged(Block block, BlockPos fromPos, boolean isMoving) {
-        onNeighborChanged(block, fromPos, isMoving);
+    public void onMachineNeighborChanged(Block block, @Nullable BlockPos fromPos, @Nullable Orientation orientation,
+                                         boolean isMoving) {
+        onNeighborChanged(block, fromPos, orientation, isMoving);
     }
 
     @Override

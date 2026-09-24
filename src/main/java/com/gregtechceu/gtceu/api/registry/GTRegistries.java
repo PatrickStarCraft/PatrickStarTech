@@ -31,9 +31,10 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraftforge.registries.ForgeRegistries;
-
 import org.jetbrains.annotations.ApiStatus;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public final class GTRegistries {
 
@@ -74,21 +75,49 @@ public final class GTRegistries {
     public static final GTRegistry.RL<PatternError.PatternErrorType> PATTERN_ERRORS = new GTRegistry.RL<>(
             GTCEu.id("pattern_errors"));
 
+    private static final Map<Identifier, RecipeType<?>> PENDING_RECIPE_TYPES = new LinkedHashMap<>();
+    private static final Map<Identifier, RecipeSerializer<?>> PENDING_RECIPE_SERIALIZERS = new LinkedHashMap<>();
+    private static boolean recipeTypesRegistered;
+    private static boolean recipeSerializersRegistered;
+
 
     // spotless:on
 
     public static <V, T extends V> T register(Registry<V> registry, Identifier name, T value) {
         ResourceKey<?> registryKey = registry.key();
 
-        if (registryKey == Registries.RECIPE_TYPE) {
-            ForgeRegistries.RECIPE_TYPES.register(name, (RecipeType<?>) value);
-        } else if (registryKey == Registries.RECIPE_SERIALIZER) {
-            ForgeRegistries.RECIPE_SERIALIZERS.register(name, (RecipeSerializer<?>) value);
+        if (registryKey.equals(Registries.RECIPE_TYPE)) {
+            queue(PENDING_RECIPE_TYPES, name, (RecipeType<?>) value, recipeTypesRegistered);
+        } else if (registryKey.equals(Registries.RECIPE_SERIALIZER)) {
+            queue(PENDING_RECIPE_SERIALIZERS, name, (RecipeSerializer<?>) value, recipeSerializersRegistered);
         } else {
             return Registry.register(registry, name, value);
         }
 
         return value;
+    }
+
+    public static void registerRecipeEntries(net.neoforged.neoforge.registries.RegisterEvent event) {
+        if (event.getRegistryKey().equals(Registries.RECIPE_TYPE)) {
+            PENDING_RECIPE_TYPES.forEach((name, recipeType) ->
+                    event.register(Registries.RECIPE_TYPE, name, () -> recipeType));
+            PENDING_RECIPE_TYPES.clear();
+            recipeTypesRegistered = true;
+        } else if (event.getRegistryKey().equals(Registries.RECIPE_SERIALIZER)) {
+            PENDING_RECIPE_SERIALIZERS.forEach((name, serializer) ->
+                    event.register(Registries.RECIPE_SERIALIZER, name, () -> serializer));
+            PENDING_RECIPE_SERIALIZERS.clear();
+            recipeSerializersRegistered = true;
+        }
+    }
+
+    private static <T> void queue(Map<Identifier, T> pending, Identifier name, T value, boolean alreadyRegistered) {
+        if (alreadyRegistered) {
+            throw new IllegalStateException("Cannot register " + name + " after its registry event has fired");
+        }
+        if (pending.putIfAbsent(name, value) != null) {
+            throw new IllegalStateException("Duplicate pending registry entry " + name);
+        }
     }
 
     private static final RegistryAccess BLANK = RegistryAccess.fromRegistryOfRegistries(BuiltInRegistries.REGISTRY);

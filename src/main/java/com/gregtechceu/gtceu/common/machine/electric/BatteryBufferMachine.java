@@ -1,5 +1,7 @@
 package com.gregtechceu.gtceu.common.machine.electric;
 
+import com.mojang.serialization.MapCodec;
+
 import com.gregtechceu.gtceu.api.GTValues;
 import com.gregtechceu.gtceu.api.blockentity.BlockEntityCreationInfo;
 import com.gregtechceu.gtceu.api.capability.GTCapabilityHelper;
@@ -25,8 +27,11 @@ import com.gregtechceu.gtceu.utils.GTUtil;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.storage.TagValueInput;
+import net.minecraft.world.level.storage.ValueInput;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 
 import brachy.modularui.api.drawable.IDrawable;
@@ -105,10 +110,15 @@ public class BatteryBufferMachine extends TieredEnergyMachine
     }
 
     @Override
-    public void load(CompoundTag tag) {
-        if (tag.contains("chargerInventory"))
-            tag.put("batteryInventory", Objects.requireNonNull(tag.get("chargerInventory")));
-        super.load(tag);
+    protected void loadAdditional(ValueInput input) {
+        CompoundTag savedData = input.read(MapCodec.assumeMapUnsafe(CompoundTag.CODEC))
+                .orElseGet(CompoundTag::new);
+        if (savedData.contains("chargerInventory")) {
+            savedData = savedData.copy();
+            savedData.put("batteryInventory", Objects.requireNonNull(savedData.get("chargerInventory")));
+            input = TagValueInput.create(ProblemReporter.DISCARDING, input.lookup(), savedData);
+        }
+        super.loadAdditional(input);
     }
 
     @Override

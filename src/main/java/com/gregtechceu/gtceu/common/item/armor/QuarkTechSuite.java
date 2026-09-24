@@ -13,6 +13,8 @@ import com.gregtechceu.gtceu.utils.input.SyncedKeyMappings;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.InteractionResult;
@@ -30,20 +32,19 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.items.IItemHandlerModifiable;
-
 import it.unimi.dsi.fastutil.objects.Reference2IntMap;
 import it.unimi.dsi.fastutil.objects.Reference2IntOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class QuarkTechSuite extends ArmorLogicSuite implements IStepAssist {
 
-    public static final Reference2IntMap<MobEffect> potionRemovalCost = new Reference2IntOpenHashMap<>();
+    public static final Reference2IntMap<Holder<MobEffect>> potionRemovalCost = new Reference2IntOpenHashMap<>();
+    private static final List<EquipmentSlot> FOOD_EQUIPMENT_SLOTS = List.of(
+            EquipmentSlot.FEET, EquipmentSlot.LEGS, EquipmentSlot.CHEST, EquipmentSlot.HEAD, EquipmentSlot.OFFHAND);
     private float charge = 0.0F;
     private static final byte RUNNING_TIMER = 10; // .5 seconds
     private static final byte JUMPING_TIMER = 10; // .5 seconds
@@ -230,40 +231,44 @@ public class QuarkTechSuite extends ArmorLogicSuite implements IStepAssist {
 
     public boolean supplyFood(@NotNull IElectricItem item, Player player) {
         if (item.canUse(energyPerUse / 10) && player.getFoodData().needsFood()) {
-            int slotId = -1;
-            IItemHandler playerInv = player.getCapability(ForgeCapabilities.ITEM_HANDLER).resolve().orElse(null);
-            if (playerInv instanceof IItemHandlerModifiable items) {
-                for (int i = 0; i < items.getSlots(); i++) {
-                    ItemStack current = items.getStackInSlot(i);
-                    if (current.getFoodProperties(player) != null) {
-                        slotId = i;
-                        break;
-                    }
+            var inventory = player.getInventory().getNonEquipmentItems();
+            for (int slot = 0; slot < inventory.size(); slot++) {
+                ItemStack stack = inventory.get(slot);
+                if (stack.get(DataComponents.FOOD) != null) {
+                    int inventorySlot = slot;
+                    return supplyFoodFromSlot(item, player, stack,
+                            replacement -> inventory.set(inventorySlot, replacement));
                 }
+            }
 
-                if (slotId > -1) {
-                    ItemStack stack = items.getStackInSlot(slotId);
-                    InteractionResult result = ArmorUtils.eat(player, stack);
-                    if (result instanceof InteractionResult.Success success &&
-                            success.heldItemTransformedTo() != null) {
-                        stack = success.heldItemTransformedTo();
-                    }
-                    if (stack.isEmpty())
-                        items.setStackInSlot(slotId, ItemStack.EMPTY);
-
-                    if (result instanceof InteractionResult.Success)
-                        item.discharge(energyPerUse / 10, item.getTier(), true, false, false);
-
-                    return true;
+            for (EquipmentSlot slot : FOOD_EQUIPMENT_SLOTS) {
+                ItemStack stack = player.getItemBySlot(slot);
+                if (stack.get(DataComponents.FOOD) != null) {
+                    return supplyFoodFromSlot(item, player, stack, replacement -> player.setItemSlot(slot, replacement));
                 }
             }
         }
         return false;
     }
 
+    private boolean supplyFoodFromSlot(IElectricItem item, Player player, ItemStack stack,
+                                       Consumer<ItemStack> replaceStack) {
+        InteractionResult result = ArmorUtils.eat(player, stack);
+        if (result instanceof InteractionResult.Success success) {
+            ItemStack replacement = success.heldItemTransformedTo();
+            if (replacement != null) {
+                replaceStack.accept(replacement);
+            } else if (stack.isEmpty()) {
+                replaceStack.accept(ItemStack.EMPTY);
+            }
+            item.discharge(energyPerUse / 10, item.getTier(), true, false, false);
+        }
+        return true;
+    }
+
     public static void removeNegativeEffects(@NotNull IElectricItem item, Player player) {
         for (MobEffectInstance effect : new LinkedList<>(player.getActiveEffects())) {
-            MobEffect potion = effect.getEffect();
+            Holder<MobEffect> potion = effect.getEffect();
             int cost = potionRemovalCost.getOrDefault(potion, -1);
             if (cost != -1) {
                 cost = cost * (effect.getAmplifier() + 1);
@@ -320,8 +325,7 @@ public class QuarkTechSuite extends ArmorLogicSuite implements IStepAssist {
 
     @Override
     public Identifier getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, String type) {
-        ItemStack currentChest = Minecraft.getInstance().player.getInventory().armor
-                .get(EquipmentSlot.CHEST.getIndex());
+        ItemStack currentChest = Minecraft.getInstance().player.getItemBySlot(EquipmentSlot.CHEST);
         String armorTexture = "quark_tech_suite";
         if (currentChest.is(GTItems.QUANTUM_CHESTPLATE_ADVANCED.get())) armorTexture = "advanced_quark_tech_suite";
         return slot != EquipmentSlot.LEGS ?

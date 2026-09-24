@@ -8,8 +8,11 @@ import com.gregtechceu.gtceu.api.data.chemical.material.Material;
 import com.gregtechceu.gtceu.api.data.chemical.material.properties.FluidProperty;
 import com.gregtechceu.gtceu.api.data.chemical.material.properties.OreProperty;
 import com.gregtechceu.gtceu.api.data.chemical.material.properties.PropertyKey;
+import com.gregtechceu.gtceu.api.data.chemical.material.stack.MaterialEntry;
 import com.gregtechceu.gtceu.api.data.chemical.material.stack.MaterialStack;
 import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
+import com.gregtechceu.gtceu.api.item.IGTTool;
+import com.gregtechceu.gtceu.api.item.tool.MaterialToolTier;
 import com.gregtechceu.gtceu.api.fluids.FluidState;
 import com.gregtechceu.gtceu.api.fluids.GTFluid;
 import com.gregtechceu.gtceu.api.fluids.store.FluidStorage;
@@ -24,9 +27,11 @@ import com.gregtechceu.gtceu.data.recipe.CustomTags;
 
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.data.loot.BlockLootSubProvider;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.loot.packs.VanillaBlockLoot;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.*;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -38,6 +43,7 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.storage.loot.IntRange;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.functions.ApplyBonusCount;
 import net.minecraft.world.level.storage.loot.functions.ApplyExplosionDecay;
@@ -48,13 +54,13 @@ import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.common.Tags;
-import net.minecraftforge.versions.forge.ForgeVersion;
 
 import com.tterrag.registrate.util.entry.BlockEntry;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -78,6 +84,11 @@ public class MixinHelpers {
                     tagMap.computeIfAbsent(materialTag.location(), path -> new ArrayList<>()).addAll(entries);
                 }
 
+                if (material.hasProperty(PropertyKey.TOOL) && isToolRepairMaterial(entry)) {
+                    tagMap.computeIfAbsent(MaterialToolTier.getRepairItemsTag(material).location(),
+                            path -> new ArrayList<>()).addAll(entries);
+                }
+
                 if (entry.tagPrefix() == TagPrefix.crushed && material.hasProperty(PropertyKey.ORE)) {
                     OreProperty ore = material.getPropertyOrThrow(PropertyKey.ORE);
                     if (!ore.hasWashedInFluid()) return;
@@ -91,11 +102,16 @@ public class MixinHelpers {
             });
 
             GTMaterialItems.TOOL_ITEMS.rowMap().forEach((material, map) -> {
+                var repairTag = MaterialToolTier.getRepairItemsTag(material).location();
                 map.values().forEach(item -> {
                     if (item == null) return;
-                    var entry = makeItemEntry(item);
-                    for (TagKey<Item> tag : item.get().getToolType().itemTags) {
-                        tagMap.computeIfAbsent(tag.location(), path -> new ArrayList<>()).add(entry);
+                    Item registeredItem = item.get();
+                    var entry = makeItemEntry(registeredItem);
+                    tagMap.computeIfAbsent(repairTag, path -> new ArrayList<>()).add(entry);
+                    if (registeredItem instanceof IGTTool tool) {
+                        for (TagKey<Item> tag : tool.getToolType().itemTags) {
+                            tagMap.computeIfAbsent(tag.location(), path -> new ArrayList<>()).add(entry);
+                        }
                     }
                 });
             });
@@ -107,12 +123,16 @@ public class MixinHelpers {
                                 GTValues.CUSTOM_TAG_SOURCE);
                         tagMap.computeIfAbsent(ItemTags.TRIMMABLE_ARMOR.location(), $ -> new ArrayList<>())
                                 .add(entry);
-                        tagMap.computeIfAbsent(switch (type) {
+                        var armorTag = switch (type) {
                             case HELMET -> net.minecraft.tags.ItemTags.HEAD_ARMOR.location();
                             case CHESTPLATE -> net.minecraft.tags.ItemTags.CHEST_ARMOR.location();
                             case LEGGINGS -> net.minecraft.tags.ItemTags.LEG_ARMOR.location();
                             case BOOTS -> net.minecraft.tags.ItemTags.FOOT_ARMOR.location();
-                        }, $ -> new ArrayList<>()).add(entry);
+                            case BODY -> null;
+                        };
+                        if (armorTag != null) {
+                            tagMap.computeIfAbsent(armorTag, $ -> new ArrayList<>()).add(entry);
+                        }
                     }
                 });
             });
@@ -138,6 +158,14 @@ public class MixinHelpers {
                 }
             }
         } else if (registry == BuiltInRegistries.BLOCK) {
+            for (int toolLevel = 0; toolLevel < CustomTags.INCORRECT_FOR_GT_TOOL_TIERS.length; toolLevel++) {
+                Identifier incorrectTag = CustomTags.INCORRECT_FOR_GT_TOOL_TIERS[toolLevel].location();
+                for (int requiredTier = toolLevel + 1; requiredTier < CustomTags.TOOL_TIERS.length; requiredTier++) {
+                    tagMap.computeIfAbsent(incorrectTag, path -> new ArrayList<>())
+                            .add(makeOptionalTagEntry(CustomTags.TOOL_TIERS[requiredTier]));
+                }
+            }
+
             ItemMaterialData.MATERIAL_ENTRY_BLOCK_MAP.forEach((entry, blocks) -> {
                 if (blocks.isEmpty()) return;
                 var material = entry.material();
@@ -215,7 +243,8 @@ public class MixinHelpers {
                     TagLoader.EntryWithSource entry = makeFluidEntry(fluid);
 
                     Identifier fluidIdTag = fluid.builtInRegistryHolder().key().identifier();
-                    fluidIdTag = Identifier.fromNamespaceAndPath(ForgeVersion.MOD_ID, fluidIdTag.getPath());
+                    // NeoForge still consumes optional legacy fluid tag aliases in the "forge" namespace.
+                    fluidIdTag = Identifier.fromNamespaceAndPath("forge", fluidIdTag.getPath());
                     tagMap.computeIfAbsent(fluidIdTag, path -> new ArrayList<>()).add(entry);
                     FluidState state;
 
@@ -266,9 +295,28 @@ public class MixinHelpers {
         return new TagLoader.EntryWithSource(TagEntry.tag(tag.location()), GTValues.CUSTOM_TAG_SOURCE);
     }
 
-    private static final VanillaBlockLoot BLOCK_LOOT = new VanillaBlockLoot();
+    private static TagLoader.EntryWithSource makeOptionalTagEntry(TagKey<?> tag) {
+        return new TagLoader.EntryWithSource(TagEntry.optionalTag(tag.location()), GTValues.CUSTOM_TAG_SOURCE);
+    }
 
-    public static void generateGTDynamicLoot(Map<Identifier, LootTable> lootTables) {
+    private static boolean isToolRepairMaterial(MaterialEntry entry) {
+        Material material = entry.material();
+        TagPrefix prefix = entry.tagPrefix();
+        if (material.hasProperty(PropertyKey.WOOD)) {
+            return prefix == TagPrefix.planks;
+        }
+        if (prefix == TagPrefix.plate) {
+            return true;
+        }
+        if (material.hasProperty(PropertyKey.INGOT)) {
+            return prefix == TagPrefix.ingot;
+        }
+        return material.hasProperty(PropertyKey.GEM) && prefix == TagPrefix.gem;
+    }
+
+    public static void generateGTDynamicLoot(Map<Identifier, LootTable> lootTables,
+                                            HolderLookup.Provider registries) {
+        GTBlockLoot blockLoot = new GTBlockLoot(registries);
         GTMaterialBlocks.MATERIAL_BLOCKS.rowMap().forEach((prefix, map) -> {
             if (TagPrefix.ORES.containsKey(prefix)) {
                 final TagPrefix.OreType type = TagPrefix.ORES.get(prefix);
@@ -281,13 +329,13 @@ public class MixinHelpers {
                     if (dropItem.isEmpty()) dropItem = ChemicalHelper.get(TagPrefix.dust, material);
                     int oreMultiplier = type.isDoubleDrops() ? 2 : 1;
 
-                    LootTable.Builder builder = BlockLootSubProvider.createSilkTouchDispatchTable(block,
-                            BLOCK_LOOT.applyExplosionDecay(block,
+                    LootTable.Builder builder = blockLoot.createSilkTouchDispatchTable(block,
+                            blockLoot.applyExplosionDecay(block,
                                     LootItem.lootTableItem(dropItem.getItem())
                                             .apply(SetItemCountFunction
                                                     .setCount(ConstantValue.exactly(oreMultiplier)))));
                     // disable fortune for balance reasons. (for now, until we can think of a better solution.)
-                    // .apply(ApplyBonusCount.addOreBonusCount(Enchantments.BLOCK_FORTUNE))));
+                    // .apply(ApplyBonusCount.addOreBonusCount(Enchantments.FORTUNE))));
 
                     LootPool.Builder pool = LootPool.lootPool();
                     boolean isEmpty = true;
@@ -295,7 +343,7 @@ public class MixinHelpers {
                         if (secondaryMaterial.material().hasProperty(PropertyKey.DUST)) {
                             ItemStack dustStack = ChemicalHelper.getGem(secondaryMaterial);
                             pool.add(LootItem.lootTableItem(dustStack.getItem())
-                                    .when(BlockLootSubProvider.HAS_NO_SILK_TOUCH)
+                                    .when(blockLoot.doesNotHaveSilkTouch())
                                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(0, 1)))
                                     .apply(LimitCount.limitCount(IntRange.range(0, 2)))
                                     .apply(ApplyExplosionDecay.explosionDecay()));
@@ -306,48 +354,67 @@ public class MixinHelpers {
                         builder.withPool(pool);
                     }
                     lootTables.put(lootTableId, builder.setParamSet(LootContextParamSets.BLOCK).build());
-                    ((BlockBehaviourAccessor) blockEntry.get()).setDrops(lootTableId);
+                    setBlockLootTable(block, lootTableId);
                 });
             } else {
-                MixinHelpers.addMaterialBlockLootTables(lootTables, prefix, map);
+                MixinHelpers.addMaterialBlockLootTables(lootTables, blockLoot, prefix, map);
             }
         });
         GTMaterialBlocks.CABLE_BLOCKS.rowMap().forEach((prefix, map) -> {
-            MixinHelpers.addMaterialBlockLootTables(lootTables, prefix, map);
+            MixinHelpers.addMaterialBlockLootTables(lootTables, blockLoot, prefix, map);
         });
         GTMaterialBlocks.FLUID_PIPE_BLOCKS.rowMap().forEach((prefix, map) -> {
-            MixinHelpers.addMaterialBlockLootTables(lootTables, prefix, map);
+            MixinHelpers.addMaterialBlockLootTables(lootTables, blockLoot, prefix, map);
         });
         GTMaterialBlocks.ITEM_PIPE_BLOCKS.rowMap().forEach((prefix, map) -> {
-            MixinHelpers.addMaterialBlockLootTables(lootTables, prefix, map);
+            MixinHelpers.addMaterialBlockLootTables(lootTables, blockLoot, prefix, map);
         });
         GTMaterialBlocks.SURFACE_ROCK_BLOCKS.forEach((material, blockEntry) -> {
             Identifier lootTableId = blockEntry.getId().withPrefix("blocks/");
-            LootTable.Builder builder = BLOCK_LOOT
+            LootTable.Builder builder = blockLoot
                     .createSingleItemTable(ChemicalHelper.get(TagPrefix.dustTiny, material).getItem(),
                             UniformGenerator.between(3, 5))
-                    .apply(ApplyBonusCount.addUniformBonusCount(Enchantments.BLOCK_FORTUNE));
+                    .apply(ApplyBonusCount.addUniformBonusCount(
+                            registries.lookupOrThrow(Registries.ENCHANTMENT)
+                                    .getOrThrow(Enchantments.FORTUNE)));
             lootTables.put(lootTableId, builder.setParamSet(LootContextParamSets.BLOCK).build());
-            ((BlockBehaviourAccessor) blockEntry.get()).setDrops(lootTableId);
+            setBlockLootTable(blockEntry.get(), lootTableId);
         });
         GTRegistries.MACHINES.forEach(machine -> {
             Block block = machine.getBlock();
             Identifier id = machine.getId();
             Identifier lootTableId = BuiltInRegistries.BLOCK.getKey(block).withPrefix("blocks/");
-            ((BlockBehaviourAccessor) block).setDrops(lootTableId);
+            setBlockLootTable(block, lootTableId);
             lootTables.put(lootTableId,
-                    BLOCK_LOOT.createSingleItemTable(block).setParamSet(LootContextParamSets.BLOCK).build());
+                    blockLoot.createSingleItemTable(block).setParamSet(LootContextParamSets.BLOCK).build());
         });
     }
 
-    public static void addMaterialBlockLootTables(Map<Identifier, LootTable> lootTables, TagPrefix prefix,
+    private static void setBlockLootTable(Block block, Identifier id) {
+        ResourceKey<LootTable> key = ResourceKey.create(Registries.LOOT_TABLE, id);
+        ((BlockBehaviourAccessor) block).setDrops(Optional.of(key));
+    }
+
+    public static void addMaterialBlockLootTables(Map<Identifier, LootTable> lootTables, GTBlockLoot blockLoot,
+                                                  TagPrefix prefix,
                                                   Map<Material, ? extends BlockEntry<? extends Block>> map) {
         map.forEach((material, blockEntry) -> {
             Identifier lootTableId = blockEntry.getId().withPrefix("blocks/");
-            ((BlockBehaviourAccessor) blockEntry.get()).setDrops(lootTableId);
+            setBlockLootTable(blockEntry.get(), lootTableId);
             lootTables.put(lootTableId,
-                    BLOCK_LOOT.createSingleItemTable(blockEntry.get()).setParamSet(LootContextParamSets.BLOCK).build());
+                    blockLoot.createSingleItemTable(blockEntry.get()).setParamSet(LootContextParamSets.BLOCK).build());
         });
+    }
+
+    public static final class GTBlockLoot extends VanillaBlockLoot {
+
+        public GTBlockLoot(HolderLookup.Provider registries) {
+            super(registries);
+        }
+
+        public LootItemCondition.Builder doesNotHaveSilkTouch() {
+            return super.doesNotHaveSilkTouch();
+        }
     }
 
     public static void addFluidTexture(Material material, FluidStorage.FluidEntry value) {

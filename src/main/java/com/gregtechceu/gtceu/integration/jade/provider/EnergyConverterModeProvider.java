@@ -26,7 +26,7 @@ public class EnergyConverterModeProvider extends MachineInfoProvider<ConverterMa
     @Override
     protected void addTooltip(ByteTag data, ITooltip tooltip, Player player, BlockAccessor block,
                               BlockEntity blockEntity, IPluginConfig config) {
-        if (data.getAsByte() == 1) {
+        if (data.byteValue() == 1) {
             tooltip.add(Component.translatable("gtceu.top.convert_fe"));
         } else {
             tooltip.add(Component.translatable("gtceu.top.convert_eu"));

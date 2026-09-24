@@ -92,17 +92,19 @@ public enum GTArmorMaterials implements StringRepresentable {
     }
 
     public Item.Properties applyProperties(ArmorType type, Item.Properties properties) {
+        // Powered armor computes its attributes per stack so its armor value can track stored charge.
+        return properties.durability(Integer.MAX_VALUE).enchantable(50)
+                .component(DataComponents.EQUIPPABLE, Equippable.builder(type.getSlot()).setEquipSound(equipSound).build());
+    }
+
+    public ItemAttributeModifiers createAttributes(ArmorType type) {
         var id = Identifier.fromNamespaceAndPath("gtceu", "armor." + type.getName());
         var slot = EquipmentSlotGroup.bySlot(type.getSlot());
-        var attributes = ItemAttributeModifiers.builder()
+        return ItemAttributeModifiers.builder()
                 .add(Attributes.ARMOR, new AttributeModifier(id, getDefenseForType(type), AttributeModifier.Operation.ADD_VALUE), slot)
                 .add(Attributes.ARMOR_TOUGHNESS, new AttributeModifier(id, toughness, AttributeModifier.Operation.ADD_VALUE), slot)
                 .add(Attributes.KNOCKBACK_RESISTANCE, new AttributeModifier(id, knockbackResistance, AttributeModifier.Operation.ADD_VALUE), slot)
                 .build();
-        // Powered armor intercepts durability damage; it still needs DAMAGE/MAX_DAMAGE components
-        // for the item damage hook to run. Repair ingredients remain absent for these presets.
-        return properties.durability(Integer.MAX_VALUE).enchantable(50).attributes(attributes)
-                .component(DataComponents.EQUIPPABLE, Equippable.builder(type.getSlot()).setEquipSound(equipSound).build());
     }
 
     public int getDefenseForType(ArmorType type) {

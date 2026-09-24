@@ -54,22 +54,20 @@ import com.gregtechceu.gtceu.integration.map.layer.builtin.OreRenderLayer;
 import com.gregtechceu.gtceu.utils.data.RuntimeBlockstateProvider;
 import com.gregtechceu.gtceu.utils.input.SyncedKeyMapping;
 
-import net.minecraft.client.Timer;
+import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.model.object.boat.BoatModel;
-import net.minecraft.client.model.ChestBoatModel;
 import net.minecraft.client.renderer.blockentity.HangingSignRenderer;
-import net.minecraft.client.renderer.blockentity.SignRenderer;
+import net.minecraft.client.renderer.blockentity.StandingSignRenderer;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
-import net.minecraftforge.client.event.*;
-import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
+import net.neoforged.neoforge.client.event.*;
+import net.neoforged.neoforge.client.event.lifecycle.ClientStartedEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.neoforged.fml.ModLoadingContext;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -78,7 +76,7 @@ import lombok.Getter;
 public class ClientProxy extends CommonProxy {
 
     @Getter
-    private static final Timer timer60Fps = new Timer(60f, 0);
+    private static final DeltaTracker.Timer timer60Fps = new DeltaTracker.Timer(60f, 0, mspt -> mspt);
 
     public static final BiMap<Identifier, GTOreDefinition> CLIENT_ORE_VEINS = HashBiMap.create();
     public static final BiMap<Identifier, BedrockFluidDefinition> CLIENT_FLUID_VEINS = HashBiMap.create();
@@ -105,8 +103,9 @@ public class ClientProxy extends CommonProxy {
         ModelEventHelper.initInternalAssetReloadListeners();
 
         NeoForge.EVENT_BUS.register(GTParticleManager.INSTANCE);
+        NeoForge.EVENT_BUS.addListener(ClientProxy::onClientStarted);
         GTGuiTextures.init();
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(GTGuiTheme::onReloadThemes);
+        ModLoadingContext.get().getActiveContainer().getEventBus().addListener(GTGuiTheme::onReloadThemes);
     }
 
     @SubscribeEvent
@@ -115,7 +114,7 @@ public class ClientProxy extends CommonProxy {
         event.registerEntityRenderer(GTEntityTypes.POWDERBARREL.get(), GTExplosiveRenderer::new);
         event.registerEntityRenderer(GTEntityTypes.INDUSTRIAL_TNT.get(), GTExplosiveRenderer::new);
 
-        event.registerBlockEntityRenderer(GTBlockEntities.GT_SIGN.get(), SignRenderer::new);
+        event.registerBlockEntityRenderer(GTBlockEntities.GT_SIGN.get(), StandingSignRenderer::new);
         event.registerBlockEntityRenderer(GTBlockEntities.GT_HANGING_SIGN.get(), HangingSignRenderer::new);
 
         event.registerEntityRenderer(GTEntityTypes.BOAT.get(), c -> new GTBoatRenderer(c, false));
@@ -125,9 +124,9 @@ public class ClientProxy extends CommonProxy {
     @SubscribeEvent
     public void onRegisterEntityLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
         for (var type : GTBoat.BoatType.values()) {
-            event.registerLayerDefinition(GTBoatRenderer.getBoatModelName(type), BoatModel::createBodyModel);
+            event.registerLayerDefinition(GTBoatRenderer.getBoatModelName(type), BoatModel::createBoatModel);
             event.registerLayerDefinition(GTBoatRenderer.getChestBoatModelName(type),
-                    ChestBoatModel::createBodyModel);
+                    BoatModel::createChestBoatModel);
         }
     }
 
@@ -164,8 +163,8 @@ public class ClientProxy extends CommonProxy {
     }
 
     @SubscribeEvent
-    public void onRegisterGuiOverlays(RegisterGuiOverlaysEvent event) {
-        event.registerAboveAll("hud", new HudGuiOverlay());
+    public void onRegisterGuiLayers(RegisterGuiLayersEvent event) {
+        event.registerAboveAll(GTCEu.id("hud"), new HudGuiOverlay());
     }
 
     @SubscribeEvent
@@ -175,7 +174,7 @@ public class ClientProxy extends CommonProxy {
     }
 
     @SubscribeEvent
-    public void onClientSetup(FMLClientSetupEvent event) {
+    private static void onClientStarted(ClientStartedEvent event) {
         MachineOwner.init();
         if (ConfigHolder.INSTANCE.compat.minimap.toggle.ftbChunksIntegration &&
                 GTCEu.isModLoaded(GTValues.MODID_FTB_CHUNKS)) {
@@ -198,11 +197,11 @@ public class ClientProxy extends CommonProxy {
     }
 
     @SubscribeEvent
-    public void onRegisterModelLoaders(ModelEvent.RegisterGeometryLoaders event) {
-        event.register(MachineModelLoader.ID.getPath(), MachineModelLoader.INSTANCE);
-        event.register(PipeModelLoader.ID.getPath(), PipeModelLoader.INSTANCE);
-        event.register("facade", FacadeUnbakedModel.Loader.INSTANCE);
-        event.register(CustomItemRendererWrapperModel.ID.getPath(), CustomItemRendererWrapperModel.Loader.INSTANCE);
+    public void onRegisterModelLoaders(ModelEvent.RegisterLoaders event) {
+        event.register(MachineModelLoader.ID, MachineModelLoader.INSTANCE);
+        event.register(PipeModelLoader.ID, PipeModelLoader.INSTANCE);
+        event.register(GTCEu.id("facade"), FacadeUnbakedModel.Loader.INSTANCE);
+        event.register(CustomItemRendererWrapperModel.ID, CustomItemRendererWrapperModel.Loader.INSTANCE);
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)

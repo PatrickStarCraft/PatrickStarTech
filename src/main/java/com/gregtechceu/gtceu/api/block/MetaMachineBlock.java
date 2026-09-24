@@ -34,12 +34,15 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
@@ -63,7 +66,7 @@ public class MetaMachineBlock extends Block implements ManagedSyncEntityBlock {
     public final MachineDefinition definition;
 
     public MetaMachineBlock(Properties properties, MachineDefinition definition) {
-        super(properties);
+        super(properties.isValidSpawn((state, level, pos, entityType) -> false));
         this.definition = definition;
         RotationState rotationState = definition.getRotationState();
         if (rotationState != RotationState.NONE) {
@@ -130,6 +133,14 @@ public class MetaMachineBlock extends Block implements ManagedSyncEntityBlock {
     @Override
     public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
         super.onPlace(state, level, pos, oldState, movedByPiston);
+        if (oldState.is(this) && getRotationState() != RotationState.NONE) {
+            Direction oldFacing = oldState.getValue(getRotationState().property);
+            Direction newFacing = state.getValue(getRotationState().property);
+            if (oldFacing != newFacing) {
+                var machine = MetaMachine.getMachine(level, pos);
+                if (machine != null) machine.onRotated(oldFacing, newFacing);
+            }
+        }
         // needed to trigger block updates so machines connect to open cables properly.
         level.updateNeighbourForOutputSignal(pos, this);
     }
@@ -182,36 +193,13 @@ public class MetaMachineBlock extends Block implements ManagedSyncEntityBlock {
     }
 
     @Override
-    public ItemStack getCloneItemStack(BlockGetter level, BlockPos pos, BlockState state) {
-        ItemStack itemStack = super.getCloneItemStack(level, pos, state);
+    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state, boolean includeData,
+                                       Player player) {
+        ItemStack itemStack = super.getCloneItemStack(level, pos, state, includeData, player);
         var machine = MetaMachine.getMachine(level, pos);
-        if (machine != null) com.gregtechceu.gtceu.api.item.data.ItemStackData.update(itemStack,
+        if (includeData && machine != null) com.gregtechceu.gtceu.api.item.data.ItemStackData.update(itemStack,
                 tag -> machine.saveToItem(tag, true));
         return itemStack;
-    }
-
-    @Override
-    public void appendHoverText(ItemStack stack, @Nullable BlockGetter level, List<Component> tooltip,
-                                TooltipFlag flag) {
-        definition.getTooltipBuilder().accept(stack, tooltip);
-        String mainKey = String.format("%s.machine.%s.tooltip", definition.getId().getNamespace(),
-                definition.getId().getPath());
-        /*
-         * if (GTUtil.isShiftDown()) {
-         * if (definition instanceof MultiblockMachineDefinition multiblockDefinition) {
-         * var pattern = multiblockDefinition.getPatternFactory().get();
-         * if (pattern != null) {
-         * var aisleDims = pattern.getDimensions();
-         * assert aisleDims.length == 3;
-         * tooltip.add(Component.translatable("gtceu.multiblock.dimension", aisleDims[0], aisleDims[1],
-         * aisleDims[2]));
-         * }
-         * }
-         * }
-         */
-        if (Language.getInstance().has(mainKey)) {
-            tooltip.add(1, Component.translatable(mainKey));
-        }
     }
 
     @Override
@@ -252,35 +240,17 @@ public class MetaMachineBlock extends Block implements ManagedSyncEntityBlock {
     }
 
     @Override
-    public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pIsMoving) {
-        if (pState.hasBlockEntity()) {
-            if (!pState.is(pNewState.getBlock())) { // new block
-                MetaMachine machine = MetaMachine.getMachine(pLevel, pPos);
-                if (machine != null) {
-                    machine.onMachineDestroyed();
-                }
-
-                pLevel.updateNeighbourForOutputSignal(pPos, this);
-                pLevel.removeBlockEntity(pPos);
-            } else if (getRotationState() != RotationState.NONE) { // old block different facing
-                var oldFacing = pState.getValue(getRotationState().property);
-                var newFacing = pNewState.getValue(getRotationState().property);
-                if (newFacing != oldFacing) {
-                    var machine = MetaMachine.getMachine(pLevel, pPos);
-                    if (machine != null) {
-                        machine.onRotated(oldFacing, newFacing);
-                    }
-                }
-            }
-        }
+    protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos,
+                                               boolean movedByPiston) {
+        super.affectNeighborsAfterRemoval(state, level, pos, movedByPiston);
+        level.updateNeighbourForOutputSignal(pos, this);
     }
 
     @Override
-    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand,
-                                 BlockHitResult hit) {
+    protected InteractionResult useItemOn(ItemStack itemStack, BlockState state, Level world, BlockPos pos,
+                                          Player player, InteractionHand hand, BlockHitResult hit) {
         var machine = MetaMachine.getMachine(world, pos);
         if (machine == null) return InteractionResult.FAIL;
-        ItemStack itemStack = player.getItemInHand(hand);
         boolean shouldOpenUi = true;
 
         if (machine.getOwnerUUID() == null && player instanceof ServerPlayer sPlayer) {
@@ -337,20 +307,20 @@ public class MetaMachineBlock extends Block implements ManagedSyncEntityBlock {
 
     @Override
     @SuppressWarnings("deprecation") // This is fine to override, just not to be called.
-    public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
+    public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos, Direction direction) {
         var machine = MetaMachine.getMachine(level, pos);
         if (machine == null) return 0;
         return machine.getAnalogOutputSignal();
     }
 
     @Override
-    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos neighborPos,
-                                boolean movedByPiston) {
+    protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock,
+                                   @Nullable Orientation orientation, boolean movedByPiston) {
         var machine = MetaMachine.getMachine(level, pos);
         if (machine != null) {
-            machine.onNeighborChanged(neighborBlock, neighborPos, movedByPiston);
+            machine.onNeighborChanged(neighborBlock, null, orientation, movedByPiston);
         }
-        super.neighborChanged(state, level, pos, neighborBlock, neighborPos, movedByPiston);
+        super.neighborChanged(state, level, pos, neighborBlock, orientation, movedByPiston);
     }
 
     @Override
@@ -361,12 +331,6 @@ public class MetaMachineBlock extends Block implements ManagedSyncEntityBlock {
             return machine.getBlockAppearance(state, tintGetter, pos, side, sourceState, sourcePos);
         }
         return super.getAppearance(state, level, pos, side, sourceState, sourcePos);
-    }
-
-    @Override
-    public boolean isValidSpawn(BlockState state, BlockGetter level, BlockPos pos, SpawnPlacements.Type type,
-                                EntityType<?> entityType) {
-        return false;
     }
 
     public Direction getFrontFacing(BlockState state) {

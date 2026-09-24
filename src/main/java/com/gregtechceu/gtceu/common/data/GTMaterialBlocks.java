@@ -82,7 +82,7 @@ public class GTMaterialBlocks {
                 .setData(ProviderType.LOOT, NonNullBiConsumer.noop())
                 .color(() -> MaterialBlock::tintedColor)
                 .item((b, p) -> tagPrefix.blockItemConstructor().create(b, p, tagPrefix, material))
-                .model(NonNullBiConsumer.noop())
+                .model(() -> NonNullBiConsumer.noop())
                 .build()
                 .register());
     }
@@ -122,12 +122,12 @@ public class GTMaterialBlocks {
                     })
                     .properties(properties -> GTBlocks.copy(oreType.template().get(), properties).noLootTable())
                     .transform(GTBlocks.unificationBlock(oreTag, material))
-                    .blockstate(NonNullBiConsumer.noop())
+                    .blockstate(() -> NonNullBiConsumer.noop())
                     .setData(ProviderType.LANG, NonNullBiConsumer.noop())
                     .setData(ProviderType.LOOT, NonNullBiConsumer.noop())
                     .color(() -> MaterialBlock::tintedColor)
                     .item((b, p) -> oreTag.blockItemConstructor().create(b, p, oreTag, material))
-                    .model(NonNullBiConsumer.noop())
+                    .model(() -> NonNullBiConsumer.noop())
                     .build()
                     .register();
             MATERIAL_BLOCKS_BUILDER.put(oreTag, material, entry);
@@ -196,14 +196,14 @@ public class GTMaterialBlocks {
                 .initialProperties(() -> Blocks.IRON_BLOCK)
                 .properties(p -> p.dynamicShape().noOcclusion().noLootTable().forceSolidOn())
                 .transform(GTBlocks.unificationBlock(insulation.tagPrefix, material))
-                .blockstate(NonNullBiConsumer.noop())
+                .blockstate(() -> NonNullBiConsumer.noop())
                 .setData(ProviderType.LANG, NonNullBiConsumer.noop())
                 .setData(ProviderType.LOOT, NonNullBiConsumer.noop())
                 .addLayer(() -> RenderType::cutoutMipped)
                 .addLayer(() -> RenderType::translucent)
                 .color(() -> MaterialPipeBlock::tintedColor)
                 .item(MaterialPipeBlockItem::new)
-                .model(NonNullBiConsumer.noop())
+                .model(() -> NonNullBiConsumer.noop())
                 .build()
                 .register();
         CABLE_BLOCKS_BUILDER.put(insulation.tagPrefix, material, entry);
@@ -241,14 +241,14 @@ public class GTMaterialBlocks {
                     return p.dynamicShape().noOcclusion().noLootTable().forceSolidOn();
                 })
                 .transform(GTBlocks.unificationBlock(fluidPipeType.tagPrefix, material))
-                .blockstate(NonNullBiConsumer.noop())
+                .blockstate(() -> NonNullBiConsumer.noop())
                 .setData(ProviderType.LANG, NonNullBiConsumer.noop())
                 .setData(ProviderType.LOOT, NonNullBiConsumer.noop())
                 .addLayer(() -> RenderType::cutoutMipped)
                 .addLayer(() -> RenderType::translucent)
                 .color(() -> MaterialPipeBlock::tintedColor)
                 .item(MaterialPipeBlockItem::new)
-                .model(NonNullBiConsumer.noop())
+                .model(() -> NonNullBiConsumer.noop())
                 .build()
                 .register();
         FLUID_PIPE_BLOCKS_BUILDER.put(fluidPipeType.tagPrefix, material, entry);
@@ -285,14 +285,14 @@ public class GTMaterialBlocks {
                     return p.dynamicShape().noOcclusion().noLootTable().forceSolidOn();
                 })
                 .transform(GTBlocks.unificationBlock(itemPipeType.getTagPrefix(), material))
-                .blockstate(NonNullBiConsumer.noop())
+                .blockstate(() -> NonNullBiConsumer.noop())
                 .setData(ProviderType.LANG, NonNullBiConsumer.noop())
                 .setData(ProviderType.LOOT, NonNullBiConsumer.noop())
                 .addLayer(() -> RenderType::cutoutMipped)
                 .addLayer(() -> RenderType::translucent)
                 .color(() -> MaterialPipeBlock::tintedColor)
                 .item(MaterialPipeBlockItem::new)
-                .model(NonNullBiConsumer.noop())
+                .model(() -> NonNullBiConsumer.noop())
                 .build()
                 .register();
         ITEM_PIPE_BLOCKS_BUILDER.put(itemPipeType.getTagPrefix(), material, entry);
