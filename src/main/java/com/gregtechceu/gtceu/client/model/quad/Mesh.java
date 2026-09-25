@@ -2,8 +2,8 @@ package com.gregtechceu.gtceu.client.model.quad;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.model.geometry.BakedQuad;
-import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.core.Direction;
+import net.minecraft.data.AtlasIds;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,7 +66,7 @@ public class Mesh {
     @SuppressWarnings("deprecation")
     public List<BakedQuad> toBlockBakedQuads() {
         SpriteFinder finder = SpriteFinder.get(Minecraft.getInstance().getAtlasManager()
-                .getAtlasOrThrow(TextureAtlas.LOCATION_BLOCKS));
+                .getAtlasOrThrow(AtlasIds.BLOCKS));
 
         List<BakedQuad> result = new ArrayList<>();
         forEach(qv -> result.add(qv.toBakedQuad(finder.find(qv))));
@@ -76,7 +76,7 @@ public class Mesh {
     @SuppressWarnings("deprecation")
     public void asBlockBakedQuads(Consumer<BakedQuad> consumer) {
         SpriteFinder finder = SpriteFinder.get(Minecraft.getInstance().getAtlasManager()
-                .getAtlasOrThrow(TextureAtlas.LOCATION_BLOCKS));
+                .getAtlasOrThrow(AtlasIds.BLOCKS));
 
         forEach(qv -> consumer.accept(qv.toBakedQuad(finder.find(qv))));
     }

@@ -82,6 +82,10 @@ public class GTDynamicResourcePack implements PackResources {
         CONTENTS.clearData();
     }
 
+    public static boolean hasResource(Identifier location) {
+        return CONTENTS.getResource(location) != null;
+    }
+
     public static void addResource(Identifier location, JsonElement obj) {
         addResource(location, obj.toString().getBytes(StandardCharsets.UTF_8));
     }

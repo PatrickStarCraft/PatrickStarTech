@@ -22,7 +22,9 @@ public class ItemTagMapIngredient extends AbstractMapIngredient {
     @NotNull
     public static List<AbstractMapIngredient> from(Ingredient ingredient) {
         List<AbstractMapIngredient> ingredients = new ObjectArrayList<>();
-        if (ingredient.getCustomIngredient() != null || ingredient.isEmpty()) return ingredients;
+        if (ingredient.getCustomIngredient() != null) return ingredients;
+        // A tag key can be used before its holder set is bound. This map key only needs
+        // the symbolic tag id; checking isEmpty() would try to expand the tag contents.
         ingredient.getValues().unwrapKey().ifPresent(tag -> ingredients.add(new ItemTagMapIngredient(tag)));
         return ingredients;
     }

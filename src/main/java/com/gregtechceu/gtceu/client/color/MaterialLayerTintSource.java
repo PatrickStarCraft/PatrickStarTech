@@ -39,7 +39,9 @@ public record MaterialLayerTintSource(int layer) implements ItemTintSource {
         }
         if (itemStack.getItem() instanceof MaterialPipeBlockItem materialPipeItem) {
             var block = materialPipeItem.getBlock();
-            return block.tinted(block.defaultBlockState(), null, null, this.layer);
+            // Legacy block tints are RGB; item tints include alpha. Without opaque alpha,
+            // material pipe faces (including cable insulation) disappear in inventories.
+            return 0xFF000000 | block.tinted(block.defaultBlockState(), null, null, this.layer);
         }
         if (itemStack.getItem() instanceof IComponentItem componentItem) {
             for (var component : componentItem.getComponents()) {

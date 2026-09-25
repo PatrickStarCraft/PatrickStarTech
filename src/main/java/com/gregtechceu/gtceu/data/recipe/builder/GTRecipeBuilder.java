@@ -401,7 +401,9 @@ public class GTRecipeBuilder {
     }
 
     public GTRecipeBuilder inputItems(TagKey<Item> tag, int amount) {
-        return inputItems(SizedIngredient.create(tag, amount));
+        // Runtime-pack tag ingredients are symbolic until datapack tags are bound. Do not call
+        // Ingredient.isEmpty() here; the tag is intentionally unresolved during recipe generation.
+        return input(ItemRecipeCapability.CAP, SizedIngredient.create(tag, amount));
     }
 
     public GTRecipeBuilder inputItems(TagKey<Item> tag) {

@@ -5,6 +5,7 @@ import com.gregtechceu.gtceu.api.block.property.GTBlockStateProperties;
 import com.gregtechceu.gtceu.api.registry.registrate.GTBlockBuilder;
 import com.gregtechceu.gtceu.api.registry.registrate.provider.GTBlockstateProvider;
 import com.gregtechceu.gtceu.data.model.builder.BlockModelBuilder;
+import com.gregtechceu.gtceu.data.model.builder.BlockModelUV;
 import com.gregtechceu.gtceu.data.model.builder.ItemModelBuilder;
 import com.gregtechceu.gtceu.data.model.builder.ModelBuilder;
 import com.gregtechceu.gtceu.data.model.builder.ModelFile;
@@ -119,6 +120,8 @@ public class PipeModel {
      * This is ex. the height of the center part's top edge.
      */
     protected final float maxCoord;
+    private boolean connectionUvLock = true;
+    private float uvEdgeInset;
     @Setter
     public Identifier side, end;
     @Setter
@@ -150,6 +153,25 @@ public class PipeModel {
 
         this.minCoord = (16.0f - this.thickness) / 2.0f;
         this.maxCoord = this.minCoord + this.thickness;
+    }
+
+    /** Keeps the face textures oriented with the pipe axis when false. */
+    public final PipeModel setConnectionUvLock(boolean connectionUvLock) {
+        this.connectionUvLock = connectionUvLock;
+        return this;
+    }
+
+    protected final boolean connectionUvLock() {
+        return this.connectionUvLock;
+    }
+
+    /** Insets texture-border UVs when alpha sampling needs room for the 26.2 transparency scan. */
+    public final PipeModel setUvEdgeInset(float uvEdgeInset) {
+        if (uvEdgeInset < 0.0f || uvEdgeInset >= 8.0f) {
+            throw new IllegalArgumentException("UV edge inset must be between 0 (inclusive) and 8 (exclusive)");
+        }
+        this.uvEdgeInset = uvEdgeInset;
+        return this;
     }
 
     public final void dynamicModel() {
@@ -188,7 +210,8 @@ public class PipeModel {
                     .parent(this.getOrCreateCenterElement());
             this.pipeModelDefinition = PipeModelBuilder.<BlockModelBuilder>begin(this.thickness, this.provider)
                     .apply(this.blockModel, this.provider.getExistingFileHelper());
-            this.pipeModelDefinition.centerModels(this.getOrCreateCenterElement().getLocation())
+            this.pipeModelDefinition.connectionUvLock(this.connectionUvLock)
+                    .centerModels(this.getOrCreateCenterElement().getLocation())
                     .connectionModels(this.getOrCreateConnectionElement().getLocation())
                     .end();
         }
@@ -374,10 +397,16 @@ public class PipeModel {
             }
             boolean isEnd = !fullCube && endFace == dir;
             if (isEnd && endTexture != null) {
-                var face = element.face(dir).cullface(dir).texture("#" + endKey).tintindex(endTintIndex);
+                var uv = BlockModelUV.insetTextureEdges(BlockModelUV.face(dir, x1, y1, z1, x2, y2, z2),
+                        this.uvEdgeInset);
+                var face = element.face(dir).uv(uv[0], uv[1], uv[2], uv[3])
+                        .cullface(dir).texture("#" + endKey).tintindex(endTintIndex);
                 faceConfigurator.accept(dir, endKey, face);
             } else if (!isEnd && sideTexture != null) {
-                var face = element.face(dir).texture("#" + sideKey).tintindex(sideTintIndex);
+                var uv = BlockModelUV.insetTextureEdges(BlockModelUV.face(dir, x1, y1, z1, x2, y2, z2),
+                        this.uvEdgeInset);
+                var face = element.face(dir).uv(uv[0], uv[1], uv[2], uv[3])
+                        .texture("#" + sideKey).tintindex(sideTintIndex);
                 faceConfigurator.accept(dir, sideKey, face);
             }
         }

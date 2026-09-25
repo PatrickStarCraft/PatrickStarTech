@@ -1,6 +1,6 @@
 {
   "parent": "gtceu:block/material_sets/dull/frame_gt",
-  "loader": "forge:composite",
+  "loader": "neoforge:composite",
   "children": {
     "base": {
       "parent": "gtceu:block/cube/tinted/all_0",

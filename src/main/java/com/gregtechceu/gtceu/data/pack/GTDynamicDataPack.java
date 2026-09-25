@@ -170,6 +170,7 @@ public class GTDynamicDataPack implements PackResources {
             return (T) new PackMetadataSection(Component.literal("GTCEu dynamic data"),
                     new InclusiveRange<>(SharedConstants.getCurrentVersion().packVersion(PackType.SERVER_DATA)));
         } else if (metaReader.name().equals("filter")) {
+            GTRecipes.recipeRemoval();
             JsonObject filter = new JsonObject();
             JsonArray block = new JsonArray();
             GTRecipes.RECIPE_FILTERS.forEach((id) -> { // Collect removed recipes in here, in the pack filter section.

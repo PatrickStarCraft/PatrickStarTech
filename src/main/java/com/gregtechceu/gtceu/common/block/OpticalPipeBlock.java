@@ -54,6 +54,8 @@ public class OpticalPipeBlock extends PipeBlock<OpticalPipeType, OpticalPipeProp
         ActivablePipeModel pipeModel = new ActivablePipeModel(this, pipeType.getThickness(),
                 GTCEu.id("block/pipe/pipe_optical_side"), GTCEu.id("block/pipe/pipe_optical_in"),
                 provider);
+        pipeModel.setConnectionUvLock(false);
+        pipeModel.setUvEdgeInset(1.0f);
         pipeModel.setSideOverlay(GTCEu.id("block/pipe/pipe_optical_side_overlay"));
         pipeModel.setSideOverlayActive(GTCEu.id("block/pipe/pipe_optical_side_overlay_active"));
         return pipeModel;

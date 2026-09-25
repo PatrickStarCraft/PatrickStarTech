@@ -5,27 +5,63 @@
       "faces": {
         "down": {
           "texture": "#side",
-          "tintindex": 0
+          "tintindex": 0,
+          "uv": [
+            5.0,
+            5.0,
+            11.0,
+            11.0
+          ]
         },
         "east": {
           "texture": "#side",
-          "tintindex": 0
+          "tintindex": 0,
+          "uv": [
+            5.0,
+            5.0,
+            11.0,
+            11.0
+          ]
         },
         "north": {
           "texture": "#side",
-          "tintindex": 0
+          "tintindex": 0,
+          "uv": [
+            5.0,
+            5.0,
+            11.0,
+            11.0
+          ]
         },
         "south": {
           "texture": "#side",
-          "tintindex": 0
+          "tintindex": 0,
+          "uv": [
+            5.0,
+            5.0,
+            11.0,
+            11.0
+          ]
         },
         "up": {
           "texture": "#side",
-          "tintindex": 0
+          "tintindex": 0,
+          "uv": [
+            5.0,
+            5.0,
+            11.0,
+            11.0
+          ]
         },
         "west": {
           "texture": "#side",
-          "tintindex": 0
+          "tintindex": 0,
+          "uv": [
+            5.0,
+            5.0,
+            11.0,
+            11.0
+          ]
         }
       },
       "from": [
@@ -48,7 +84,13 @@
             "sky_light": 15
           },
           "texture": "#side_overlay",
-          "tintindex": 2
+          "tintindex": 2,
+          "uv": [
+            4.968,
+            4.968,
+            11.032,
+            11.032
+          ]
         },
         "east": {
           "forge_data": {
@@ -57,7 +99,13 @@
             "sky_light": 15
           },
           "texture": "#side_overlay",
-          "tintindex": 2
+          "tintindex": 2,
+          "uv": [
+            4.968,
+            4.968,
+            11.032,
+            11.032
+          ]
         },
         "north": {
           "forge_data": {
@@ -66,7 +114,13 @@
             "sky_light": 15
           },
           "texture": "#side_overlay",
-          "tintindex": 2
+          "tintindex": 2,
+          "uv": [
+            4.968,
+            4.968,
+            11.032,
+            11.032
+          ]
         },
         "south": {
           "forge_data": {
@@ -75,7 +129,13 @@
             "sky_light": 15
           },
           "texture": "#side_overlay",
-          "tintindex": 2
+          "tintindex": 2,
+          "uv": [
+            4.968,
+            4.968,
+            11.032,
+            11.032
+          ]
         },
         "up": {
           "forge_data": {
@@ -84,7 +144,13 @@
             "sky_light": 15
           },
           "texture": "#side_overlay",
-          "tintindex": 2
+          "tintindex": 2,
+          "uv": [
+            4.968,
+            4.968,
+            11.032,
+            11.032
+          ]
         },
         "west": {
           "forge_data": {
@@ -93,7 +159,13 @@
             "sky_light": 15
           },
           "texture": "#side_overlay",
-          "tintindex": 2
+          "tintindex": 2,
+          "uv": [
+            4.968,
+            4.968,
+            11.032,
+            11.032
+          ]
         }
       },
       "from": [

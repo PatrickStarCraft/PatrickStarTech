@@ -105,10 +105,10 @@ public class IOCoverRenderer implements ICoverRenderer {
             }
             if (isInverted && invertedEmissiveOverlaySprite != null) {
                 quads.add(StaticFaceBakery.bakeFace(StaticFaceBakery.COVER_OVERLAY, coverBehavior.attachedSide,
-                        invertedEmissiveOverlaySprite, BlockModelRotation.IDENTITY, -101, 15, true, false));
+                        invertedEmissiveOverlaySprite, BlockModelRotation.IDENTITY, -1, 15, true, false));
             } else if (emissiveOverlaySprite != null) {
                 quads.add(StaticFaceBakery.bakeFace(StaticFaceBakery.COVER_OVERLAY, coverBehavior.attachedSide,
-                        emissiveOverlaySprite, BlockModelRotation.IDENTITY, -101, 15, true, false));
+                        emissiveOverlaySprite, BlockModelRotation.IDENTITY, -1, 15, true, false));
             }
         }
     }

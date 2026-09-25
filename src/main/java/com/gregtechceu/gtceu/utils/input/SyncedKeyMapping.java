@@ -28,6 +28,8 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.function.Supplier;
+import java.util.HashMap;
+import java.util.Map;
 
 public final class SyncedKeyMapping {
 
@@ -44,6 +46,7 @@ public final class SyncedKeyMapping {
     @OnlyIn(Dist.CLIENT)
     private boolean isKeyDown;
 
+    private static final Map<String, KeyMapping.Category> CATEGORIES = new HashMap<>();
     private static final Int2BooleanMap updatingKeyDown = new Int2BooleanOpenHashMap();
 
     private final WeakHashMap<ServerPlayer, Boolean> serverMapping = new WeakHashMap<>();
@@ -127,11 +130,28 @@ public final class SyncedKeyMapping {
     }
 
     @OnlyIn(Dist.CLIENT)
-    private @NotNull Object createKeyMapping(@NotNull String nameKey, @NotNull IKeyConflictContext ctx, int keyCode,
-                                             String category) {
-        return new KeyMapping(nameKey, ctx, InputConstants.Type.KEYSYM, keyCode,
-                KeyMapping.Category.register(Identifier.fromNamespaceAndPath(GTCEu.MOD_ID,
-                        category.toLowerCase(java.util.Locale.ROOT))));
+    private @NotNull Object createKeyMapping(
+            @NotNull String nameKey,
+            @NotNull IKeyConflictContext ctx,
+            int keyCode,
+            String category) {
+
+        String categoryName = category.toLowerCase(java.util.Locale.ROOT);
+
+        KeyMapping.Category keyCategory = CATEGORIES.computeIfAbsent(
+                categoryName,
+                name -> KeyMapping.Category.register(
+                        Identifier.fromNamespaceAndPath(GTCEu.MOD_ID, name)
+                )
+        );
+
+        return new KeyMapping(
+                nameKey,
+                ctx,
+                InputConstants.Type.KEYSYM,
+                keyCode,
+                keyCategory
+        );
     }
 
     /**
@@ -191,10 +211,6 @@ public final class SyncedKeyMapping {
     @ApiStatus.Internal
     public static void onRegisterKeyBinds(@NotNull RegisterKeyMappingsEvent event) {
         for (SyncedKeyMapping value : KEYMAPPINGS.values()) {
-            if (value.keyMappingGetter != null) {
-                value.keyMapping = value.keyMappingGetter.get().get();
-                value.keyMappingGetter = null;
-            }
             if (value.keyMapping != null && value.needsRegister) {
                 event.register(value.keyMapping);
             }
@@ -241,6 +257,12 @@ public final class SyncedKeyMapping {
         updatingKeyDown.clear();
         for (var entry : KEYMAPPINGS.int2ObjectEntrySet()) {
             SyncedKeyMapping keyMapping = entry.getValue();
+            // RegisterKeyMappingsEvent fires while Options is still being constructed, so vanilla
+            // mappings supplied from Minecraft.getInstance().options are resolved on the first tick.
+            if (keyMapping.keyMappingGetter != null) {
+                keyMapping.keyMapping = keyMapping.keyMappingGetter.get().get();
+                keyMapping.keyMappingGetter = null;
+            }
             boolean previousKeyDown = keyMapping.isKeyDown;
 
             if (keyMapping.keyMapping != null) {

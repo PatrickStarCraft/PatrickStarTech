@@ -54,6 +54,10 @@ public class ItemModelProvider extends ModelProvider<ItemModelBuilder> {
         itemDefinitions.put(itemId, definition.deepCopy());
     }
 
+    public boolean hasItemDefinition(Identifier itemId) {
+        return itemDefinitions.containsKey(itemId) || itemDefinitionBuilders.containsKey(itemId);
+    }
+
     public void addTint(Identifier itemId, Identifier modelId, Identifier tintSource) {
         bindItemDefinition(itemId, RuntimeModelResources.itemDefinition(modelId, RuntimeModelResources.dynamicTint(tintSource)));
     }

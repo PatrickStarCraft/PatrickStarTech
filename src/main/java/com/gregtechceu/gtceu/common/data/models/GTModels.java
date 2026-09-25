@@ -146,6 +146,8 @@ public class GTModels {
     /** Keep the generated block-item model as the base so its display transforms stay active. */
     public static void createLampItemDefinition(DataGenContext<Item, ? extends Item> ctx,
                                                 ItemModelProvider prov) {
+        prov.withExistingParent(ctx.getId().withPrefix("item/").toString(),
+                ctx.getId().withPrefix("block/").withSuffix("_on"));
         prov.bindItemDefinition(ctx.getId(), specialItemDefinition(ctx.getId().withPrefix("item/"),
                 GTCEu.id("lamp")));
     }
@@ -154,7 +156,7 @@ public class GTModels {
     public static void createMachineItemDefinition(DataGenContext<Item, ? extends Item> ctx,
                                                    ItemModelProvider prov) {
         prov.withExistingParent(ctx.getId().withPrefix("item/").toString(),
-                ctx.getId().withPrefix("block/machine/"));
+                ctx.getId().withPrefix("block/machine/")).texture("particle", BLANK_TEXTURE);
         prov.bindItemDefinition(ctx.getId(), specialItemDefinition(ctx.getId().withPrefix("item/"),
                 GTCEu.id("machine_dynamic")));
     }
@@ -207,6 +209,21 @@ public class GTModels {
         registerMaterialPipeItemTints(itemModels, GTMaterialBlocks.CABLE_BLOCKS.values());
         registerMaterialPipeItemTints(itemModels, GTMaterialBlocks.FLUID_PIPE_BLOCKS.values());
         registerMaterialPipeItemTints(itemModels, GTMaterialBlocks.ITEM_PIPE_BLOCKS.values());
+        registerRuntimeMachineItemModels(itemModels);
+    }
+
+    /** Runtime registrations do not run Registrate's datagen callbacks, so bind machine special models here. */
+    private static void registerRuntimeMachineItemModels(ItemModelProvider itemModels) {
+        for (var definition : GTRegistries.MACHINES) {
+            Item item = definition.getItem();
+            Identifier itemId = BuiltInRegistries.ITEM.getKey(item);
+            if (itemId == null || !GTCEu.MOD_ID.equals(itemId.getNamespace())) continue;
+
+            Identifier baseModel = itemId.withPrefix("item/");
+            itemModels.withExistingParent(baseModel.toString(), itemId.withPrefix("block/machine/"))
+                    .texture("particle", BLANK_TEXTURE);
+            itemModels.bindItemDefinition(itemId, specialItemDefinition(baseModel, GTCEu.id("machine_dynamic")));
+        }
     }
 
     private static void registerMaterialPipeItemTints(ItemModelProvider itemModels,

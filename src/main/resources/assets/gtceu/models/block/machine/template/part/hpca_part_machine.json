@@ -23,10 +23,10 @@
         {
             "from": [ -0.004, -0.004, -0.004 ],
             "to":   [ 16.004, 16.004, -0.004 ],
-            "forge_data": { "block_light": 15, "sky_light": 15 },
+            "light_emission": 15,
             "shade": false,
             "faces": {
-                "north": { "uv": [0, 0, 16, 16], "texture": "#overlay_emissive", "cullface": "north", "tintindex": -101 }
+                "north": { "uv": [0, 0, 16, 16], "texture": "#overlay_emissive", "cullface": "north", "tintindex": -1 }
             }
         }
     ]

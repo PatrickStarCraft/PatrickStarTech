@@ -77,7 +77,7 @@ import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsE
 import net.neoforged.neoforge.client.event.lifecycle.ClientStartedEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.bus.api.EventPriority;
-import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModLoadingContext;
 
 import com.google.common.collect.BiMap;
@@ -101,13 +101,30 @@ public class ClientProxy extends CommonProxy {
 
     public ClientProxy() {
         super();
+        registerEventListeners();
         init();
+    }
+
+    private void registerEventListeners() {
+        IEventBus modBus = ModLoadingContext.get().getActiveContainer().getEventBus();
+        modBus.addListener(this::onRegisterEntityRenderers);
+        modBus.addListener(this::onRegisterEntityLayerDefinitions);
+        modBus.addListener(this::onRegisterDebugEntries);
+        modBus.addListener(this::onRegisterItemDecorations);
+        modBus.addListener(this::onRegisterItemTintSources);
+        modBus.addListener(this::onRegisterClientExtensions);
+        modBus.addListener(EventPriority.LOWEST, this::onModernFixModifyBakingResult);
+        modBus.addListener(this::registerKeyBindings);
+        modBus.addListener(this::onRegisterGuiLayers);
+        modBus.addListener(this::onRegisterParticleProviders);
+        modBus.addListener(EventPriority.HIGHEST, this::preRegisterDynamicAssets);
+        modBus.addListener(this::registerDynamicAssets);
+        modBus.addListener(EventPriority.LOWEST, this::postRegisterDynamicAssets);
     }
 
     public static void init() {
         if (!GTCEu.isDataGen()) {
 
-            ClientCacheManager.registerClientCache(GTClientCache.instance, "gtceu");
             Layers.registerLayer(OreRenderLayer::new, "ore_veins");
             Layers.registerLayer(FluidRenderLayer::new, "bedrock_fluids");
             CommonEventListener.registerCapes(new RegisterGTCapesEvent());
@@ -122,7 +139,6 @@ public class ClientProxy extends CommonProxy {
         ModLoadingContext.get().getActiveContainer().getEventBus().addListener(GTGuiTheme::onReloadThemes);
     }
 
-    @SubscribeEvent
     public void onRegisterEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(GTEntityTypes.DYNAMITE.get(), ThrownItemRenderer::new);
         event.registerEntityRenderer(GTEntityTypes.POWDERBARREL.get(), GTExplosiveRenderer::new);
@@ -143,7 +159,6 @@ public class ClientProxy extends CommonProxy {
         }
     }
 
-    @SubscribeEvent
     public void onRegisterEntityLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
         for (var type : GTBoat.BoatType.values()) {
             event.registerLayerDefinition(GTBoatRenderer.getBoatModelName(type), BoatModel::createBoatModel);
@@ -152,7 +167,6 @@ public class ClientProxy extends CommonProxy {
         }
     }
 
-    @SubscribeEvent
     public void onRegisterDebugEntries(RegisterDebugEntriesEvent event) {
         GTParticleManager.INSTANCE.registerDebugEntries(event);
 
@@ -177,7 +191,6 @@ public class ClientProxy extends CommonProxy {
         event.includeInProfile(machineDebugEntry, DebugScreenProfile.DEFAULT, DebugScreenEntryStatus.ALWAYS_ON);
     }
 
-    @SubscribeEvent
     public void onRegisterItemDecorations(RegisterItemDecorationsEvent event) {
         for (Item item : BuiltInRegistries.ITEM) {
             if (item instanceof IComponentItem) {
@@ -198,7 +211,6 @@ public class ClientProxy extends CommonProxy {
         }
     }
 
-    @SubscribeEvent
     public void onRegisterItemTintSources(RegisterColorHandlersEvent.ItemTintSources event) {
         event.register(FluidCellTintSource.ID, FluidCellTintSource.MAP_CODEC);
         event.register(GTMaterialPartTintSource.ID, GTMaterialPartTintSource.MAP_CODEC);
@@ -206,7 +218,6 @@ public class ClientProxy extends CommonProxy {
         event.register(MachineItemTintSource.ID, MachineItemTintSource.MAP_CODEC);
     }
 
-    @SubscribeEvent
     public void onRegisterClientExtensions(RegisterClientExtensionsEvent event) {
         for (Item item : BuiltInRegistries.ITEM) {
             if (item instanceof ArmorComponentItem || item instanceof GTArmorItem) {
@@ -215,31 +226,31 @@ public class ClientProxy extends CommonProxy {
         }
     }
 
-    @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onModernFixModifyBakingResult(ModelEvent.ModifyBakingResult event) {
         if (GTCEu.Mods.isModernFixLoaded()) {
             GTModernFixIntegration.onModifyBakingResult(event);
         }
     }
 
-    @SubscribeEvent
     public void registerKeyBindings(RegisterKeyMappingsEvent event) {
         SyncedKeyMapping.onRegisterKeyBinds(event);
     }
 
-    @SubscribeEvent
     public void onRegisterGuiLayers(RegisterGuiLayersEvent event) {
         event.registerAboveAll(GTCEu.id("hud"), new HudGuiOverlay());
     }
 
-    @SubscribeEvent
     public void onRegisterParticleProviders(RegisterParticleProvidersEvent event) {
         event.registerSpriteSet(GTParticleTypes.HAZARD_PARTICLE.get(), HazardParticle.Provider::new);
         event.registerSpriteSet(GTParticleTypes.MUFFLER_PARTICLE.get(), MufflerParticle.Provider::new);
     }
 
-    @SubscribeEvent
     private static void onClientStarted(ClientStartedEvent event) {
+        if (!GTCEu.isDataGen()) {
+            // ClientCacheManager reads Minecraft's game directory during class initialization.
+            // Wait until ClientStartedEvent so the Minecraft singleton and window are available.
+            ClientCacheManager.registerClientCache(GTClientCache.instance, "gtceu");
+        }
         MachineOwner.init();
     }
 
@@ -262,12 +273,10 @@ public class ClientProxy extends CommonProxy {
         event.registerBlockEntityRenderer(type, MachineBlockEntityRenderer::new);
     }
 
-    @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void preRegisterDynamicAssets(RegisterDynamicResourcesEvent event) {
         PipeModel.DYNAMIC_MODELS.clear();
     }
 
-    @SubscribeEvent
     public void registerDynamicAssets(RegisterDynamicResourcesEvent event) {
         // regenerate all pipe models in case their textures changed
         // cables may do this, others too if something's removed
@@ -284,6 +293,19 @@ public class ClientProxy extends CommonProxy {
             block.get().createPipeModel(RuntimeBlockstateProvider.INSTANCE).dynamicModel();
         }
 
+        // These fixed, non-material pipe families are emitted by datagen, so they are not in
+        // PipeModel.DYNAMIC_MODELS. Regenerate them into the runtime pack as well: besides
+        // applying the current 26.2 UV mapping, this makes their models available when the
+        // runtime provider writes modern item definitions for their BlockItems.
+        for (var block : GTBlocks.LASER_PIPES) {
+            if (block == null) continue;
+            block.get().createPipeModel(RuntimeBlockstateProvider.INSTANCE).initModels();
+        }
+        for (var block : GTBlocks.OPTICAL_PIPES) {
+            if (block == null) continue;
+            block.get().createPipeModel(RuntimeBlockstateProvider.INSTANCE).initModels();
+        }
+
         MaterialBlockModelGenerator.reinitModels();
         TagPrefixItemModelGenerator.reinitModels();
         OreBlockModelGenerator.reinitModels();
@@ -291,10 +313,8 @@ public class ClientProxy extends CommonProxy {
         ArmorItemModelGenerator.reinitModels();
         SurfaceRockModelGenerator.reinitModels();
         GTModels.registerMaterialFluidModels();
-        GTModels.registerRuntimeTintedItemModels();
     }
 
-    @SubscribeEvent(priority = EventPriority.LOWEST)
     public void postRegisterDynamicAssets(RegisterDynamicResourcesEvent event) {
         // do this last so addons can easily add new variants to the registered model set
         PipeModel.initDynamicModels();

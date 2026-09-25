@@ -6,23 +6,53 @@
         "down": {
           "cullface": "down",
           "texture": "#end",
-          "tintindex": 1
+          "tintindex": 1,
+          "uv": [
+            5.0,
+            5.0,
+            11.0,
+            11.0
+          ]
         },
         "east": {
           "texture": "#side",
-          "tintindex": 0
+          "tintindex": 0,
+          "uv": [
+            5.0,
+            11.0,
+            11.0,
+            15.0
+          ]
         },
         "north": {
           "texture": "#side",
-          "tintindex": 0
+          "tintindex": 0,
+          "uv": [
+            5.0,
+            11.0,
+            11.0,
+            15.0
+          ]
         },
         "south": {
           "texture": "#side",
-          "tintindex": 0
+          "tintindex": 0,
+          "uv": [
+            5.0,
+            11.0,
+            11.0,
+            15.0
+          ]
         },
         "west": {
           "texture": "#side",
-          "tintindex": 0
+          "tintindex": 0,
+          "uv": [
+            5.0,
+            11.0,
+            11.0,
+            15.0
+          ]
         }
       },
       "from": [
@@ -40,19 +70,43 @@
       "faces": {
         "east": {
           "texture": "#side_overlay",
-          "tintindex": 2
+          "tintindex": 2,
+          "uv": [
+            4.968,
+            10.968,
+            11.032,
+            15.0
+          ]
         },
         "north": {
           "texture": "#side_overlay",
-          "tintindex": 2
+          "tintindex": 2,
+          "uv": [
+            4.968,
+            10.968,
+            11.032,
+            15.0
+          ]
         },
         "south": {
           "texture": "#side_overlay",
-          "tintindex": 2
+          "tintindex": 2,
+          "uv": [
+            4.968,
+            10.968,
+            11.032,
+            15.0
+          ]
         },
         "west": {
           "texture": "#side_overlay",
-          "tintindex": 2
+          "tintindex": 2,
+          "uv": [
+            4.968,
+            10.968,
+            11.032,
+            15.0
+          ]
         }
       },
       "from": [

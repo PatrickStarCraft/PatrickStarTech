@@ -8,6 +8,8 @@ import com.gregtechceu.gtceu.common.data.GTMaterialItems;
 import com.gregtechceu.gtceu.integration.jade.provider.*;
 
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
@@ -101,8 +103,32 @@ public class GTJadePlugin implements IWailaPlugin {
                 clazz = machineInfoProvider.machineType;
             if (provider instanceof MachineTraitProvider<?, ?>) clazz = MetaMachine.class;
 
-            reg.registerBlockDataProvider(provider, clazz);
+            reg.registerBlockDataProvider(serverOnly(provider), clazz);
         }
+    }
+
+    private static IServerDataProvider<BlockAccessor> serverOnly(IServerDataProvider<BlockAccessor> provider) {
+        return new IServerDataProvider<>() {
+            @Override
+            public Identifier getUid() {
+                return provider.getUid();
+            }
+
+            @Override
+            public int getDefaultPriority() {
+                return provider.getDefaultPriority();
+            }
+
+            @Override
+            public void appendServerData(CompoundTag data, BlockAccessor accessor) {
+                provider.appendServerData(data, accessor);
+            }
+
+            @Override
+            public boolean shouldRequestData(BlockAccessor accessor) {
+                return provider.shouldRequestData(accessor);
+            }
+        };
     }
 
     public static void register(IWailaClientRegistration reg, IBlockComponentProvider... providers) {

@@ -4,6 +4,7 @@ import brachy.modularui.api.drawable.Text;
 import brachy.modularui.factory.UIFactories;
 import brachy.modularui.factory.inventory.InventoryTypes;
 import brachy.modularui.network.ModularNetwork;
+import brachy.modularui.network.NetworkHandler;
 import brachy.modularui.screen.ModularContainerMenu;
 import brachy.modularui.test.TestRegistration;
 import brachy.modularui.theme.ThemeManager;
@@ -51,6 +52,7 @@ public class ModularUI {
     public ModularUI(IEventBus modBus, ModContainer modContainer) {
         // uncomment if mod bus event listeners are added to this class
         // modBus.register(this);
+        modBus.addListener(NetworkHandler::registerPayloads);
         IEventBus forgeBus = NeoForge.EVENT_BUS;
         forgeBus.addListener(this::onRegisterDataReloadListener);
         forgeBus.addListener(this::onTick);

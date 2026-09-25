@@ -80,8 +80,11 @@ import net.neoforged.neoforge.common.crafting.IntersectionIngredient;
 import net.neoforged.neoforge.common.crafting.DataComponentIngredient;
 import net.neoforged.neoforge.common.crafting.CompoundIngredient;
 import net.neoforged.neoforge.event.AddPackFindersEvent;
+import net.neoforged.neoforge.event.AddServerReloadListenersEvent;
+import net.neoforged.neoforge.event.DefaultDataComponentsBoundEvent;
+import net.neoforged.neoforge.event.server.ServerStartingEvent;
+import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.transfer.fluid.BucketResourceHandler;
 import net.neoforged.fml.ModLoader;
@@ -100,10 +103,25 @@ import java.util.List;
 
 public class CommonProxy {
 
+    private volatile boolean defaultDataComponentsBound;
+    private volatile boolean recipeDataGeneratedForCurrentRepository;
+    private boolean startupRecipeReloadRequested;
+
     public CommonProxy() {
         // used for forge events (ClientProxy + CommonProxy)
         IEventBus eventBus = ModLoadingContext.get().getActiveContainer().getEventBus();
-        eventBus.register(this);
+        // Register explicitly so ClientProxy can extend this class without the 26.2 event bus
+        // rejecting the inherited @SubscribeEvent handlers on the concrete listener object.
+        eventBus.addListener(this::preInit);
+        eventBus.addListener(this::addSpoilTransferModifier);
+        eventBus.addListener(this::registerSpoilables);
+        eventBus.addListener(this::modConstruct);
+        eventBus.addListener(this::commonSetup);
+        eventBus.addListener(this::registerCapabilities);
+        eventBus.addListener(this::registerPackFinders);
+        NeoForge.EVENT_BUS.addListener(this::onDefaultDataComponentsBound);
+        NeoForge.EVENT_BUS.addListener(this::onServerReloadListeners);
+        NeoForge.EVENT_BUS.addListener(this::onServerStarting);
         eventBus.addListener(GTRegistries::registerRecipeEntries);
         eventBus.addListener(GTNetwork::registerPayloads);
         ConfigHolder.init();
@@ -194,7 +212,6 @@ public class CommonProxy {
         FusionReactorMachine.registerFusionTier(GTValues.UV, " (MKIII)");
     }
 
-    @SubscribeEvent
     public void preInit(FMLConstructModEvent event) {}
 
     private static void initMaterials() {
@@ -243,12 +260,10 @@ public class CommonProxy {
         /* End Material Registration */
     }
 
-    @SubscribeEvent
     public void addSpoilTransferModifier(ModifyMachineEvent event) {
         event.getBuilder().addRecipeModifier(GTRecipeModifiers.SPOILAGE_TRANSFER);
     }
 
-    @SubscribeEvent
     public void registerSpoilables(RegisterSpoilablesEvent event) {
         if (GTCEu.isDev()) {
             event.getBuilder()
@@ -286,13 +301,11 @@ public class CommonProxy {
                 .attachTo(GTItems.MAGNETIC_GOLDEN_CARROT);
     }
 
-    @SubscribeEvent
     public void modConstruct(FMLConstructModEvent event) {
         // this is done to delay initialization of content to be after KJS has set up.
         event.enqueueWork(CommonProxy::init);
     }
 
-    @SubscribeEvent
     public void commonSetup(FMLCommonSetupEvent event) {
         event.enqueueWork(() -> {
             LegacyRegistryAliases.register();
@@ -332,7 +345,6 @@ public class CommonProxy {
         });
     }
 
-    @SubscribeEvent
     public void registerCapabilities(RegisterCapabilitiesEvent event) {
         SpoilableBehavior.registerCapabilities(event);
         ElectricItemCapabilityRegistration.register(event);
@@ -377,7 +389,6 @@ public class CommonProxy {
                 (stack, access) -> new BottleItemFluidHandler(access), Items.GLASS_BOTTLE);
     }
 
-    @SubscribeEvent
     public void registerPackFinders(AddPackFindersEvent event) {
         if (event.getPackType() == PackType.CLIENT_RESOURCES) {
             // Clear old data
@@ -390,18 +401,40 @@ public class CommonProxy {
         } else if (event.getPackType() == PackType.SERVER_DATA) {
             // Clear old data
             GTDynamicDataPack.clearServer();
-
-            long startTime = System.currentTimeMillis();
-            GTCraftingComponents.init();
-            GTRecipes.recipeRemoval();
-            GTRecipes.recipeAddition(GTDynamicDataPack::addRecipe);
-            GTCEu.LOGGER.info("GregTech Data loading took {}ms", System.currentTimeMillis() - startTime);
+            this.recipeDataGeneratedForCurrentRepository = false;
+            this.startupRecipeReloadRequested = false;
 
             event.addRepositorySource(new GTPackSource("gtceu:dynamic_data",
                     event.getPackType(),
                     Pack.Position.BOTTOM,
                     GTDynamicDataPack::new));
         }
+    }
+
+    private void onDefaultDataComponentsBound(DefaultDataComponentsBoundEvent event) {
+        if (event.getUpdateCause() == DefaultDataComponentsBoundEvent.UpdateCause.SERVER_DATA_LOAD) {
+            this.defaultDataComponentsBound = true;
+        }
+    }
+
+    private void onServerReloadListeners(AddServerReloadListenersEvent event) {
+        if (!this.defaultDataComponentsBound) return;
+
+        long startTime = System.currentTimeMillis();
+        GTCraftingComponents.init();
+        GTRecipes.recipeAddition(GTDynamicDataPack::addRecipe);
+        this.recipeDataGeneratedForCurrentRepository = true;
+        GTCEu.LOGGER.info("GregTech Data loading took {}ms", System.currentTimeMillis() - startTime);
+    }
+
+    private void onServerStarting(ServerStartingEvent event) {
+        if (!this.defaultDataComponentsBound || this.recipeDataGeneratedForCurrentRepository ||
+                this.startupRecipeReloadRequested) return;
+
+        this.startupRecipeReloadRequested = true;
+        GTCEu.LOGGER.info("Reloading GregTech recipes after item data components are bound");
+        var server = event.getServer();
+        server.reloadResources(server.getPackRepository().getSelectedIds()).join();
     }
 
     public static final class KJSEventWrapper {

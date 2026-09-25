@@ -5,6 +5,7 @@ import com.tterrag.registrate.providers.RegistrateLangProvider;
 public class MultiblockLang {
 
     public static void init(RegistrateLangProvider provider) {
+        provider.add("multiblock.steam_turbine.name", "Steam Turbine");
         provider.add("gtceu.pattern_error.mismatch_coils", "Mismatched coils: %s vs %s at (%d, %d, %d)");
         provider.add("gtceu.pattern_error.mismatch_filters", "Mismatched filters: %s vs %s at (%d, %d, %d)");
         provider.add("gtceu.predicate_error.active_transformer.missing_io", "Missing hatches: IN - %s | OUT - %s");

@@ -34,7 +34,6 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.*;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.ItemLike;
@@ -324,14 +323,16 @@ public class MixinHelpers {
                     Identifier lootTableId = blockEntry.getId().withPrefix("blocks/");
                     Block block = blockEntry.get();
 
-                    ItemStack dropItem = ChemicalHelper.get(TagPrefix.rawOre, material);
-                    if (dropItem.isEmpty()) dropItem = ChemicalHelper.get(TagPrefix.gem, material);
-                    if (dropItem.isEmpty()) dropItem = ChemicalHelper.get(TagPrefix.dust, material);
+                    // Registry reloads build loot tables before item default components are bound.
+                    // LootItem only needs the item, so avoid creating an ItemStack here.
+                    Item dropItem = ChemicalHelper.getItem(TagPrefix.rawOre, material);
+                    if (dropItem == Items.AIR) dropItem = ChemicalHelper.getItem(TagPrefix.gem, material);
+                    if (dropItem == Items.AIR) dropItem = ChemicalHelper.getItem(TagPrefix.dust, material);
                     int oreMultiplier = type.isDoubleDrops() ? 2 : 1;
 
                     LootTable.Builder builder = blockLoot.createSilkTouchDispatchTable(block,
                             blockLoot.applyExplosionDecay(block,
-                                    LootItem.lootTableItem(dropItem.getItem())
+                                    LootItem.lootTableItem(dropItem)
                                             .apply(SetItemCountFunction
                                                     .setCount(ConstantValue.exactly(oreMultiplier)))));
                     // disable fortune for balance reasons. (for now, until we can think of a better solution.)
@@ -341,8 +342,7 @@ public class MixinHelpers {
                     boolean isEmpty = true;
                     for (MaterialStack secondaryMaterial : prefix.secondaryMaterials()) {
                         if (secondaryMaterial.material().hasProperty(PropertyKey.DUST)) {
-                            ItemStack dustStack = ChemicalHelper.getGem(secondaryMaterial);
-                            pool.add(LootItem.lootTableItem(dustStack.getItem())
+                            pool.add(LootItem.lootTableItem(getGemItem(secondaryMaterial))
                                     .when(blockLoot.doesNotHaveSilkTouch())
                                     .apply(SetItemCountFunction.setCount(UniformGenerator.between(0, 1)))
                                     .apply(LimitCount.limitCount(IntRange.range(0, 2)))
@@ -372,7 +372,7 @@ public class MixinHelpers {
         GTMaterialBlocks.SURFACE_ROCK_BLOCKS.forEach((material, blockEntry) -> {
             Identifier lootTableId = blockEntry.getId().withPrefix("blocks/");
             LootTable.Builder builder = blockLoot
-                    .createSingleItemTable(ChemicalHelper.get(TagPrefix.dustTiny, material).getItem(),
+                    .createSingleItemTable(ChemicalHelper.getItem(TagPrefix.dustTiny, material),
                             UniformGenerator.between(3, 5))
                     .apply(ApplyBonusCount.addUniformBonusCount(
                             registries.lookupOrThrow(Registries.ENCHANTMENT)
@@ -404,6 +404,29 @@ public class MixinHelpers {
             lootTables.put(lootTableId,
                     blockLoot.createSingleItemTable(blockEntry.get()).setParamSet(LootContextParamSets.BLOCK).build());
         });
+    }
+
+    private static Item getGemItem(MaterialStack materialStack) {
+        if (materialStack.isEmpty()) return Items.AIR;
+
+        Material material = materialStack.material();
+        if (material.hasProperty(PropertyKey.GEM) && !TagPrefix.gem.isIgnored(material) &&
+                materialStack.amount() == TagPrefix.gem.getMaterialAmount(material)) {
+            return ChemicalHelper.getItem(TagPrefix.gem, material);
+        }
+
+        long amount = materialStack.amount();
+        if (!material.hasProperty(PropertyKey.DUST) || amount <= 0) return Items.AIR;
+        if (amount % GTValues.M == 0 || amount >= GTValues.M * 16) {
+            return ChemicalHelper.getItem(TagPrefix.dust, material);
+        }
+        if ((amount * 4) % GTValues.M == 0 || amount >= GTValues.M * 8) {
+            return ChemicalHelper.getItem(TagPrefix.dustSmall, material);
+        }
+        if ((amount * 9) >= GTValues.M) {
+            return ChemicalHelper.getItem(TagPrefix.dustTiny, material);
+        }
+        return Items.AIR;
     }
 
     public static final class GTBlockLoot extends VanillaBlockLoot {

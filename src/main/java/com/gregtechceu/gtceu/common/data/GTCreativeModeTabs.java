@@ -16,8 +16,14 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.*;
 
+import com.tterrag.registrate.util.entry.BlockEntry;
 import com.tterrag.registrate.util.entry.RegistryEntry;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.IdentityHashMap;
+import java.util.Set;
 
 import static com.gregtechceu.gtceu.common.registry.GTRegistration.REGISTRATE;
 
@@ -90,11 +96,22 @@ public class GTCreativeModeTabs {
         public void accept(@NotNull CreativeModeTab.ItemDisplayParameters itemDisplayParameters,
                            @NotNull CreativeModeTab.Output output) {
             var tab = registrate.get(name, Registries.CREATIVE_MODE_TAB);
+            Set<Item> displayedBlockItems = Collections.newSetFromMap(new IdentityHashMap<>());
+
+            // Generated material pipes use per-material Registrate instances, so they are not
+            // present in the main registrate's getAll(BLOCK) collection below.
+            if ("material_pipe".equals(name)) {
+                addPipeItems(GTMaterialBlocks.CABLE_BLOCKS.values(), displayedBlockItems, output);
+                addPipeItems(GTMaterialBlocks.FLUID_PIPE_BLOCKS.values(), displayedBlockItems, output);
+                addPipeItems(GTMaterialBlocks.ITEM_PIPE_BLOCKS.values(), displayedBlockItems, output);
+            }
+
             for (var entry : registrate.getAll(Registries.BLOCK)) {
                 if (!registrate.isInCreativeTab(entry, tab))
                     continue;
                 Item item = entry.get().asItem();
-                if (item == Items.AIR)
+                // Standing and wall sign blocks resolve to the same SignItem.
+                if (item == Items.AIR || !displayedBlockItems.add(item))
                     continue;
                 if (item instanceof IComponentItem componentItem) {
                     NonNullList<ItemStack> list = NonNullList.create();
@@ -127,6 +144,16 @@ public class GTCreativeModeTabs {
                     tool.definition$fillItemCategory(tab.get(), list);
                     list.forEach(output::accept);
                 } else {
+                    output.accept(item);
+                }
+            }
+        }
+
+        private static void addPipeItems(Collection<? extends BlockEntry<?>> entries, Set<Item> displayedItems,
+                                         CreativeModeTab.Output output) {
+            for (var entry : entries) {
+                Item item = entry.get().asItem();
+                if (item != Items.AIR && displayedItems.add(item)) {
                     output.accept(item);
                 }
             }

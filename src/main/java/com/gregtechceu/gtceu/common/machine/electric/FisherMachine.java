@@ -91,7 +91,6 @@ public class FisherMachine extends TieredEnergyMachine
     @SaveField
     private boolean active = false;
     public static final int WATER_CHECK_SIZE = 5;
-    private static final ItemStack fishingRod = new ItemStack(Items.FISHING_ROD);
     private boolean hasWater = false;
 
     @Getter
@@ -207,7 +206,7 @@ public class FisherMachine extends TieredEnergyMachine
 
             LootParams lootContext = new LootParams.Builder((ServerLevel) getLevel())
                     .withOptionalParameter(LootContextParams.THIS_ENTITY, simulatedHook)
-                    .withParameter(LootContextParams.TOOL, fishingRod)
+                    .withParameter(LootContextParams.TOOL, Items.FISHING_ROD.getDefaultInstance())
                     .withParameter(LootContextParams.ORIGIN,
                             new Vec3(getBlockPos().getX(), getBlockPos().getY(), getBlockPos().getZ()))
                     .create(LootContextParamSets.FISHING);

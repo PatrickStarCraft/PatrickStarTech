@@ -74,7 +74,8 @@ public class ActivablePipeModel extends PipeModel {
                 this.provider.getExistingFileHelper()).parent(this.getOrCreateActiveCenterElement());
         this.activePipeModelDefinition = PipeModelBuilder.<BlockModelBuilder>begin(this.thickness, this.provider)
                 .apply(this.activeBlockModel, this.provider.getExistingFileHelper());
-        this.activePipeModelDefinition.centerModels(this.getOrCreateActiveCenterElement().getLocation())
+        this.activePipeModelDefinition.connectionUvLock(this.connectionUvLock())
+                .centerModels(this.getOrCreateActiveCenterElement().getLocation())
                 .connectionModels(this.getOrCreateActiveConnectionElement().getLocation())
                 .end();
         return this.activeBlockModel;

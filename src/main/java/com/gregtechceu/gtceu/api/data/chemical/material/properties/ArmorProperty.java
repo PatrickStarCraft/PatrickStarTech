@@ -6,6 +6,7 @@ import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
 import com.gregtechceu.gtceu.api.recipe.ingredient.EmptyIngredient;
 import com.gregtechceu.gtceu.utils.memoization.GTMemoizer;
 
+import net.minecraft.core.HolderGetter;
 import net.minecraft.util.Util;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -98,9 +99,9 @@ public class ArmorProperty implements IMaterialProperty {
     }
 
     private static HolderSet<Item> itemTag(net.minecraft.tags.TagKey<Item> tag) {
-        return BuiltInRegistries.ITEM.get(tag)
-                .<HolderSet<Item>>map(holders -> holders)
-                .orElseThrow(() -> new IllegalStateException("Missing item tag " + tag.location()));
+        HolderGetter<Item> itemLookup =
+                BuiltInRegistries.acquireBootstrapRegistrationLookup(BuiltInRegistries.ITEM);
+        return itemLookup.getOrThrow(tag);
     }
 
     @SuppressWarnings("unused") // API, need to treat all of these as used

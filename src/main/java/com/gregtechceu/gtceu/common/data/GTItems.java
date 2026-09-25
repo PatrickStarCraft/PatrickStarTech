@@ -2509,23 +2509,27 @@ public class GTItems {
             .register();
 
     public static ItemEntry<GTBoatItem> RUBBER_BOAT = REGISTRATE
-            .item("rubber_boat", p -> new GTBoatItem(false, GTBoat.BoatType.RUBBER, new Item.Properties()))
+            .item("rubber_boat", p -> new GTBoatItem(
+                    false,
+                    GTBoat.BoatType.RUBBER,
+                    p
+            ))
             .lang("Rubber Boat")
             .register();
 
     public static ItemEntry<GTBoatItem> TREATED_WOOD_BOAT = REGISTRATE
-            .item("treated_wood_boat", p -> new GTBoatItem(false, GTBoat.BoatType.TREATED_WOOD, new Item.Properties()))
-            .lang("Treated Wood Boat")
+            .item("treated_wood_boat",
+                    p -> new GTBoatItem(false, GTBoat.BoatType.TREATED_WOOD, p)).lang("Treated Wood Boat")
             .register();
 
     public static ItemEntry<GTBoatItem> RUBBER_CHEST_BOAT = REGISTRATE
-            .item("rubber_chest_boat", p -> new GTBoatItem(true, GTBoat.BoatType.RUBBER, new Item.Properties()))
+            .item("rubber_chest_boat", p -> new GTBoatItem(true, GTBoat.BoatType.RUBBER,p))
             .lang("Rubber Boat with Chest")
             .register();
 
     public static ItemEntry<GTBoatItem> TREATED_WOOD_CHEST_BOAT = REGISTRATE
             .item("treated_wood_chest_boat",
-                    p -> new GTBoatItem(true, GTBoat.BoatType.TREATED_WOOD, new Item.Properties()))
+                    p -> new GTBoatItem(true, GTBoat.BoatType.TREATED_WOOD, p))
             .lang("Treated Wood Boat with Chest")
             .register();
 

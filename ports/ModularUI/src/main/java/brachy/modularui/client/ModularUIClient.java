@@ -38,6 +38,7 @@ import net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactori
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.client.event.RegisterPictureInPictureRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterTextureAtlasesEvent;
+import net.neoforged.neoforge.client.event.lifecycle.ClientStartedEvent;
 import net.minecraft.client.resources.model.sprite.AtlasManager;
 import net.minecraft.client.resources.metadata.gui.GuiMetadataSection;
 import java.util.Set;
@@ -70,9 +71,13 @@ public class ModularUIClient {
         forgeBus.addListener(this::onUnloadWorld);
 
         if (!ModularUI.isDataGen()) {
-            CursorHandler.init();
+            forgeBus.addListener(this::onClientStarted);
             AnimatorManager.init();
         }
+    }
+
+    private void onClientStarted(ClientStartedEvent event) {
+        CursorHandler.init();
     }
 
     protected void onPreInit(FMLConstructModEvent event) {

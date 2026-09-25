@@ -24,6 +24,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.client.model.DynamicBlockStateModel;
+import net.neoforged.neoforge.client.model.quad.BakedNormals;
 import net.neoforged.neoforge.model.data.ModelData;
 import com.mojang.math.OctahedralGroup;
 import org.jetbrains.annotations.Nullable;
@@ -200,17 +201,34 @@ public final class MachineBlockStateModel implements DynamicBlockStateModel, Mac
         private BakedQuad rotate(BakedQuad quad) {
             Vector3f[] positions = new Vector3f[BakedQuad.VERTEX_COUNT];
             for (int i = 0; i < positions.length; i++) {
-                positions[i] = new Vector3f(quad.position(i)).sub(8.0F, 8.0F, 8.0F);
+                // 26.2 baked quad coordinates are normalized to the 0..1 block-space range.
+                positions[i] = new Vector3f(quad.position(i)).sub(0.5F, 0.5F, 0.5F);
                 this.rotation.transformation().transform(positions[i]);
-                positions[i].add(8.0F, 8.0F, 8.0F);
+                positions[i].add(0.5F, 0.5F, 0.5F);
             }
             BakedQuad rotated = new BakedQuad(positions[0], positions[1], positions[2], positions[3],
                     quad.packedUV(0), quad.packedUV(1), quad.packedUV(2), quad.packedUV(3),
-                    this.rotation.rotate(quad.direction()), quad.materialInfo());
+                    this.rotation.rotate(quad.direction()), quad.materialInfo(),
+                    this.rotateNormals(quad.bakedNormals()), quad.bakedColors());
             if ((Object) quad instanceof BakedQuadExt source) {
                 ((BakedQuadExt) (Object) rotated).gtceu$setTextureKey(source.gtceu$getTextureKey());
             }
             return rotated;
+        }
+
+        private BakedNormals rotateNormals(BakedNormals normals) {
+            int[] transformed = new int[BakedQuad.VERTEX_COUNT];
+            for (int i = 0; i < transformed.length; i++) {
+                int packed = normals.normal(i);
+                if (BakedNormals.isUnspecified(packed)) {
+                    transformed[i] = packed;
+                } else {
+                    Vector3f normal = BakedNormals.unpack(packed, null);
+                    this.rotation.transformation().transform(normal);
+                    transformed[i] = BakedNormals.pack(normal);
+                }
+            }
+            return BakedNormals.of(transformed[0], transformed[1], transformed[2], transformed[3]);
         }
 
         @Override public boolean useAmbientOcclusion() { return this.original.useAmbientOcclusion(); }

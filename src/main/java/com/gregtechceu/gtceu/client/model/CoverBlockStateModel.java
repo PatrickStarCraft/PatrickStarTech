@@ -11,6 +11,7 @@ import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.geometry.BakedQuad;
 import net.minecraft.client.resources.model.sprite.Material;
+import net.minecraft.data.AtlasIds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.Identifier;
@@ -56,7 +57,7 @@ public final class CoverBlockStateModel {
     }
 
     private CoverParts bakeParts(CoverRenderState state) {
-        TextureAtlas atlas = Minecraft.getInstance().getAtlasManager().getAtlasOrThrow(TextureAtlas.LOCATION_BLOCKS);
+        TextureAtlas atlas = Minecraft.getInstance().getAtlasManager().getAtlasOrThrow(AtlasIds.BLOCKS);
         List<BakedQuad> unculled = new ArrayList<>();
         EnumMap<Direction, List<BakedQuad>> culled = new EnumMap<>(Direction.class);
         @Nullable TextureAtlasSprite particleSprite = null;
@@ -80,7 +81,7 @@ public final class CoverBlockStateModel {
                     particleSprite = particleSprite == null ? overlay : particleSprite;
                     BakedQuad overlayQuad = cover.explicitEmissive()
                             ? StaticFaceBakery.bakeFace(StaticFaceBakery.COVER_OVERLAY, attachedSide, overlay,
-                                    BlockModelRotation.IDENTITY, -101, 15, true, false)
+                                    BlockModelRotation.IDENTITY, -1, 15, true, false)
                             : StaticFaceBakery.bakeFace(StaticFaceBakery.COVER_OVERLAY, attachedSide, overlay);
                     unculled.add(overlayQuad);
                     culled.computeIfAbsent(attachedSide, $ -> new ArrayList<>()).add(overlayQuad);

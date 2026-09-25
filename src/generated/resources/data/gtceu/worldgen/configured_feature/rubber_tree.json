@@ -2,7 +2,7 @@
   "type": "minecraft:tree",
   "config": {
     "decorators": [],
-    "dirt_provider": {
+    "below_trunk_provider": {
       "type": "minecraft:simple_state_provider",
       "state": {
         "Name": "minecraft:dirt"
@@ -13,10 +13,8 @@
       "height": 1,
       "offset": {
         "type": "minecraft:uniform",
-        "value": {
-          "max_inclusive": 1,
-          "min_inclusive": 0
-        }
+        "max_inclusive": 1,
+        "min_inclusive": 0
       },
       "radius": 1
     },
@@ -31,7 +29,6 @@
         }
       }
     },
-    "force_dirt": false,
     "ignore_vines": true,
     "minimum_size": {
       "type": "minecraft:two_layers_feature_size",

@@ -32,12 +32,8 @@ public final class MachineItemSpecialRenderer implements SpecialModelRenderer<Ma
     @Override
     public @Nullable State extractArgument(ItemStack stack) {
         if (!(stack.getItem() instanceof MetaMachineItem machineItem)) return null;
-        BlockStateModel model = Minecraft.getInstance().getModelManager().getBlockStateModelSet()
-                .get(machineItem.getBlock().defaultBlockState());
-        MachineBlockStateModel machineModel = MachineBlockStateModel.find(model);
-        if (machineModel == null || machineModel.getDefinition() != machineItem.getDefinition()) return null;
-
         BlockState blockState = machineItem.getBlock().defaultBlockState();
+        BlockStateModel model = Minecraft.getInstance().getModelManager().getBlockStateModelSet().get(blockState);
         List<BlockStateModelPart> baseParts = new ArrayList<>();
         model.collectParts(BlockAndTintGetter.EMPTY, BlockPos.ZERO, blockState, RandomSource.create(0L), baseParts);
         // The special renderer also submits the base geometry, so retain the builder's
@@ -48,11 +44,19 @@ public final class MachineItemSpecialRenderer implements SpecialModelRenderer<Ma
                 net.minecraft.client.resources.model.geometry.BakedQuad.FLAG_TRANSLUCENT);
 
         List<MachineItemRenderSnapshot> snapshots = new ArrayList<>();
-        for (DynamicRender<?, ?> dynamicRender : machineModel.getDynamicRenders()) {
-            if (!(dynamicRender instanceof MachineItemRenderSnapshotProvider provider)) continue;
-            MachineItemRenderSnapshot snapshot = provider.extractItemRenderState(stack);
-            if (snapshot != null) snapshots.add(snapshot);
+        MachineBlockStateModel machineModel = MachineBlockStateModel.find(model);
+        if (machineModel != null && machineModel.getDefinition() == machineItem.getDefinition()) {
+            for (DynamicRender<?, ?> dynamicRender : machineModel.getDynamicRenders()) {
+                if (!(dynamicRender instanceof MachineItemRenderSnapshotProvider provider)) continue;
+                MachineItemRenderSnapshot snapshot = provider.extractItemRenderState(stack);
+                if (snapshot != null) snapshots.add(snapshot);
+            }
         }
+
+        // Keep rendering the static item geometry if a model wrapper or addon supplies a
+        // BlockStateModel that is not directly recognized as GT's machine model. The item
+        // definition's special-model base contains render properties, not fallback geometry;
+        // returning null here therefore made every part of that item completely invisible.
         return new State(baseParts, tintLayers, translucent, snapshots);
     }
 

@@ -259,7 +259,7 @@ public class RichText implements IDrawable, IRichTextBuilder<RichText> {
             Text text;
             if (o instanceof Text text1) text = text1;
             else if (o instanceof String s) text = Text.str(s);
-            else if (o instanceof Component component) text = component.asModular();
+            else if (o instanceof Component component) text = ModularComponent.of(component);
             else return this;
             text = function.apply(text);
             if (text == null) {

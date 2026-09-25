@@ -81,6 +81,8 @@ public class LaserPipeBlock extends PipeBlock<LaserPipeType, LaserPipeProperties
         ActivablePipeModel model = new ActivablePipeModel(this, LaserPipeType.NORMAL.getThickness(),
                 GTCEu.id("block/pipe/pipe_laser_side"), GTCEu.id("block/pipe/pipe_laser_in"),
                 provider);
+        model.setConnectionUvLock(false);
+        model.setUvEdgeInset(1.0f);
         model.setSideOverlay(GTCEu.id("block/pipe/pipe_laser_side_overlay"));
         model.setSideOverlayActive(GTCEu.id("block/pipe/pipe_laser_side_overlay_emissive"));
         return model;

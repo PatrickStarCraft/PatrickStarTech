@@ -32,6 +32,12 @@ public abstract class RecipeManagerMixin {
             at = @At(value = "TAIL"))
     private void gtceu$cloneVanillaRecipes(RecipeMap map, ResourceManager resourceManager,
                                            ProfilerFiller profiler, CallbackInfo ci) {
+        // The client's initial recipe reload can finish before data-pack defaults are bound
+        // to every item. Proxy conversion assembles result stacks and requires those defaults.
+        if (BuiltInRegistries.ITEM.stream().anyMatch(item -> !item.builtInRegistryHolder().areComponentsBound())) {
+            return;
+        }
+
         Map<RecipeType<?>, Map<Identifier, Recipe<?>>> recipes = new HashMap<>();
         for (var holder : map.values()) {
             recipes.computeIfAbsent(holder.value().getType(), type -> new HashMap<>())

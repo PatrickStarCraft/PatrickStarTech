@@ -113,6 +113,11 @@ public class GTBlockstateProvider implements RegistrateProvider {
 
     protected void registerStatesAndModels() {
         parent.genData(BLOCKSTATE, this);
+        registerItemModels();
+    }
+
+    /** Runs Registrate item-model callbacks for runtime packs as well as static datagen. */
+    protected final void registerItemModels() {
         parent.genData(ITEM_MODEL, itemModels);
     }
 

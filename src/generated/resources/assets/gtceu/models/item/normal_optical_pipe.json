@@ -5,28 +5,64 @@
       "faces": {
         "down": {
           "texture": "#side",
-          "tintindex": 0
+          "tintindex": 0,
+          "uv": [
+            5.0,
+            1.0,
+            11.0,
+            15.0
+          ]
         },
         "east": {
           "texture": "#side",
-          "tintindex": 0
+          "tintindex": 0,
+          "uv": [
+            1.0,
+            5.0,
+            15.0,
+            11.0
+          ]
         },
         "north": {
           "cullface": "north",
           "texture": "#end",
-          "tintindex": 1
+          "tintindex": 1,
+          "uv": [
+            5.0,
+            5.0,
+            11.0,
+            11.0
+          ]
         },
         "south": {
           "texture": "#side",
-          "tintindex": 0
+          "tintindex": 0,
+          "uv": [
+            5.0,
+            5.0,
+            11.0,
+            11.0
+          ]
         },
         "up": {
           "texture": "#side",
-          "tintindex": 0
+          "tintindex": 0,
+          "uv": [
+            5.0,
+            1.0,
+            11.0,
+            15.0
+          ]
         },
         "west": {
           "texture": "#side",
-          "tintindex": 0
+          "tintindex": 0,
+          "uv": [
+            1.0,
+            5.0,
+            15.0,
+            11.0
+          ]
         }
       },
       "from": [
@@ -44,23 +80,53 @@
       "faces": {
         "down": {
           "texture": "#side_overlay",
-          "tintindex": 2
+          "tintindex": 2,
+          "uv": [
+            4.968,
+            1.0,
+            11.032,
+            15.0
+          ]
         },
         "east": {
           "texture": "#side_overlay",
-          "tintindex": 2
+          "tintindex": 2,
+          "uv": [
+            1.0,
+            4.968,
+            15.0,
+            11.032
+          ]
         },
         "south": {
           "texture": "#side_overlay",
-          "tintindex": 2
+          "tintindex": 2,
+          "uv": [
+            4.968,
+            4.968,
+            11.032,
+            11.032
+          ]
         },
         "up": {
           "texture": "#side_overlay",
-          "tintindex": 2
+          "tintindex": 2,
+          "uv": [
+            4.968,
+            1.0,
+            11.032,
+            15.0
+          ]
         },
         "west": {
           "texture": "#side_overlay",
-          "tintindex": 2
+          "tintindex": 2,
+          "uv": [
+            1.0,
+            4.968,
+            15.0,
+            11.032
+          ]
         }
       },
       "from": [

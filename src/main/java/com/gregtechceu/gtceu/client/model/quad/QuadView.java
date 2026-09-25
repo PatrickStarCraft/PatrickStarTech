@@ -21,10 +21,10 @@ import com.gregtechceu.gtceu.client.util.quad.GeometryHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.builders.UVPair;
 import net.minecraft.client.resources.model.geometry.BakedQuad;
-import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.core.Direction;
+import net.minecraft.data.AtlasIds;
 import net.neoforged.neoforge.client.model.quad.BakedColors;
 import net.neoforged.neoforge.client.model.quad.BakedNormals;
 import com.mojang.blaze3d.platform.Transparency;
@@ -398,7 +398,7 @@ public class QuadView {
     @SuppressWarnings("deprecation")
     public BakedQuad toBlockBakedQuad() {
         var finder = SpriteFinder.get(Minecraft.getInstance().getAtlasManager()
-                .getAtlasOrThrow(TextureAtlas.LOCATION_BLOCKS));
+                .getAtlasOrThrow(AtlasIds.BLOCKS));
         return toBakedQuad(finder.find(this));
     }
 }

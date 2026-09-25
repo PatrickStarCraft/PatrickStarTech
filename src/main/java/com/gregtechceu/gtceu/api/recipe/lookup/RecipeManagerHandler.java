@@ -2,11 +2,17 @@ package com.gregtechceu.gtceu.api.recipe.lookup;
 
 import com.gregtechceu.gtceu.api.recipe.GTRecipe;
 import com.gregtechceu.gtceu.api.recipe.GTRecipeType;
+import com.gregtechceu.gtceu.api.recipe.ingredient.SizedIngredient;
 
+import net.minecraft.core.HolderSet;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.SmeltingRecipe;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.neoforged.neoforge.common.crafting.CompoundIngredient;
+import net.neoforged.neoforge.common.crafting.IntersectionIngredient;
 
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -43,6 +49,11 @@ public final class RecipeManagerHandler {
             if (!(recipe instanceof SmeltingRecipe smeltingRecipe)) {
                 throw new IllegalStateException("Unsupported proxy recipe " + id + ": " + recipe.getClass());
             }
+            if (hasUnboundItemTag(smeltingRecipe.input())) {
+                // Recipe reload can see GT's serialized tag reference before the item tag is
+                // bound. Defer this proxy until a later reload can expand its item set.
+                return;
+            }
             GTRecipe gtRecipe = gtRecipeType.toGTrecipe(id, smeltingRecipe);
             proxyRecipes.add(gtRecipe);
             lookup.addStaging(gtRecipe);
@@ -67,5 +78,20 @@ public final class RecipeManagerHandler {
                 lookup.addStaging(recipe);
             }
         }
+    }
+
+    private static boolean hasUnboundItemTag(Ingredient ingredient) {
+        Ingredient unwrapped = SizedIngredient.getInner(ingredient);
+        var custom = unwrapped.getCustomIngredient();
+        if (custom instanceof CompoundIngredient compound) {
+            return compound.children().stream().anyMatch(RecipeManagerHandler::hasUnboundItemTag);
+        }
+        if (custom instanceof IntersectionIngredient intersection) {
+            return intersection.children().stream().anyMatch(RecipeManagerHandler::hasUnboundItemTag);
+        }
+        if (custom != null) return false;
+
+        HolderSet<Item> values = unwrapped.getValues();
+        return values.unwrapKey().isPresent() && !values.isBound();
     }
 }

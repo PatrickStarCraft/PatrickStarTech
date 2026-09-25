@@ -19,6 +19,7 @@ import net.minecraft.client.renderer.block.FluidModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.core.BlockPos;
+import net.minecraft.data.AtlasIds;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
@@ -193,7 +194,7 @@ public class JourneymapRenderer extends GenericMapRenderer {
 
         Identifier layer1 = MaterialIconType.rawOre.getItemTexturePath(material.getMaterialIconSet(), true);
         TextureAtlasSprite baseTexture = Minecraft.getInstance().getAtlasManager()
-                .getAtlasOrThrow(TextureAtlas.LOCATION_BLOCKS).getSprite(layer1);
+                .getAtlasOrThrow(AtlasIds.BLOCKS).getSprite(layer1);
         if (baseTexture == null) {
             return null;
         }
@@ -217,7 +218,7 @@ public class JourneymapRenderer extends GenericMapRenderer {
                 return result;
             }
             TextureAtlasSprite image2 = Minecraft.getInstance().getAtlasManager()
-                    .getAtlasOrThrow(TextureAtlas.LOCATION_BLOCKS).getSprite(layer2);
+                    .getAtlasOrThrow(AtlasIds.BLOCKS).getSprite(layer2);
 
             for (int x = 0; x < result.getWidth(); ++x) {
                 for (int y = 0; y < result.getHeight(); ++y) {

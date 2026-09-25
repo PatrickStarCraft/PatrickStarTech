@@ -61,15 +61,15 @@ public final class GTRenderTypes {
 
     private static final RenderPipeline BLOOM_PIPELINE = RenderPipeline.builder(RenderPipelines.BLOCK_SNIPPET)
             .withLocation(GTCEu.id("pipeline/bloom"))
-            .withVertexShader(GTCEu.id("rendertype_bloom"))
-            .withFragmentShader(GTCEu.id("rendertype_bloom"))
+            .withVertexShader(GTCEu.id("core/rendertype_bloom"))
+            .withFragmentShader(GTCEu.id("core/rendertype_bloom"))
             .withColorTargetState(new ColorTargetState(BlendFunction.TRANSLUCENT))
             .build();
 
     private static final RenderPipeline ENTITY_BLOOM_PIPELINE = RenderPipeline.builder(RenderPipelines.ENTITY_SNIPPET)
             .withLocation(GTCEu.id("pipeline/entity_bloom"))
-            .withVertexShader(GTCEu.id("rendertype_entity_bloom"))
-            .withFragmentShader(GTCEu.id("rendertype_entity_bloom"))
+            .withVertexShader(GTCEu.id("core/rendertype_entity_bloom"))
+            .withFragmentShader(GTCEu.id("core/rendertype_entity_bloom"))
             .withColorTargetState(new ColorTargetState(BlendFunction.TRANSLUCENT))
             .build();
 

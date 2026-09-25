@@ -30,26 +30,14 @@ import java.util.function.Consumer;
 
 public class GTShovelItem extends GTToolItem {
 
-    @Getter
-    private final GTToolType toolType;
-    @Getter
-    private final Material material;
-    @Getter
-    private final int electricTier;
-    @Getter
-    private final IGTToolDefinition toolStats;
-
-    public GTShovelItem(GTToolType toolType, MaterialToolTier tier, Material material, IGTToolDefinition toolStats,
-                        Properties properties) {
+    public GTShovelItem(
+            GTToolType toolType,
+            MaterialToolTier tier,
+            Material material,
+            IGTToolDefinition toolStats,
+            Properties properties
+    ) {
         super(toolType, tier, material, toolStats, properties);
-        this.toolType = toolType;
-        this.material = material;
-        this.electricTier = toolType.electricTier;
-        this.toolStats = toolStats;
-        if (GTCEu.isClientSide()) {
-            ToolItemModelGenerator.add(this, toolType);
-        }
-        definition$init();
     }
 
     @Override

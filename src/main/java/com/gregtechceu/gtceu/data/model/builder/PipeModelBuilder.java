@@ -47,6 +47,7 @@ public class PipeModelBuilder<T extends ModelBuilder<T>> extends CustomLoaderBui
     private final Map<@Nullable Direction, ConfiguredModelList> parts = new IdentityHashMap<>();
     private final float thickness;
     private final GTBlockstateProvider provider;
+    private boolean connectionUvLock = true;
     private BlockModelBuilder @Nullable [] restrictors = null;
 
     protected PipeModelBuilder(T parent, ModelFileHelper existingFileHelper,
@@ -57,6 +58,12 @@ public class PipeModelBuilder<T extends ModelBuilder<T>> extends CustomLoaderBui
                 "Thickness must be between 0 (exclusive) and 16 (inclusive). It is %s", thickness);
         this.thickness = thickness;
         this.provider = provider;
+    }
+
+    /** Controls whether rotated connection parts keep their texture orientation fixed in world space. */
+    public PipeModelBuilder<T> connectionUvLock(boolean connectionUvLock) {
+        this.connectionUvLock = connectionUvLock;
+        return this;
     }
 
     /**
@@ -116,7 +123,7 @@ public class PipeModelBuilder<T extends ModelBuilder<T>> extends CustomLoaderBui
         for (Direction dir : GTUtil.DIRECTIONS) {
             ConfiguredModel[] rotatedModels = Arrays.stream(connectionModels)
                     .map(model -> ConfiguredModel.builder()
-                            .modelFile(model.model).uvLock(true).weight(model.weight)
+                            .modelFile(model.model).uvLock(this.connectionUvLock).weight(model.weight)
                             .rotationX(dir == Direction.DOWN ? 90 : dir == Direction.UP ? 270 : 0)
                             .rotationY(dir.getAxis().isVertical() ? 0 : ((int) dir.toYRot() + 180) % 360)
                             .buildLast())
@@ -138,7 +145,7 @@ public class PipeModelBuilder<T extends ModelBuilder<T>> extends CustomLoaderBui
         for (Direction dir : GTUtil.DIRECTIONS) {
             ConfiguredModel[] rotatedModels = Arrays.stream(connectionModels)
                     .map(model -> ConfiguredModel.builder()
-                            .modelFile(model).uvLock(true)
+                            .modelFile(model).uvLock(this.connectionUvLock)
                             .rotationX(dir == Direction.DOWN ? 0 : dir == Direction.UP ? 180 : 90)
                             .rotationY(dir.getAxis().isVertical() ? 0 : (int) dir.toYRot())
                             .buildLast())
@@ -357,6 +364,11 @@ public class PipeModelBuilder<T extends ModelBuilder<T>> extends CustomLoaderBui
             var coords = GTMath.getCoordinates(dir, min, max);
             Vector3f minPos = coords.getLeft();
             Vector3f maxPos = coords.getRight();
+            float uvMin = (16.0f - thickness) / 2.0f;
+            float uvMax = uvMin + thickness;
+            var uvCoords = GTMath.getCoordinates(dir, uvMin, uvMax);
+            Vector3f uvMinPos = uvCoords.getLeft();
+            Vector3f uvMaxPos = uvCoords.getRight();
             BlockModelBuilder model = provider.getBuilder(modelPath);
             model.texture("restrictor", PIPE_BLOCKED_OVERLAY)
                     .element()
@@ -366,7 +378,11 @@ public class PipeModelBuilder<T extends ModelBuilder<T>> extends CustomLoaderBui
                     .face(getSideAtBorder(dir, Border.TOP)).end()
                     .face(getSideAtBorder(dir, Border.LEFT)).end()
                     .face(getSideAtBorder(dir, Border.RIGHT)).end()
-                    .faces((face, builder) -> builder.texture("#restrictor"))
+                    .faces((face, builder) -> {
+                        float[] uv = BlockModelUV.face(face, uvMinPos.x, uvMinPos.y, uvMinPos.z,
+                                uvMaxPos.x, uvMaxPos.y, uvMaxPos.z);
+                        builder.texture("#restrictor").uv(uv[0], uv[1], uv[2], uv[3]);
+                    })
                     .end();
             models[dir.ordinal()] = model;
         }

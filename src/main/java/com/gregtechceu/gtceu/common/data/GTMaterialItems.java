@@ -120,8 +120,8 @@ public class GTMaterialItems {
         var toolItem = registrate.item(toolType.idFormat.formatted(tier.material.getName()),
                         p -> toolType.constructor.apply(toolType, tier, material,
                                 toolType.toolDefinition, p).asItem())
-                .properties(p -> p.craftRemainder(Items.AIR).enchantable(material.getProperty(PropertyKey.TOOL)
-                        .getEnchantability()))
+                .properties(p -> p.enchantable(
+                        material.getProperty(PropertyKey.TOOL).getEnchantability()))
                 .tag(ItemTags.VANISHING_ENCHANTABLE);
         if (!material.getProperty(PropertyKey.TOOL).isUnbreakable()) {
             toolItem.tag(ItemTags.DURABILITY_ENCHANTABLE);

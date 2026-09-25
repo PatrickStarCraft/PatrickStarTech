@@ -80,9 +80,7 @@ public class GTArmorItem extends Item {
             HolderSet<Item> repairItems = customRepairIngredient == null
                     ? repairIngredient.getValues()
                     : HolderSet.direct(customRepairIngredient.items().toList());
-            if (repairItems.size() > 0) {
-                result.component(DataComponents.REPAIRABLE, new Repairable(repairItems));
-            }
+            result.component(DataComponents.REPAIRABLE, new Repairable(repairItems));
         }
         // A non-simple custom predicate cannot be represented by the target Repairable holder-set component.
         return result;

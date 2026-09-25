@@ -1,5 +1,6 @@
 package com.gregtechceu.gtceu.api.registry.registrate.forge;
 
+import com.gregtechceu.gtceu.GTCEu;
 import com.gregtechceu.gtceu.api.data.chemical.material.Material;
 import com.gregtechceu.gtceu.api.fluids.FluidState;
 import com.gregtechceu.gtceu.api.fluids.GTFluid;
@@ -240,15 +241,11 @@ public class GTFluidBuilder<P> extends AbstractBuilder<Fluid, GTFluid.Flowing, P
         var block = getOwner().<Block, Block>getOptional(sourceName, Registries.BLOCK);
         this.typeProperties.accept(properties);
 
-        // Force the translation key after the user callback runs
-        // This is done because we need to remove the lang data generator if using the block key,
-        // and if it was possible to undo this change, it might result in the user translation getting
-        // silently lost, as there's no good way to check whether the translation key was changed.
-        // TODO improve this?
         if (block.isPresent()) {
-            properties.descriptionId(block.get().get().getDescriptionId());
+            properties.descriptionId(
+                    "block." + GTCEu.MOD_ID + "." + sourceName.replace('/', '.')
+            );
         } else {
-            // Fallback to material's name
             properties.descriptionId(langKey);
         }
         setData(ProviderType.LANG, NonNullBiConsumer.noop());
